@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Naos.SqlServer.Domain.Recipes.DummyFactory</id>
+    <description>A Dummy Factory for types in Naos.SqlServer.Domain</description>
+    <tags>dummyfactory dummy factory fakeiteasy autofixture snippet codeinclude utility shared recipe SqlServer</tags>
+    <dependencies>
+      <dependency id="Naos.SqlServer.Domain" version="$version$" />
+      <dependency id="OBeautifulCode.AutoFakeItEasy" version="1.0.129" />
+      <dependency id="Naos.CodeAnalysis.Recipes.SuppressBecause" version="1.0.126" />
+      <dependency id="Naos.Protocol.Recipes.DummyFactory" version="1.0.74" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="SqlServerDummyFactory.cs" target="content\net462\.recipes\Naos.SqlServer\SqlServerDummyFactory.cs" />
+    <file src="SqlServerDummyFactory.designer.cs" target="content\net462\.recipes\Naos.SqlServer\SqlServerDummyFactory.designer.cs" />
+  </files>
+</package>

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <description>BSON Serialization Configuration for types in Naos.SqlServer</description>
+    <tags>bson serialization configuration SqlServer</tags>
+  </metadata>
+</package>
