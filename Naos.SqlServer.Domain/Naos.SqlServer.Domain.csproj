@@ -39,11 +39,20 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Naos.Database.Domain, Version=1.1.212.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Naos.Database.Domain.1.1.212\lib\net462\Naos.Database.Domain.dll</HintPath>
+    </Reference>
     <Reference Include="Naos.Protocol.Domain, Version=1.0.74.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Naos.Protocol.Domain.1.0.74\lib\net462\Naos.Protocol.Domain.dll</HintPath>
     </Reference>
+    <Reference Include="OBeautifulCode.Compression, Version=1.0.19.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OBeautifulCode.Compression.1.0.19\lib\net462\OBeautifulCode.Compression.dll</HintPath>
+    </Reference>
     <Reference Include="OBeautifulCode.Representation.System, Version=1.0.55.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OBeautifulCode.Representation.System.1.0.55\lib\net462\OBeautifulCode.Representation.System.dll</HintPath>
+    </Reference>
+    <Reference Include="OBeautifulCode.Serialization, Version=1.0.84.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OBeautifulCode.Serialization.1.0.84\lib\net462\OBeautifulCode.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="OBeautifulCode.Type, Version=1.0.71.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OBeautifulCode.Type.1.0.71\lib\net462\OBeautifulCode.Type.dll</HintPath>
@@ -90,11 +99,99 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="IProtocolSqlOperations.cs" />
+    <Compile Include="Model\DataTypeRepresentation\BinarySqlDataTypeRepresentation.cs" />
+    <Compile Include="Model\DataTypeRepresentation\BinarySqlDataTypeRepresentation.designer.cs">
+      <DependentUpon>BinarySqlDataTypeRepresentation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DataTypeRepresentation\DecimalSqlDataTypeRepresentation.cs" />
+    <Compile Include="Model\DataTypeRepresentation\DecimalSqlDataTypeRepresentation.designer.cs">
+      <DependentUpon>DecimalSqlDataTypeRepresentation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DataTypeRepresentation\IntSqlDataTypeRepresentation.cs" />
+    <Compile Include="Model\DataTypeRepresentation\IntSqlDataTypeRepresentation.designer.cs">
+      <DependentUpon>IntSqlDataTypeRepresentation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DataTypeRepresentation\SqlDataTypeRepresentationBase.cs" />
+    <Compile Include="Model\DataTypeRepresentation\SqlDataTypeRepresentationBase.designer.cs">
+      <DependentUpon>SqlDataTypeRepresentationBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DataTypeRepresentation\StringSqlDataTypeRepresentation.cs" />
+    <Compile Include="Model\DataTypeRepresentation\StringSqlDataTypeRepresentation.designer.cs">
+      <DependentUpon>StringSqlDataTypeRepresentation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DataTypeRepresentation\UtcDateTimeSqlDataTypeRepresentation.cs" />
+    <Compile Include="Model\DataTypeRepresentation\UtcDateTimeSqlDataTypeRepresentation.designer.cs">
+      <DependentUpon>UtcDateTimeSqlDataTypeRepresentation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DescribedSerializer.cs" />
+    <Compile Include="Model\ResourceLocation\ISqlServerLocator.cs" />
+    <Compile Include="Model\ParameterRepresentation\ISqlOutputParameterRepresentationWithResult.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentation{TValue}.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentation{TValue}.designer.cs">
+      <DependentUpon>SqlInputParameterRepresentation{TValue}.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationBase.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationBase.designer.cs">
+      <DependentUpon>SqlOutputParameterRepresentationBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationWithResult{TValue}.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationWithResult{TValue}.designer.cs">
+      <DependentUpon>SqlOutputParameterRepresentationWithResult{TValue}.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentation{TValue}.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentation{TValue}.designer.cs">
+      <DependentUpon>SqlOutputParameterRepresentation{TValue}.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\ParameterRepresentation\SqlParameterRepresentationBase.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlParameterRepresentationBase.designer.cs">
+      <DependentUpon>SqlParameterRepresentationBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Scripting\ScriptableObjectType.cs" />
+    <Compile Include="Model\ResourceLocation\SqlServerLocator.cs" />
+    <Compile Include="Model\ResourceLocation\SqlServerLocator.designer.cs">
+      <DependentUpon>SqlServerLocator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\StoredProcedureExecutionResult.cs" />
+    <Compile Include="Model\SchemaRepresentation\ColumnRepresentation.cs" />
+    <Compile Include="Model\SchemaRepresentation\TableRepresentation.cs" />
+    <Compile Include="Operations\ExecuteStoredProcedureOp.cs" />
+    <Compile Include="Operations\GetIdAddIfNecessarySerializerRepresentationOp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
     <AdditionalFiles Include=".analyzers\stylecop.json" />
+    <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessarySerializerDescription.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestByIdAndType.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.PutObject.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.Object.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.SerializerDescription.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.Tag.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithoutVersion.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithVersion.cs" />
+    <Compile Include="Model\CreationBackupRestore\BackupSqlServerDatabaseDetails.cs" />
+    <Compile Include="Model\CreationBackupRestore\ChecksumOption.cs" />
+    <Compile Include="Model\CreationBackupRestore\Cipher.cs" />
+    <Compile Include="Model\SchemaRepresentation\ColumnDescription.cs" />
+    <Compile Include="Model\CreationBackupRestore\CompressionOption.cs" />
+    <Compile Include="Model\CreationBackupRestore\DatabaseConfiguration.cs" />
+    <Compile Include="Model\CreationBackupRestore\DatabaseType.cs" />
+    <Compile Include="Model\CreationBackupRestore\Device.cs" />
+    <Compile Include="Model\CreationBackupRestore\EncryptionCipher.cs" />
+    <Compile Include="Model\CreationBackupRestore\Encryptor.cs" />
+    <Compile Include="Model\CreationBackupRestore\ErrorHandling.cs" />
+    <Compile Include="Model\CreationBackupRestore\FileConstants.cs" />
+    <Compile Include="Model\CreationBackupRestore\RecoveryMode.cs" />
+    <Compile Include="Model\CreationBackupRestore\RecoveryOption.cs" />
+    <Compile Include="Model\CreationBackupRestore\RestoreFile.cs" />
+    <Compile Include="Model\CreationBackupRestore\RestoreSqlServerDatabaseDetails.cs" />
+    <Compile Include="Model\CreationBackupRestore\RestrictedUserOption.cs" />
+    <Compile Include="Model\Scripting\ScriptedObject.cs" />
+    <Compile Include="Model\SchemaRepresentation\TableDescription.cs" />
+    <Compile Include="SqlInjectorChecker.cs" />
     <None Include=".analyzers\release.ruleset" />
     <None Include="Naos.SqlServer.Domain.override-nuspec" />
     <None Include="packages.config" />
@@ -106,6 +203,7 @@
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Naos.Build.Analyzers.1.55.46\build\Naos.Build.Analyzers.targets" Condition="Exists('..\packages\Naos.Build.Analyzers.1.55.46\build\Naos.Build.Analyzers.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
