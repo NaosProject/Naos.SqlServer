@@ -9,7 +9,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Constants used in project.
     /// </summary>
-    public static class FileConstants
+    public static class SqlServerFileConstants
     {
         /// <summary>
         /// The extension (WITHOUT the PERIOD) of an MS SQL Server Data File.

@@ -183,7 +183,7 @@
     <Compile Include="Model\CreationBackupRestore\EncryptionCipher.cs" />
     <Compile Include="Model\CreationBackupRestore\Encryptor.cs" />
     <Compile Include="Model\CreationBackupRestore\ErrorHandling.cs" />
-    <Compile Include="Model\CreationBackupRestore\FileConstants.cs" />
+    <Compile Include="Model\CreationBackupRestore\SqlServerFileConstants.cs" />
     <Compile Include="Model\CreationBackupRestore\RecoveryMode.cs" />
     <Compile Include="Model\CreationBackupRestore\RecoveryOption.cs" />
     <Compile Include="Model\CreationBackupRestore\RestoreFile.cs" />
