@@ -1,0 +1,7 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <description>Client to perform migration operations against MS SQL Server.</description>
+    <tags>Migration SqlServer</tags>
+  </metadata>
+</package>
