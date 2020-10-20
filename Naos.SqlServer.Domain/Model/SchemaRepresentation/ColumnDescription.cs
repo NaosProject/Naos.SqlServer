@@ -3,7 +3,7 @@
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-/*
+
 namespace Naos.SqlServer.Domain
 {
     /// <summary>
@@ -12,29 +12,50 @@ namespace Naos.SqlServer.Domain
     public class ColumnDescription
     {
         /// <summary>
-        /// Gets or sets the name of the column.
+        /// Initializes a new instance of the <see cref="ColumnDescription"/> class.
         /// </summary>
-        public string ColumnName { get; set; }
+        /// <param name="columnName">Name of the column.</param>
+        /// <param name="ordinalPosition">The ordinal position.</param>
+        /// <param name="columnDefault">The column default value.</param>
+        /// <param name="isNullable">if set to <c>true</c> [is nullable].</param>
+        /// <param name="dataType">Type of the data.</param>
+        public ColumnDescription(
+            string columnName,
+            int ordinalPosition,
+            string columnDefault,
+            bool isNullable,
+            string dataType)
+        {
+            this.ColumnName = columnName;
+            this.OrdinalPosition = ordinalPosition;
+            this.ColumnDefault = columnDefault;
+            this.IsNullable = isNullable;
+            this.DataType = dataType;
+        }
 
         /// <summary>
-        /// Gets or sets the ordinal position of the column.
+        /// Gets the name of the column.
         /// </summary>
-        public int OrdinalPosition { get; set; }
+        public string ColumnName { get; private set; }
 
         /// <summary>
-        /// Gets or sets the default value of the column.
+        /// Gets the ordinal position of the column.
         /// </summary>
-        public string ColumnDefault { get; set; }
+        public int OrdinalPosition { get; private set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether or not the column is nullable.
+        /// Gets the default value of the column.
         /// </summary>
-        public bool IsNullable { get; set; }
+        public string ColumnDefault { get; private set; }
 
         /// <summary>
-        /// Gets or sets the data type of the column.
+        /// Gets a value indicating whether or not the column is nullable.
         /// </summary>
-        public string DataType { get; set; }
+        public bool IsNullable { get; private set; }
+
+        /// <summary>
+        /// Gets the data type of the column.
+        /// </summary>
+        public string DataType { get; private set; }
     }
 }
-*/

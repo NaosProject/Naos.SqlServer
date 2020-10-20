@@ -3,7 +3,7 @@
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-/*
+
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
@@ -14,24 +14,42 @@ namespace Naos.SqlServer.Domain
     public class TableDescription
     {
         /// <summary>
-        /// Gets or sets the name of the database the table is from.
+        /// Initializes a new instance of the <see cref="TableDescription"/> class.
         /// </summary>
-        public string DatabaseName { get; set; }
+        /// <param name="databaseName">Name of the database.</param>
+        /// <param name="tableSchema">The table schema (e.g. 'dbo').</param>
+        /// <param name="tableName">Name of the table.</param>
+        /// <param name="columns">The columns.</param>
+        public TableDescription(
+            string databaseName,
+            string tableSchema,
+            string tableName,
+            IReadOnlyCollection<ColumnDescription> columns)
+        {
+            this.DatabaseName = databaseName;
+            this.TableSchema = tableSchema;
+            this.TableName = tableName;
+            this.Columns = columns;
+        }
 
         /// <summary>
-        /// Gets or sets the schema of the table.
+        /// Gets the name of the database the table is from.
         /// </summary>
-        public string TableSchema { get; set; }
+        public string DatabaseName { get; private set; }
 
         /// <summary>
-        /// Gets or sets the name of the table.
+        /// Gets the schema of the table.
         /// </summary>
-        public string TableName { get; set; }
+        public string TableSchema { get; private set; }
 
         /// <summary>
-        /// Gets or sets the columns descriptions of the table.
+        /// Gets the name of the table.
         /// </summary>
-        public IReadOnlyCollection<ColumnDescription> Columns { get; set; }
+        public string TableName { get; private set; }
+
+        /// <summary>
+        /// Gets the columns descriptions of the table.
+        /// </summary>
+        public IReadOnlyCollection<ColumnDescription> Columns { get; private set; }
     }
 }
-*/

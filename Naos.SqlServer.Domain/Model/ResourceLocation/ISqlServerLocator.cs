@@ -7,7 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     /// <summary>
-    /// Generic SQL locator properties to allow for other SQL type locators to share information with the <see cref="SqlOperationsProtocol" />.
+    /// Interface for the properties needed to construct a SQL connection string, implemented by <see cref="SqlServerLocator"/>.
     /// </summary>
     public interface ISqlServerLocator
     {
