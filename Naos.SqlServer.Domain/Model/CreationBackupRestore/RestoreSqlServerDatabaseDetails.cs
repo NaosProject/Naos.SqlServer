@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using Naos.Database.Domain;
+    using OBeautifulCode.Assertion.Recipes;
 
     /// <summary>
     /// Captures the details of a restore operation.
@@ -72,5 +73,49 @@ namespace Naos.SqlServer.Domain
         /// Gets or sets an enum value that indicates whether or not to put the database into restricted user mode after restoring.
         /// </summary>
         public RestrictedUserOption RestrictedUserOption { get; set; }
+    }
+
+    /// <summary>
+    /// Extension methods for <see cref="RestoreSqlServerDatabaseDetails"/>.
+    /// </summary>
+    public static class RestoreSqlServerDatabaseDetailsExtensions
+    {
+        /// <summary>
+        /// Throws an exception if the <see cref="RestoreSqlServerDatabaseDetails"/> is invalid.
+        /// </summary>
+        /// <param name="restoreDetails">The restore details to validate.</param>
+        public static void ThrowIfInvalid(this RestoreSqlServerDatabaseDetails restoreDetails)
+        {
+            new { restoreDetails }.AsArg().Must().NotBeNull();
+            new { restoreDetails.RestoreFrom }.AsArg().Must().NotBeNull();
+
+            if (restoreDetails.Device == Device.Url)
+            {
+                if (string.IsNullOrWhiteSpace(restoreDetails.Credential))
+                {
+                    throw new ArgumentException("Credential cannot be null or whitespace when Device is URL");
+                }
+
+                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(restoreDetails.Credential);
+            }
+
+            if (!string.IsNullOrWhiteSpace(restoreDetails.DataFilePath))
+            {
+                SqlInjectorChecker.ThrowIfNotValidPath(restoreDetails.DataFilePath);
+            }
+
+            if (!string.IsNullOrWhiteSpace(restoreDetails.LogFilePath))
+            {
+                SqlInjectorChecker.ThrowIfNotValidPath(restoreDetails.LogFilePath);
+            }
+
+            if (restoreDetails.ChecksumOption == ChecksumOption.Checksum)
+            {
+                if (restoreDetails.ErrorHandling == ErrorHandling.None)
+                {
+                    throw new ArgumentException("ErrorHandling cannot be None when using checksum.");
+                }
+            }
+        }
     }
 }
