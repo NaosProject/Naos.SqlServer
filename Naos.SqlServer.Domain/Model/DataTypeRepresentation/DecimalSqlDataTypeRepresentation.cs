@@ -8,11 +8,12 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Top level .
     /// </summary>
-    public partial class DecimalSqlDataTypeRepresentation : SqlDataTypeRepresentationBase
+    public partial class DecimalSqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
         /// The default numeric precision to hold dot net decimal.

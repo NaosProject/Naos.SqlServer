@@ -18,7 +18,7 @@ namespace Naos.SqlServer.Protocol.Management
     using Naos.SqlServer.Domain;
     using Naos.SqlServer.Protocol.Client;
     using OBeautifulCode.Assertion.Recipes;
-
+    using OBeautifulCode.Database.Recipes;
     using static System.FormattableString;
 
     /// <summary>
@@ -58,7 +58,7 @@ namespace Naos.SqlServer.Protocol.Management
 
             var scriptedObjects = Scripter.ScriptObjectsFromDatabase(sourceDatabaseConnectionString, orderedObjectNamesToCopy);
 
-            using (var targetConnection = SqlServerDatabaseManager.OpenConnection(targetDatabaseConnectionString, SqlMessagesToAnnouncerAdapter))
+            using (var targetConnection = targetDatabaseConnectionString.OpenSqlConnection(SqlMessagesToAnnouncerAdapter))
             {
                 async Task RunScriptOnServer(ScriptedObject scriptedObject, string scriptToRun)
                 {
@@ -77,7 +77,7 @@ namespace Naos.SqlServer.Protocol.Management
                     catch (Exception ex)
                     {
                         throw new FailedOperationException(
-                            Invariant($"Failed to run script on database {ConnectionStringHelper.GetDatabaseNameFromConnectionString(targetDatabaseConnectionString)}; {scriptToRun}"),
+                            Invariant($"Failed to run script on database {targetDatabaseConnectionString.ObfuscateCredentialsInConnectionString()}; {scriptToRun}"),
                             ex);
                     }
                 }
@@ -100,7 +100,7 @@ namespace Naos.SqlServer.Protocol.Management
                                     | SqlBulkCopyOptions.KeepIdentity
                                     | SqlBulkCopyOptions.KeepNulls
                                     | SqlBulkCopyOptions.TableLock;
-                    using (var sourceConnection = SqlServerDatabaseManager.OpenConnection(sourceDatabaseConnectionString, SqlMessagesToAnnouncerAdapter))
+                    using (var sourceConnection = sourceDatabaseConnectionString.OpenSqlConnection(SqlMessagesToAnnouncerAdapter))
                     {
                         foreach (var table in tables)
                         {

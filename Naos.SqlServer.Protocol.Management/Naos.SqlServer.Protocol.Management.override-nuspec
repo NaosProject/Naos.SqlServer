@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package>
   <metadata>
-    <description>DESCRIPTION_HERE</description>
-    <tags>TAG1_HERE TAG2_HERE SqlServer</tags>
+    <description>Client to perform specific management operations on MS SQL Server that require use of the MS SMO (SQL Management Objects) interface.</description>
+    <tags>Naos SMO SqlServer</tags>
   </metadata>
 </package>

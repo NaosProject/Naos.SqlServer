@@ -8,11 +8,12 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Top level .
     /// </summary>
-    public partial class IntSqlDataTypeRepresentation : SqlDataTypeRepresentationBase
+    public partial class IntSqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IModelViaCodeGen
     {
         /// <inheritdoc />
         public override string DeclarationInSqlSyntax => "[INT]";

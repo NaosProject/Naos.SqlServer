@@ -7,11 +7,12 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Results of the stored procedure.
     /// </summary>
-    public class StoredProcedureExecutionResult
+    public class StoredProcedureExecutionResult : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StoredProcedureExecutionResult"/> class.

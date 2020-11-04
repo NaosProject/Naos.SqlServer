@@ -9,11 +9,12 @@ namespace Naos.SqlServer.Domain
     using System;
     using System.Globalization;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Top level .
     /// </summary>
-    public partial class BinarySqlDataTypeRepresentation : SqlDataTypeRepresentationBase
+    public partial class BinarySqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BinarySqlDataTypeRepresentation"/> class.

@@ -10,11 +10,12 @@
 namespace Naos.SqlServer.Protocol.Migration
 {
     using FluentMigrator;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Class to pass necessary options to runner.
     /// </summary>
-    public class MigrationOptions : IMigrationProcessorOptions
+    public class MigrationOptions : IMigrationProcessorOptions, IModelViaCodeGen
     {
         /// <summary>
         /// Gets or sets a value indicating whether to run in preview only mode.

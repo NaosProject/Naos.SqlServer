@@ -6,10 +6,12 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using OBeautifulCode.Type;
+
     /// <summary>
     /// Detailed information about the column.
     /// </summary>
-    public class ColumnDescription
+    public class ColumnDescription : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnDescription"/> class.

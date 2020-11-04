@@ -7,13 +7,14 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
+    using OBeautifulCode.Type;
     using OBeautifulCode.Type.Recipes;
 
     /// <summary>
     /// Top level .
     /// </summary>
     /// <typeparam name="TValue">Type of the Output value.</typeparam>
-    public partial class SqlOutputParameterRepresentationWithResult<TValue> : SqlOutputParameterRepresentationBase, ISqlOutputParameterRepresentationWithResult
+    public partial class SqlOutputParameterRepresentationWithResult<TValue> : SqlOutputParameterRepresentationBase, ISqlOutputParameterRepresentationWithResult, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlOutputParameterRepresentationWithResult{TValue}"/> class.

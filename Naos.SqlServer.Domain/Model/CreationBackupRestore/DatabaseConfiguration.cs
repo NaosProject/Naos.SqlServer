@@ -7,117 +7,128 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Diagnostics.CodeAnalysis;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Detailed information about the database's configuration (file size and name type stuff).
     /// </summary>
-    public class DatabaseConfiguration
+    public class DatabaseConfiguration : IModelViaCodeGen
     {
         /// <summary>
-        /// Gets or sets the name of database.
+        /// Initializes a new instance of the <see cref="DatabaseConfiguration"/> class.
         /// </summary>
-        public string DatabaseName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the type of database.
-        /// </summary>
-        public DatabaseType DatabaseType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the recovery mode.
-        /// </summary>
-        public RecoveryMode RecoveryMode { get; set; }
-
-        /// <summary>
-        /// Gets or sets the metadata name of the data file.
-        /// </summary>
-        public string DataFileLogicalName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the full path to the data file.
-        /// </summary>
-        public string DataFilePath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the full path to the log file.
-        /// </summary>
-        public string LogFilePath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the current size of data file in kilobytes.
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
-        public long DataFileCurrentSizeInKb { get; set; }
-
-        /// <summary>
-        /// Gets or sets the max size of data file in kilobytes.
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
-        public long DataFileMaxSizeInKb { get; set; }
-
-        /// <summary>
-        /// Gets or sets the size of growth interval of data file in kilobytes.
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
-        public long DataFileGrowthSizeInKb { get; set; }
-
-        /// <summary>
-        /// Gets or sets the metadata name of the log file.
-        /// </summary>
-        public string LogFileLogicalName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the current size of log file in kilobytes.
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
-        public long LogFileCurrentSizeInKb { get; set; }
-
-        /// <summary>
-        /// Gets or sets the max size of data file in kilobytes.
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
-        public long LogFileMaxSizeInKb { get; set; }
-
-        /// <summary>
-        /// Gets or sets the size of growth interval of log file in kilobytes.
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
-        public long LogFileGrowthSizeInKb { get; set; }
-
-        /// <summary>
-        /// Creates a copy of the current object.
-        /// </summary>
-        /// <returns>A copy of the current object.</returns>
-        public DatabaseConfiguration Clone()
+        /// <param name="databaseName">Name of the database.</param>
+        /// <param name="databaseType">Type of the database.</param>
+        /// <param name="recoveryMode">The recovery mode.</param>
+        /// <param name="dataFileLogicalName">Name of the data file logical.</param>
+        /// <param name="dataFilePath">The data file path.</param>
+        /// <param name="logFilePath">The log file path.</param>
+        /// <param name="dataFileCurrentSizeInKb">The data file current size in kilobytes.</param>
+        /// <param name="dataFileMaxSizeInKb">The data file maximum size in kilobytes.</param>
+        /// <param name="dataFileGrowthSizeInKb">The data file growth size in kilobytes.</param>
+        /// <param name="logFileLogicalName">Name of the log file logical.</param>
+        /// <param name="logFileCurrentSizeInKb">The log file current size in kilobytes.</param>
+        /// <param name="logFileMaxSizeInKb">The log file maximum size in kilobytes.</param>
+        /// <param name="logFileGrowthSizeInKb">The log file growth size in kilobytes.</param>
+        public DatabaseConfiguration(
+            string databaseName,
+            DatabaseType databaseType,
+            RecoveryMode recoveryMode,
+            string dataFileLogicalName,
+            string dataFilePath,
+            string logFilePath,
+            long dataFileCurrentSizeInKb,
+            long dataFileMaxSizeInKb,
+            long dataFileGrowthSizeInKb,
+            string logFileLogicalName,
+            long logFileCurrentSizeInKb,
+            long logFileMaxSizeInKb,
+            long logFileGrowthSizeInKb)
         {
-            return new DatabaseConfiguration()
-                       {
-                           DatabaseType = this.DatabaseType,
-                           DatabaseName = this.DatabaseName,
-                           DataFileLogicalName = this.DataFileLogicalName,
-                           DataFilePath = this.DataFilePath,
-                           DataFileCurrentSizeInKb = this.DataFileCurrentSizeInKb,
-                           DataFileMaxSizeInKb = this.DataFileMaxSizeInKb,
-                           DataFileGrowthSizeInKb = this.DataFileGrowthSizeInKb,
-                           LogFileLogicalName = this.LogFileLogicalName,
-                           LogFilePath = this.LogFilePath,
-                           LogFileCurrentSizeInKb = this.LogFileCurrentSizeInKb,
-                           LogFileMaxSizeInKb = this.LogFileMaxSizeInKb,
-                           LogFileGrowthSizeInKb = this.LogFileGrowthSizeInKb,
-                           RecoveryMode = this.RecoveryMode,
-                       };
+            this.DatabaseName = databaseName;
+            this.DatabaseType = databaseType;
+            this.RecoveryMode = recoveryMode;
+            this.DataFileLogicalName = dataFileLogicalName;
+            this.DataFilePath = dataFilePath;
+            this.LogFilePath = logFilePath;
+            this.DataFileCurrentSizeInKb = dataFileCurrentSizeInKb;
+            this.DataFileMaxSizeInKb = dataFileMaxSizeInKb;
+            this.DataFileGrowthSizeInKb = dataFileGrowthSizeInKb;
+            this.LogFileLogicalName = logFileLogicalName;
+            this.LogFileCurrentSizeInKb = logFileCurrentSizeInKb;
+            this.LogFileMaxSizeInKb = logFileMaxSizeInKb;
+            this.LogFileGrowthSizeInKb = logFileGrowthSizeInKb;
         }
 
         /// <summary>
-        /// Creates a copy of the current object while also updating the database name to the new value.
+        /// Gets the name of database.
         /// </summary>
-        /// <param name="newDatabaseName">New database name to be updated in the cloned object.</param>
-        /// <returns>A copy of the current object with the new database name assigned.</returns>
-        public DatabaseConfiguration CloneWithNewDatabaseName(string newDatabaseName)
-        {
-            var clone = this.Clone();
-            clone.DatabaseName = newDatabaseName;
-            return clone;
-        }
+        public string DatabaseName { get; private set; }
+
+        /// <summary>
+        /// Gets the type of database.
+        /// </summary>
+        public DatabaseType DatabaseType { get; private set; }
+
+        /// <summary>
+        /// Gets the recovery mode.
+        /// </summary>
+        public RecoveryMode RecoveryMode { get; private set; }
+
+        /// <summary>
+        /// Gets the metadata name of the data file.
+        /// </summary>
+        public string DataFileLogicalName { get; private set; }
+
+        /// <summary>
+        /// Gets the full path to the data file.
+        /// </summary>
+        public string DataFilePath { get; private set; }
+
+        /// <summary>
+        /// Gets the full path to the log file.
+        /// </summary>
+        public string LogFilePath { get; private set; }
+
+        /// <summary>
+        /// Gets the current size of data file in kilobytes.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        public long DataFileCurrentSizeInKb { get; private set; }
+
+        /// <summary>
+        /// Gets the max size of data file in kilobytes.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        public long DataFileMaxSizeInKb { get; private set; }
+
+        /// <summary>
+        /// Gets the size of growth interval of data file in kilobytes.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        public long DataFileGrowthSizeInKb { get; private set; }
+
+        /// <summary>
+        /// Gets the metadata name of the log file.
+        /// </summary>
+        public string LogFileLogicalName { get; private set; }
+
+        /// <summary>
+        /// Gets the current size of log file in kilobytes.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        public long LogFileCurrentSizeInKb { get; private set; }
+
+        /// <summary>
+        /// Gets the max size of data file in kilobytes.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        public long LogFileMaxSizeInKb { get; private set; }
+
+        /// <summary>
+        /// Gets the size of growth interval of log file in kilobytes.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        public long LogFileGrowthSizeInKb { get; private set; }
     }
 }

@@ -7,26 +7,48 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Diagnostics.CodeAnalysis;
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Represents a file to restore.
     /// </summary>
-    public class RestoreFile
+    public class RestoreFile : IModelViaCodeGen
     {
         /// <summary>
-        /// Gets or sets the metadata name of the file.
+        /// Initializes a new instance of the <see cref="RestoreFile"/> class.
         /// </summary>
-        public string LogicalName { get; set; }
+        /// <param name="logicalName">Name of the logical.</param>
+        /// <param name="physicalName">Name of the physical.</param>
+        /// <param name="type">The type.</param>
+        public RestoreFile(
+            string logicalName,
+            string physicalName,
+            string type)
+        {
+            logicalName.MustForArg(nameof(logicalName)).NotBeNullNorWhiteSpace();
+            physicalName.MustForArg(nameof(physicalName)).NotBeNullNorWhiteSpace();
+            type.MustForArg(nameof(type)).NotBeNullNorWhiteSpace();
+
+            this.LogicalName = logicalName;
+            this.PhysicalName = physicalName;
+            this.Type = type;
+        }
 
         /// <summary>
-        /// Gets or sets the path to the file.
+        /// Gets the metadata name of the file.
         /// </summary>
-        public string PhysicalName { get; set; }
+        public string LogicalName { get; private set; }
 
         /// <summary>
-        /// Gets or sets the type of file.
+        /// Gets the path to the file.
+        /// </summary>
+        public string PhysicalName { get; private set; }
+
+        /// <summary>
+        /// Gets the type of file.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Matches sys schema in SQL Server.")]
-        public string Type { get; set; }
+        public string Type { get; private set; }
     }
 }

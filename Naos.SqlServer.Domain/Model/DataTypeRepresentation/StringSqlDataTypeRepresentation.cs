@@ -9,12 +9,13 @@ namespace Naos.SqlServer.Domain
     using System;
     using System.Globalization;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
     using OBeautifulCode.Type.Recipes;
 
     /// <summary>
     /// Top level .
     /// </summary>
-    public partial class StringSqlDataTypeRepresentation : SqlDataTypeRepresentationBase
+    public partial class StringSqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StringSqlDataTypeRepresentation"/> class.

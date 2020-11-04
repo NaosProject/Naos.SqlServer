@@ -8,13 +8,14 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
     using OBeautifulCode.Type.Recipes;
 
     /// <summary>
     /// Top level .
     /// </summary>
     /// <typeparam name="TValue">Type of the input value.</typeparam>
-    public partial class SqlInputParameterRepresentation<TValue> : SqlParameterRepresentationBase
+    public partial class SqlInputParameterRepresentation<TValue> : SqlParameterRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlInputParameterRepresentation{TValue}"/> class.

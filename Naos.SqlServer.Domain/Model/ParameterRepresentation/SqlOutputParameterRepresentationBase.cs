@@ -6,10 +6,12 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using OBeautifulCode.Type;
+
     /// <summary>
     /// Top level base of a SQL Parameter.
     /// </summary>
-    public abstract partial class SqlOutputParameterRepresentationBase : SqlParameterRepresentationBase
+    public abstract partial class SqlOutputParameterRepresentationBase : SqlParameterRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlOutputParameterRepresentationBase"/> class.

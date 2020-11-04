@@ -7,11 +7,12 @@
 namespace Naos.SqlServer.Domain
 {
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Top level base of a SQL Parameter.
     /// </summary>
-    public class ColumnRepresentation
+    public class ColumnRepresentation : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnRepresentation"/> class.
