@@ -312,7 +312,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.SqlServerLocator: ServerName = {this.ServerName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseName = {this.DatabaseName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {this.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Password = {this.Password?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, InstanceName = {this.InstanceName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Port = {this.Port.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.SqlServerLocator: ServerName = {this.ServerName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseName = {this.DatabaseName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {this.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Password = {this.Password?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, InstanceName = {this.InstanceName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Port = {this.Port?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
 
             return result;
         }

@@ -31,7 +31,7 @@ namespace Naos.SqlServer.Domain
             string userName,
             string password,
             string instanceName = null,
-            int port = 1433)
+            int? port = null)
         {
             serverName.MustForArg(nameof(serverName)).NotBeNullNorWhiteSpace();
             databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace();
@@ -77,7 +77,7 @@ namespace Naos.SqlServer.Domain
         /// Gets the port.
         /// </summary>
         /// <value>The port.</value>
-        public int Port { get; private set; }
+        public int? Port { get; private set; }
 
         /// <summary>
         /// Builds the invalid stream locator type exception.

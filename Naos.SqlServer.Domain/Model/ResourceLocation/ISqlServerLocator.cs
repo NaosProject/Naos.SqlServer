@@ -45,6 +45,6 @@ namespace Naos.SqlServer.Domain
         /// Gets the port.
         /// </summary>
         /// <value>The port.</value>
-        int Port { get; }
+        int? Port { get; }
     }
 }
