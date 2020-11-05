@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Results of the stored procedure.
     /// </summary>
-    public class StoredProcedureExecutionResult : IModelViaCodeGen
+    public partial class StoredProcedureExecutionResult : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StoredProcedureExecutionResult"/> class.

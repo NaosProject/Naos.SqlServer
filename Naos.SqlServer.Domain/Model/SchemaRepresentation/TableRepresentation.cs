@@ -13,7 +13,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Top level base of a SQL Parameter.
     /// </summary>
-    public class TableRepresentation : IModelViaCodeGen
+    public partial class TableRepresentation : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TableRepresentation"/> class.

@@ -11,7 +11,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Detailed information about the column.
     /// </summary>
-    public class ColumnDescription : IModelViaCodeGen
+    public partial class ColumnDescription : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnDescription"/> class.

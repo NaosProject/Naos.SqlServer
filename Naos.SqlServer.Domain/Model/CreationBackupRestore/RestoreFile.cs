@@ -13,7 +13,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Represents a file to restore.
     /// </summary>
-    public class RestoreFile : IModelViaCodeGen
+    public partial class RestoreFile : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RestoreFile"/> class.

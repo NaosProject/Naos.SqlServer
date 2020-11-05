@@ -13,7 +13,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Detailed information about the database's configuration (file size and name type stuff).
     /// </summary>
-    public class DatabaseConfiguration : IModelViaCodeGen
+    public partial class DatabaseConfiguration : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseConfiguration"/> class.

@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Top level base of a SQL Parameter.
     /// </summary>
-    public class ColumnRepresentation : IModelViaCodeGen
+    public partial class ColumnRepresentation : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnRepresentation"/> class.

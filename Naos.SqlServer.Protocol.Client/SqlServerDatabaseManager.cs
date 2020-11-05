@@ -18,7 +18,6 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.Database.Domain;
     using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Domain;
-    using Naos.SqlServer.Domain.Legacy;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Database.Recipes;
     using OBeautifulCode.Enum.Recipes;

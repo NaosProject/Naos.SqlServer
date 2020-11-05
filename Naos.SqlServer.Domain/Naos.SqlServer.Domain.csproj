@@ -100,6 +100,21 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="IProtocolSqlOperations.cs" />
+    <Compile Include="Legacy\SqlServerConnectionDefinition.designer.cs">
+      <DependentUpon>SqlServerConnectionDefinition.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\CreationBackupRestore\BackupSqlServerDatabaseDetails.designer.cs">
+      <DependentUpon>BackupSqlServerDatabaseDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\CreationBackupRestore\DatabaseConfiguration.designer.cs">
+      <DependentUpon>DatabaseConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\CreationBackupRestore\RestoreFile.designer.cs">
+      <DependentUpon>RestoreFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\CreationBackupRestore\RestoreSqlServerDatabaseDetails.designer.cs">
+      <DependentUpon>RestoreSqlServerDatabaseDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\DataTypeRepresentation\BinarySqlDataTypeRepresentation.cs" />
     <Compile Include="Model\DataTypeRepresentation\BinarySqlDataTypeRepresentation.designer.cs">
       <DependentUpon>BinarySqlDataTypeRepresentation.cs</DependentUpon>
@@ -147,6 +162,18 @@
     <Compile Include="Model\ParameterRepresentation\SqlParameterRepresentationBase.designer.cs">
       <DependentUpon>SqlParameterRepresentationBase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\SchemaRepresentation\ColumnDescription.designer.cs">
+      <DependentUpon>ColumnDescription.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\SchemaRepresentation\ColumnRepresentation.designer.cs">
+      <DependentUpon>ColumnRepresentation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\SchemaRepresentation\TableDescription.designer.cs">
+      <DependentUpon>TableDescription.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\SchemaRepresentation\TableRepresentation.designer.cs">
+      <DependentUpon>TableRepresentation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\Scripting\ScriptableObjectType.cs" />
     <Compile Include="Model\ResourceLocation\SqlServerLocator.cs" />
     <Compile Include="Model\ResourceLocation\SqlServerLocator.designer.cs">
@@ -155,8 +182,17 @@
     <Compile Include="Model\StoredProcedureExecutionResult.cs" />
     <Compile Include="Model\SchemaRepresentation\ColumnRepresentation.cs" />
     <Compile Include="Model\SchemaRepresentation\TableRepresentation.cs" />
+    <Compile Include="Model\StoredProcedureExecutionResult.designer.cs">
+      <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
+    </Compile>
     <Compile Include="Operations\ExecuteStoredProcedureOp.cs" />
+    <Compile Include="Operations\ExecuteStoredProcedureOp.designer.cs">
+      <DependentUpon>ExecuteStoredProcedureOp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Operations\GetIdAddIfNecessarySerializerRepresentationOp.cs" />
+    <Compile Include="Operations\GetIdAddIfNecessarySerializerRepresentationOp.designer.cs">
+      <DependentUpon>GetIdAddIfNecessarySerializerRepresentationOp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />

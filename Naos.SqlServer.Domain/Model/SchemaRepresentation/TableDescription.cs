@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Detailed information about the table.
     /// </summary>
-    public class TableDescription : IModelViaCodeGen
+    public partial class TableDescription : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TableDescription"/> class.
