@@ -22,6 +22,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Stored procedures.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sprocs", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
         public partial class Sprocs
         {
             /// <summary>
@@ -32,7 +33,8 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Input parameter names.
                 /// </summary>
-                public enum InputParamNames
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                public enum InputParamName
                 {
                     /// <summary>
                     /// The serialized object identifier
@@ -58,7 +60,8 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Output parameter names.
                 /// </summary>
-                public enum OutputParamNames
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                public enum OutputParamName
                 {
                     /// <summary>
                     /// The serialization configuration assembly qualified name without version
@@ -116,17 +119,17 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.SerializedObjectId), Tables.Object.SerializedObjectId.DataType, serializedObjectId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.ObjectAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithoutVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamNames.SerializationConfigAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType),
-                                         new SqlOutputParameterRepresentation<SerializationKind>(nameof(OutputParamNames.SerializationKind), Tables.SerializerRepresentation.SerializationKind.DataType),
-                                         new SqlOutputParameterRepresentation<SerializationFormat>(nameof(OutputParamNames.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.DataType),
-                                         new SqlOutputParameterRepresentation<CompressionKind>(nameof(OutputParamNames.CompressionKind), Tables.SerializerRepresentation.CompressionKind.DataType),
-                                         new SqlOutputParameterRepresentation<UnregisteredTypeEncounteredStrategy>(nameof(OutputParamNames.UnregisteredTypeEncounteredStrategy), Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamNames.SerializedObjectString), Tables.Object.SerializedObjectString.DataType),
-                                         new SqlOutputParameterRepresentation<byte[]>(nameof(OutputParamNames.SerializedObjectBinary), Tables.Object.SerializedObjectBinary.DataType),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.SerializedObjectId), Tables.Object.SerializedObjectId.DataType, serializedObjectId),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithoutVersion),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithVersion),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType),
+                                         new SqlOutputParameterRepresentation<SerializationKind>(nameof(OutputParamName.SerializationKind), Tables.SerializerRepresentation.SerializationKind.DataType),
+                                         new SqlOutputParameterRepresentation<SerializationFormat>(nameof(OutputParamName.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.DataType),
+                                         new SqlOutputParameterRepresentation<CompressionKind>(nameof(OutputParamName.CompressionKind), Tables.SerializerRepresentation.CompressionKind.DataType),
+                                         new SqlOutputParameterRepresentation<UnregisteredTypeEncounteredStrategy>(nameof(OutputParamName.UnregisteredTypeEncounteredStrategy), Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy.DataType),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.SerializedObjectString), Tables.Object.SerializedObjectString.DataType),
+                                         new SqlOutputParameterRepresentation<byte[]>(nameof(OutputParamName.SerializedObjectBinary), Tables.Object.SerializedObjectBinary.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -157,17 +160,17 @@ namespace Naos.SqlServer.Domain
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].GetLatestByIdAndType(
-  @{nameof(InputParamNames.SerializedObjectId)} AS nvarchar(450)
-, @{nameof(InputParamNames.ObjectAssemblyQualifiedNameWithoutVersion)} AS nvarchar(2000)
-, @{nameof(InputParamNames.ObjectAssemblyQualifiedNameWithVersion)} AS nvarchar(2000)
-, @{nameof(InputParamNames.TypeVersionMatchStrategy)} AS varchar(10)
-, @{nameof(OutputParamNames.SerializationConfigAssemblyQualifiedNameWithoutVersion)} AS nvarchar(2000) OUTPUT
-, @{nameof(OutputParamNames.SerializationKind)} AS varchar(50) OUTPUT
-, @{nameof(OutputParamNames.SerializationFormat)} AS varchar(50) OUTPUT
-, @{nameof(OutputParamNames.CompressionKind)} AS varchar(50) OUTPUT
-, @{nameof(OutputParamNames.UnregisteredTypeEncounteredStrategy)} AS varchar(50) OUTPUT
-, @{nameof(OutputParamNames.SerializedObjectString)} AS nvarchar(MAX) OUTPUT
-, @{nameof(OutputParamNames.SerializedObjectBinary)} AS varbinary(MAX) OUTPUT
+  @{nameof(InputParamName.SerializedObjectId)} AS nvarchar(450)
+, @{nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersion)} AS nvarchar(2000)
+, @{nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersion)} AS nvarchar(2000)
+, @{nameof(InputParamName.TypeVersionMatchStrategy)} AS varchar(10)
+, @{nameof(OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion)} AS nvarchar(2000) OUTPUT
+, @{nameof(OutputParamName.SerializationKind)} AS varchar(50) OUTPUT
+, @{nameof(OutputParamName.SerializationFormat)} AS varchar(50) OUTPUT
+, @{nameof(OutputParamName.CompressionKind)} AS varchar(50) OUTPUT
+, @{nameof(OutputParamName.UnregisteredTypeEncounteredStrategy)} AS varchar(50) OUTPUT
+, @{nameof(OutputParamName.SerializedObjectString)} AS nvarchar(MAX) OUTPUT
+, @{nameof(OutputParamName.SerializedObjectBinary)} AS varbinary(MAX) OUTPUT
 )
 AS
 BEGIN
@@ -179,8 +182,8 @@ BEGIN
 	   @SerializerRepresentationId = [SerializerRepresentationId]
 	 , @ObjectTypeWithoutVersionId = [ObjectTypeWithoutVersionId]
 	 , @ObjectTypeWithVersionId = [ObjectTypeWithVersionId]
-	 , @{nameof(OutputParamNames.SerializedObjectString)} = [SerializedObjectString]
-	 , @{nameof(OutputParamNames.SerializedObjectBinary)} = [SerializedObjectBinary]
+	 , @{nameof(OutputParamName.SerializedObjectString)} = [SerializedObjectString]
+	 , @{nameof(OutputParamName.SerializedObjectBinary)} = [SerializedObjectBinary]
 	FROM [{streamName}].[Object]
 	WHERE [SerializedObjectId] = @SerializedObjectId
 	ORDER BY [Id] DESC
@@ -188,13 +191,13 @@ BEGIN
 	DECLARE @SerializationConfigTypeWithoutVersionId int
 	SELECT 
 		@SerializationConfigTypeWithoutVersionId = [{nameof(Tables.SerializerRepresentation.SerializationConfigurationTypeWithoutVersionId)}] 
-	  , @{nameof(OutputParamNames.SerializationKind)} = [{nameof(Tables.SerializerRepresentation.SerializationKind)}]
-	  , @{nameof(OutputParamNames.SerializationFormat)} = [{nameof(Tables.SerializerRepresentation.SerializationFormat)}]
-	  , @{nameof(OutputParamNames.CompressionKind)} = [{nameof(Tables.SerializerRepresentation.CompressionKind)}]
-	  , @{nameof(OutputParamNames.UnregisteredTypeEncounteredStrategy)} = [{nameof(Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy)}]
+	  , @{nameof(OutputParamName.SerializationKind)} = [{nameof(Tables.SerializerRepresentation.SerializationKind)}]
+	  , @{nameof(OutputParamName.SerializationFormat)} = [{nameof(Tables.SerializerRepresentation.SerializationFormat)}]
+	  , @{nameof(OutputParamName.CompressionKind)} = [{nameof(Tables.SerializerRepresentation.CompressionKind)}]
+	  , @{nameof(OutputParamName.UnregisteredTypeEncounteredStrategy)} = [{nameof(Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy)}]
 	FROM [{streamName}].[SerializerRepresentation] WHERE [Id] = @SerializerRepresentationId
 
-	SELECT @{nameof(OutputParamNames.SerializationConfigAssemblyQualifiedNameWithoutVersion)} = [AssemblyQualifiedName] FROM [{streamName}].[TypeWithoutVersion] WHERE [Id] = @SerializationConfigTypeWithoutVersionId
+	SELECT @{nameof(OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion)} = [AssemblyQualifiedName] FROM [{streamName}].[TypeWithoutVersion] WHERE [Id] = @SerializationConfigTypeWithoutVersionId
 	SELECT @ObjectAssemblyQualifiedNameWithoutVersion = [AssemblyQualifiedName] FROM [{streamName}].[TypeWithoutVersion] WHERE [Id] = @ObjectTypeWithoutVersionId
 	SELECT @ObjectAssemblyQualifiedNameWithVersion = [AssemblyQualifiedName] FROM [{streamName}].[TypeWithVersion] WHERE [Id] = @ObjectTypeWithVersionId
 END

@@ -33,7 +33,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Input parameter names.
                 /// </summary>
-                public enum InputParamNames
+                public enum InputParamName
                 {
                     /// <summary>
                     /// The serialization configuration assembly qualified name without version
@@ -69,7 +69,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Output parameter names.
                 /// </summary>
-                public enum OutputParamNames
+                public enum OutputParamName
                 {
                     /// <summary>
                     /// The identifier.
@@ -101,13 +101,13 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.ConfigAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, configAssemblyQualifiedNameWithoutVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.ConfigAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, configAssemblyQualifiedNameWithVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.SerializationKind), Tables.SerializerRepresentation.SerializationKind.DataType, serializationKind.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.DataType, serializationFormat.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.CompressionKind), Tables.SerializerRepresentation.CompressionKind.DataType, compressionKind.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.UnregisteredTypeEncounteredStrategy), Tables.SerializerRepresentation.SerializationKind.DataType, unregisteredTypeEncounteredStrategy.ToString()),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamNames.Id), Tables.SerializerRepresentation.Id.DataType),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ConfigAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, configAssemblyQualifiedNameWithoutVersion),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ConfigAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, configAssemblyQualifiedNameWithVersion),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.SerializationKind), Tables.SerializerRepresentation.SerializationKind.DataType, serializationKind.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.DataType, serializationFormat.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.CompressionKind), Tables.SerializerRepresentation.CompressionKind.DataType, compressionKind.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.UnregisteredTypeEncounteredStrategy), Tables.SerializerRepresentation.SerializationKind.DataType, unregisteredTypeEncounteredStrategy.ToString()),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.SerializerRepresentation.Id.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -133,13 +133,13 @@ namespace Naos.SqlServer.Domain
                     return FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].GetIdAddIfNecessarySerializerRepresentation(
-  @{InputParamNames.ConfigAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamNames.ConfigAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamNames.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax}
-, @{InputParamNames.SerializationFormat} AS {Tables.SerializerRepresentation.SerializationFormat.DataType.DeclarationInSqlSyntax}
-, @{InputParamNames.CompressionKind} AS {Tables.SerializerRepresentation.CompressionKind.DataType.DeclarationInSqlSyntax}
-, @{InputParamNames.UnregisteredTypeEncounteredStrategy} AS {Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy.DataType.DeclarationInSqlSyntax}
-, @{OutputParamNames.Id} {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+  @{InputParamName.ConfigAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ConfigAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.SerializationFormat} AS {Tables.SerializerRepresentation.SerializationFormat.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.CompressionKind} AS {Tables.SerializerRepresentation.CompressionKind.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.UnregisteredTypeEncounteredStrategy} AS {Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy.DataType.DeclarationInSqlSyntax}
+, @{OutputParamName.Id} {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -147,19 +147,19 @@ BEGIN
 BEGIN TRANSACTION [GetIdAddSerializerRepresentation]
   BEGIN TRY
       DECLARE @TypeWithoutVersionId {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
-      EXEC [{streamName}].[GetIdAddIfNecessaryTypeWithoutVersion] @{InputParamNames.ConfigAssemblyQualifiedNameWithoutVersion}, @TypeWithoutVersionId OUTPUT
+      EXEC [{streamName}].[GetIdAddIfNecessaryTypeWithoutVersion] @{InputParamName.ConfigAssemblyQualifiedNameWithoutVersion}, @TypeWithoutVersionId OUTPUT
       DECLARE @TypeWithVersionId {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
-      EXEC [{streamName}].[GetIdAddIfNecessaryTypeWithVersion] @{InputParamNames.ConfigAssemblyQualifiedNameWithVersion}, @TypeWithVersionId OUTPUT
+      EXEC [{streamName}].[GetIdAddIfNecessaryTypeWithVersion] @{InputParamName.ConfigAssemblyQualifiedNameWithVersion}, @TypeWithVersionId OUTPUT
       
-      SELECT @{nameof(OutputParamNames.Id)} = [{nameof(Tables.SerializerRepresentation.Id)}] FROM [{streamName}].[{nameof(Tables.SerializerRepresentation)}]
+      SELECT @{nameof(OutputParamName.Id)} = [{nameof(Tables.SerializerRepresentation.Id)}] FROM [{streamName}].[{nameof(Tables.SerializerRepresentation)}]
         WHERE [{nameof(Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId)}] = @TypeWithVersionId
         AND [{nameof(Tables.SerializerRepresentation.SerializationConfigurationTypeWithoutVersionId)}] = @TypeWithoutVersionId
-        AND [{nameof(Tables.SerializerRepresentation.SerializationKind)}] = @{InputParamNames.SerializationKind}
-        AND [{nameof(Tables.SerializerRepresentation.SerializationFormat)}] = @{InputParamNames.SerializationFormat}
-        AND [{nameof(Tables.SerializerRepresentation.CompressionKind)}] = @{InputParamNames.CompressionKind}
-        AND [{nameof(Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy)}] = @{InputParamNames.UnregisteredTypeEncounteredStrategy}
+        AND [{nameof(Tables.SerializerRepresentation.SerializationKind)}] = @{InputParamName.SerializationKind}
+        AND [{nameof(Tables.SerializerRepresentation.SerializationFormat)}] = @{InputParamName.SerializationFormat}
+        AND [{nameof(Tables.SerializerRepresentation.CompressionKind)}] = @{InputParamName.CompressionKind}
+        AND [{nameof(Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy)}] = @{InputParamName.UnregisteredTypeEncounteredStrategy}
 
-	  IF (@{nameof(OutputParamNames.Id)} IS NULL)
+	  IF (@{nameof(OutputParamName.Id)} IS NULL)
 	  BEGIN
 	      INSERT INTO [{streamName}].[{nameof(Tables.SerializerRepresentation)}] (
 		    [{nameof(Tables.SerializerRepresentation.SerializationKind)}]
@@ -170,16 +170,16 @@ BEGIN TRANSACTION [GetIdAddSerializerRepresentation]
 		  , [{nameof(Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy)}]
 		  , [{nameof(Tables.SerializerRepresentation.RecordCreatedUtc)}]
 		  ) VALUES (
-	        @{InputParamNames.SerializationKind}
-		  , @{InputParamNames.SerializationFormat}
+	        @{InputParamName.SerializationKind}
+		  , @{InputParamName.SerializationFormat}
 		  , @TypeWithoutVersionId
 		  , @TypeWithVersionId
-		  , @{InputParamNames.CompressionKind}
-		  , @{InputParamNames.UnregisteredTypeEncounteredStrategy}
+		  , @{InputParamName.CompressionKind}
+		  , @{InputParamName.UnregisteredTypeEncounteredStrategy}
 		  , GETUTCDATE()
 		  )
 
-	      SET @{nameof(OutputParamNames.Id)} = SCOPE_IDENTITY()
+	      SET @{nameof(OutputParamName.Id)} = SCOPE_IDENTITY()
 	  END
 
       COMMIT TRANSACTION [GetIdAddSerializerRepresentation]
@@ -187,7 +187,7 @@ BEGIN TRANSACTION [GetIdAddSerializerRepresentation]
   END TRY
 
   BEGIN CATCH
-      SET @{nameof(OutputParamNames.Id)} = NULL
+      SET @{nameof(OutputParamName.Id)} = NULL
       DECLARE @ErrorMessage nvarchar(max), 
               @ErrorSeverity int, 
               @ErrorState int

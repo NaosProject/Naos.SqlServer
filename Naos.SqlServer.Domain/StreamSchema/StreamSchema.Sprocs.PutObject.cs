@@ -28,7 +28,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Input parameter names.
                 /// </summary>
-                public enum InputParamNames
+                public enum InputParamName
                 {
                     /// <summary>
                     /// The object assembly qualified name without version
@@ -69,7 +69,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Output parameter names.
                 /// </summary>
-                public enum OutputParamNames
+                public enum OutputParamName
                 {
                     /// <summary>
                     /// The identifier.
@@ -103,14 +103,14 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.ObjectAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithoutVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithVersion),
-                                         new SqlInputParameterRepresentation<int>(nameof(InputParamNames.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType, serializerDescriptionId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.SerializedObjectId), Tables.Object.SerializedObjectId.DataType, serializedObjectId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.SerializedObjectString), Tables.Object.SerializedObjectString.DataType, serializedObjectString),
-                                         new SqlInputParameterRepresentation<byte[]>(nameof(InputParamNames.SerializedObjectBinary), Tables.Object.SerializedObjectBinary.DataType, serializedObjectBinary),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamNames.Tags), new StringSqlDataTypeRepresentation(true, -1), tagsXml),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamNames.Id), Tables.Object.Id.DataType),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithoutVersion),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithVersion),
+                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType, serializerDescriptionId),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.SerializedObjectId), Tables.Object.SerializedObjectId.DataType, serializedObjectId),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.SerializedObjectString), Tables.Object.SerializedObjectString.DataType, serializedObjectString),
+                                         new SqlInputParameterRepresentation<byte[]>(nameof(InputParamName.SerializedObjectBinary), Tables.Object.SerializedObjectBinary.DataType, serializedObjectBinary),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Tags), new StringSqlDataTypeRepresentation(true, -1), tagsXml),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.Object.Id.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -130,14 +130,14 @@ namespace Naos.SqlServer.Domain
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].PutObject(
-  @{nameof(InputParamNames.ObjectAssemblyQualifiedNameWithoutVersion)} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{nameof(InputParamNames.ObjectAssemblyQualifiedNameWithVersion)} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{nameof(InputParamNames.SerializerRepresentationId)} AS {Tables.Object.SerializerRepresentationId.DataType.DeclarationInSqlSyntax}
-, @{nameof(InputParamNames.SerializedObjectId)} AS {Tables.Object.SerializedObjectId.DataType.DeclarationInSqlSyntax}
-, @{nameof(InputParamNames.SerializedObjectString)} AS {Tables.Object.SerializedObjectString.DataType.DeclarationInSqlSyntax}
-, @{nameof(InputParamNames.SerializedObjectBinary)} AS {Tables.Object.SerializedObjectBinary.DataType.DeclarationInSqlSyntax}
-, @{nameof(InputParamNames.Tags)} AS xml
-, @{nameof(OutputParamNames.Id)} AS {Tables.Object.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+  @{nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersion)} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersion)} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{nameof(InputParamName.SerializerRepresentationId)} AS {Tables.Object.SerializerRepresentationId.DataType.DeclarationInSqlSyntax}
+, @{nameof(InputParamName.SerializedObjectId)} AS {Tables.Object.SerializedObjectId.DataType.DeclarationInSqlSyntax}
+, @{nameof(InputParamName.SerializedObjectString)} AS {Tables.Object.SerializedObjectString.DataType.DeclarationInSqlSyntax}
+, @{nameof(InputParamName.SerializedObjectBinary)} AS {Tables.Object.SerializedObjectBinary.DataType.DeclarationInSqlSyntax}
+, @{nameof(InputParamName.Tags)} AS xml
+, @{nameof(OutputParamName.Id)} AS {Tables.Object.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -145,9 +145,9 @@ BEGIN
 BEGIN TRANSACTION [PutObject]
   BEGIN TRY
       DECLARE @TypeWithoutVersionId {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
-      EXEC [{streamName}].[{nameof(GetIdAddIfNecessaryTypeWithoutVersion)}] @{nameof(InputParamNames.ObjectAssemblyQualifiedNameWithoutVersion)}, @TypeWithoutVersionId OUTPUT
+      EXEC [{streamName}].[{nameof(GetIdAddIfNecessaryTypeWithoutVersion)}] @{nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersion)}, @TypeWithoutVersionId OUTPUT
       DECLARE @TypeWithVersionId {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
-      EXEC [{streamName}].[{nameof(GetIdAddIfNecessaryTypeWithVersion)}] @{nameof(InputParamNames.ObjectAssemblyQualifiedNameWithVersion)}, @TypeWithVersionId OUTPUT
+      EXEC [{streamName}].[{nameof(GetIdAddIfNecessaryTypeWithVersion)}] @{nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersion)}, @TypeWithVersionId OUTPUT
 
 	  DECLARE @RecordCreatedUtc datetime2
 	  SET @RecordCreatedUtc = GETUTCDATE()
@@ -162,16 +162,16 @@ BEGIN TRANSACTION [PutObject]
 		) VALUES (
 		  @TypeWithoutVersionId
 		, @TypeWithVersionId
-		, @{nameof(InputParamNames.SerializerRepresentationId)}
-		, @{nameof(InputParamNames.SerializedObjectId)}
-		, @{nameof(InputParamNames.SerializedObjectString)}
-		, @{nameof(InputParamNames.SerializedObjectBinary)}
+		, @{nameof(InputParamName.SerializerRepresentationId)}
+		, @{nameof(InputParamName.SerializedObjectId)}
+		, @{nameof(InputParamName.SerializedObjectString)}
+		, @{nameof(InputParamName.SerializedObjectBinary)}
 		, @RecordCreatedUtc
 		)
 
       SET @Id = SCOPE_IDENTITY()
 	  
-	  IF (@{nameof(InputParamNames.Tags)} IS NOT NULL)
+	  IF (@{nameof(InputParamName.Tags)} IS NOT NULL)
 	  BEGIN
 	      INSERT INTO [{streamName}].Tag
 		  SELECT
@@ -181,7 +181,7 @@ BEGIN TRANSACTION [PutObject]
 		  , C.value('(Tag/@Value)[1]', 'nvarchar(4000)') as [TagValue]
 		  , @RecordCreatedUtc as RecordCreatedUtc
 		  FROM
-			@{nameof(InputParamNames.Tags)}.nodes('/Tags') AS T(C)
+			@{nameof(InputParamName.Tags)}.nodes('/Tags') AS T(C)
 	  END
 
       COMMIT TRANSACTION [PutObject]

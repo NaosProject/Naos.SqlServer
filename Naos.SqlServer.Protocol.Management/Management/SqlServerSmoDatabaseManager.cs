@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Protocol.Management
     using System.Threading.Tasks;
     using Microsoft.SqlServer.Management.Common;
     using Microsoft.SqlServer.Management.Smo;
-
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Protocol.Client;
     using static System.FormattableString;
@@ -20,6 +20,7 @@ namespace Naos.SqlServer.Protocol.Management
     /// <summary>
     /// Logic to copy objects from one database to another.
     /// </summary>
+    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Smo", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
     public static class SqlServerSmoDatabaseManager
     {
         /// <summary>

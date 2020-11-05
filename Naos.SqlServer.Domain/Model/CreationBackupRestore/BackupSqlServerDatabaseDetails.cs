@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using Naos.CodeAnalysis.Recipes;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
@@ -30,6 +31,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="encryptorName">Name of the encryptor.</param>
         /// <param name="errorHandling">The error handling.</param>
         /// <param name="name">The name.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "encryptor", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
         public BackupSqlServerDatabaseDetails(
             Uri backupTo,
             ChecksumOption checksumOption,

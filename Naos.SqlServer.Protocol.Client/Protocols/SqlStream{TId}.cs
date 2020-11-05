@@ -118,12 +118,6 @@ namespace Naos.SqlServer.Protocol.Client
         public override void Execute(
             CreateStreamOp<TId> operation)
         {
-            var streamRepresentation = operation.StreamRepresentation;
-            if (streamRepresentation.Name != this.Name)
-            {
-                throw new ArgumentException(FormattableString.Invariant($"Cannot create a stream using a stream with mismatching name, confirm this is the stream you're intending to create; this.Name '{this.Name}' op.StreamRepresentation.Name '{streamRepresentation.Name}'."));
-            }
-
             var allLocators = this.ResourceLocatorProtocol.Execute(new GetAllResourceLocatorsOp());
             foreach (var locator in allLocators)
             {
@@ -260,7 +254,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
-            var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.OutputParamNames.Id)]
+            var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.OutputParamName.Id)]
                                     .GetValue<int>();
             return result;
         }

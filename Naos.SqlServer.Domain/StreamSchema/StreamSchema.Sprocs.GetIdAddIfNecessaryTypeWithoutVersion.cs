@@ -28,7 +28,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Input parameter names.
                 /// </summary>
-                public enum InputParamNames
+                public enum InputParamName
                 {
                     /// <summary>
                     /// The object assembly qualified name without version.
@@ -39,7 +39,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Output parameter names.
                 /// </summary>
-                public enum OutputParamNames
+                public enum OutputParamName
                 {
                     /// <summary>
                     /// The identifier.
@@ -62,10 +62,10 @@ namespace Naos.SqlServer.Domain
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(
-                                             nameof(InputParamNames.AssemblyQualifiedNameWithoutVersion),
+                                             nameof(InputParamName.AssemblyQualifiedNameWithoutVersion),
                                              Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType,
                                              assemblyQualifiedNameWithoutVersion),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamNames.Id), Tables.Object.Id.DataType),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.Object.Id.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -86,29 +86,29 @@ namespace Naos.SqlServer.Domain
                     return FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{nameof(GetIdAddIfNecessaryTypeWithoutVersion)}(
-  @{nameof(InputParamNames.AssemblyQualifiedNameWithoutVersion)} {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax},
-  @{nameof(OutputParamNames.Id)} {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+  @{nameof(InputParamName.AssemblyQualifiedNameWithoutVersion)} {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax},
+  @{nameof(OutputParamName.Id)} {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
   )
 AS
 BEGIN
 
 BEGIN TRANSACTION [GetIdAddTypeWithoutVersion]
   BEGIN TRY
-      SELECT @{nameof(OutputParamNames.Id)} = [{nameof(Tables.TypeWithoutVersion.Id)}] FROM [{streamName}].[{nameof(Tables.TypeWithoutVersion)}]
-        WHERE [{nameof(Tables.TypeWithoutVersion.AssemblyQualifiedName)}] = @{nameof(InputParamNames.AssemblyQualifiedNameWithoutVersion)}
+      SELECT @{nameof(OutputParamName.Id)} = [{nameof(Tables.TypeWithoutVersion.Id)}] FROM [{streamName}].[{nameof(Tables.TypeWithoutVersion)}]
+        WHERE [{nameof(Tables.TypeWithoutVersion.AssemblyQualifiedName)}] = @{nameof(InputParamName.AssemblyQualifiedNameWithoutVersion)}
 
-	  IF (@{nameof(OutputParamNames.Id)} IS NULL)
+	  IF (@{nameof(OutputParamName.Id)} IS NULL)
 	  BEGIN
 	      
-	      INSERT INTO [{streamName}].[{nameof(Tables.TypeWithoutVersion)}] ([{nameof(Tables.TypeWithoutVersion.AssemblyQualifiedName)}], [{nameof(Tables.TypeWithoutVersion.RecordCreatedUtc)}]) VALUES (@{nameof(InputParamNames.AssemblyQualifiedNameWithoutVersion)}, GETUTCDATE())
-		  SET @{nameof(OutputParamNames.Id)} = SCOPE_IDENTITY()
+	      INSERT INTO [{streamName}].[{nameof(Tables.TypeWithoutVersion)}] ([{nameof(Tables.TypeWithoutVersion.AssemblyQualifiedName)}], [{nameof(Tables.TypeWithoutVersion.RecordCreatedUtc)}]) VALUES (@{nameof(InputParamName.AssemblyQualifiedNameWithoutVersion)}, GETUTCDATE())
+		  SET @{nameof(OutputParamName.Id)} = SCOPE_IDENTITY()
 	  END
 
       COMMIT TRANSACTION [GetIdAddTypeWithoutVersion]
 
   END TRY
   BEGIN CATCH
-      SET @{nameof(OutputParamNames.Id)} = NULL
+      SET @{nameof(OutputParamName.Id)} = NULL
       DECLARE @ErrorMessage nvarchar(max), 
               @ErrorSeverity int, 
               @ErrorState int

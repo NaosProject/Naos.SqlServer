@@ -59,12 +59,12 @@ namespace Naos.SqlServer.Protocol.Client
                 var sqlProtocol = this.stream.BuildSqlOperationsProtocol(sqlServerLocator);
                 var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-                SerializationKind serializationKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamNames.SerializationKind)].GetValue<SerializationKind>();
-                SerializationFormat serializationFormat = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamNames.SerializationFormat)].GetValue<SerializationFormat>();
-                string serializationConfigAssemblyQualifiedNameWithoutVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamNames.SerializationConfigAssemblyQualifiedNameWithoutVersion)].GetValue<string>();
-                CompressionKind compressionKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamNames.CompressionKind)].GetValue<CompressionKind>();
-                string serializedObjectString = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamNames.SerializedObjectString)].GetValue<string>();
-                byte[] serializedObjectBytes = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamNames.SerializedObjectBinary)].GetValue<byte[]>();
+                SerializationKind serializationKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamName.SerializationKind)].GetValue<SerializationKind>();
+                SerializationFormat serializationFormat = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamName.SerializationFormat)].GetValue<SerializationFormat>();
+                string serializationConfigAssemblyQualifiedNameWithoutVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion)].GetValue<string>();
+                CompressionKind compressionKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamName.CompressionKind)].GetValue<CompressionKind>();
+                string serializedObjectString = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamName.SerializedObjectString)].GetValue<string>();
+                byte[] serializedObjectBytes = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestByIdAndType.OutputParamName.SerializedObjectBinary)].GetValue<byte[]>();
 
                 var serializerDescription = new SerializerRepresentation(
                     serializationKind,

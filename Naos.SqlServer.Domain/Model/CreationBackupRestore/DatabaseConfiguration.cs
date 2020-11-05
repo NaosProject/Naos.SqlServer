@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Diagnostics.CodeAnalysis;
+    using Naos.CodeAnalysis.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -30,6 +31,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="logFileCurrentSizeInKb">The log file current size in kilobytes.</param>
         /// <param name="logFileMaxSizeInKb">The log file maximum size in kilobytes.</param>
         /// <param name="logFileGrowthSizeInKb">The log file growth size in kilobytes.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Name is correct in context.")]
         public DatabaseConfiguration(
             string databaseName,
             DatabaseType databaseType,

@@ -28,7 +28,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Input parameter names.
                 /// </summary>
-                public enum InputParamNames
+                public enum InputParamName
                 {
                     /// <summary>
                     /// The object assembly qualified name With version.
@@ -39,7 +39,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Output parameter names.
                 /// </summary>
-                public enum OutputParamNames
+                public enum OutputParamName
                 {
                     /// <summary>
                     /// The identifier.
@@ -62,10 +62,10 @@ namespace Naos.SqlServer.Domain
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(
-                                             nameof(InputParamNames.AssemblyQualifiedNameWithVersion),
+                                             nameof(InputParamName.AssemblyQualifiedNameWithVersion),
                                              Tables.TypeWithVersion.AssemblyQualifiedName.DataType,
                                              assemblyQualifiedNameWithVersion),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamNames.Id), Tables.Object.Id.DataType),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.Object.Id.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -86,29 +86,29 @@ namespace Naos.SqlServer.Domain
                     return FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{nameof(GetIdAddIfNecessaryTypeWithVersion)}(
-  @{nameof(InputParamNames.AssemblyQualifiedNameWithVersion)} {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax},
-  @{nameof(OutputParamNames.Id)} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+  @{nameof(InputParamName.AssemblyQualifiedNameWithVersion)} {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax},
+  @{nameof(OutputParamName.Id)} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
   )
 AS
 BEGIN
 
 BEGIN TRANSACTION [GetIdAddTypeWithVersion]
   BEGIN TRY
-      SELECT @{nameof(OutputParamNames.Id)} = [{nameof(Tables.TypeWithVersion.Id)}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}]
-        WHERE [{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}] = @{nameof(InputParamNames.AssemblyQualifiedNameWithVersion)}
+      SELECT @{nameof(OutputParamName.Id)} = [{nameof(Tables.TypeWithVersion.Id)}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}]
+        WHERE [{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}] = @{nameof(InputParamName.AssemblyQualifiedNameWithVersion)}
 
-	  IF (@{nameof(OutputParamNames.Id)} IS NULL)
+	  IF (@{nameof(OutputParamName.Id)} IS NULL)
 	  BEGIN
 	      
-	      INSERT INTO [{streamName}].[{nameof(Tables.TypeWithVersion)}] ([{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}], [{nameof(Tables.TypeWithVersion.RecordCreatedUtc)}]) VALUES (@{nameof(InputParamNames.AssemblyQualifiedNameWithVersion)}, GETUTCDATE())
-		  SET @{nameof(OutputParamNames.Id)} = SCOPE_IDENTITY()
+	      INSERT INTO [{streamName}].[{nameof(Tables.TypeWithVersion)}] ([{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}], [{nameof(Tables.TypeWithVersion.RecordCreatedUtc)}]) VALUES (@{nameof(InputParamName.AssemblyQualifiedNameWithVersion)}, GETUTCDATE())
+		  SET @{nameof(OutputParamName.Id)} = SCOPE_IDENTITY()
 	  END
 
       COMMIT TRANSACTION [GetIdAddTypeWithVersion]
 
   END TRY
   BEGIN CATCH
-      SET @{nameof(OutputParamNames.Id)} = NULL
+      SET @{nameof(OutputParamName.Id)} = NULL
       DECLARE @ErrorMessage nvarchar(max), 
               @ErrorSeverity int, 
               @ErrorState int
