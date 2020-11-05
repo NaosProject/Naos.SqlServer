@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Naos.SqlServer.Domain.Legacy
+namespace Naos.SqlServer.Domain
 {
     using Naos.Database.Domain.Legacy;
     using OBeautifulCode.Type;
@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain.Legacy
     /// <summary>
     /// Kinds of databases.
     /// </summary>
-    public class SqlServerConnectionDefinition : IConnectionDefinition, IModelViaCodeGen
+    public partial class SqlServerConnectionDefinition : IConnectionDefinition, IModelViaCodeGen
     {
         /// <summary>
         /// Gets or sets the server name, IP, DNS, etc.
