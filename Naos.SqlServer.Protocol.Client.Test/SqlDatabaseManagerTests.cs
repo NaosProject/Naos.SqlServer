@@ -7,17 +7,9 @@
 namespace Naos.SqlServer.Protocol.Client.Test
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using Naos.Database.Domain;
-    using Naos.Protocol.Domain;
-    using Naos.Protocol.Serialization.Json;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.Representation.System;
-    using OBeautifulCode.Serialization;
     using OBeautifulCode.Serialization.Json;
-    using OBeautifulCode.Type;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -41,6 +33,23 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var connectionString = sqlServerLocator.BuildConnectionString(TimeSpan.FromSeconds(100));
             var output = SqlServerDatabaseManager.GetTableDescription(connectionString, "Streams", "Object", "StreamName1");
             output.MustForTest().NotBeNull();
+
+            var jsonSerializer = new ObcJsonSerializer();
+            var json = jsonSerializer.SerializeToString(output);
+            this.testOutputHelper.WriteLine(json);
+        }
+
+        [Fact(Skip = "Local testing only.")]
+        public void Retrieve___Should_do_something___When_called()
+        {
+            var sqlServerLocator = new SqlServerLocator("localhost", "Streams", "sa", "password", "SQLDEV2017");
+            var connectionString = sqlServerLocator.BuildConnectionString(TimeSpan.FromSeconds(100));
+            var output = SqlServerDatabaseManager.Retrieve(connectionString);
+            output.MustForTest().NotBeNull();
+
+            var jsonSerializer = new ObcJsonSerializer();
+            var json = jsonSerializer.SerializeToString(output);
+            this.testOutputHelper.WriteLine(json);
         }
     }
 }
