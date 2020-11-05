@@ -21,6 +21,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.SqlServer.Domain.Legacy;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Database.Recipes;
+    using OBeautifulCode.Enum.Recipes;
     using OBeautifulCode.Serialization.PropertyBag;
     using static System.FormattableString;
 
@@ -323,7 +324,26 @@ namespace Naos.SqlServer.Protocol.Client
             void Logic(SqlConnection connection)
             {
                 ret = connection.ReadAllRows(Query, (int)timeout.TotalSeconds)
-                                .Select(_ => propertyBagSerializer.Deserialize<DatabaseConfiguration>(_))
+                                .Select(_ =>
+                                        {
+                                            var enumConvertedDictionary = _
+                                               .ToDictionary(
+                                                    k => k.Key,
+                                                    v =>
+                                                    {
+                                                        switch (v.Key)
+                                                        {
+                                                            case nameof(DatabaseType):
+                                                                return v.Value?.ToString().ToEnum<DatabaseType>(true);
+                                                            case nameof(RecoveryMode):
+                                                                return v.Value?.ToString().ToEnum<RecoveryMode>(true);
+                                                            default:
+                                                                return v.Value;
+                                                        }
+                                                    });
+
+                                            return propertyBagSerializer.Deserialize<DatabaseConfiguration>(enumConvertedDictionary);
+                                        })
                                 .ToArray();
             }
 
