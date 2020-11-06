@@ -14,7 +14,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Captures the details of a restore operation.
     /// </summary>
-    public partial class RestoreSqlServerDatabaseDetails : IModelViaCodeGen
+    public partial class RestoreSqlServerDatabaseDetails : IModelViaCodeGen, IForsakeDeepCloneWithVariantsViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RestoreSqlServerDatabaseDetails"/> class.

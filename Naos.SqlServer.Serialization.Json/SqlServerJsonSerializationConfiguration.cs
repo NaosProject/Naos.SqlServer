@@ -9,6 +9,7 @@ namespace Naos.SqlServer.Serialization.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Naos.Database.Serialization.Json;
     using Naos.Protocol.Serialization.Json;
     using OBeautifulCode.Serialization.Json;
     using OBeautifulCode.Type;
@@ -29,6 +30,7 @@ namespace Naos.SqlServer.Serialization.Json
             new[]
             {
                 typeof(ProtocolJsonSerializationConfiguration).ToJsonSerializationConfigurationType(),
+                typeof(DatabaseJsonSerializationConfiguration).ToJsonSerializationConfigurationType(),
             };
 
         /// <inheritdoc />

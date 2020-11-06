@@ -10,9 +10,9 @@
 namespace Naos.SqlServer.Domain.Test
 {
     using System;
-
+    using System.Collections.Generic;
     using FakeItEasy;
-
+    using Naos.Database.Domain;
     using OBeautifulCode.AutoFakeItEasy;
 
     /// <summary>
@@ -29,7 +29,103 @@ namespace Naos.SqlServer.Domain.Test
     {
         public SqlServerDummyFactory()
         {
-            /* Add any overriding or custom registrations here. */
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var checksumOption = A.Dummy<ChecksumOption>();
+                    var cipher = A.Dummy<Cipher>();
+                    var compressionOption = A.Dummy<CompressionOption>();
+                    var device = A.Dummy<Device>();
+                    var encryptor = A.Dummy<Encryptor>();
+                    var errorHandling = A.Dummy<ErrorHandling>();
+
+                    if (cipher == Cipher.NoEncryption && encryptor != Encryptor.None)
+                    {
+                        encryptor = Encryptor.None;
+                    }
+
+                    if (cipher != Cipher.NoEncryption && encryptor == Encryptor.None)
+                    {
+                        encryptor = A.Dummy<Encryptor>().ThatIsNot(Encryptor.None);
+                    }
+
+                    if (checksumOption == ChecksumOption.Checksum && errorHandling == ErrorHandling.None)
+                    {
+                        errorHandling = A.Dummy<ErrorHandling>().ThatIsNot(ErrorHandling.None);
+                    }
+
+                    var backupSqlServerDatabaseDetails = new BackupSqlServerDatabaseDetails(
+                        A.Dummy<Uri>(),
+                        checksumOption,
+                        cipher,
+                        compressionOption,
+                        A.Dummy<string>().Replace("-", string.Empty),
+                        A.Dummy<string>().Replace("-", string.Empty),
+                        device,
+                        encryptor,
+                        A.Dummy<string>().Replace("-", string.Empty),
+                        errorHandling,
+                        A.Dummy<string>().Replace("-", string.Empty));
+
+                    return backupSqlServerDatabaseDetails;
+                });
+
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var checksumOption = A.Dummy<ChecksumOption>();
+                    var device = A.Dummy<Device>();
+                    var recoveryOption = A.Dummy<RecoveryOption>();
+                    var replaceOption = A.Dummy<ReplaceOption>();
+                    var restrictedUserOption = A.Dummy<RestrictedUserOption>();
+                    var errorHandling = A.Dummy<ErrorHandling>();
+
+                    if (checksumOption == ChecksumOption.Checksum && errorHandling == ErrorHandling.None)
+                    {
+                        errorHandling = A.Dummy<ErrorHandling>().ThatIsNot(ErrorHandling.None);
+                    }
+
+                    var logFilePath = FormattableString.Invariant($"C:\\directory\\{A.Dummy<string>()}.dat");
+                    var dataFilePath = FormattableString.Invariant($"C:\\directory\\{A.Dummy<string>()}.ldf");
+                    return new RestoreSqlServerDatabaseDetails(
+                        checksumOption,
+                        A.Dummy<string>().Replace("-", string.Empty),
+                        dataFilePath,
+                        device,
+                        errorHandling,
+                        logFilePath,
+                        recoveryOption,
+                        replaceOption,
+                        A.Dummy<Uri>(),
+                        restrictedUserOption);
+                });
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new TableRepresentation(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<IReadOnlyDictionary<string, ColumnRepresentation>>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ColumnRepresentation(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<SqlDataTypeRepresentationBase>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlOutputParameterRepresentationWithResult<Version>(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<SqlDataTypeRepresentationBase>(),
+                    A.Dummy<Version>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlOutputParameterRepresentation<Version>(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<SqlDataTypeRepresentationBase>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlInputParameterRepresentation<Version>(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<SqlDataTypeRepresentationBase>(),
+                    A.Dummy<Version>()));
         }
     }
 }

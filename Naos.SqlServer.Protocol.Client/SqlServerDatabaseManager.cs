@@ -322,7 +322,7 @@ namespace Naos.SqlServer.Protocol.Client
             DatabaseConfiguration[] ret = new DatabaseConfiguration[0];
             void Logic(SqlConnection connection)
             {
-                ret = connection.ReadAllRows(Query, (int)timeout.TotalSeconds)
+                ret = connection.ReadAllRowsWithNamedColumns(Query, (int)timeout.TotalSeconds)
                                 .Select(_ =>
                                         {
                                             var enumConvertedDictionary = _
@@ -889,7 +889,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var propertyBagSerializer = new ObcPropertyBagSerializer();
                 void QueryRestoreFilesLogic(SqlConnection connection)
                 {
-                    restoreFiles = connection.ReadAllRows(fileListCommand, (int)timeout.TotalSeconds)
+                    restoreFiles = connection.ReadAllRowsWithNamedColumns(fileListCommand, (int)timeout.TotalSeconds)
                                              .Select(_ => propertyBagSerializer.Deserialize<RestoreFile>(_))
                                              .ToList();
                 }
@@ -1118,7 +1118,7 @@ namespace Naos.SqlServer.Protocol.Client
             var propertyBagSerializer = new ObcPropertyBagSerializer();
             void QueryColumnsFilesLogic(SqlConnection connection)
             {
-                columns = connection.ReadAllRows(commandText, (int)timeout.TotalSeconds, sqlParams)
+                columns = connection.ReadAllRowsWithNamedColumns(commandText, (int)timeout.TotalSeconds, sqlParams)
                                     .Select(_ => propertyBagSerializer.Deserialize<ColumnDescription>(_))
                                     .ToArray();
             }

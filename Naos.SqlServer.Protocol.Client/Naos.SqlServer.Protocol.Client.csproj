@@ -39,8 +39,8 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Naos.Database.Domain, Version=1.1.217.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Naos.Database.Domain.1.1.217\lib\net462\Naos.Database.Domain.dll</HintPath>
+    <Reference Include="Naos.Database.Domain, Version=1.1.219.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Naos.Database.Domain.1.1.219\lib\net462\Naos.Database.Domain.dll</HintPath>
     </Reference>
     <Reference Include="Naos.Protocol.Domain, Version=1.0.74.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Naos.Protocol.Domain.1.0.74\lib\net462\Naos.Protocol.Domain.dll</HintPath>
@@ -57,8 +57,8 @@
     <Reference Include="OBeautifulCode.Serialization.PropertyBag, Version=1.0.90.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OBeautifulCode.Serialization.PropertyBag.1.0.90\lib\net462\OBeautifulCode.Serialization.PropertyBag.dll</HintPath>
     </Reference>
-    <Reference Include="OBeautifulCode.Type, Version=1.0.73.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OBeautifulCode.Type.1.0.73\lib\net462\OBeautifulCode.Type.dll</HintPath>
+    <Reference Include="OBeautifulCode.Type, Version=1.0.74.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OBeautifulCode.Type.1.0.74\lib\net462\OBeautifulCode.Type.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
@@ -94,6 +94,14 @@
     <Compile Include=".recipes\OBeautifulCode.Collection\EnumerableExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Database\ConnectionStringHelper.cs" />
     <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.ExecuteNonQuery.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.ExecuteReader.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.HasRow.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.ReadColumn.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.ReadRowsNamed.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.ReadRowsOrdinal.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.ReadValue.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.WriteToCsv.cs" />
     <Compile Include=".recipes\OBeautifulCode.Database\SqlBatchStatementSplitter.cs" />
     <Compile Include=".recipes\OBeautifulCode.Database\SqlParameterExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Enum\EnumExtensions.cs" />
@@ -125,6 +133,7 @@
     <Compile Include=".recipes\OBeautifulCode.Reflection\ReflectionHelper.Property.cs" />
     <Compile Include=".recipes\OBeautifulCode.String\StringExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ArrayKind.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Type\DeepCloneExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />

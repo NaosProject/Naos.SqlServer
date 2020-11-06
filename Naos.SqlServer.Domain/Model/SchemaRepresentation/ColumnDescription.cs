@@ -6,6 +6,7 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -28,6 +29,8 @@ namespace Naos.SqlServer.Domain
             bool isNullable,
             string dataType)
         {
+            columnName.MustForArg(nameof(columnName)).NotBeNullNorWhiteSpace();
+
             this.ColumnName = columnName;
             this.OrdinalPosition = ordinalPosition;
             this.ColumnDefault = columnDefault;
