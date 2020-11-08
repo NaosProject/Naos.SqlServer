@@ -89,6 +89,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<Uri>(),
                         restrictedUserOption);
                 });
+
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new TableRepresentation(
                     A.Dummy<string>().Replace("-", string.Empty),

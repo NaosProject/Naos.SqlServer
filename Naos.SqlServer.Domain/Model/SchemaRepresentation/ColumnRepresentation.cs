@@ -23,7 +23,7 @@ namespace Naos.SqlServer.Domain
             string name,
             SqlDataTypeRepresentationBase dataType)
         {
-            name.MustForArg(nameof(name)).NotBeNull().And().BeAlphanumeric();
+            name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace().And().BeAlphanumeric();
             dataType.MustForArg(nameof(dataType)).NotBeNull();
 
             this.Name = name;

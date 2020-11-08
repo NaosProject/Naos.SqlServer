@@ -30,6 +30,7 @@ namespace Naos.SqlServer.Domain
             string dataType)
         {
             columnName.MustForArg(nameof(columnName)).NotBeNullNorWhiteSpace();
+            dataType.MustForArg(nameof(dataType)).NotBeNullNorWhiteSpace();
 
             this.ColumnName = columnName;
             this.OrdinalPosition = ordinalPosition;

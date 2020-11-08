@@ -13,8 +13,10 @@ namespace Naos.SqlServer.Domain.Test
 
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
-
+    using OBeautifulCode.CodeGen.ModelObject.Recipes;
     using Xunit;
+
+    using static System.FormattableString;
 
     public static partial class ColumnRepresentationTest
     {
@@ -22,6 +24,28 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static ColumnRepresentationTest()
         {
+            ConstructorArgumentValidationTestScenarios
+               .AddScenario(
+                    () =>
+                        new ConstructorArgumentValidationTestScenario<ColumnRepresentation>
+                        {
+                            Name = "constructor should throw ArgumentException when parameter 'name' is not alpha-numeric scenario",
+                            ConstructionFunc = () =>
+                                               {
+                                                   var referenceObject = A.Dummy<ColumnRepresentation>();
+
+                                                   var result = new ColumnRepresentation(
+                                                       "not-alpha-numeric",
+                                                       referenceObject.DataType);
+
+                                                   return result;
+                                               },
+                            ExpectedExceptionType = typeof(ArgumentException),
+                            ExpectedExceptionMessageContains = new[]
+                                                               {
+                                                                   "name",
+                                                               },
+                        });
         }
     }
 }
