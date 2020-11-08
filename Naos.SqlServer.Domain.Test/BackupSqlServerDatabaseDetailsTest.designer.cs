@@ -63,18 +63,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             null,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             referenceObject.Credential,
-                                             referenceObject.Description,
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             referenceObject.EncryptorName,
-                                             referenceObject.ErrorHandling,
-                                             referenceObject.Name);
+                        var result = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, null, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName);
 
                         return result;
                     },
@@ -89,18 +78,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             referenceObject.BackupTo,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             null,
-                                             referenceObject.Description,
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             referenceObject.EncryptorName,
-                                             referenceObject.ErrorHandling,
-                                             referenceObject.Name);
+                        var result = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, null, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName);
 
                         return result;
                     },
@@ -115,18 +93,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             referenceObject.BackupTo,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.Description,
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             referenceObject.EncryptorName,
-                                             referenceObject.ErrorHandling,
-                                             referenceObject.Name);
+                        var result = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, Invariant($"  {Environment.NewLine}  "), referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName);
 
                         return result;
                     },
@@ -141,18 +108,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             referenceObject.BackupTo,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             referenceObject.Credential,
-                                             null,
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             referenceObject.EncryptorName,
-                                             referenceObject.ErrorHandling,
-                                             referenceObject.Name);
+                        var result = new BackupSqlServerDatabaseDetails(referenceObject.Name, null, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName);
 
                         return result;
                     },
@@ -167,18 +123,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             referenceObject.BackupTo,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             referenceObject.Credential,
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             referenceObject.EncryptorName,
-                                             referenceObject.ErrorHandling,
-                                             referenceObject.Name);
+                        var result = new BackupSqlServerDatabaseDetails(referenceObject.Name, Invariant($"  {Environment.NewLine}  "), referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName);
 
                         return result;
                     },
@@ -193,18 +138,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             referenceObject.BackupTo,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             referenceObject.Credential,
-                                             referenceObject.Description,
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             null,
-                                             referenceObject.ErrorHandling,
-                                             referenceObject.Name);
+                        var result = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, null);
 
                         return result;
                     },
@@ -219,18 +153,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             referenceObject.BackupTo,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             referenceObject.Credential,
-                                             referenceObject.Description,
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.ErrorHandling,
-                                             referenceObject.Name);
+                        var result = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, Invariant($"  {Environment.NewLine}  "));
 
                         return result;
                     },
@@ -245,18 +168,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             referenceObject.BackupTo,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             referenceObject.Credential,
-                                             referenceObject.Description,
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             referenceObject.EncryptorName,
-                                             referenceObject.ErrorHandling,
-                                             null);
+                        var result = new BackupSqlServerDatabaseDetails(null, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName);
 
                         return result;
                     },
@@ -271,18 +183,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
-                        var result = new BackupSqlServerDatabaseDetails(
-                                             referenceObject.BackupTo,
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Cipher,
-                                             referenceObject.CompressionOption,
-                                             referenceObject.Credential,
-                                             referenceObject.Description,
-                                             referenceObject.Device,
-                                             referenceObject.Encryptor,
-                                             referenceObject.EncryptorName,
-                                             referenceObject.ErrorHandling,
-                                             Invariant($"  {Environment.NewLine}  "));
+                        var result = new BackupSqlServerDatabaseDetails(Invariant($"  {Environment.NewLine}  "), referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName);
 
                         return result;
                     },
@@ -301,18 +202,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.BackupTo,
                         };
 
@@ -330,18 +220,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.ChecksumOption,
                         };
 
@@ -359,18 +238,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.Cipher,
                         };
 
@@ -388,18 +256,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.CompressionOption,
                         };
 
@@ -417,18 +274,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.Credential,
                         };
 
@@ -446,18 +292,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.Description,
                         };
 
@@ -475,18 +310,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.Device,
                         };
 
@@ -504,18 +328,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.Encryptor,
                         };
 
@@ -533,18 +346,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.EncryptorName,
                         };
 
@@ -562,18 +364,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.ErrorHandling,
                         };
 
@@ -591,18 +382,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SystemUnderTestExpectedPropertyValue<BackupSqlServerDatabaseDetails>
                         {
-                            SystemUnderTest = new BackupSqlServerDatabaseDetails(
-                                                      referenceObject.BackupTo,
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Cipher,
-                                                      referenceObject.CompressionOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.Description,
-                                                      referenceObject.Device,
-                                                      referenceObject.Encryptor,
-                                                      referenceObject.EncryptorName,
-                                                      referenceObject.ErrorHandling,
-                                                      referenceObject.Name),
+                            SystemUnderTest = new BackupSqlServerDatabaseDetails(referenceObject.Name, referenceObject.Description, referenceObject.Device, referenceObject.BackupTo, referenceObject.Credential, referenceObject.CompressionOption, referenceObject.ChecksumOption, referenceObject.ErrorHandling, referenceObject.Cipher, referenceObject.Encryptor, referenceObject.EncryptorName),
                             ExpectedPropertyValue = referenceObject.Name,
                         };
 
@@ -621,153 +401,21 @@ namespace Naos.SqlServer.Domain.Test
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
                     ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new BackupSqlServerDatabaseDetails[]
                     {
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
                     },
                     ObjectsThatAreNotEqualToReferenceObject = new BackupSqlServerDatabaseDetails[]
                     {
-                        new BackupSqlServerDatabaseDetails(
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.BackupTo.IsEqualTo(ReferenceObjectForEquatableTestScenarios.BackupTo)).BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.ChecksumOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ChecksumOption)).ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Cipher.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Cipher)).Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.CompressionOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.CompressionOption)).CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Credential.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Credential)).Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Description.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Description)).Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Device.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Device)).Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Encryptor.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Encryptor)).Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.EncryptorName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.EncryptorName)).EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.ErrorHandling.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ErrorHandling)).ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.Name),
-                        new BackupSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.BackupTo,
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Cipher,
-                                ReferenceObjectForEquatableTestScenarios.CompressionOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.Description,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.Encryptor,
-                                ReferenceObjectForEquatableTestScenarios.EncryptorName,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.BackupTo.IsEqualTo(ReferenceObjectForEquatableTestScenarios.BackupTo)).BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.ChecksumOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ChecksumOption)).ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Cipher.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Cipher)).Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.CompressionOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.CompressionOption)).CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Credential.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Credential)).Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Description.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Description)).Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Device.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Device)).Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Encryptor.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Encryptor)).Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.EncryptorName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.EncryptorName)).EncryptorName),
+                        new BackupSqlServerDatabaseDetails(ReferenceObjectForEquatableTestScenarios.Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.ErrorHandling.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ErrorHandling)).ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        new BackupSqlServerDatabaseDetails(A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name, ReferenceObjectForEquatableTestScenarios.Description, ReferenceObjectForEquatableTestScenarios.Device, ReferenceObjectForEquatableTestScenarios.BackupTo, ReferenceObjectForEquatableTestScenarios.Credential, ReferenceObjectForEquatableTestScenarios.CompressionOption, ReferenceObjectForEquatableTestScenarios.ChecksumOption, ReferenceObjectForEquatableTestScenarios.ErrorHandling, ReferenceObjectForEquatableTestScenarios.Cipher, ReferenceObjectForEquatableTestScenarios.Encryptor, ReferenceObjectForEquatableTestScenarios.EncryptorName),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {

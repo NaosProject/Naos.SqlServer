@@ -49,18 +49,7 @@ namespace Naos.SqlServer.Domain.Test
                              });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new BackupSqlServerDatabaseDetails(
-                                 A.Dummy<Uri>(),
-                                 A.Dummy<ChecksumOption>(),
-                                 A.Dummy<Cipher>(),
-                                 A.Dummy<CompressionOption>(),
-                                 A.Dummy<string>(),
-                                 A.Dummy<string>(),
-                                 A.Dummy<Device>(),
-                                 A.Dummy<Encryptor>(),
-                                 A.Dummy<string>(),
-                                 A.Dummy<ErrorHandling>(),
-                                 A.Dummy<string>()));
+                () => new BackupSqlServerDatabaseDetails(A.Dummy<string>(), A.Dummy<string>(), A.Dummy<Device>(), A.Dummy<Uri>(), A.Dummy<string>(), A.Dummy<CompressionOption>(), A.Dummy<ChecksumOption>(), A.Dummy<ErrorHandling>(), A.Dummy<Cipher>(), A.Dummy<Encryptor>(), A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new DatabaseConfiguration(

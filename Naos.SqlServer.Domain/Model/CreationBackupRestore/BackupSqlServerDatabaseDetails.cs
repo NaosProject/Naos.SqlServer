@@ -20,49 +20,39 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="BackupSqlServerDatabaseDetails"/> class.
         /// </summary>
-        /// <param name="backupTo">The backup to.</param>
-        /// <param name="checksumOption">The checksum option.</param>
-        /// <param name="cipher">The cipher.</param>
-        /// <param name="compressionOption">The compression option.</param>
-        /// <param name="credential">The credential.</param>
+        /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
         /// <param name="device">The device.</param>
+        /// <param name="backupTo">The backup to.</param>
+        /// <param name="credential">The credential.</param>
+        /// <param name="compressionOption">The compression option.</param>
+        /// <param name="checksumOption">The checksum option.</param>
+        /// <param name="errorHandling">The error handling.</param>
+        /// <param name="cipher">The cipher.</param>
         /// <param name="encryptor">The encryptor.</param>
         /// <param name="encryptorName">Name of the encryptor.</param>
-        /// <param name="errorHandling">The error handling.</param>
-        /// <param name="name">The name.</param>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "encryptor", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
         public BackupSqlServerDatabaseDetails(
-            Uri backupTo,
-            ChecksumOption checksumOption,
-            Cipher cipher,
-            CompressionOption compressionOption,
-            string credential,
+            string name,
             string description,
             Device device,
-            Encryptor encryptor,
-            string encryptorName,
+            Uri backupTo,
+            string credential,
+            CompressionOption compressionOption,
+            ChecksumOption checksumOption,
             ErrorHandling errorHandling,
-            string name)
+            Cipher cipher,
+            Encryptor encryptor,
+            string encryptorName)
         {
-            new { backupTo }.AsArg().Must().NotBeNull();
-
-            if (device == Device.Url)
-            {
-                if (string.IsNullOrWhiteSpace(credential))
-                {
-                    throw new ArgumentException("Credential cannot be null or whitespace when Device is URL");
-                }
-
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(credential);
-            }
-
             if (!string.IsNullOrWhiteSpace(name))
             {
                 if (name.Length > 128)
                 {
                     throw new ArgumentException("Name cannot be more than 128 characters in length.");
                 }
+
+                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(name, nameof(name));
             }
 
             if (!string.IsNullOrWhiteSpace(description))
@@ -71,21 +61,17 @@ namespace Naos.SqlServer.Domain
                 {
                     throw new ArgumentException("Description cannot be more than 255 characters in length.");
                 }
+
+                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(description, nameof(description));
             }
 
-            if (cipher != Cipher.NoEncryption)
+            backupTo.MustForArg(nameof(backupTo)).NotBeNull();
+
+            if (device == Device.Url)
             {
-                if (encryptor == Encryptor.None)
-                {
-                    throw new ArgumentException("Encryptor is required when any Cipher != NoEncryption");
-                }
+                credential.MustForArg(nameof(credential)).NotBeNullNorWhiteSpace("Credential cannot be null or whitespace when Device is URL");
 
-                if (string.IsNullOrWhiteSpace(encryptorName))
-                {
-                    throw new ArgumentException("EncryptorName is required when any Cipher != NoEncryption.");
-                }
-
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(encryptorName);
+                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(credential, nameof(credential));
             }
 
             if (checksumOption == ChecksumOption.Checksum)
@@ -96,27 +82,29 @@ namespace Naos.SqlServer.Domain
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(name))
+            if (cipher != Cipher.NoEncryption)
             {
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(name);
+                if (encryptor == Encryptor.None)
+                {
+                    throw new ArgumentException("Encryptor is required when any Cipher != NoEncryption");
+                }
+
+                encryptorName.MustForArg(nameof(encryptorName)).NotBeNullNorWhiteSpace("EncryptorName is required when any Cipher != NoEncryption.");
+
+                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(encryptorName, nameof(encryptorName));
             }
 
-            if (!string.IsNullOrWhiteSpace(description))
-            {
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(description);
-            }
-
-            this.BackupTo = backupTo;
-            this.ChecksumOption = checksumOption;
-            this.Cipher = cipher;
-            this.CompressionOption = compressionOption;
-            this.Credential = credential;
+            this.Name = name;
             this.Description = description;
             this.Device = device;
+            this.BackupTo = backupTo;
+            this.Credential = credential;
+            this.CompressionOption = compressionOption;
+            this.ChecksumOption = checksumOption;
+            this.ErrorHandling = errorHandling;
+            this.Cipher = cipher;
             this.Encryptor = encryptor;
             this.EncryptorName = encryptorName;
-            this.ErrorHandling = errorHandling;
-            this.Name = name;
         }
 
         /// <summary>

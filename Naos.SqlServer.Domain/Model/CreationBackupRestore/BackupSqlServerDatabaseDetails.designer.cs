@@ -107,18 +107,7 @@ namespace Naos.SqlServer.Domain
         /// <inheritdoc />
         public BackupSqlServerDatabaseDetails DeepClone()
         {
-            var result = new BackupSqlServerDatabaseDetails(
-                                 this.BackupTo?.DeepClone(),
-                                 this.ChecksumOption,
-                                 this.Cipher,
-                                 this.CompressionOption,
-                                 this.Credential?.DeepClone(),
-                                 this.Description?.DeepClone(),
-                                 this.Device,
-                                 this.Encryptor,
-                                 this.EncryptorName?.DeepClone(),
-                                 this.ErrorHandling,
-                                 this.Name?.DeepClone());
+            var result = new BackupSqlServerDatabaseDetails(this.Name?.DeepClone(), this.Description?.DeepClone(), this.Device, this.BackupTo?.DeepClone(), this.Credential?.DeepClone(), this.CompressionOption, this.ChecksumOption, this.ErrorHandling, this.Cipher, this.Encryptor, this.EncryptorName?.DeepClone());
 
             return result;
         }

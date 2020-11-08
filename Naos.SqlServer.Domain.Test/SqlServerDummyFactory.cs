@@ -54,18 +54,7 @@ namespace Naos.SqlServer.Domain.Test
                         errorHandling = A.Dummy<ErrorHandling>().ThatIsNot(ErrorHandling.None);
                     }
 
-                    var backupSqlServerDatabaseDetails = new BackupSqlServerDatabaseDetails(
-                        A.Dummy<Uri>(),
-                        checksumOption,
-                        cipher,
-                        compressionOption,
-                        A.Dummy<string>().Replace("-", string.Empty),
-                        A.Dummy<string>().Replace("-", string.Empty),
-                        device,
-                        encryptor,
-                        A.Dummy<string>().Replace("-", string.Empty),
-                        errorHandling,
-                        A.Dummy<string>().Replace("-", string.Empty));
+                    var backupSqlServerDatabaseDetails = new BackupSqlServerDatabaseDetails(A.Dummy<string>().Replace("-", string.Empty), A.Dummy<string>().Replace("-", string.Empty), device, A.Dummy<Uri>(), A.Dummy<string>().Replace("-", string.Empty), compressionOption, checksumOption, errorHandling, cipher, encryptor, A.Dummy<string>().Replace("-", string.Empty));
 
                     return backupSqlServerDatabaseDetails;
                 });

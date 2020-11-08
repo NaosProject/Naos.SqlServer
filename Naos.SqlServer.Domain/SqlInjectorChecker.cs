@@ -21,7 +21,8 @@ namespace Naos.SqlServer.Domain
         /// Throws an <see cref="ArgumentException"/> if input has any characters that are not alpha-numeric nor the space character nor the underscore character.
         /// </summary>
         /// <param name="textToCheck">Text to check.</param>
-        public static void ThrowIfNotAlphanumericOrSpaceOrUnderscore(string textToCheck)
+        /// <param name="customErrorMessage">Optional additional text for exception (like a parameter name).</param>
+        public static void ThrowIfNotAlphanumericOrSpaceOrUnderscore(string textToCheck, string customErrorMessage = null)
         {
             new { textToCheck }.AsArg().Must().NotBeNull();
 
@@ -29,7 +30,8 @@ namespace Naos.SqlServer.Domain
             Match match = Regex.Match(textToCheck, pattern);
             if (match.Value != textToCheck)
             {
-                throw new ArgumentException("The provided input: " + textToCheck + " is not alphanumeric and is not valid.");
+                var customMessageAddIn = string.IsNullOrWhiteSpace(customErrorMessage) ? string.Empty : FormattableString.Invariant($" ({customErrorMessage})");
+                throw new ArgumentException("The provided input: " + textToCheck + " is not alphanumeric and is not valid " + customMessageAddIn + ".");
             }
         }
 
