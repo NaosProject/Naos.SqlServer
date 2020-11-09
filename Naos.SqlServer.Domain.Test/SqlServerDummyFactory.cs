@@ -78,15 +78,15 @@ namespace Naos.SqlServer.Domain.Test
                     var logFilePath = FormattableString.Invariant($"C:\\directory\\{A.Dummy<string>()}.dat");
                     var dataFilePath = FormattableString.Invariant($"C:\\directory\\{A.Dummy<string>()}.ldf");
                     return new RestoreSqlServerDatabaseDetails(
-                        checksumOption,
-                        A.Dummy<string>().Replace("-", string.Empty),
                         dataFilePath,
-                        device,
-                        errorHandling,
                         logFilePath,
+                        device,
+                        A.Dummy<Uri>(),
+                        A.Dummy<string>().Replace("-", string.Empty),
+                        checksumOption,
+                        errorHandling,
                         recoveryOption,
                         replaceOption,
-                        A.Dummy<Uri>(),
                         restrictedUserOption);
                 });
 
@@ -101,21 +101,37 @@ namespace Naos.SqlServer.Domain.Test
                     A.Dummy<SqlDataTypeRepresentationBase>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterRepresentationWithResult<Version>(
+                () => new SqlOutputParameterRepresentationWithResult<int>(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<SqlDataTypeRepresentationBase>(),
-                    A.Dummy<Version>()));
+                    A.Dummy<int>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterRepresentation<Version>(
+                () => new SqlOutputParameterRepresentation<int>(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<SqlDataTypeRepresentationBase>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlInputParameterRepresentation<Version>(
+                () => new SqlInputParameterRepresentation<int>(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<SqlDataTypeRepresentationBase>(),
-                    A.Dummy<Version>()));
+                    A.Dummy<int>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new DatabaseConfiguration(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<DatabaseType>(),
+                    A.Dummy<RecoveryMode>(),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<long>(),
+                    A.Dummy<long>(),
+                    A.Dummy<long>(),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<long>(),
+                    A.Dummy<long>(),
+                    A.Dummy<long>()));
         }
     }
 }

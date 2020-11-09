@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System.Diagnostics.CodeAnalysis;
     using Naos.CodeAnalysis.Recipes;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -23,11 +24,11 @@ namespace Naos.SqlServer.Domain
         /// <param name="recoveryMode">The recovery mode.</param>
         /// <param name="dataFileLogicalName">Name of the data file logical.</param>
         /// <param name="dataFilePath">The data file path.</param>
-        /// <param name="logFilePath">The log file path.</param>
         /// <param name="dataFileCurrentSizeInKb">The data file current size in kilobytes.</param>
         /// <param name="dataFileMaxSizeInKb">The data file maximum size in kilobytes.</param>
         /// <param name="dataFileGrowthSizeInKb">The data file growth size in kilobytes.</param>
         /// <param name="logFileLogicalName">Name of the log file logical.</param>
+        /// <param name="logFilePath">The log file path.</param>
         /// <param name="logFileCurrentSizeInKb">The log file current size in kilobytes.</param>
         /// <param name="logFileMaxSizeInKb">The log file maximum size in kilobytes.</param>
         /// <param name="logFileGrowthSizeInKb">The log file growth size in kilobytes.</param>
@@ -38,15 +39,38 @@ namespace Naos.SqlServer.Domain
             RecoveryMode recoveryMode,
             string dataFileLogicalName,
             string dataFilePath,
-            string logFilePath,
             long dataFileCurrentSizeInKb,
             long dataFileMaxSizeInKb,
             long dataFileGrowthSizeInKb,
             string logFileLogicalName,
+            string logFilePath,
             long logFileCurrentSizeInKb,
             long logFileMaxSizeInKb,
             long logFileGrowthSizeInKb)
         {
+            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace();
+            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName, nameof(databaseName));
+
+            if (!string.IsNullOrWhiteSpace(dataFileLogicalName))
+            {
+                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(dataFileLogicalName, nameof(dataFileLogicalName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(dataFilePath))
+            {
+                SqlInjectorChecker.ThrowIfNotValidPath(dataFilePath, nameof(dataFilePath));
+            }
+
+            if (!string.IsNullOrWhiteSpace(logFileLogicalName))
+            {
+                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(logFileLogicalName, nameof(logFileLogicalName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(logFilePath))
+            {
+                SqlInjectorChecker.ThrowIfNotValidPath(logFilePath, nameof(logFilePath));
+            }
+
             this.DatabaseName = databaseName;
             this.DatabaseType = databaseType;
             this.RecoveryMode = recoveryMode;

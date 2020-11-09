@@ -39,23 +39,30 @@ namespace Naos.SqlServer.Domain
         /// Throws an ArgumentException if input is not a valid path.
         /// </summary>
         /// <param name="pathToCheck">Path to check.</param>
-        public static void ThrowIfNotValidPath(string pathToCheck)
+        /// <param name="customErrorMessage">Optional additional text for exception (like a parameter name).</param>
+        public static void ThrowIfNotValidPath(string pathToCheck, string customErrorMessage = null)
         {
-            new { pathToCheck }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { pathToCheck }.AsArg().Must().NotBeNullNorWhiteSpace(customErrorMessage);
 
             try
             {
                 var fileInfoToCheck = new FileInfo(pathToCheck);
-                new { fileInfoToCheck }.AsOp().Must().NotBeNull();
+                new { fileInfoToCheck }.AsOp().Must().NotBeNull(customErrorMessage);
             }
             catch (Exception)
             {
-                throw new ArgumentException("The provided path: " + pathToCheck + " is invalid.");
+                var customErrorMessageAddIn = string.IsNullOrWhiteSpace(customErrorMessage)
+                    ? string.Empty
+                    : FormattableString.Invariant($"({customErrorMessage})");
+                throw new ArgumentException("The provided path: " + pathToCheck + " is invalid " + customErrorMessageAddIn + ".");
             }
 
             if (pathToCheck.Contains("'") || pathToCheck.Contains("\"") || pathToCheck.Contains(";"))
             {
-                throw new ArgumentException("The provided path: " + pathToCheck + " contains either quotes or single quotes or semicolons which are not allowed.");
+                var customErrorMessageAddIn = string.IsNullOrWhiteSpace(customErrorMessage)
+                    ? string.Empty
+                    : FormattableString.Invariant($"({customErrorMessage})");
+                throw new ArgumentException("The provided path: " + pathToCheck + " contains either quotes or single quotes or semicolons which are not allowed " + customErrorMessageAddIn + ".");
             }
         }
     }

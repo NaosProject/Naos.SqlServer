@@ -108,16 +108,16 @@ namespace Naos.SqlServer.Domain
         public RestoreSqlServerDatabaseDetails DeepClone()
         {
             var result = new RestoreSqlServerDatabaseDetails(
-                                 this.ChecksumOption,
-                                 this.Credential?.DeepClone(),
-                                 this.DataFilePath?.DeepClone(),
-                                 this.Device,
-                                 this.ErrorHandling,
+                this.DataFilePath?.DeepClone(),
                                  this.LogFilePath?.DeepClone(),
-                                 this.RecoveryOption,
-                                 this.ReplaceOption,
+                                 this.Device,
                                  this.RestoreFrom?.DeepClone(),
-                                 this.RestrictedUserOption);
+                                 this.Credential?.DeepClone(),
+                this.ChecksumOption,
+                this.ErrorHandling,
+                this.RecoveryOption,
+                this.ReplaceOption,
+                this.RestrictedUserOption);
 
             return result;
         }

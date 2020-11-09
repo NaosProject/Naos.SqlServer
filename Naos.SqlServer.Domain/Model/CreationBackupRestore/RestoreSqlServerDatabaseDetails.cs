@@ -19,15 +19,15 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="RestoreSqlServerDatabaseDetails"/> class.
         /// </summary>
-        /// <param name="checksumOption">The checksum option.</param>
-        /// <param name="credential">The credential.</param>
         /// <param name="dataFilePath">The data file path.</param>
-        /// <param name="device">The device.</param>
-        /// <param name="errorHandling">The error handling.</param>
         /// <param name="logFilePath">The log file path.</param>
+        /// <param name="device">The device.</param>
+        /// <param name="restoreFrom">The restore from.</param>
+        /// <param name="credential">The credential.</param>
+        /// <param name="checksumOption">The checksum option.</param>
+        /// <param name="errorHandling">The error handling.</param>
         /// <param name="recoveryOption">The recovery option.</param>
         /// <param name="replaceOption">The replace option.</param>
-        /// <param name="restoreFrom">The restore from.</param>
         /// <param name="restrictedUserOption">The restricted user option.</param>
         /// <exception cref="System.ArgumentException">
         /// Credential cannot be null or whitespace when Device is URL
@@ -35,44 +35,41 @@ namespace Naos.SqlServer.Domain
         /// ErrorHandling cannot be None when using checksum.
         /// </exception>
         public RestoreSqlServerDatabaseDetails(
-            ChecksumOption checksumOption,
-            string credential,
             string dataFilePath,
-            Device device,
-            ErrorHandling errorHandling,
             string logFilePath,
+            Device device,
+            Uri restoreFrom,
+            string credential,
+            ChecksumOption checksumOption,
+            ErrorHandling errorHandling,
             RecoveryOption recoveryOption,
             ReplaceOption replaceOption,
-            Uri restoreFrom,
             RestrictedUserOption restrictedUserOption)
         {
-            new { restoreFrom }.AsArg().Must().NotBeNull();
-
-            if (device == Device.Url)
-            {
-                if (string.IsNullOrWhiteSpace(credential))
-                {
-                    throw new ArgumentException("Credential cannot be null or whitespace when Device is URL");
-                }
-
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(credential);
-            }
-
             if (!string.IsNullOrWhiteSpace(dataFilePath))
             {
-                SqlInjectorChecker.ThrowIfNotValidPath(dataFilePath);
+                SqlInjectorChecker.ThrowIfNotValidPath(dataFilePath, nameof(dataFilePath));
             }
 
             if (!string.IsNullOrWhiteSpace(logFilePath))
             {
-                SqlInjectorChecker.ThrowIfNotValidPath(logFilePath);
+                SqlInjectorChecker.ThrowIfNotValidPath(logFilePath, nameof(logFilePath));
+            }
+
+            new { restoreFrom }.AsArg().Must().NotBeNull();
+
+            if (device == Device.Url)
+            {
+                credential.MustForArg(nameof(credential)).NotBeNullNorWhiteSpace("Credential cannot be null or whitespace when Device is URL");
+
+                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(credential, nameof(credential));
             }
 
             if (checksumOption == ChecksumOption.Checksum)
             {
                 if (errorHandling == ErrorHandling.None)
                 {
-                    throw new ArgumentException("ErrorHandling cannot be None when using checksum.");
+                    throw new ArgumentException("ErrorHandling cannot be None when using checksum.", nameof(errorHandling));
                 }
             }
 

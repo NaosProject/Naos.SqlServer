@@ -66,16 +66,16 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<RestoreSqlServerDatabaseDetails>();
 
                         var result = new RestoreSqlServerDatabaseDetails(
-                                             referenceObject.ChecksumOption,
-                                             null,
-                                             referenceObject.DataFilePath,
-                                             referenceObject.Device,
-                                             referenceObject.ErrorHandling,
+                            referenceObject.DataFilePath,
                                              referenceObject.LogFilePath,
-                                             referenceObject.RecoveryOption,
-                                             referenceObject.ReplaceOption,
+                                             referenceObject.Device,
                                              referenceObject.RestoreFrom,
-                                             referenceObject.RestrictedUserOption);
+                                             null,
+                            referenceObject.ChecksumOption,
+                            referenceObject.ErrorHandling,
+                            referenceObject.RecoveryOption,
+                            referenceObject.ReplaceOption,
+                            referenceObject.RestrictedUserOption);
 
                         return result;
                     },
@@ -91,16 +91,16 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<RestoreSqlServerDatabaseDetails>();
 
                         var result = new RestoreSqlServerDatabaseDetails(
-                                             referenceObject.ChecksumOption,
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.DataFilePath,
-                                             referenceObject.Device,
-                                             referenceObject.ErrorHandling,
+                            referenceObject.DataFilePath,
                                              referenceObject.LogFilePath,
-                                             referenceObject.RecoveryOption,
-                                             referenceObject.ReplaceOption,
+                                             referenceObject.Device,
                                              referenceObject.RestoreFrom,
-                                             referenceObject.RestrictedUserOption);
+                                             Invariant($"  {Environment.NewLine}  "),
+                            referenceObject.ChecksumOption,
+                            referenceObject.ErrorHandling,
+                            referenceObject.RecoveryOption,
+                            referenceObject.ReplaceOption,
+                            referenceObject.RestrictedUserOption);
 
                         return result;
                     },
@@ -116,16 +116,16 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<RestoreSqlServerDatabaseDetails>();
 
                         var result = new RestoreSqlServerDatabaseDetails(
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Credential,
-                                             null,
-                                             referenceObject.Device,
-                                             referenceObject.ErrorHandling,
+                            null,
                                              referenceObject.LogFilePath,
-                                             referenceObject.RecoveryOption,
-                                             referenceObject.ReplaceOption,
+                                             referenceObject.Device,
                                              referenceObject.RestoreFrom,
-                                             referenceObject.RestrictedUserOption);
+                                             referenceObject.Credential,
+                            referenceObject.ChecksumOption,
+                            referenceObject.ErrorHandling,
+                            referenceObject.RecoveryOption,
+                            referenceObject.ReplaceOption,
+                            referenceObject.RestrictedUserOption);
 
                         return result;
                     },
@@ -141,16 +141,16 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<RestoreSqlServerDatabaseDetails>();
 
                         var result = new RestoreSqlServerDatabaseDetails(
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Credential,
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.Device,
-                                             referenceObject.ErrorHandling,
+                            Invariant($"  {Environment.NewLine}  "),
                                              referenceObject.LogFilePath,
-                                             referenceObject.RecoveryOption,
-                                             referenceObject.ReplaceOption,
+                                             referenceObject.Device,
                                              referenceObject.RestoreFrom,
-                                             referenceObject.RestrictedUserOption);
+                                             referenceObject.Credential,
+                            referenceObject.ChecksumOption,
+                            referenceObject.ErrorHandling,
+                            referenceObject.RecoveryOption,
+                            referenceObject.ReplaceOption,
+                            referenceObject.RestrictedUserOption);
 
                         return result;
                     },
@@ -166,16 +166,16 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<RestoreSqlServerDatabaseDetails>();
 
                         var result = new RestoreSqlServerDatabaseDetails(
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Credential,
-                                             referenceObject.DataFilePath,
-                                             referenceObject.Device,
-                                             referenceObject.ErrorHandling,
+                            referenceObject.DataFilePath,
                                              null,
-                                             referenceObject.RecoveryOption,
-                                             referenceObject.ReplaceOption,
+                                             referenceObject.Device,
                                              referenceObject.RestoreFrom,
-                                             referenceObject.RestrictedUserOption);
+                                             referenceObject.Credential,
+                            referenceObject.ChecksumOption,
+                            referenceObject.ErrorHandling,
+                            referenceObject.RecoveryOption,
+                            referenceObject.ReplaceOption,
+                            referenceObject.RestrictedUserOption);
 
                         return result;
                     },
@@ -191,16 +191,16 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<RestoreSqlServerDatabaseDetails>();
 
                         var result = new RestoreSqlServerDatabaseDetails(
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Credential,
-                                             referenceObject.DataFilePath,
-                                             referenceObject.Device,
-                                             referenceObject.ErrorHandling,
+                            referenceObject.DataFilePath,
                                              Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.RecoveryOption,
-                                             referenceObject.ReplaceOption,
+                                             referenceObject.Device,
                                              referenceObject.RestoreFrom,
-                                             referenceObject.RestrictedUserOption);
+                                             referenceObject.Credential,
+                            referenceObject.ChecksumOption,
+                            referenceObject.ErrorHandling,
+                            referenceObject.RecoveryOption,
+                            referenceObject.ReplaceOption,
+                            referenceObject.RestrictedUserOption);
 
                         return result;
                     },
@@ -216,16 +216,16 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<RestoreSqlServerDatabaseDetails>();
 
                         var result = new RestoreSqlServerDatabaseDetails(
-                                             referenceObject.ChecksumOption,
-                                             referenceObject.Credential,
-                                             referenceObject.DataFilePath,
-                                             referenceObject.Device,
-                                             referenceObject.ErrorHandling,
+                            referenceObject.DataFilePath,
                                              referenceObject.LogFilePath,
-                                             referenceObject.RecoveryOption,
-                                             referenceObject.ReplaceOption,
+                                             referenceObject.Device,
                                              null,
-                                             referenceObject.RestrictedUserOption);
+                                             referenceObject.Credential,
+                            referenceObject.ChecksumOption,
+                            referenceObject.ErrorHandling,
+                            referenceObject.RecoveryOption,
+                            referenceObject.ReplaceOption,
+                            referenceObject.RestrictedUserOption);
 
                         return result;
                     },
@@ -245,16 +245,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.ChecksumOption,
                         };
 
@@ -273,16 +273,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.Credential,
                         };
 
@@ -301,16 +301,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.DataFilePath,
                         };
 
@@ -329,16 +329,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.Device,
                         };
 
@@ -357,16 +357,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.ErrorHandling,
                         };
 
@@ -385,16 +385,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.LogFilePath,
                         };
 
@@ -413,16 +413,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.RecoveryOption,
                         };
 
@@ -441,16 +441,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.ReplaceOption,
                         };
 
@@ -469,16 +469,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.RestoreFrom,
                         };
 
@@ -497,16 +497,16 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<RestoreSqlServerDatabaseDetails>
                         {
                             SystemUnderTest = new RestoreSqlServerDatabaseDetails(
-                                                      referenceObject.ChecksumOption,
-                                                      referenceObject.Credential,
-                                                      referenceObject.DataFilePath,
-                                                      referenceObject.Device,
-                                                      referenceObject.ErrorHandling,
+                                referenceObject.DataFilePath,
                                                       referenceObject.LogFilePath,
-                                                      referenceObject.RecoveryOption,
-                                                      referenceObject.ReplaceOption,
+                                                      referenceObject.Device,
                                                       referenceObject.RestoreFrom,
-                                                      referenceObject.RestrictedUserOption),
+                                                      referenceObject.Credential,
+                                referenceObject.ChecksumOption,
+                                referenceObject.ErrorHandling,
+                                referenceObject.RecoveryOption,
+                                referenceObject.ReplaceOption,
+                                referenceObject.RestrictedUserOption),
                             ExpectedPropertyValue = referenceObject.RestrictedUserOption,
                         };
 
@@ -526,129 +526,129 @@ namespace Naos.SqlServer.Domain.Test
                     ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new RestoreSqlServerDatabaseDetails[]
                     {
                         new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                ReferenceObjectForEquatableTestScenarios.Device,
                                 ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                                ReferenceObjectForEquatableTestScenarios.Credential,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
                     },
                     ObjectsThatAreNotEqualToReferenceObject = new RestoreSqlServerDatabaseDetails[]
                     {
                         new RestoreSqlServerDatabaseDetails(
-                                A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.ChecksumOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ChecksumOption)).ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                ReferenceObjectForEquatableTestScenarios.Device,
                                 ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                                ReferenceObjectForEquatableTestScenarios.Credential,
+                            A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.ChecksumOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ChecksumOption)).ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
                         new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                ReferenceObjectForEquatableTestScenarios.Device,
+                                ReferenceObjectForEquatableTestScenarios.RestoreFrom,
                                 A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.Credential.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Credential)).Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
-                                ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
                         new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.DataFilePath.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DataFilePath)).DataFilePath,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.DataFilePath.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DataFilePath)).DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                ReferenceObjectForEquatableTestScenarios.Device,
                                 ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
-                        new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
                                 ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                        new RestoreSqlServerDatabaseDetails(
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                ReferenceObjectForEquatableTestScenarios.LogFilePath,
                                 A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.Device.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Device)).Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
                                 ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
-                        new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
                                 ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.ErrorHandling.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ErrorHandling)).ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                        new RestoreSqlServerDatabaseDetails(
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
-                                ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
-                        new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                ReferenceObjectForEquatableTestScenarios.Credential,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.ErrorHandling.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ErrorHandling)).ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                        new RestoreSqlServerDatabaseDetails(
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.LogFilePath.IsEqualTo(ReferenceObjectForEquatableTestScenarios.LogFilePath)).LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
-                                ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
-                        new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
-                                ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
-                                ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.RecoveryOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RecoveryOption)).RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
                                 ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
-                        new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
                                 ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                        new RestoreSqlServerDatabaseDetails(
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.ReplaceOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ReplaceOption)).ReplaceOption,
+                                ReferenceObjectForEquatableTestScenarios.Device,
                                 ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
-                        new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
                                 ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.RecoveryOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RecoveryOption)).RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                        new RestoreSqlServerDatabaseDetails(
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                ReferenceObjectForEquatableTestScenarios.Device,
+                                ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                ReferenceObjectForEquatableTestScenarios.Credential,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.ReplaceOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ReplaceOption)).ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                        new RestoreSqlServerDatabaseDetails(
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                ReferenceObjectForEquatableTestScenarios.Device,
                                 A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.RestoreFrom.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RestoreFrom)).RestoreFrom,
-                                ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
-                        new RestoreSqlServerDatabaseDetails(
-                                ReferenceObjectForEquatableTestScenarios.ChecksumOption,
                                 ReferenceObjectForEquatableTestScenarios.Credential,
-                                ReferenceObjectForEquatableTestScenarios.DataFilePath,
-                                ReferenceObjectForEquatableTestScenarios.Device,
-                                ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                        new RestoreSqlServerDatabaseDetails(
+                            ReferenceObjectForEquatableTestScenarios.DataFilePath,
                                 ReferenceObjectForEquatableTestScenarios.LogFilePath,
-                                ReferenceObjectForEquatableTestScenarios.RecoveryOption,
-                                ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                ReferenceObjectForEquatableTestScenarios.Device,
                                 ReferenceObjectForEquatableTestScenarios.RestoreFrom,
-                                A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.RestrictedUserOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RestrictedUserOption)).RestrictedUserOption),
+                                ReferenceObjectForEquatableTestScenarios.Credential,
+                            ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                            ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                            ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                            ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                            A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.RestrictedUserOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RestrictedUserOption)).RestrictedUserOption),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {

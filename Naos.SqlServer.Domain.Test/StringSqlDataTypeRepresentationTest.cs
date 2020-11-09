@@ -13,7 +13,7 @@ namespace Naos.SqlServer.Domain.Test
 
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
-
+    using OBeautifulCode.CodeGen.ModelObject.Recipes;
     using Xunit;
 
     public static partial class StringSqlDataTypeRepresentationTest
@@ -22,6 +22,8 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static StringSqlDataTypeRepresentationTest()
         {
+            ConstructorArgumentValidationTestScenarios
+               .AddScenario(ConstructorArgumentValidationTestScenario<StringSqlDataTypeRepresentation>.ConstructorCannotThrowScenario);
         }
     }
 }

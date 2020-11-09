@@ -58,10 +58,10 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<RecoveryMode>(),
                                  A.Dummy<string>(),
                                  A.Dummy<string>(),
+                                 A.Dummy<long>(),
+                                 A.Dummy<long>(),
+                                 A.Dummy<long>(),
                                  A.Dummy<string>(),
-                                 A.Dummy<long>(),
-                                 A.Dummy<long>(),
-                                 A.Dummy<long>(),
                                  A.Dummy<string>(),
                                  A.Dummy<long>(),
                                  A.Dummy<long>(),
@@ -75,16 +75,16 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new RestoreSqlServerDatabaseDetails(
-                                 A.Dummy<ChecksumOption>(),
-                                 A.Dummy<string>(),
+                    A.Dummy<string>(),
                                  A.Dummy<string>(),
                                  A.Dummy<Device>(),
-                                 A.Dummy<ErrorHandling>(),
-                                 A.Dummy<string>(),
-                                 A.Dummy<RecoveryOption>(),
-                                 A.Dummy<ReplaceOption>(),
                                  A.Dummy<Uri>(),
-                                 A.Dummy<RestrictedUserOption>()));
+                                 A.Dummy<string>(),
+                    A.Dummy<ChecksumOption>(),
+                    A.Dummy<ErrorHandling>(),
+                    A.Dummy<RecoveryOption>(),
+                    A.Dummy<ReplaceOption>(),
+                    A.Dummy<RestrictedUserOption>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new BinarySqlDataTypeRepresentation(
