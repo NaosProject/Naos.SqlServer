@@ -24,7 +24,9 @@ namespace Naos.SqlServer.Domain
             string name,
             IReadOnlyDictionary<string, ColumnRepresentation> columnNameToRepresentationMap)
         {
-            name.MustForArg(nameof(name)).NotBeNull().And().BeAlphanumeric();
+            name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace().And().BeAlphanumeric();
+
+            columnNameToRepresentationMap.MustForArg(nameof(columnNameToRepresentationMap)).NotBeNullNorEmptyDictionaryNorContainAnyNullValues();
 
             this.Name = name;
             this.ColumnNameToRepresentationMap = columnNameToRepresentationMap;

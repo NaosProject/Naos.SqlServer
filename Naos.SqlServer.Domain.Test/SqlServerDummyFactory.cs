@@ -132,6 +132,18 @@ namespace Naos.SqlServer.Domain.Test
                     A.Dummy<long>(),
                     A.Dummy<long>(),
                     A.Dummy<long>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new TableDescription(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<IReadOnlyCollection<ColumnDescription>>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new TableRepresentation(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<IReadOnlyDictionary<string, ColumnRepresentation>>()));
         }
     }
 }

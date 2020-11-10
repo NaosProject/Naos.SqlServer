@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -27,6 +28,17 @@ namespace Naos.SqlServer.Domain
             string tableName,
             IReadOnlyCollection<ColumnDescription> columns)
         {
+            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace();
+            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName, nameof(databaseName));
+
+            tableSchema.MustForArg(nameof(tableSchema)).NotBeNullNorWhiteSpace();
+            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(tableSchema, nameof(tableSchema));
+
+            tableName.MustForArg(nameof(tableName)).NotBeNullNorWhiteSpace();
+            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(tableName, nameof(tableName));
+
+            columns.MustForArg(nameof(columns)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.DatabaseName = databaseName;
             this.TableSchema = tableSchema;
             this.TableName = tableName;
