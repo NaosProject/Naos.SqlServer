@@ -44,6 +44,10 @@ namespace Naos.SqlServer.Protocol.Client
             {
                 return intRepresentationInput.ToSqlParameter();
             }
+            else if (parameterRepresentation is SqlInputParameterRepresentation<long> longRepresentationInput)
+            {
+                return longRepresentationInput.ToSqlParameter();
+            }
             else if (parameterRepresentation is SqlInputParameterRepresentation<string> stringRepresentationInput)
             {
                 return stringRepresentationInput.ToSqlParameter();
@@ -63,6 +67,10 @@ namespace Naos.SqlServer.Protocol.Client
             else if (parameterRepresentation is SqlOutputParameterRepresentation<int> intRepresentationOutput)
             {
                 return intRepresentationOutput.ToSqlParameter();
+            }
+            else if (parameterRepresentation is SqlOutputParameterRepresentation<long> longRepresentationOutput)
+            {
+                return longRepresentationOutput.ToSqlParameter();
             }
             else if (parameterRepresentation is SqlOutputParameterRepresentation<string> stringRepresentationOutput)
             {
@@ -147,6 +155,21 @@ namespace Naos.SqlServer.Protocol.Client
         /// <summary>
         /// Converts to a <see cref="SqlParameter"/>.
         /// </summary>
+        /// <param name="longInputParameter">The long input parameter.</param>
+        /// <returns>SqlParameter.</returns>
+        public static SqlParameter ToSqlParameter(
+            this SqlInputParameterRepresentation<long> longInputParameter)
+        {
+            longInputParameter.MustForArg(nameof(longInputParameter)).NotBeNull();
+            var name = longInputParameter.Name;
+            name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+            var result = longInputParameter.Value.CreateInputSqlParameter(name);
+            return result;
+        }
+
+        /// <summary>
+        /// Converts to a <see cref="SqlParameter"/>.
+        /// </summary>
         /// <param name="stringInputParameter">The string input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
@@ -225,6 +248,21 @@ namespace Naos.SqlServer.Protocol.Client
         /// <summary>
         /// Converts to a <see cref="SqlParameter"/>.
         /// </summary>
+        /// <param name="longOutputParameter">The long Output parameter.</param>
+        /// <returns>SqlParameter.</returns>
+        public static SqlParameter ToSqlParameter(
+            this SqlOutputParameterRepresentation<long> longOutputParameter)
+        {
+            longOutputParameter.MustForArg(nameof(longOutputParameter)).NotBeNull();
+            var name = longOutputParameter.Name;
+            name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+            var result = SqlParameterExtensions.CreateOutputLongSqlParameter(name);
+            return result;
+        }
+
+        /// <summary>
+        /// Converts to a <see cref="SqlParameter"/>.
+        /// </summary>
         /// <param name="stringOutputParameter">The string Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
@@ -284,6 +322,12 @@ namespace Naos.SqlServer.Protocol.Client
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var intValue = Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
                 result = new SqlOutputParameterRepresentationWithResult<int>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, intValue);
+            }
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long>)
+            {
+                rawValue.MustForArg(nameof(rawValue)).NotBeNull();
+                var longValue = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
+                result = new SqlOutputParameterRepresentationWithResult<long>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, longValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<string>)
             {

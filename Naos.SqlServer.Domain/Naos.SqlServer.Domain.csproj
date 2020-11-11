@@ -124,6 +124,10 @@
     <Compile Include="Model\DataTypeRepresentation\DecimalSqlDataTypeRepresentation.designer.cs">
       <DependentUpon>DecimalSqlDataTypeRepresentation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\DataTypeRepresentation\BigIntSqlDataTypeRepresentation.cs" />
+    <Compile Include="Model\DataTypeRepresentation\BigIntSqlDataTypeRepresentation.designer.cs">
+      <DependentUpon>BigIntSqlDataTypeRepresentation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\DataTypeRepresentation\IntSqlDataTypeRepresentation.cs" />
     <Compile Include="Model\DataTypeRepresentation\IntSqlDataTypeRepresentation.designer.cs">
       <DependentUpon>IntSqlDataTypeRepresentation.cs</DependentUpon>

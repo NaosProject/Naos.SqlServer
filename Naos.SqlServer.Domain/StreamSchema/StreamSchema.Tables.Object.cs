@@ -28,7 +28,7 @@ namespace Naos.SqlServer.Domain
                 /// Gets the identifier column.
                 /// </summary>
                 /// <value>The identifier column.</value>
-                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new IntSqlDataTypeRepresentation());
+                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the object type without version identifier.

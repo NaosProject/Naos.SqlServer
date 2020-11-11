@@ -110,7 +110,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.SerializedObjectString), Tables.Object.SerializedObjectString.DataType, serializedObjectString),
                                          new SqlInputParameterRepresentation<byte[]>(nameof(InputParamName.SerializedObjectBinary), Tables.Object.SerializedObjectBinary.DataType, serializedObjectBinary),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Tags), new StringSqlDataTypeRepresentation(true, -1), tagsXml),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.Object.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Object.Id.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);

@@ -28,13 +28,13 @@ namespace Naos.SqlServer.Domain
                 /// Gets the identifier.
                 /// </summary>
                 /// <value>The identifier.</value>
-                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new IntSqlDataTypeRepresentation());
+                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the object identifier.
                 /// </summary>
                 /// <value>The object identifier.</value>
-                public static ColumnRepresentation ObjectId => new ColumnRepresentation(nameof(ObjectId), new IntSqlDataTypeRepresentation());
+                public static ColumnRepresentation ObjectId => new ColumnRepresentation(nameof(ObjectId), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the object type without version identifier.
