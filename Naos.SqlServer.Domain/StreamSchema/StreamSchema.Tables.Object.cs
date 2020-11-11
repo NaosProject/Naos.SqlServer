@@ -119,15 +119,20 @@ CREATE TABLE [{streamName}].[{nameof(Object)}](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
-ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_TypeWithoutVersion] FOREIGN KEY([{nameof(ObjectTypeWithoutVersionId)}])
-REFERENCES [{streamName}].[TypeWithoutVersion] ([Id])
+ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithoutVersionId)}])
+REFERENCES [{streamName}].[{nameof(TypeWithoutVersion)}] ([Id])
 
-ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}_TypeWithoutVersion]
+ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithoutVersion)}]
 
-ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_TypeWithVersion] FOREIGN KEY([{nameof(ObjectTypeWithVersionId)}])
-REFERENCES [{streamName}].[TypeWithVersion] ([Id])
+ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithVersionId)}])
+REFERENCES [{streamName}].[{nameof(TypeWithVersion)}] ([Id])
 
-ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}_TypeWithVersion]
+ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithVersion)}]
+
+ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_{nameof(SerializerRepresentation)}] FOREIGN KEY([{nameof(SerializerRepresentationId)}])
+REFERENCES [{streamName}].[{nameof(SerializerRepresentation)}] ([Id])
+
+ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}_{nameof(SerializerRepresentation)}]
 
 SET ANSI_PADDING ON
 
