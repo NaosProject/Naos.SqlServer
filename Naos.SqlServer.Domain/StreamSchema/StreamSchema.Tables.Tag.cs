@@ -112,6 +112,12 @@ REFERENCES [{streamName}].[{nameof(Object)}] ([{nameof(Object.Id)}])
 
 ALTER TABLE [{streamName}].[Tag] CHECK CONSTRAINT [FK_{nameof(Tag)}_{nameof(Object)}]
 
+ALTER TABLE [{streamName}].[{nameof(Tag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Tag)}_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithoutVersionId)}])
+REFERENCES [{streamName}].[{nameof(TypeWithoutVersion)}] ([{nameof(TypeWithoutVersion.Id)}])
+
+
+ALTER TABLE [{streamName}].[Tag] CHECK CONSTRAINT [FK_{nameof(Tag)}_{nameof(TypeWithoutVersion)}]
+
 SET ANSI_PADDING ON
 
 CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(Id)}_Asc] ON [{streamName}].[{nameof(Tag)}]
