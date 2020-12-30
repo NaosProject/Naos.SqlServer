@@ -27,7 +27,7 @@ namespace Naos.SqlServer.Domain
             SqlDataTypeRepresentationBase dataType)
             : base(name, dataType)
         {
-            dataType.MustForTest(nameof(dataType)).NotBeNull();
+            dataType.MustForArg(nameof(dataType)).NotBeNull();
 
             var valueType = typeof(TValue);
             dataType.ValidateObjectTypeIsCompatible(valueType);

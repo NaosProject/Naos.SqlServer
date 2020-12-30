@@ -18,16 +18,12 @@ namespace Naos.SqlServer.Domain
         /// Initializes a new instance of the <see cref="SqlParameterRepresentationBase"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
-        /// <param name="dataType">The type.</param>
         protected SqlParameterRepresentationBase(
-            string name,
-            SqlDataTypeRepresentationBase dataType)
+            string name)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace().And().BeAlphanumeric();
-            dataType.MustForArg(nameof(dataType)).NotBeNull();
 
             this.Name = name;
-            this.DataType = dataType;
         }
 
         /// <summary>
@@ -35,11 +31,5 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <value>The name.</value>
         public string Name { get; private set; }
-
-        /// <summary>
-        /// Gets the type.
-        /// </summary>
-        /// <value>The type.</value>
-        public SqlDataTypeRepresentationBase DataType { get; private set; }
     }
 }

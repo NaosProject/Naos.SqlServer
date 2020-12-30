@@ -1,25 +1,27 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlOutputParameterRepresentationBase.cs" company="Naos Project">
+// <copyright file="SqlInputParameterRepresentationBase.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Naos.SqlServer.Domain
 {
+    using System;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+    using OBeautifulCode.Type.Recipes;
 
     /// <summary>
-    /// Top level base of a SQL Parameter.
+    /// Base class to SQL input parameters of any type.
     /// </summary>
-    public abstract partial class SqlOutputParameterRepresentationBase : SqlParameterRepresentationBase, IModelViaCodeGen
+    public abstract partial class SqlInputParameterRepresentationBase : SqlParameterRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlOutputParameterRepresentationBase"/> class.
+        /// Initializes a new instance of the <see cref="SqlInputParameterRepresentationBase"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="dataType">The type.</param>
-        protected SqlOutputParameterRepresentationBase(
+        protected SqlInputParameterRepresentationBase(
             string name,
             SqlDataTypeRepresentationBase dataType)
             : base(name)

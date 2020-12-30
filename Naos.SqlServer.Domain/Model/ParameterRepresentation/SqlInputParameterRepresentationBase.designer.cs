@@ -22,15 +22,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlParameterRepresentationBase : IModel<SqlParameterRepresentationBase>
+    public partial class SqlInputParameterRepresentationBase : IModel<SqlInputParameterRepresentationBase>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlParameterRepresentationBase"/> are equal.
+        /// Determines whether two objects of type <see cref="SqlInputParameterRepresentationBase"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlParameterRepresentationBase left, SqlParameterRepresentationBase right)
+        public static bool operator ==(SqlInputParameterRepresentationBase left, SqlInputParameterRepresentationBase right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -48,15 +48,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlParameterRepresentationBase"/> are not equal.
+        /// Determines whether two objects of type <see cref="SqlInputParameterRepresentationBase"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlParameterRepresentationBase left, SqlParameterRepresentationBase right) => !(left == right);
+        public static bool operator !=(SqlInputParameterRepresentationBase left, SqlInputParameterRepresentationBase right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlParameterRepresentationBase other) => this == other;
+        public bool Equals(SqlInputParameterRepresentationBase other) => this == other;
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
@@ -73,16 +73,13 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <inheritdoc />
-        public object Clone() => this.DeepClone();
-
-        /// <inheritdoc />
-        public SqlParameterRepresentationBase DeepClone() => this.DeepCloneInternal();
+        public new SqlInputParameterRepresentationBase DeepClone() => (SqlInputParameterRepresentationBase)this.DeepCloneInternal();
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="Name" />.
+        /// Deep clones this object with a new <see cref="DataType" />.
         /// </summary>
-        /// <param name="name">The new <see cref="Name" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlParameterRepresentationBase" /> using the specified <paramref name="name" /> for <see cref="Name" /> and a deep clone of every other property.</returns>
+        /// <param name="dataType">The new <see cref="DataType" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="SqlInputParameterRepresentationBase" /> using the specified <paramref name="dataType" /> for <see cref="DataType" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -98,18 +95,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public virtual SqlParameterRepresentationBase DeepCloneWithName(string name)
-        {
-            throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
-        }
-
-        /// <summary>
-        /// Creates a new object that is a deep clone of this instance.
-        /// </summary>
-        /// <returns>
-        /// A new object that is a deep clone of this instance.
-        /// </returns>
-        protected virtual SqlParameterRepresentationBase DeepCloneInternal()
+        public virtual SqlInputParameterRepresentationBase DeepCloneWithDataType(SqlDataTypeRepresentationBase dataType)
         {
             throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
         }

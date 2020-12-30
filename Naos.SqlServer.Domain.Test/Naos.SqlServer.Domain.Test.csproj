@@ -265,6 +265,10 @@
     <Compile Include="BackupSqlServerDatabaseDetailsTest.designer.cs">
       <DependentUpon>BackupSqlServerDatabaseDetailsTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="BigIntSqlDataTypeRepresentationTest.cs" />
+    <Compile Include="BigIntSqlDataTypeRepresentationTest.designer.cs">
+      <DependentUpon>BigIntSqlDataTypeRepresentationTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="BinarySqlDataTypeRepresentationTest.cs" />
     <Compile Include="BinarySqlDataTypeRepresentationTest.designer.cs">
       <DependentUpon>BinarySqlDataTypeRepresentationTest.cs</DependentUpon>
@@ -316,6 +320,10 @@
       <DependentUpon>SqlDataTypeRepresentationBaseTest.cs</DependentUpon>
     </Compile>
     <Compile Include="SqlInjectorCheckerTest.cs" />
+    <Compile Include="SqlInputParameterRepresentationBaseTest.cs" />
+    <Compile Include="SqlInputParameterRepresentationBaseTest.designer.cs">
+      <DependentUpon>SqlInputParameterRepresentationBaseTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlInputParameterRepresentation{TValue}Test.cs" />
     <Compile Include="SqlInputParameterRepresentation{TValue}Test.designer.cs">
       <DependentUpon>SqlInputParameterRepresentation{TValue}Test.cs</DependentUpon>

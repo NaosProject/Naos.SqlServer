@@ -145,28 +145,32 @@
       <DependentUpon>UtcDateTimeSqlDataTypeRepresentation.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\DescribedSerializer.cs" />
-    <Compile Include="Model\ResourceLocation\ISqlServerLocator.cs" />
-    <Compile Include="Model\ParameterRepresentation\ISqlOutputParameterRepresentationWithResult.cs" />
-    <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentation{TValue}.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentationBase.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentationBase.designer.cs">
+      <DependentUpon>SqlInputParameterRepresentationBase.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentation{TValue}.designer.cs">
       <DependentUpon>SqlInputParameterRepresentation{TValue}.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationBase.cs" />
     <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationBase.designer.cs">
       <DependentUpon>SqlOutputParameterRepresentationBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationWithResult{TValue}.cs" />
     <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationWithResult{TValue}.designer.cs">
       <DependentUpon>SqlOutputParameterRepresentationWithResult{TValue}.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentation{TValue}.cs" />
     <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentation{TValue}.designer.cs">
       <DependentUpon>SqlOutputParameterRepresentation{TValue}.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\ParameterRepresentation\SqlParameterRepresentationBase.cs" />
     <Compile Include="Model\ParameterRepresentation\SqlParameterRepresentationBase.designer.cs">
       <DependentUpon>SqlParameterRepresentationBase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\ResourceLocation\ISqlServerLocator.cs" />
+    <Compile Include="Model\ParameterRepresentation\ISqlOutputParameterRepresentationWithResult.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentation{TValue}.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationBase.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentationWithResult{TValue}.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlOutputParameterRepresentation{TValue}.cs" />
+    <Compile Include="Model\ParameterRepresentation\SqlParameterRepresentationBase.cs" />
     <Compile Include="Model\SchemaRepresentation\ColumnDescription.designer.cs">
       <DependentUpon>ColumnDescription.cs</DependentUpon>
     </Compile>
@@ -245,7 +249,10 @@
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Model\ParameterRepresentation\Input\" />
+    <Folder Include="Model\ParameterRepresentation\Output\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Naos.Build.Analyzers.1.55.46\build\Naos.Build.Analyzers.targets" Condition="Exists('..\packages\Naos.Build.Analyzers.1.55.46\build\Naos.Build.Analyzers.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

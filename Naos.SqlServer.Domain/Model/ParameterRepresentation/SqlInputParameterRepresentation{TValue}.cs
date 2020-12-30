@@ -15,7 +15,7 @@ namespace Naos.SqlServer.Domain
     /// Top level .
     /// </summary>
     /// <typeparam name="TValue">Type of the input value.</typeparam>
-    public partial class SqlInputParameterRepresentation<TValue> : SqlParameterRepresentationBase, IModelViaCodeGen
+    public partial class SqlInputParameterRepresentation<TValue> : SqlInputParameterRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlInputParameterRepresentation{TValue}"/> class.
@@ -29,7 +29,7 @@ namespace Naos.SqlServer.Domain
             TValue value)
             : base(name, dataType)
         {
-            dataType.MustForTest(nameof(dataType)).NotBeNull();
+            dataType.MustForArg(nameof(dataType)).NotBeNull();
 
             var valueType = typeof(TValue);
             dataType.ValidateObjectTypeIsCompatible(valueType);
