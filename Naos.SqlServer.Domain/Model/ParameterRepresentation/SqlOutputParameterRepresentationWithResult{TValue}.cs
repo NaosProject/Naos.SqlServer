@@ -20,7 +20,7 @@ namespace Naos.SqlServer.Domain
         /// Initializes a new instance of the <see cref="SqlOutputParameterRepresentationWithResult{TValue}"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
-        /// <param name="dataType">The type.</param>
+        /// <param name="dataType">The data type.</param>
         /// <param name="value">The value.</param>
         public SqlOutputParameterRepresentationWithResult(
             string name,

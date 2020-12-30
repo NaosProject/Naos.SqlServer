@@ -130,7 +130,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override SqlInputParameterRepresentationBase DeepCloneWithDataType(SqlDataTypeRepresentationBase dataType)
+        public override SqlParameterRepresentationBase DeepCloneWithDataType(SqlDataTypeRepresentationBase dataType)
         {
             var result = new SqlInputParameterRepresentation<TValue>(
                                  this.Name?.DeepClone(),

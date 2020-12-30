@@ -54,7 +54,7 @@ namespace Naos.SqlServer.Domain.Test
                         // corresponds with the property who's value is provided in the DeepCloneWith___() method.
                         // We do not know in advance if this will happen.  As such, the following objects are commented out.
                         // (SqlOutputParameterRepresentationBase)ReferenceObjectForEquatableTestScenarios.DeepCloneWithName(A.Dummy<SqlOutputParameterRepresentationBase>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name),
-                        // ReferenceObjectForEquatableTestScenarios.DeepCloneWithDataType(A.Dummy<SqlOutputParameterRepresentationBase>().Whose(_ => !_.DataType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DataType)).DataType),
+                        // (SqlOutputParameterRepresentationBase)ReferenceObjectForEquatableTestScenarios.DeepCloneWithDataType(A.Dummy<SqlOutputParameterRepresentationBase>().Whose(_ => !_.DataType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DataType)).DataType),
                     },
                     ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject = new SqlOutputParameterRepresentationBase[]
                     {

@@ -75,31 +75,6 @@ namespace Naos.SqlServer.Domain
         /// <inheritdoc />
         public new SqlInputParameterRepresentationBase DeepClone() => (SqlInputParameterRepresentationBase)this.DeepCloneInternal();
 
-        /// <summary>
-        /// Deep clones this object with a new <see cref="DataType" />.
-        /// </summary>
-        /// <param name="dataType">The new <see cref="DataType" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlInputParameterRepresentationBase" /> using the specified <paramref name="dataType" /> for <see cref="DataType" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public virtual SqlInputParameterRepresentationBase DeepCloneWithDataType(SqlDataTypeRepresentationBase dataType)
-        {
-            throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
-        }
-
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public override string ToString()

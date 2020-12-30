@@ -54,6 +54,7 @@ namespace Naos.SqlServer.Domain.Test
                         // corresponds with the property who's value is provided in the DeepCloneWith___() method.
                         // We do not know in advance if this will happen.  As such, the following objects are commented out.
                         // ReferenceObjectForEquatableTestScenarios.DeepCloneWithName(A.Dummy<SqlParameterRepresentationBase>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name),
+                        // ReferenceObjectForEquatableTestScenarios.DeepCloneWithDataType(A.Dummy<SqlParameterRepresentationBase>().Whose(_ => !_.DataType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DataType)).DataType),
                     },
                     ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject = new SqlParameterRepresentationBase[]
                     {
@@ -189,6 +190,15 @@ namespace Naos.SqlServer.Domain.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
+
+                if (systemUnderTest.DataType == null)
+                {
+                    actual.DataType.AsTest().Must().BeNull();
+                }
+                else
+                {
+                    actual.DataType.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.DataType);
+                }
             }
         }
 

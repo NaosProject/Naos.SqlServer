@@ -160,6 +160,25 @@ namespace Naos.SqlServer.Domain.Test
                 });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var availableTypes = new[]
+                    {
+                        typeof(SqlInputParameterRepresentation<Version>),
+                        typeof(SqlOutputParameterRepresentationWithResult<Version>),
+                        typeof(SqlOutputParameterRepresentation<Version>)
+                    };
+
+                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
+
+                    var randomType = availableTypes[randomIndex];
+
+                    var result = (SqlParameterRepresentationBase)AD.ummy(randomType);
+
+                    return result;
+                });
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlInputParameterRepresentation<Version>(
                                  A.Dummy<string>(),
                                  A.Dummy<SqlDataTypeRepresentationBase>(),
@@ -193,25 +212,6 @@ namespace Naos.SqlServer.Domain.Test
                 () => new SqlOutputParameterRepresentation<Version>(
                                  A.Dummy<string>(),
                                  A.Dummy<SqlDataTypeRepresentationBase>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () =>
-                {
-                    var availableTypes = new[]
-                    {
-                        typeof(SqlInputParameterRepresentation<Version>),
-                        typeof(SqlOutputParameterRepresentationWithResult<Version>),
-                        typeof(SqlOutputParameterRepresentation<Version>)
-                    };
-
-                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
-
-                    var randomType = availableTypes[randomIndex];
-
-                    var result = (SqlParameterRepresentationBase)AD.ummy(randomType);
-
-                    return result;
-                });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new ColumnDescription(

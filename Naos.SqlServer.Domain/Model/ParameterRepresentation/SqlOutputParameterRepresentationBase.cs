@@ -22,17 +22,8 @@ namespace Naos.SqlServer.Domain
         protected SqlOutputParameterRepresentationBase(
             string name,
             SqlDataTypeRepresentationBase dataType)
-            : base(name)
+            : base(name, dataType)
         {
-            dataType.MustForArg().NotBeNull();
-
-            this.DataType = dataType;
         }
-
-        /// <summary>
-        /// Gets the type of the data.
-        /// </summary>
-        /// <value>The type of the data.</value>
-        public SqlDataTypeRepresentationBase DataType { get; private set; }
     }
 }
