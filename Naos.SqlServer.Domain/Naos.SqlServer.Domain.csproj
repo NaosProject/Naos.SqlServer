@@ -199,6 +199,7 @@
     <Compile Include="Operations\ExecuteStoredProcedureOp.designer.cs">
       <DependentUpon>ExecuteStoredProcedureOp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Operations\CreateStreamUserOp.cs" />
     <Compile Include="Operations\GetIdAddIfNecessarySerializerRepresentationOp.cs" />
     <Compile Include="Operations\GetIdAddIfNecessarySerializerRepresentationOp.designer.cs">
       <DependentUpon>GetIdAddIfNecessarySerializerRepresentationOp.cs</DependentUpon>
@@ -239,6 +240,7 @@
     <Compile Include="Model\SchemaRepresentation\TableDescription.cs" />
     <Compile Include="SqlInjectorChecker.cs" />
     <AdditionalFiles Include=".analyzers\stylecop.json" />
+    <Compile Include="StreamSchema\TagConversionTool.cs" />
     <None Include=".analyzers\release.ruleset" />
     <None Include="Naos.SqlServer.Domain.override-nuspec" />
     <None Include="packages.config" />
