@@ -26,6 +26,12 @@ namespace Naos.SqlServer.Domain
             public static class GetIdAddIfNecessaryTypeWithVersion
             {
                 /// <summary>
+                /// Gets the name of the stored procedure.
+                /// </summary>
+                /// <value>The name of the stored procedure.</value>
+                public static string Name => nameof(GetIdAddIfNecessaryTypeWithVersion);
+
+                /// <summary>
                 /// Input parameter names.
                 /// </summary>
                 public enum InputParamName

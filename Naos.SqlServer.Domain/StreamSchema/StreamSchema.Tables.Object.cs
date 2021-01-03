@@ -31,6 +31,18 @@ namespace Naos.SqlServer.Domain
                 public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
+                /// Gets the identifier type without version identifier.
+                /// </summary>
+                /// <value>The identifier type without version identifier.</value>
+                public static ColumnRepresentation IdentifierTypeWithoutVersionId => new ColumnRepresentation(nameof(IdentifierTypeWithoutVersionId), new IntSqlDataTypeRepresentation());
+
+                /// <summary>
+                /// Gets the identifier type without version identifier.
+                /// </summary>
+                /// <value>The identifier type without version identifier.</value>
+                public static ColumnRepresentation IdentifierTypeWithVersionId => new ColumnRepresentation(nameof(IdentifierTypeWithVersionId), new IntSqlDataTypeRepresentation());
+
+                /// <summary>
                 /// Gets the object type without version identifier.
                 /// </summary>
                 /// <value>The object type without version identifier.</value>
@@ -49,28 +61,28 @@ namespace Naos.SqlServer.Domain
                 public static ColumnRepresentation SerializerRepresentationId => new ColumnRepresentation(nameof(SerializerRepresentationId), new IntSqlDataTypeRepresentation());
 
                 /// <summary>
-                /// Gets the serialized object identifier.
+                /// Gets the string serialized object identifier.
                 /// </summary>
-                /// <value>The serialized object identifier.</value>
-                public static ColumnRepresentation SerializedObjectId => new ColumnRepresentation(nameof(SerializedObjectId), new StringSqlDataTypeRepresentation(true, 450));
+                /// <value>The string serialized object identifier.</value>
+                public static ColumnRepresentation StringSerializedId => new ColumnRepresentation(nameof(StringSerializedId), new StringSqlDataTypeRepresentation(true, 450));
 
                 /// <summary>
-                /// Gets the serialized object string.
+                /// Gets the string serialized object string.
                 /// </summary>
-                /// <value>The serialized object string.</value>
-                public static ColumnRepresentation SerializedObjectString => new ColumnRepresentation(nameof(SerializedObjectString), new StringSqlDataTypeRepresentation(true, -1));
-
-                /// <summary>
-                /// Gets the serialized object bytes.
-                /// </summary>
-                /// <value>The serialized object bytes.</value>
-                public static ColumnRepresentation SerializedObjectBinary => new ColumnRepresentation(nameof(SerializedObjectBinary), new BinarySqlDataTypeRepresentation(-1));
+                /// <value>The string serialized object string.</value>
+                public static ColumnRepresentation StringSerializedObject => new ColumnRepresentation(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, -1));
 
                 /// <summary>
                 /// Gets the record created UTC.
                 /// </summary>
                 /// <value>The record created UTC.</value>
                 public static ColumnRepresentation RecordCreatedUtc => new ColumnRepresentation(nameof(RecordCreatedUtc), new UtcDateTimeSqlDataTypeRepresentation());
+
+                /// <summary>
+                /// Gets the date time from object.
+                /// </summary>
+                /// <value>The object date time UTC.</value>
+                public static ColumnRepresentation ObjectDateTimeUtc => new ColumnRepresentation(nameof(ObjectDateTimeUtc), new UtcDateTimeSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the table.
@@ -81,13 +93,15 @@ namespace Naos.SqlServer.Domain
                     new[]
                     {
                         Id,
+                        IdentifierTypeWithoutVersionId,
+                        IdentifierTypeWithVersionId,
                         ObjectTypeWithoutVersionId,
                         ObjectTypeWithVersionId,
                         SerializerRepresentationId,
-                        SerializedObjectId,
-                        SerializedObjectString,
-                        SerializedObjectBinary,
+                        StringSerializedId,
+                        StringSerializedObject,
                         RecordCreatedUtc,
+                        ObjectDateTimeUtc,
                     }.ToDictionary(k => k.Name, v => v));
 
                 /// <summary>
@@ -106,18 +120,30 @@ SET QUOTED_IDENTIFIER ON
 
 CREATE TABLE [{streamName}].[{nameof(Object)}](
 	[{nameof(Id)}] {Id.DataType.DeclarationInSqlSyntax} IDENTITY(1,1) NOT NULL,
+	[{nameof(IdentifierTypeWithoutVersionId)}] {IdentifierTypeWithoutVersionId.DataType.DeclarationInSqlSyntax} NOT NULL,
+	[{nameof(IdentifierTypeWithVersionId)}] {IdentifierTypeWithVersionId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(ObjectTypeWithoutVersionId)}] {ObjectTypeWithoutVersionId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(ObjectTypeWithVersionId)}] {ObjectTypeWithVersionId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(SerializerRepresentationId)}] {SerializerRepresentationId.DataType.DeclarationInSqlSyntax} NOT NULL,
-	[{nameof(SerializedObjectId)}] {SerializedObjectId.DataType.DeclarationInSqlSyntax} NOT NULL,
-	[{nameof(SerializedObjectString)}] {SerializedObjectString.DataType.DeclarationInSqlSyntax} NULL,
-	[{nameof(SerializedObjectBinary)}] {SerializedObjectBinary.DataType.DeclarationInSqlSyntax} NULL,
+	[{nameof(StringSerializedId)}] {StringSerializedId.DataType.DeclarationInSqlSyntax} NOT NULL,
+	[{nameof(StringSerializedObject)}] {StringSerializedObject.DataType.DeclarationInSqlSyntax} NULL,
+	[{nameof(ObjectDateTimeUtc)}] {ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
  CONSTRAINT [PK_{nameof(Object)}] PRIMARY KEY CLUSTERED 
 (
 	[{nameof(Id)}] DESC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}Id_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(IdentifierTypeWithoutVersionId)}])
+REFERENCES [{streamName}].[{nameof(TypeWithoutVersion)}] ([Id])
+
+ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}Id_{nameof(TypeWithoutVersion)}]
+
+ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}Id_{nameof(TypeWithVersion)}] FOREIGN KEY([{nameof(IdentifierTypeWithVersionId)}])
+REFERENCES [{streamName}].[{nameof(TypeWithVersion)}] ([Id])
+
+ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}Id_{nameof(TypeWithVersion)}]
 
 ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithoutVersionId)}])
 REFERENCES [{streamName}].[{nameof(TypeWithoutVersion)}] ([Id])
@@ -141,14 +167,19 @@ CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(Id)}_Asc] ON [{streamName
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
+CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(IdentifierTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Object)}]
+(
+	[{nameof(IdentifierTypeWithoutVersionId)}] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(ObjectTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Object)}]
 (
 	[{nameof(ObjectTypeWithoutVersionId)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(SerializedObjectId)}_Asc] ON [{streamName}].[{nameof(Object)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(StringSerializedId)}_Asc] ON [{streamName}].[{nameof(Object)}]
 (
-	[{nameof(SerializedObjectId)}] ASC
+	[{nameof(StringSerializedId)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 			");
 

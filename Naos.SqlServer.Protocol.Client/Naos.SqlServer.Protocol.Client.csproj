@@ -148,13 +148,10 @@
     <Compile Include="Properties\ProjectInfo.cs" />
     <Compile Include="Protocols\SqlOperationsProtocol.cs" />
     <Compile Include="Protocols\SqlOperationsProtocol.ExecuteSproc.cs" />
-    <Compile Include="Protocols\SqlStreamObjectOperationsProtocol.cs" />
-    <Compile Include="Protocols\SqlStreamObjectOperationsProtocol.GetLatestByIdAndType.cs" />
-    <Compile Include="Protocols\SqlStreamObjectOperationsProtocol.Put.cs" />
-    <Compile Include="SqlParameterRepresentationExtensions.cs" />
-    <Compile Include="SqlServerDatabaseManager.cs" />
-    <Compile Include="SqlServerLocatorExtensions.cs" />
-    <Compile Include="Protocols\SqlStream{TId}.cs" />
+    <Compile Include="Stream\SqlStream.cs" />
+    <Compile Include="Utility\SqlParameterRepresentationExtensions.cs" />
+    <Compile Include="Legacy\SqlServerDatabaseManager.cs" />
+    <Compile Include="Utility\SqlServerLocatorExtensions.cs" />
     <AdditionalFiles Include=".analyzers\stylecop.json" />
     <None Include=".analyzers\release.ruleset" />
     <None Include="Naos.SqlServer.Protocol.Client.override-nuspec" />

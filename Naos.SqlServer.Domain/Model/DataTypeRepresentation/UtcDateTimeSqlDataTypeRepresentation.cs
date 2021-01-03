@@ -9,6 +9,8 @@ namespace Naos.SqlServer.Domain
     using System;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+    using OBeautifulCode.Type.Recipes;
+    using static System.FormattableString;
 
     /// <summary>
     /// Top level .
@@ -22,7 +24,11 @@ namespace Naos.SqlServer.Domain
         public override void ValidateObjectTypeIsCompatible(
             Type objectType)
         {
-            objectType.MustForArg(nameof(objectType)).NotBeNull().And().BeEqualTo(typeof(DateTime));
+            objectType.MustForArg(nameof(objectType)).NotBeNull();
+            if (objectType != typeof(DateTime) && objectType != typeof(DateTime?))
+            {
+                throw new NotSupportedException(Invariant($"Object type '{objectType.ToStringReadable()}' is not support by '{nameof(UtcDateTimeRangeInclusive)}'."));
+            }
         }
     }
 }

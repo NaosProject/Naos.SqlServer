@@ -33,7 +33,7 @@ namespace Naos.SqlServer.Domain
                 /// Gets the serialization kind.
                 /// </summary>
                 public static ColumnRepresentation SerializationKind => new ColumnRepresentation(
-                    nameof(Id),
+                    nameof(SerializationKind),
                     new StringSqlDataTypeRepresentation(false, 50));
 
                 /// <summary>

@@ -56,6 +56,10 @@ namespace Naos.SqlServer.Protocol.Client
             {
                 return dateTimeRepresentationInput.ToSqlParameter();
             }
+            else if (parameterRepresentation is SqlInputParameterRepresentation<DateTime?> dateTimeNullableRepresentationInput)
+            {
+                return dateTimeNullableRepresentationInput.ToSqlParameter();
+            }
             else if (parameterRepresentation is SqlOutputParameterRepresentation<byte[]> binaryRepresentationOutput)
             {
                 return binaryRepresentationOutput.ToSqlParameter();
@@ -79,6 +83,10 @@ namespace Naos.SqlServer.Protocol.Client
             else if (parameterRepresentation is SqlOutputParameterRepresentation<DateTime> dateTimeRepresentationOutput)
             {
                 return dateTimeRepresentationOutput.ToSqlParameter();
+            }
+            else if (parameterRepresentation is SqlOutputParameterRepresentation<DateTime?> dateTimeNullableRepresentationOutput)
+            {
+                return dateTimeNullableRepresentationOutput.ToSqlParameter();
             }
             else if (parameterRepresentation.GetType().GetGenericArguments().SingleOrDefault()?.IsEnum ?? false)
             {
@@ -201,6 +209,21 @@ namespace Naos.SqlServer.Protocol.Client
         /// <summary>
         /// Converts to a <see cref="SqlParameter"/>.
         /// </summary>
+        /// <param name="dateTimeInputParameter">The nullable <see cref="DateTime"/> input parameter.</param>
+        /// <returns>SqlParameter.</returns>
+        public static SqlParameter ToSqlParameter(
+            this SqlInputParameterRepresentation<DateTime?> dateTimeInputParameter)
+        {
+            dateTimeInputParameter.MustForArg(nameof(dateTimeInputParameter)).NotBeNull();
+            var name = dateTimeInputParameter.Name;
+            name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+            var result = dateTimeInputParameter.Value.CreateInputSqlParameter(name);
+            return result;
+        }
+
+        /// <summary>
+        /// Converts to a <see cref="SqlParameter"/>.
+        /// </summary>
         /// <param name="binaryOutputParameter">The decimal Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
@@ -292,6 +315,21 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         /// <summary>
+        /// Converts to a <see cref="SqlParameter"/>.
+        /// </summary>
+        /// <param name="dateTimeOutputParameter">The nullable <see cref="DateTime"/> Output parameter.</param>
+        /// <returns>SqlParameter.</returns>
+        public static SqlParameter ToSqlParameter(
+            this SqlOutputParameterRepresentation<DateTime?> dateTimeOutputParameter)
+        {
+            dateTimeOutputParameter.MustForArg(nameof(dateTimeOutputParameter)).NotBeNull();
+            var name = dateTimeOutputParameter.Name;
+            name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+            var result = SqlParameterExtensions.CreateOutputDateTimeSqlParameter(name);
+            return result;
+        }
+
+        /// <summary>
         /// Creates a <see cref="ISqlOutputParameterRepresentationWithResult"/> with the provided result.
         /// </summary>
         /// <param name="outputParameterRepresentation">The output parameter representation.</param>
@@ -339,6 +377,11 @@ namespace Naos.SqlServer.Protocol.Client
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var dateTimeValue = (DateTime)rawValue;
                 result = new SqlOutputParameterRepresentationWithResult<DateTime>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, dateTimeValue);
+            }
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<DateTime?>)
+            {
+                var dateTimeNullableValue = (DateTime?)rawValue;
+                result = new SqlOutputParameterRepresentationWithResult<DateTime?>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, dateTimeNullableValue);
             }
             else if (outputParameterRepresentation.GetType().GetGenericArguments().SingleOrDefault()?.IsEnum ?? false)
             {

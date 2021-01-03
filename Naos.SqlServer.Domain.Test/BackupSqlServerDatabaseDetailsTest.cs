@@ -494,7 +494,7 @@ namespace Naos.SqlServer.Domain.Test
         }
 
         [Fact]
-        public static void Constructor___Should_succeed___If_name_has_whitespace()
+        public static void Constructor___Should_succeed___If_name_has_whiteSpace()
         {
             var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 
@@ -557,7 +557,7 @@ namespace Naos.SqlServer.Domain.Test
         }
 
         [Fact]
-        public static void Constructor___Should_succeed___If_description_has_whitespace()
+        public static void Constructor___Should_succeed___If_description_has_whiteSpace()
         {
             var referenceObject = A.Dummy<BackupSqlServerDatabaseDetails>();
 

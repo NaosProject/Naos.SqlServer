@@ -9,6 +9,7 @@ namespace Naos.SqlServer.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.Protocol.Domain;
     using Naos.SqlServer.Domain;
@@ -26,6 +27,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// The <see cref="TypeRepresentation"/>'s of the supported protocols sets that stream users can be created with.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<TypeRepresentation> SupportedProtocolTypeRepresentations = new[]
                                                                                               {
                                                                                                   typeof(IStreamReadProtocols).ToRepresentation(),

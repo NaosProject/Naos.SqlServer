@@ -46,7 +46,7 @@ namespace Naos.SqlServer.Domain
                 /// Gets the tag string identifier.
                 /// </summary>
                 /// <value>The tag string identifier.</value>
-                public static ColumnRepresentation TagStringId => new ColumnRepresentation(nameof(TagStringId), new StringSqlDataTypeRepresentation(true, 450));
+                public static ColumnRepresentation TagKey => new ColumnRepresentation(nameof(TagKey), new StringSqlDataTypeRepresentation(true, 450));
 
                 /// <summary>
                 /// Gets the tag value.
@@ -71,7 +71,7 @@ namespace Naos.SqlServer.Domain
                         Id,
                         ObjectId,
                         ObjectTypeWithoutVersionId,
-                        TagStringId,
+                        TagKey,
                         TagValue,
                         RecordCreatedUtc,
                     }.ToDictionary(k => k.Name, v => v));
@@ -96,7 +96,7 @@ CREATE TABLE [{streamName}].[Tag](
 	[{nameof(Id)}] {Id.DataType.DeclarationInSqlSyntax} IDENTITY(1,1) NOT NULL,
 	[{nameof(ObjectId)}] {ObjectId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(ObjectTypeWithoutVersionId)}] {ObjectTypeWithoutVersionId.DataType.DeclarationInSqlSyntax} NOT NULL,
-	[{nameof(TagStringId)}] {TagStringId.DataType.DeclarationInSqlSyntax} NOT NULL,
+	[{nameof(TagKey)}] {TagKey.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(TagValue)}] {TagValue.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
  CONSTRAINT [PK_{nameof(Tag)}] PRIMARY KEY CLUSTERED 
@@ -135,9 +135,9 @@ CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(ObjectTypeWithoutVersionId)}
 	[{nameof(ObjectTypeWithoutVersionId)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(TagStringId)}_Asc] ON [{streamName}].[Tag]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(TagKey)}_Asc] ON [{streamName}].[Tag]
 (
-	[{nameof(TagStringId)}] ASC
+	[{nameof(TagKey)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 			");
 

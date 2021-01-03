@@ -40,7 +40,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var streamName = "StreamName32";
 
             var sqlServerLocator = new SqlServerLocator("localhost", "Streams", "sa", "password", "SQLDEV2017");
-            var resourceLocatorProtocol = new SingleResourceLocatorProtocol<string>(sqlServerLocator);
+            var resourceLocatorProtocol = new SingleResourceLocatorProtocol(sqlServerLocator);
 
             var configurationTypeRepresentation =
                 typeof(DependencyOnlyJsonSerializationConfiguration<
@@ -53,42 +53,41 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             var defaultSerializationFormat = SerializationFormat.String;
 
-            var tagExtractor = new LambdaReturningProtocol<GetTagsFromObjectOp<MyObject>, IReadOnlyDictionary<string, string>>(
-                _ => new Dictionary<string, string>
-                     {
-                         { nameof(MyObject.Field), _.ObjectToDetermineTagsFrom.Field },
-                     });
-
-            var stream = new SqlStream<string>(
+            var stream = new SqlStream(
                 streamName,
                 TimeSpan.FromMinutes(1),
                 TimeSpan.FromMinutes(3),
                 defaultSerializerRepresentation,
                 defaultSerializationFormat,
                 new JsonSerializerFactory(),
-                resourceLocatorProtocol,
-                new ProtocolFactory(new Dictionary<Type, Func<IProtocol>>()),
-                new ProtocolFactory(
-                    new Dictionary<Type, Func<IProtocol>>
-                    {
-                        { typeof(ISyncAndAsyncReturningProtocol<GetTagsFromObjectOp<MyObject>, IReadOnlyDictionary<string, string>>), () => tagExtractor },
-                    }));
+                resourceLocatorProtocol);
 
-            stream.Execute(new CreateStreamOp<string>(stream.StreamRepresentation, ExistingStreamEncounteredStrategy.Skip));
+            stream.Execute(new CreateStreamOp(stream.StreamRepresentation, ExistingStreamEncounteredStrategy.Skip));
             var key = stream.Name;
             var firstValue = "Testing again.";
             var secondValue = "Testing again latest.";
-            stream.BuildPutProtocol<MyObject>().Execute(new PutOp<MyObject>(new MyObject(key, firstValue)));
+            var firstTags = new Dictionary<string, string>
+                            {
+                                { nameof(MyObject.Field), firstValue },
+                            };
+
+            stream.PutWithId(key, new MyObject(key, firstValue), firstTags);
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            stream.BuildPutProtocol<MyObject>().Execute(new PutOp<MyObject>(new MyObject(key, secondValue)));
+
+            var secondTags = new Dictionary<string, string>
+                            {
+                                { nameof(MyObject.Field), secondValue },
+                            };
+
+            stream.PutWithId(key, new MyObject(key, secondValue), secondTags);
+
             stopwatch.Stop();
             this.testOutputHelper.WriteLine(FormattableString.Invariant($"Put: {stopwatch.Elapsed.TotalMilliseconds} ms"));
             stopwatch.Reset();
             stopwatch.Start();
-            var my = stream.BuildGetLatestByIdAndTypeProtocol<MyObject>().Execute(new GetLatestByIdAndTypeOp<string, MyObject>(key));
+            var my = stream.GetLatestObjectById<string, MyObject>(key);
             this.testOutputHelper.WriteLine(FormattableString.Invariant($"Get: {stopwatch.Elapsed.TotalMilliseconds} ms"));
-            // this.testOutputHelper.WriteLine(FormattableString.Invariant($"Get: {SqlStream<string>.Stopwatch.Elapsed.TotalMilliseconds} ms"));
             this.testOutputHelper.WriteLine(FormattableString.Invariant($"Key={my.Id}, Field={my.Field}"));
             my.Id.MustForTest().BeEqualTo(key);
         }
