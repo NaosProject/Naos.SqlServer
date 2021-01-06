@@ -253,11 +253,16 @@ BEGIN
 	  , @{OutputParamName.CompressionKind} = [{Tables.SerializerRepresentation.CompressionKind.Name}]
 	FROM [{streamName}].[{Tables.SerializerRepresentation.Table.Name}] WHERE [{Tables.SerializerRepresentation.Id.Name}] = @{serializerRepresentationId}
 
-	SELECT @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} = [{nameof(Tables.TypeWithoutVersion.AssemblyQualifiedName)}] FROM [{streamName}].[{nameof(Tables.TypeWithoutVersion)}] WHERE [{Tables.TypeWithoutVersion.Id.Name}] = @{serializerConfigTypeId}
-	SELECT @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} = [{nameof(Tables.TypeWithoutVersion.AssemblyQualifiedName)}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WHERE [{Tables.TypeWithVersion.Id.Name}] = @{identifierTypeWithVersionId}
-	SELECT @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} = [{nameof(Tables.TypeWithoutVersion.AssemblyQualifiedName)}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WHERE [{Tables.TypeWithVersion.Id.Name}] = @{objectTypeWithVersionId}
+	SELECT @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithoutVersion)}] WHERE [{Tables.TypeWithoutVersion.Id.Name}] = @{serializerConfigTypeId}
+	SELECT @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WHERE [{Tables.TypeWithVersion.Id.Name}] = @{identifierTypeWithVersionId}
+	SELECT @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WHERE [{Tables.TypeWithVersion.Id.Name}] = @{objectTypeWithVersionId}
 
-    SELECT @{OutputParamName.TagsXml} = null
+    SELECT @{OutputParamName.TagsXml} = (SELECT
+		{Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
+		{Tables.Tag.TagValue.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
+	FROM [{streamName}].[{Tables.Tag.Table.Name}]
+	WHERE [{Tables.Tag.ObjectId.Name}] = 1
+	FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 END
 
 			");
