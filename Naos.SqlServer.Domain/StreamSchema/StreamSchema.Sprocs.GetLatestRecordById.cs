@@ -261,7 +261,7 @@ BEGIN
 		{Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
 		{Tables.Tag.TagValue.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
 	FROM [{streamName}].[{Tables.Tag.Table.Name}]
-	WHERE [{Tables.Tag.ObjectId.Name}] = 1
+	WHERE [{Tables.Tag.RecordId.Name}] = 1
 	FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 END
 

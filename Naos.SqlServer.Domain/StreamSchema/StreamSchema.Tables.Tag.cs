@@ -31,10 +31,10 @@ namespace Naos.SqlServer.Domain
                 public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
-                /// Gets the object identifier.
+                /// Gets the record identifier.
                 /// </summary>
-                /// <value>The object identifier.</value>
-                public static ColumnRepresentation ObjectId => new ColumnRepresentation(nameof(ObjectId), new BigIntSqlDataTypeRepresentation());
+                /// <value>The record identifier.</value>
+                public static ColumnRepresentation RecordId => new ColumnRepresentation(nameof(RecordId), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the object type without version identifier.
@@ -69,7 +69,7 @@ namespace Naos.SqlServer.Domain
                     new[]
                     {
                         Id,
-                        ObjectId,
+                        RecordId,
                         ObjectTypeWithoutVersionId,
                         TagKey,
                         TagValue,
@@ -94,7 +94,7 @@ SET QUOTED_IDENTIFIER ON
 
 CREATE TABLE [{streamName}].[Tag](
 	[{nameof(Id)}] {Id.DataType.DeclarationInSqlSyntax} IDENTITY(1,1) NOT NULL,
-	[{nameof(ObjectId)}] {ObjectId.DataType.DeclarationInSqlSyntax} NOT NULL,
+	[{nameof(RecordId)}] {RecordId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(ObjectTypeWithoutVersionId)}] {ObjectTypeWithoutVersionId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(TagKey)}] {TagKey.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(TagValue)}] {TagValue.DataType.DeclarationInSqlSyntax} NULL,
@@ -106,7 +106,7 @@ CREATE TABLE [{streamName}].[Tag](
 ) ON [PRIMARY]
 
 
-ALTER TABLE [{streamName}].[{nameof(Tag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Tag)}_{nameof(Object)}] FOREIGN KEY([{nameof(ObjectId)}])
+ALTER TABLE [{streamName}].[{nameof(Tag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Tag)}_{nameof(Object)}] FOREIGN KEY([{nameof(RecordId)}])
 REFERENCES [{streamName}].[{nameof(Object)}] ([{nameof(Object.Id)}])
 
 
@@ -125,9 +125,9 @@ CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(Id)}_Asc] ON [{streamName}].
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(ObjectId)}_Desc] ON [{streamName}].[Tag]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(RecordId)}_Desc] ON [{streamName}].[Tag]
 (
-	[{nameof(ObjectId)}] DESC
+	[{nameof(RecordId)}] DESC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(ObjectTypeWithoutVersionId)}_Asc] ON [{streamName}].[Tag]
