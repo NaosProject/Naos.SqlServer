@@ -181,6 +181,18 @@ CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(StringSerializedId)}_Asc]
 (
 	[{nameof(StringSerializedId)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(ObjectDateTimeUtc)}] ON [{streamName}].[{nameof(Object)}]
+(
+	[{nameof(ObjectDateTimeUtc)}] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(RecordCreatedUtc)}] ON [{streamName}].[{nameof(Object)}]
+(
+	[{nameof(RecordCreatedUtc)}] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+
 			");
 
                     return result;
