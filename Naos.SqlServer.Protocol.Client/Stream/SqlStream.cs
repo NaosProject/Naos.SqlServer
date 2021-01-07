@@ -325,7 +325,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.TypeWithoutVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.TypeWithVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.SerializerRepresentation.BuildCreationScript(this.Name),
-                                                      StreamSchema.Tables.Object.BuildCreationScript(this.Name),
+                                                      StreamSchema.Tables.Record.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.Tag.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name),

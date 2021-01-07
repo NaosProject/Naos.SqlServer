@@ -214,7 +214,7 @@
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordById.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.PutRecord.cs" />
-    <Compile Include="StreamSchema\StreamSchema.Tables.Object.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.Record.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.SerializerDescription.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Tag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithoutVersion.cs" />

@@ -11,7 +11,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
 
     /// <summary>
-    /// TODO: Starting point for new project.
+    /// Container for schema.
     /// </summary>
     public static partial class StreamSchema
     {

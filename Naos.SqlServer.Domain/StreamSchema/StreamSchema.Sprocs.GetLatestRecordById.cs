@@ -18,7 +18,7 @@ namespace Naos.SqlServer.Domain
     using OBeautifulCode.Type;
 
     /// <summary>
-    /// Stream schema.
+    /// Container for schema.
     /// </summary>
     public static partial class StreamSchema
     {
@@ -158,22 +158,22 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Object.StringSerializedId.DataType, stringSerializedId),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, stringSerializedId),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, identifierType.WithoutVersion.BuildAssemblyQualifiedName()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, identifierType.WithVersion.BuildAssemblyQualifiedName()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectType.WithoutVersion.BuildAssemblyQualifiedName()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectType.WithVersion.BuildAssemblyQualifiedName()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
-                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Object.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType),
                                          new SqlOutputParameterRepresentation<SerializationKind>(nameof(OutputParamName.SerializationKind), Tables.SerializerRepresentation.SerializationKind.DataType),
                                          new SqlOutputParameterRepresentation<SerializationFormat>(nameof(OutputParamName.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.DataType),
                                          new SqlOutputParameterRepresentation<CompressionKind>(nameof(OutputParamName.CompressionKind), Tables.SerializerRepresentation.CompressionKind.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.IdentifierAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedObject), Tables.Object.StringSerializedObject.DataType),
-                                         new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Object.RecordCreatedUtc.DataType),
-                                         new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Object.ObjectDateTimeUtc.DataType),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType),
+                                         new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
+                                         new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagsXml), new StringSqlDataTypeRepresentation(true, -1)),
                                      };
 
@@ -209,22 +209,22 @@ namespace Naos.SqlServer.Domain
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{GetLatestRecordById.Name}(
-  @{InputParamName.StringSerializedId} AS {Tables.Object.StringSerializedId.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS varchar(10)
-, @{OutputParamName.InternalRecordId} AS {Tables.Object.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializationKind} AS {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializationFormat} AS {Tables.SerializerRepresentation.SerializationFormat.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.CompressionKind} AS {Tables.SerializerRepresentation.CompressionKind.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.StringSerializedObject} AS {Tables.Object.StringSerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ObjectDateTime} AS {Tables.Object.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.RecordDateTime} AS {Tables.Object.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.TagsXml} AS [NVARCHAR](MAX) OUTPUT
 )
 AS
@@ -234,16 +234,16 @@ BEGIN
 	DECLARE @{identifierTypeWithVersionId} int
 	DECLARE @{objectTypeWithVersionId} int
     SELECT TOP 1
-	   @{serializerRepresentationId} = [{Tables.Object.SerializerRepresentationId.Name}]
-	 , @{identifierTypeWithVersionId} = [{Tables.Object.IdentifierTypeWithVersionId.Name}]
-	 , @{objectTypeWithVersionId} = [{Tables.Object.ObjectTypeWithVersionId.Name}]
-	 , @{OutputParamName.StringSerializedObject} = [{Tables.Object.StringSerializedObject.Name}]
-	 , @{OutputParamName.InternalRecordId} = [{Tables.Object.Id.Name}]
-	 , @{OutputParamName.RecordDateTime} = [{Tables.Object.RecordCreatedUtc.Name}]
-	 , @{OutputParamName.ObjectDateTime} = [{Tables.Object.ObjectDateTimeUtc.Name}]
-	FROM [{streamName}].[{Tables.Object.Table.Name}]
-	WHERE [{Tables.Object.StringSerializedId.Name}] = @{InputParamName.StringSerializedId}
-	ORDER BY [{Tables.Object.Id.Name}] DESC
+	   @{serializerRepresentationId} = [{Tables.Record.SerializerRepresentationId.Name}]
+	 , @{identifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
+	 , @{objectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
+	 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
+	 , @{OutputParamName.InternalRecordId} = [{Tables.Record.Id.Name}]
+	 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]
+	 , @{OutputParamName.ObjectDateTime} = [{Tables.Record.ObjectDateTimeUtc.Name}]
+	FROM [{streamName}].[{Tables.Record.Table.Name}]
+	WHERE [{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId}
+	ORDER BY [{Tables.Record.Id.Name}] DESC
 --check for record count and update contract to have an understanding of nothing found
 	DECLARE @{serializerConfigTypeId} int
 	SELECT 

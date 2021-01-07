@@ -10,7 +10,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
 
     /// <summary>
-    /// TODO: Starting point for new project.
+    /// Container for schema.
     /// </summary>
     public static partial class StreamSchema
     {
@@ -106,11 +106,11 @@ CREATE TABLE [{streamName}].[Tag](
 ) ON [PRIMARY]
 
 
-ALTER TABLE [{streamName}].[{nameof(Tag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Tag)}_{nameof(Object)}] FOREIGN KEY([{nameof(RecordId)}])
-REFERENCES [{streamName}].[{nameof(Object)}] ([{nameof(Object.Id)}])
+ALTER TABLE [{streamName}].[{nameof(Tag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Tag)}_{nameof(Record)}] FOREIGN KEY([{nameof(RecordId)}])
+REFERENCES [{streamName}].[{nameof(Record)}] ([{nameof(Record.Id)}])
 
 
-ALTER TABLE [{streamName}].[Tag] CHECK CONSTRAINT [FK_{nameof(Tag)}_{nameof(Object)}]
+ALTER TABLE [{streamName}].[Tag] CHECK CONSTRAINT [FK_{nameof(Tag)}_{nameof(Record)}]
 
 ALTER TABLE [{streamName}].[{nameof(Tag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Tag)}_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithoutVersionId)}])
 REFERENCES [{streamName}].[{nameof(TypeWithoutVersion)}] ([{nameof(TypeWithoutVersion.Id)}])

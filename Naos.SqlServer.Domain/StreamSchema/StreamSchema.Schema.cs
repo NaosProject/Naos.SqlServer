@@ -9,7 +9,7 @@ namespace Naos.SqlServer.Domain
     using System;
 
     /// <summary>
-    /// Object table schema.
+    /// Container for schema.
     /// </summary>
     public partial class StreamSchema
     {

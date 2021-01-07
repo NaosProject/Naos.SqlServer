@@ -11,7 +11,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
 
     /// <summary>
-    /// Object table schema.
+    /// Container for schema.
     /// </summary>
     public static partial class StreamSchema
     {
@@ -71,7 +71,7 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.AssemblyQualifiedNameWithVersion),
                                              Tables.TypeWithVersion.AssemblyQualifiedName.DataType,
                                              assemblyQualifiedNameWithVersion),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.Object.Id.DataType),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);

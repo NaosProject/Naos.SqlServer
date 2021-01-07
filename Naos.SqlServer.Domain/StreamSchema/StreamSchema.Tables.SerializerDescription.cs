@@ -10,7 +10,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
 
     /// <summary>
-    /// SerializerRepresentation table schema.
+    /// Container for schema.
     /// </summary>
     public static partial class StreamSchema
     {

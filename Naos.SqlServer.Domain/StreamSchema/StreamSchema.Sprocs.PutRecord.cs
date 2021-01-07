@@ -11,7 +11,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
 
     /// <summary>
-    /// Stream schema.
+    /// Container for schema.
     /// </summary>
     public static partial class StreamSchema
     {
@@ -128,11 +128,11 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithoutVersion),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithVersion),
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType, serializerDescriptionId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Object.StringSerializedId.DataType, serializedObjectId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedObject), Tables.Object.StringSerializedObject.DataType, serializedObjectString),
-                                         new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Object.ObjectDateTimeUtc.DataType, objectDateTimeUtc),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, serializedObjectId),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType, serializedObjectString),
+                                         new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.DataType, objectDateTimeUtc),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagsXml), new StringSqlDataTypeRepresentation(true, -1), tagsXml),
-                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Object.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -161,12 +161,12 @@ CREATE PROCEDURE [{streamName}].{nameof(PutRecord)}(
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.SerializerRepresentationId} AS {Tables.Object.SerializerRepresentationId.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.StringSerializedId} AS {Tables.Object.StringSerializedId.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.StringSerializedObject} AS {Tables.Object.StringSerializedObject.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectDateTimeUtc} AS {Tables.Object.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.SerializerRepresentationId} AS {Tables.Record.SerializerRepresentationId.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TagsXml} AS xml
-, @{OutputParamName.Id} AS {Tables.Object.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.Id} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -183,18 +183,18 @@ BEGIN TRANSACTION [{nameof(PutRecord)}]
       DECLARE @{objectTypeWithVersionId} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
       EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithVersion}, @{objectTypeWithVersionId} OUTPUT
 
-	  DECLARE @{recordCreatedUtc} {Tables.Object.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
+	  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 	  SET @RecordCreatedUtc = GETUTCDATE()
-	  INSERT INTO [{streamName}].[Object] (
-		  [{nameof(Tables.Object.IdentifierTypeWithoutVersionId)}]
-		, [{nameof(Tables.Object.IdentifierTypeWithVersionId)}]
-		, [{nameof(Tables.Object.ObjectTypeWithoutVersionId)}]
-		, [{nameof(Tables.Object.ObjectTypeWithVersionId)}]
-		, [{nameof(Tables.Object.SerializerRepresentationId)}]
-		, [{nameof(Tables.Object.StringSerializedId)}]
-		, [{nameof(Tables.Object.StringSerializedObject)}]
-		, [{nameof(Tables.Object.ObjectDateTimeUtc)}]
-		, [{nameof(Tables.Object.RecordCreatedUtc)}]
+	  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
+		  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
+		, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
+		, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
+		, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
+		, [{nameof(Tables.Record.SerializerRepresentationId)}]
+		, [{nameof(Tables.Record.StringSerializedId)}]
+		, [{nameof(Tables.Record.StringSerializedObject)}]
+		, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
+		, [{nameof(Tables.Record.RecordCreatedUtc)}]
 		) VALUES (
 		  @{identifierTypeWithoutVersionId}
 		, @{identifierTypeWithVersionId}

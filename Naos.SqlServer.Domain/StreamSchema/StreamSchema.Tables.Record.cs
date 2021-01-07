@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StreamSchema.Tables.Object.cs" company="Naos Project">
+// <copyright file="StreamSchema.Tables.Record.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
 
     /// <summary>
-    /// Object table schema.
+    /// Container for schema.
     /// </summary>
     public static partial class StreamSchema
     {
@@ -22,7 +22,7 @@ namespace Naos.SqlServer.Domain
             /// <summary>
             /// Object table.
             /// </summary>
-            public static class Object
+            public static class Record
             {
                 /// <summary>
                 /// Gets the identifier column.
@@ -89,7 +89,7 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <value>The table.</value>
                 public static TableRepresentation Table => new TableRepresentation(
-                    nameof(Object),
+                    nameof(Record),
                     new[]
                     {
                         Id,
@@ -118,7 +118,7 @@ SET ANSI_NULLS ON
 
 SET QUOTED_IDENTIFIER ON
 
-CREATE TABLE [{streamName}].[{nameof(Object)}](
+CREATE TABLE [{streamName}].[{nameof(Record)}](
 	[{nameof(Id)}] {Id.DataType.DeclarationInSqlSyntax} IDENTITY(1,1) NOT NULL,
 	[{nameof(IdentifierTypeWithoutVersionId)}] {IdentifierTypeWithoutVersionId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(IdentifierTypeWithVersionId)}] {IdentifierTypeWithVersionId.DataType.DeclarationInSqlSyntax} NOT NULL,
@@ -129,65 +129,65 @@ CREATE TABLE [{streamName}].[{nameof(Object)}](
 	[{nameof(StringSerializedObject)}] {StringSerializedObject.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(ObjectDateTimeUtc)}] {ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
- CONSTRAINT [PK_{nameof(Object)}] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{nameof(Record)}] PRIMARY KEY CLUSTERED 
 (
 	[{nameof(Id)}] DESC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
-ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}Id_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(IdentifierTypeWithoutVersionId)}])
+ALTER TABLE [{streamName}].[{nameof(Record)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Record)}Id_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(IdentifierTypeWithoutVersionId)}])
 REFERENCES [{streamName}].[{nameof(TypeWithoutVersion)}] ([Id])
 
-ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}Id_{nameof(TypeWithoutVersion)}]
+ALTER TABLE [{streamName}].[{nameof(Record)}] CHECK CONSTRAINT [FK_{nameof(Record)}Id_{nameof(TypeWithoutVersion)}]
 
-ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}Id_{nameof(TypeWithVersion)}] FOREIGN KEY([{nameof(IdentifierTypeWithVersionId)}])
+ALTER TABLE [{streamName}].[{nameof(Record)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Record)}Id_{nameof(TypeWithVersion)}] FOREIGN KEY([{nameof(IdentifierTypeWithVersionId)}])
 REFERENCES [{streamName}].[{nameof(TypeWithVersion)}] ([Id])
 
-ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}Id_{nameof(TypeWithVersion)}]
+ALTER TABLE [{streamName}].[{nameof(Record)}] CHECK CONSTRAINT [FK_{nameof(Record)}Id_{nameof(TypeWithVersion)}]
 
-ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithoutVersionId)}])
+ALTER TABLE [{streamName}].[{nameof(Record)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Record)}_{nameof(TypeWithoutVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithoutVersionId)}])
 REFERENCES [{streamName}].[{nameof(TypeWithoutVersion)}] ([Id])
 
-ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithoutVersion)}]
+ALTER TABLE [{streamName}].[{nameof(Record)}] CHECK CONSTRAINT [FK_{nameof(Record)}_{nameof(TypeWithoutVersion)}]
 
-ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithVersionId)}])
+ALTER TABLE [{streamName}].[{nameof(Record)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Record)}_{nameof(TypeWithVersion)}] FOREIGN KEY([{nameof(ObjectTypeWithVersionId)}])
 REFERENCES [{streamName}].[{nameof(TypeWithVersion)}] ([Id])
 
-ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}_{nameof(TypeWithVersion)}]
+ALTER TABLE [{streamName}].[{nameof(Record)}] CHECK CONSTRAINT [FK_{nameof(Record)}_{nameof(TypeWithVersion)}]
 
-ALTER TABLE [{streamName}].[{nameof(Object)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Object)}_{nameof(SerializerRepresentation)}] FOREIGN KEY([{nameof(SerializerRepresentationId)}])
+ALTER TABLE [{streamName}].[{nameof(Record)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Record)}_{nameof(SerializerRepresentation)}] FOREIGN KEY([{nameof(SerializerRepresentationId)}])
 REFERENCES [{streamName}].[{nameof(SerializerRepresentation)}] ([Id])
 
-ALTER TABLE [{streamName}].[{nameof(Object)}] CHECK CONSTRAINT [FK_{nameof(Object)}_{nameof(SerializerRepresentation)}]
+ALTER TABLE [{streamName}].[{nameof(Record)}] CHECK CONSTRAINT [FK_{nameof(Record)}_{nameof(SerializerRepresentation)}]
 
 SET ANSI_PADDING ON
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(Id)}_Asc] ON [{streamName}].[{nameof(Object)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(Id)}_Asc] ON [{streamName}].[{nameof(Record)}]
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(IdentifierTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Object)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(IdentifierTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Record)}]
 (
 	[{nameof(IdentifierTypeWithoutVersionId)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(ObjectTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Object)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(ObjectTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Record)}]
 (
 	[{nameof(ObjectTypeWithoutVersionId)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(StringSerializedId)}_Asc] ON [{streamName}].[{nameof(Object)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(StringSerializedId)}_Asc] ON [{streamName}].[{nameof(Record)}]
 (
 	[{nameof(StringSerializedId)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(ObjectDateTimeUtc)}] ON [{streamName}].[{nameof(Object)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(ObjectDateTimeUtc)}] ON [{streamName}].[{nameof(Record)}]
 (
 	[{nameof(ObjectDateTimeUtc)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Object)}_{nameof(RecordCreatedUtc)}] ON [{streamName}].[{nameof(Object)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(RecordCreatedUtc)}] ON [{streamName}].[{nameof(Record)}]
 (
 	[{nameof(RecordCreatedUtc)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

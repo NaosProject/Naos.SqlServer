@@ -16,7 +16,7 @@ namespace Naos.SqlServer.Domain
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
     /// <summary>
-    /// Stream schema.
+    /// Container for schema.
     /// </summary>
     public static partial class StreamSchema
     {
