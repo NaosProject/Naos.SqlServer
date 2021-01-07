@@ -680,10 +680,11 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         /// <inheritdoc />
-        public Task ExecuteAsync(
+        public async Task ExecuteAsync(
             CreateStreamUserOp operation)
         {
-            throw new NotImplementedException();
+            this.Execute(operation);
+            await Task.FromResult(true); // just for await
         }
 
         private SqlServerLocator TryGetLocator(ISpecifyResourceLocator locatorSpecification = null)
