@@ -327,11 +327,14 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.SerializerRepresentation.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.Record.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.Tag.BuildCreationScript(this.Name),
+                                                      StreamSchema.Tables.Resource.BuildCreationScript(this.Name),
+                                                      StreamSchema.Tables.Handling.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetIdAddIfNecessaryResource.BuildCreationScript(this.Name),
                                                   };
 
                             foreach (var script in creationScripts)

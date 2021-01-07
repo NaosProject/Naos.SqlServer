@@ -209,13 +209,16 @@
     <Compile Include="Legacy\SqlServerConnectionDefinition.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
     <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryResource.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessarySerializerDescription.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordById.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.PutRecord.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Record.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.Resource.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.SerializerDescription.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.Handling.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Tag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithoutVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithVersion.cs" />
