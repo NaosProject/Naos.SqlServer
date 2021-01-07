@@ -66,7 +66,7 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Value), Tables.NextUniqueLong.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Value), Tables.NextUniqueLong.Id.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
