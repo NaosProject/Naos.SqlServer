@@ -37,13 +37,6 @@ namespace Naos.SqlServer.Domain
                 public static string Name => nameof(GetNextUniqueLong);
 
                 /// <summary>
-                /// Input parameter names.
-                /// </summary>
-                public enum InputParamName
-                {
-                }
-
-                /// <summary>
                 /// Output parameter names.
                 /// </summary>
                 public enum OutputParamName

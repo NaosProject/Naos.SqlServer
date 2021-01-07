@@ -46,6 +46,7 @@ namespace Naos.SqlServer.Protocol.Client
         private readonly IDictionary<SerializerRepresentation, DescribedSerializer> serializerDescriptionToDescribedSerializerMap = new Dictionary<SerializerRepresentation, DescribedSerializer>();
         private readonly SqlServerLocator singleLocator;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Only want to manage one thing here.")]
         static SqlStream()
         {
             lock (ResourceDetailsSync)

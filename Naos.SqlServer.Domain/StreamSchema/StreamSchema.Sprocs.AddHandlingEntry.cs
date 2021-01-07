@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
@@ -107,7 +108,7 @@ namespace Naos.SqlServer.Domain
                     var acceptableCurrentStatusesDictionary = new Dictionary<string, string>();
                     for (var idx = 0; idx < acceptableCurrentStatuses.Count; idx++)
                     {
-                        acceptableCurrentStatusesDictionary.Add(idx.ToString(), acceptableCurrentStatuses.ElementAt(idx).ToString());
+                        acceptableCurrentStatusesDictionary.Add(idx.ToString(CultureInfo.InvariantCulture), acceptableCurrentStatuses.ElementAt(idx).ToString());
                     }
 
                     var acceptableCurrentStatusesXml = TagConversionTool.GetTagsXmlString(acceptableCurrentStatusesDictionary);
