@@ -46,6 +46,16 @@ namespace Naos.SqlServer.Domain
                 public enum InputParamName
                 {
                     /// <summary>
+                    /// The concern.
+                    /// </summary>
+                    Concern,
+
+                    /// <summary>
+                    /// The resource details.
+                    /// </summary>
+                    ResourceDetails,
+
+                    /// <summary>
                     /// The identifier assembly qualified name without version
                     /// </summary>
                     IdentifierAssemblyQualifiedNameWithoutVersionQuery,
@@ -82,6 +92,11 @@ namespace Naos.SqlServer.Domain
                 [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public enum OutputParamName
                 {
+                    /// <summary>
+                    /// The identifier.
+                    /// </summary>
+                    Id,
+
                     /// <summary>
                     /// The internal record identifier.
                     /// </summary>
@@ -152,7 +167,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the execute stored procedure operation.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
-                /// <param name="stringSerializedId">The serialized object identifier.</param>
+                /// <param name="concern">The concern.</param>
                 /// <param name="identifierType">The identifier assembly qualified name with and without version.</param>
                 /// <param name="objectType">The object assembly qualified name with and without version.</param>
                 /// <param name="orderRecordsStrategy">The <see cref="OrderRecordsStrategy"/>.</param>
@@ -160,7 +175,7 @@ namespace Naos.SqlServer.Domain
                 /// <returns>ExecuteStoredProcedureOp.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
-                    string stringSerializedId,
+                    string concern,
                     TypeRepresentationWithAndWithoutVersion identifierType,
                     TypeRepresentationWithAndWithoutVersion objectType,
                     OrderRecordsStrategy orderRecordsStrategy,
@@ -170,6 +185,7 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.OrderRecordsStrategy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsStrategy.ToString()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, identifierType.WithoutVersion.BuildAssemblyQualifiedName()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, identifierType.WithVersion.BuildAssemblyQualifiedName()),
@@ -218,17 +234,22 @@ namespace Naos.SqlServer.Domain
                     const string serializerRepresentationId = "SerializerRepresentationId";
                     const string serializerConfigTypeId = "SerializerConfigTypeId";
                     const string identifierTypeWithVersionId = "IdentifierTypeWithVersionId";
+                    const string objectTypeWithoutVersionId = "ObjectTypeWithoutVersionId";
                     const string objectTypeWithVersionId = "ObjectTypeWithVersionId";
                     const string recordToHandleId = "RecordToHandleId";
+                    const string transaction = "Transaction";
+                    const string resourceId = "ResourceId";
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{TryHandleRecord.Name}(
-  @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+  @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS varchar(10)
+, @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializationKind} AS {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -245,10 +266,85 @@ CREATE PROCEDURE [{streamName}].{TryHandleRecord.Name}(
 )
 AS
 BEGIN
-    @{OutputParamName.ShouldHandle} = 1
+	DECLARE @{resourceId} {Tables.Resource.Id.DataType.DeclarationInSqlSyntax}
+	EXEC [{streamName}].[{GetIdAddIfNecessaryResource.Name}] @{InputParamName.ResourceDetails}, @{resourceId} OUTPUT
+
+	DECLARE @{objectTypeWithoutVersionId} {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
+	EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithoutVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery}, @{objectTypeWithoutVersionId} OUTPUT
+	DECLARE @{objectTypeWithVersionId} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
+	EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery}, @{objectTypeWithVersionId} OUTPUT
 
 	DECLARE @{recordToHandleId} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
-    SET @{recordToHandleId} = 1
+	BEGIN TRANSACTION [{transaction}]
+	  BEGIN TRY
+	  IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdAscending}')
+          BEGIN
+		      SELECT @{recordToHandleId} = TOP 1 [{Tables.Record.Id.Name}]
+		      FROM [{streamName}].[{Tables.Record.Table.Name}] r
+			  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+		      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
+		      WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+					AND r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{objectTypeWithoutVersionId}
+					AND (h.[{Tables.Handling.Id.Name}] IS NULL OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}')
+		      ORDER BY r.[{Tables.Record.Id.Name}] ASC
+          END
+      ELSEIF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdDescending}')
+          BEGIN
+		      SELECT @{recordToHandleId} = TOP 1 [{Tables.Record.Id.Name}]
+		      FROM [{streamName}].[{Tables.Record.Table.Name}] r
+			  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+		      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
+		      WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+					AND r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{objectTypeWithoutVersionId}
+					AND (h.[{Tables.Handling.Id.Name}] IS NULL OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}')
+		      ORDER BY r.[{Tables.Record.Id.Name}] DESC
+          END
+      ELSE
+		   BEGIN
+		      DECLARE @NotValidOrderRecordsStrategyErrorMessage nvarchar(max), 
+		              @NotValidOrderRecordsStrategyErrorSeverity int, 
+		              @NotValidOrderRecordsStrategyErrorState int
+
+		      SELECT @NotValidOrderRecordsStrategyErrorMessage = 'Unsupported {nameof(OrderRecordsStrategy)}: ' + @{InputParamName.OrderRecordsStrategy} + ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @NotValidOrderRecordsStrategyErrorSeverity = ERROR_SEVERITY(), @NotValidOrderRecordsStrategyErrorState = ERROR_STATE()
+		      RAISERROR (@NotValidOrderRecordsStrategyErrorMessage, @NotValidOrderRecordsStrategyErrorSeverity, @NotValidOrderRecordsStrategyErrorState)
+		   END
+	IF (@{recordToHandleId} IS NOT NULL)
+	BEGIN
+	      INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] (
+		    [{Tables.Handling.Concern.Name}]
+		  , [{Tables.Handling.RecordId.Name}]
+		  , [{Tables.Handling.ResourceId.Name}]
+		  , [{Tables.Handling.Status.Name}]
+		  , [{Tables.Handling.Details.Name}]
+		  , [{Tables.Handling.RecordCreatedUtc.Name}]
+		  ) VALUES (
+	        @{InputParamName.Concern}
+	      , @{recordToHandleId}
+	      , @{resourceId}
+	      , '{HandlingStatus.Requested}'
+	      , 'Created by {nameof(TryHandleRecord)}'
+		  , GETUTCDATE()
+		  )
+
+	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+		  SET @{OutputParamName.ShouldHandle} = 1
+	END
+
+      COMMIT TRANSACTION [{transaction}]
+	  END TRY
+      BEGIN CATCH
+	      DECLARE @ErrorMessage nvarchar(max), 
+	              @ErrorSeverity int, 
+	              @ErrorState int
+
+	      SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+
+	      IF (@@trancount > 0)
+	      BEGIN
+	         ROLLBACK TRANSACTION [{transaction}]
+	      END
+		  RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+      END CATCH
 
     IF (@{OutputParamName.ShouldHandle} = 1)
 	BEGIN

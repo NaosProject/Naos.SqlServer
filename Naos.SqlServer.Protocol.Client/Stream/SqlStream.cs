@@ -541,6 +541,8 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryResource.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.AddHandlingEntry.BuildCreationScript(this.Name),
                                                   };
 
                             foreach (var script in creationScripts)
