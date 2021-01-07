@@ -224,6 +224,7 @@ namespace Naos.SqlServer.Protocol.Client
             var storedProcOp = StreamSchema.Sprocs.TryHandleRecord.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.Concern,
+                ResourceDetails,
                 operation.IdentifierType.ToWithAndWithoutVersion(),
                 operation.ObjectType.ToWithAndWithoutVersion(),
                 operation.OrderRecordsStrategy,

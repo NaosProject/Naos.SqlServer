@@ -168,6 +168,7 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">The concern.</param>
+                /// <param name="resourceDetails">The resource details.</param>
                 /// <param name="identifierType">The identifier assembly qualified name with and without version.</param>
                 /// <param name="objectType">The object assembly qualified name with and without version.</param>
                 /// <param name="orderRecordsStrategy">The <see cref="OrderRecordsStrategy"/>.</param>
@@ -176,6 +177,7 @@ namespace Naos.SqlServer.Domain
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,
+                    string resourceDetails,
                     TypeRepresentationWithAndWithoutVersion identifierType,
                     TypeRepresentationWithAndWithoutVersion objectType,
                     OrderRecordsStrategy orderRecordsStrategy,
@@ -186,6 +188,7 @@ namespace Naos.SqlServer.Domain
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ResourceDetails), Tables.Resource.Details.DataType, resourceDetails),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.OrderRecordsStrategy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsStrategy.ToString()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, identifierType.WithoutVersion.BuildAssemblyQualifiedName()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, identifierType.WithVersion.BuildAssemblyQualifiedName()),
@@ -243,6 +246,7 @@ namespace Naos.SqlServer.Domain
                         $@"
 CREATE PROCEDURE [{streamName}].{TryHandleRecord.Name}(
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.ResourceDetails} AS {Tables.Resource.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
