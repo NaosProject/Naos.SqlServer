@@ -210,6 +210,7 @@
     <Compile Include="Properties\ProjectInfo.cs" />
     <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.AddHandlingEntry.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.TryHandleRecord.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordMetadataById.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetNextUniqueLong.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryResource.cs" />

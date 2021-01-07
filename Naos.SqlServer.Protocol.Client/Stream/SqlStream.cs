@@ -220,7 +220,77 @@ namespace Naos.SqlServer.Protocol.Client
         public override StreamRecord Execute(
             TryHandleRecordOp operation)
         {
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+            var storedProcOp = StreamSchema.Sprocs.TryHandleRecord.BuildExecuteStoredProcedureOp(
+                this.Name,
+                operation.Concern,
+                operation.IdentifierType.ToWithAndWithoutVersion(),
+                operation.ObjectType.ToWithAndWithoutVersion(),
+                operation.OrderRecordsStrategy,
+                TypeVersionMatchStrategy.Any);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+
+            bool shouldHandle = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ShouldHandle)].GetValue<bool>();
+            if (!shouldHandle)
+            {
+                return null;
+            }
+
+            long internalRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.InternalRecordId)].GetValue<long>();
+            SerializationKind serializationKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.SerializationKind)].GetValue<SerializationKind>();
+            SerializationFormat serializationFormat = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.SerializationFormat)].GetValue<SerializationFormat>();
+            string serializationConfigAssemblyQualifiedNameWithoutVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion)].GetValue<string>();
+            CompressionKind compressionKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.CompressionKind)].GetValue<CompressionKind>();
+            string identifierAssemblyQualifiedNameWithVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.IdentifierAssemblyQualifiedNameWithVersion)].GetValue<string>();
+            string objectAssemblyQualifiedNameWithVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ObjectAssemblyQualifiedNameWithVersion)].GetValue<string>();
+            string stringSerializedId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.StringSerializedId)].GetValue<string>();
+            string stringSerializedObject = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.StringSerializedObject)].GetValue<string>();
+            DateTime recordTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.RecordDateTime)].GetValue<DateTime>();
+            DateTime? objectTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ObjectDateTime)].GetValue<DateTime?>();
+            string tagsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.TagsXml)].GetValue<string>();
+
+            var tags = TagConversionTool.GetTagsFromXmlString(tagsXml);
+            var configType = serializationConfigAssemblyQualifiedNameWithoutVersion
+               .ToTypeRepresentationFromAssemblyQualifiedName();
+            var serializerRepresentation = new SerializerRepresentation(serializationKind, configType, compressionKind);
+
+            var recordTimestamp = new DateTime(
+                recordTimestampRaw.Year,
+                recordTimestampRaw.Month,
+                recordTimestampRaw.Day,
+                recordTimestampRaw.Hour,
+                recordTimestampRaw.Minute,
+                recordTimestampRaw.Second,
+                recordTimestampRaw.Millisecond,
+                DateTimeKind.Utc);
+
+            var objectTimestamp = objectTimestampRaw == null ? (DateTime?)null : new DateTime(
+                objectTimestampRaw.Value.Year,
+                objectTimestampRaw.Value.Month,
+                objectTimestampRaw.Value.Day,
+                objectTimestampRaw.Value.Hour,
+                objectTimestampRaw.Value.Minute,
+                objectTimestampRaw.Value.Second,
+                objectTimestampRaw.Value.Millisecond,
+                DateTimeKind.Utc);
+
+            var identifierType = identifierAssemblyQualifiedNameWithVersion.ToTypeRepresentationFromAssemblyQualifiedName().ToWithAndWithoutVersion();
+            var objectType = objectAssemblyQualifiedNameWithVersion.ToTypeRepresentationFromAssemblyQualifiedName().ToWithAndWithoutVersion();
+            var metadata = new StreamRecordMetadata(
+                stringSerializedId,
+                serializerRepresentation,
+                identifierType,
+                objectType,
+                tags,
+                recordTimestamp,
+                objectTimestamp);
+
+            var payload = new DescribedSerialization(objectType.WithVersion, stringSerializedObject, serializerRepresentation, serializationFormat);
+
+            var result = new StreamRecord(internalRecordId, metadata, payload);
+            return result;
         }
 
         /// <inheritdoc />
