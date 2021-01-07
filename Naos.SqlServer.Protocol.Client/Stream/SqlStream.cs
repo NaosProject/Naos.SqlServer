@@ -24,6 +24,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Compression;
     using OBeautifulCode.Database.Recipes;
+    using OBeautifulCode.Enum.Recipes;
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.Type;
@@ -40,8 +41,19 @@ namespace Naos.SqlServer.Protocol.Client
                                      ISyncAndAsyncReturningProtocol<GetIdAddIfNecessarySerializerRepresentationOp, int>,
                                      ISyncAndAsyncVoidProtocol<CreateStreamUserOp>
     {
+        private static readonly object ResourceDetailsSync = new object();
+        private static readonly string ResourceDetails;
         private readonly IDictionary<SerializerRepresentation, DescribedSerializer> serializerDescriptionToDescribedSerializerMap = new Dictionary<SerializerRepresentation, DescribedSerializer>();
         private readonly SqlServerLocator singleLocator;
+
+        static SqlStream()
+        {
+            lock (ResourceDetailsSync)
+            {
+                // get process and machine name here?
+                ResourceDetails = Guid.NewGuid().ToString().ToUpperInvariant();
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlStream"/> class.
@@ -247,56 +259,165 @@ namespace Naos.SqlServer.Protocol.Client
         public override void Execute(
             BlockRecordHandlingOp operation)
         {
-            throw new NotImplementedException();
+            var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
+            var sqlServerLocator = locator as SqlServerLocator
+                                ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
+
+            var storedProcOp = StreamSchema.Sprocs.AddHandlingEntry.BuildExecuteStoredProcedureOp(
+                this.Name,
+                Concerns.RecordHandlingConcern,
+                Concerns.GlobalBlockingRecordId,
+                ResourceDetails,
+                HandlingStatus.Blocked,
+                typeof(HandlingStatus).GetAllPossibleEnumValues()
+                                      .Cast<HandlingStatus>()
+                                      .Except(
+                                           new[]
+                                           {
+                                               HandlingStatus.Blocked,
+                                           })
+                                      .ToList(),
+                operation.Details);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
 
         /// <inheritdoc />
         public override void Execute(
             CancelBlockedRecordHandlingOp operation)
         {
-            throw new NotImplementedException();
+            var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
+            var sqlServerLocator = locator as SqlServerLocator
+                                ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
+
+            var storedProcOp = StreamSchema.Sprocs.AddHandlingEntry.BuildExecuteStoredProcedureOp(
+                this.Name,
+                Concerns.RecordHandlingConcern,
+                Concerns.GlobalBlockingRecordId,
+                ResourceDetails,
+                HandlingStatus.Requested,
+                new[] { HandlingStatus.Blocked },
+                operation.Details);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
 
         /// <inheritdoc />
         public override void Execute(
             CancelHandleRecordExecutionRequestOp operation)
         {
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+            var storedProcOp = StreamSchema.Sprocs.AddHandlingEntry.BuildExecuteStoredProcedureOp(
+                this.Name,
+                operation.Concern,
+                operation.Id,
+                ResourceDetails,
+                HandlingStatus.Canceled,
+                new[] { HandlingStatus.Requested, HandlingStatus.Running, HandlingStatus.Failed },
+                operation.Details);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
 
         /// <inheritdoc />
         public override void Execute(
             CancelRunningHandleRecordExecutionOp operation)
         {
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+            var storedProcOp = StreamSchema.Sprocs.AddHandlingEntry.BuildExecuteStoredProcedureOp(
+                this.Name,
+                operation.Concern,
+                operation.Id,
+                ResourceDetails,
+                HandlingStatus.CanceledRunning,
+                new[] { HandlingStatus.Running },
+                operation.Details);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
 
         /// <inheritdoc />
         public override void Execute(
             CompleteRunningHandleRecordExecutionOp operation)
         {
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+            var storedProcOp = StreamSchema.Sprocs.AddHandlingEntry.BuildExecuteStoredProcedureOp(
+                this.Name,
+                operation.Concern,
+                operation.Id,
+                ResourceDetails,
+                HandlingStatus.Completed,
+                new[] { HandlingStatus.Running },
+                operation.Details);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
 
         /// <inheritdoc />
         public override void Execute(
             FailRunningHandleRecordExecutionOp operation)
         {
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+            var storedProcOp = StreamSchema.Sprocs.AddHandlingEntry.BuildExecuteStoredProcedureOp(
+                this.Name,
+                operation.Concern,
+                operation.Id,
+                ResourceDetails,
+                HandlingStatus.Failed,
+                new[] { HandlingStatus.Running },
+                operation.Details);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
 
         /// <inheritdoc />
         public override void Execute(
             SelfCancelRunningHandleRecordExecutionOp operation)
         {
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+            var storedProcOp = StreamSchema.Sprocs.AddHandlingEntry.BuildExecuteStoredProcedureOp(
+                this.Name,
+                operation.Concern,
+                operation.Id,
+                ResourceDetails,
+                HandlingStatus.SelfCanceledRunning,
+                new[] { HandlingStatus.Running },
+                operation.Details);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
 
         /// <inheritdoc />
         public override void Execute(
             RetryFailedHandleRecordExecutionOp operation)
         {
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+            var storedProcOp = StreamSchema.Sprocs.AddHandlingEntry.BuildExecuteStoredProcedureOp(
+                this.Name,
+                operation.Concern,
+                operation.Id,
+                ResourceDetails,
+                HandlingStatus.RetryFailed,
+                new[] { HandlingStatus.Failed },
+                operation.Details);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
 
         /// <inheritdoc />
