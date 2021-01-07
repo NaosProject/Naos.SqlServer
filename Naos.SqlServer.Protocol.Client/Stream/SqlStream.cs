@@ -92,7 +92,18 @@ namespace Naos.SqlServer.Protocol.Client
         public override long Execute(
             GetNextUniqueLongOp operation)
         {
-            throw new NotImplementedException();
+            var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
+            var sqlServerLocator = locator as SqlServerLocator
+                                ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
+
+            var storedProcOp = StreamSchema.Sprocs.GetNextUniqueLong.BuildExecuteStoredProcedureOp(this.Name);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+
+            long result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetNextUniqueLong.OutputParamName.Value)].GetValue<long>();
+
+            return result;
         }
 
         /// <inheritdoc />
@@ -329,12 +340,14 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.Tag.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.Resource.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.Handling.BuildCreationScript(this.Name),
+                                                      StreamSchema.Tables.NextUniqueLong.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryResource.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name),
                                                   };
 
                             foreach (var script in creationScripts)
