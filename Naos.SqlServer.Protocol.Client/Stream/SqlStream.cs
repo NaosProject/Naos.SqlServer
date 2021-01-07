@@ -233,8 +233,8 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-            bool shouldHandle = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ShouldHandle)].GetValue<bool>();
-            if (!shouldHandle)
+            int shouldHandle = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ShouldHandle)].GetValue<int>();
+            if (shouldHandle != 1)
             {
                 return null;
             }
@@ -763,7 +763,7 @@ namespace Naos.SqlServer.Protocol.Client
 
         private SqlServerLocator TryGetLocator(ISpecifyResourceLocator locatorSpecification = null)
         {
-            var locator = locatorSpecification?.SpecifiedResourceLocator.ConfirmAndConvert<SqlServerLocator>()
+            var locator = locatorSpecification?.SpecifiedResourceLocator?.ConfirmAndConvert<SqlServerLocator>()
                        ?? this.singleLocator
                        ?? throw new NotSupportedException(Invariant($"There is not a locator specified on {locatorSpecification?.ToString()} and there is not a single locator specified to fall back to."));
 

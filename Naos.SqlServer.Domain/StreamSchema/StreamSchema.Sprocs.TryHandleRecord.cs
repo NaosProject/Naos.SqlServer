@@ -195,6 +195,8 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectType.WithoutVersion.BuildAssemblyQualifiedName()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectType.WithVersion.BuildAssemblyQualifiedName()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
+                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType),
                                          new SqlOutputParameterRepresentation<SerializationKind>(nameof(OutputParamName.SerializationKind), Tables.SerializerRepresentation.SerializationKind.DataType),
@@ -237,16 +239,18 @@ namespace Naos.SqlServer.Domain
                     const string serializerRepresentationId = "SerializerRepresentationId";
                     const string serializerConfigTypeId = "SerializerConfigTypeId";
                     const string identifierTypeWithVersionId = "IdentifierTypeWithVersionId";
-                    const string objectTypeWithoutVersionId = "ObjectTypeWithoutVersionId";
                     const string objectTypeWithVersionId = "ObjectTypeWithVersionId";
+                    const string objectTypeWithoutVersionIdQuery = "ObjectTypeWithoutVersionIdQuery";
+                    const string objectTypeWithVersionIdQuery = "ObjectTypeWithVersionIdQuery";
                     const string recordToHandleId = "RecordToHandleId";
                     const string transaction = "Transaction";
                     const string resourceId = "ResourceId";
+                    const string blockedStatus = "BlockedStatus";
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{TryHandleRecord.Name}(
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
-  @{InputParamName.ResourceDetails} AS {Tables.Resource.Details.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ResourceDetails} AS {Tables.Resource.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
@@ -265,44 +269,76 @@ CREATE PROCEDURE [{streamName}].{TryHandleRecord.Name}(
 , @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.TagsXml} AS [NVARCHAR](MAX) OUTPUT
-, @{OutputParamName.ShouldHandle} AS [BIT] OUTPUT
+, @{OutputParamName.TagsXml} AS {new StringSqlDataTypeRepresentation(true, -1).DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.ShouldHandle} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
-	DECLARE @{resourceId} {Tables.Resource.Id.DataType.DeclarationInSqlSyntax}
-	EXEC [{streamName}].[{GetIdAddIfNecessaryResource.Name}] @{InputParamName.ResourceDetails}, @{resourceId} OUTPUT
+    DECLARE @{blockedStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+	SELECT TOP 1 @{blockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
+	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingConcern}'
 
-	DECLARE @{objectTypeWithoutVersionId} {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
-	EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithoutVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery}, @{objectTypeWithoutVersionId} OUTPUT
-	DECLARE @{objectTypeWithVersionId} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
-	EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery}, @{objectTypeWithVersionId} OUTPUT
+	IF ((@{blockedStatus} IS NULL) OR (@{blockedStatus} <> '{HandlingStatus.Blocked}'))
+	BEGIN
+		DECLARE @{resourceId} {Tables.Resource.Id.DataType.DeclarationInSqlSyntax}
+		EXEC [{streamName}].[{GetIdAddIfNecessaryResource.Name}] @{InputParamName.ResourceDetails}, @{resourceId} OUTPUT
 
-	DECLARE @{recordToHandleId} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
-	BEGIN TRANSACTION [{transaction}]
+		DECLARE @{objectTypeWithoutVersionIdQuery} {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
+		EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithoutVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery}, @{objectTypeWithoutVersionIdQuery} OUTPUT
+		DECLARE @{objectTypeWithVersionIdQuery} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
+		EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery}, @{objectTypeWithVersionIdQuery} OUTPUT
+
+		DECLARE @{recordToHandleId} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
+		BEGIN TRANSACTION [{transaction}]
 	  BEGIN TRY
 	  IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdAscending}')
           BEGIN
-		      SELECT @{recordToHandleId} = TOP 1 [{Tables.Record.Id.Name}]
-		      FROM [{streamName}].[{Tables.Record.Table.Name}] r
-			  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-		      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
-		      WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-					AND r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{objectTypeWithoutVersionId}
-					AND (h.[{Tables.Handling.Id.Name}] IS NULL OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}')
-		      ORDER BY r.[{Tables.Record.Id.Name}] ASC
+			  -- See if any reprocessing is needed
+			  IF (@{recordToHandleId} IS NULL)
+			  BEGIN
+			      SELECT TOP 1 @{recordToHandleId} = h.[{Tables.Handling.RecordId.Name}]
+				  FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+			      WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
+					AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
+				  ORDER BY h.[{Tables.Record.Id.Name}] ASC
+			  END
+
+			  -- See if any new records
+			  IF (@{recordToHandleId} IS NULL)
+			  BEGIN
+			      SELECT TOP 1 @{recordToHandleId} = r.[{Tables.Record.Id.Name}]
+			      FROM [{streamName}].[{Tables.Record.Table.Name}] r
+				  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+			      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			      WHERE r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{objectTypeWithoutVersionIdQuery}
+					AND h.[{Tables.Handling.Id.Name}] IS NULL
+				  ORDER BY r.[{Tables.Record.Id.Name}] ASC
+			  END
           END
-      ELSEIF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdDescending}')
-          BEGIN
-		      SELECT @{recordToHandleId} = TOP 1 [{Tables.Record.Id.Name}]
-		      FROM [{streamName}].[{Tables.Record.Table.Name}] r
-			  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-		      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
-		      WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-					AND r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{objectTypeWithoutVersionId}
-					AND (h.[{Tables.Handling.Id.Name}] IS NULL OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}')
-		      ORDER BY r.[{Tables.Record.Id.Name}] DESC
-          END
+      ELSE IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdDescending}')
+			  -- See if any new records
+			  IF (@{recordToHandleId} IS NULL)
+			  BEGIN
+			      SELECT TOP 1 @{recordToHandleId} = r.[{Tables.Record.Id.Name}]
+			      FROM [{streamName}].[{Tables.Record.Table.Name}] r
+				  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+			      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			      WHERE r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{objectTypeWithoutVersionIdQuery}
+					AND h.[{Tables.Handling.Id.Name}] IS NULL
+				  ORDER BY r.[{Tables.Record.Id.Name}] DESC
+			  END
+
+			  -- See if any reprocessing is needed
+			  IF (@{recordToHandleId} IS NULL)
+			  BEGIN
+			      SELECT TOP 1 @{recordToHandleId} = h.[{Tables.Handling.RecordId.Name}]
+				  FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+			      WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
+					AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
+				  ORDER BY h.[{Tables.Record.Id.Name}] DESC
+			  END
       ELSE
 		   BEGIN
 		      DECLARE @NotValidOrderRecordsStrategyErrorMessage nvarchar(max), 
@@ -314,7 +350,7 @@ BEGIN
 		   END
 	IF (@{recordToHandleId} IS NOT NULL)
 	BEGIN
-	      INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] (
+		INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] (
 		    [{Tables.Handling.Concern.Name}]
 		  , [{Tables.Handling.RecordId.Name}]
 		  , [{Tables.Handling.ResourceId.Name}]
@@ -325,30 +361,31 @@ BEGIN
 	        @{InputParamName.Concern}
 	      , @{recordToHandleId}
 	      , @{resourceId}
-	      , '{HandlingStatus.Requested}'
+	      , '{HandlingStatus.Running}'
 	      , 'Created by {nameof(TryHandleRecord)}'
 		  , GETUTCDATE()
 		  )
 
 	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
 		  SET @{OutputParamName.ShouldHandle} = 1
+		END
+
+	      COMMIT TRANSACTION [{transaction}]
+		  END TRY
+	      BEGIN CATCH
+		      DECLARE @ErrorMessage nvarchar(max), 
+		              @ErrorSeverity int, 
+		              @ErrorState int
+
+		      SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+
+		      IF (@@trancount > 0)
+		      BEGIN
+		         ROLLBACK TRANSACTION [{transaction}]
+		      END
+			  RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+	      END CATCH
 	END
-
-      COMMIT TRANSACTION [{transaction}]
-	  END TRY
-      BEGIN CATCH
-	      DECLARE @ErrorMessage nvarchar(max), 
-	              @ErrorSeverity int, 
-	              @ErrorState int
-
-	      SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
-
-	      IF (@@trancount > 0)
-	      BEGIN
-	         ROLLBACK TRANSACTION [{transaction}]
-	      END
-		  RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
-      END CATCH
 
     IF (@{OutputParamName.ShouldHandle} = 1)
 	BEGIN
@@ -385,6 +422,23 @@ BEGIN
 		FROM [{streamName}].[{Tables.Tag.Table.Name}]
 		WHERE [{Tables.Tag.RecordId.Name}] = 1
 		FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+	END
+    ELSE
+	BEGIN
+		SET @{OutputParamName.ShouldHandle} = 0
+		SET @{OutputParamName.Id} = -1
+		SET @{OutputParamName.InternalRecordId} = -1
+		SET @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} = 'Fake'
+		SET @{OutputParamName.SerializationKind} = 'Json'
+		SET @{OutputParamName.SerializationFormat} = 'String'
+		SET @{OutputParamName.CompressionKind} = 'None'
+		SET @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} = 'Fake'
+		SET @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} = 'Fake'
+		SET @{OutputParamName.StringSerializedId} = 'Fake'
+		SET @{OutputParamName.StringSerializedObject} = 'Fake'
+		SET @{OutputParamName.ObjectDateTime} = GETUTCDATE()
+		SET @{OutputParamName.RecordDateTime} = GETUTCDATE()
+		SET @{OutputParamName.TagsXml} = null
 	END
 END
 

@@ -157,16 +157,16 @@ CREATE PROCEDURE [{streamName}].{AddHandlingEntry.Name}(
 , @{InputParamName.ResourceDetails} AS {Tables.Resource.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.NewStatus} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.AcceptableCurrentStatusesXml} AS [Xml]
-, @{OutputParamName.Id} AS [{Tables.Handling.Id.DataType.DeclarationInSqlSyntax}] OUTPUT
+, @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
 
-DECLARE @{currentStatus} {Tables.Handling.Status}
-SELECT @{currentStatus} = TOP 1 {Tables.Handling.Status}
+DECLARE @{currentStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
     FROM [{streamName}].[{Tables.Handling.Table.Name}]
-    WHERE [{Tables.Handling.Concern}] = @{InputParamName.Concern} AND [{Tables.Handling.RecordId}] = @{InputParamName.RecordId}
-    ORDER BY [{Tables.Handling.Id}] DESC
+    WHERE [{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} AND [{Tables.Handling.RecordId.Name}] = @{InputParamName.RecordId}
+    ORDER BY [{Tables.Handling.Id.Name}] DESC
 
 IF @{currentStatus} IS NULL
 BEGIN

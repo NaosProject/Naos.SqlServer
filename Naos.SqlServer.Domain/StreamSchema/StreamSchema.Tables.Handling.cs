@@ -117,14 +117,14 @@ CREATE TABLE [{streamName}].[Handling](
 ALTER TABLE [{streamName}].[{nameof(Handling)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Handling)}_{nameof(Record)}] FOREIGN KEY([{nameof(RecordId)}])
 REFERENCES [{streamName}].[{nameof(Record)}] ([{nameof(Record.Id)}])
 
+ALTER TABLE [{streamName}].[{nameof(Handling)}] CHECK CONSTRAINT [FK_{nameof(Handling)}_{nameof(Record)}]
 
-ALTER TABLE [{streamName}].[Handling] CHECK CONSTRAINT [FK_{nameof(Handling)}_{nameof(Record)}]
 
 ALTER TABLE [{streamName}].[{nameof(Handling)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Handling)}_{nameof(Resource)}] FOREIGN KEY([{nameof(ResourceId)}])
 REFERENCES [{streamName}].[{nameof(Resource)}] ([{nameof(Resource.Id)}])
 
-
 ALTER TABLE [{streamName}].[Handling] CHECK CONSTRAINT [FK_{nameof(Handling)}_{nameof(Resource)}]
+
 
 SET ANSI_PADDING ON
 
