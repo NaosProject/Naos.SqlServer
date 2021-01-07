@@ -209,6 +209,7 @@
     <Compile Include="Legacy\SqlServerConnectionDefinition.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
     <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordMetadataById.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetNextUniqueLong.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryResource.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessarySerializerDescription.cs" />

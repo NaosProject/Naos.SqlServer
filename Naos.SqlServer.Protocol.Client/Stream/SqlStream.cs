@@ -345,6 +345,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryResource.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name),
@@ -396,7 +397,63 @@ namespace Naos.SqlServer.Protocol.Client
         public override StreamRecordMetadata Execute(
             GetLatestRecordMetadataByIdOp operation)
         {
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+            var storedProcOp = StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildExecuteStoredProcedureOp(
+                this.Name,
+                operation.StringSerializedId,
+                operation.IdentifierType.ToWithAndWithoutVersion(),
+                operation.ObjectType.ToWithAndWithoutVersion(),
+                TypeVersionMatchStrategy.Any);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+
+            SerializationKind serializationKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.SerializationKind)].GetValue<SerializationKind>();
+            string serializationConfigAssemblyQualifiedNameWithoutVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion)].GetValue<string>();
+            CompressionKind compressionKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.CompressionKind)].GetValue<CompressionKind>();
+            string identifierAssemblyQualifiedNameWithVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.IdentifierAssemblyQualifiedNameWithVersion)].GetValue<string>();
+            string objectAssemblyQualifiedNameWithVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.ObjectAssemblyQualifiedNameWithVersion)].GetValue<string>();
+            DateTime recordTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.RecordDateTime)].GetValue<DateTime>();
+            DateTime? objectTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.ObjectDateTime)].GetValue<DateTime?>();
+            string tagsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.TagsXml)].GetValue<string>();
+
+            var tags = TagConversionTool.GetTagsFromXmlString(tagsXml);
+            var configType = serializationConfigAssemblyQualifiedNameWithoutVersion
+               .ToTypeRepresentationFromAssemblyQualifiedName();
+            var serializerRepresentation = new SerializerRepresentation(serializationKind, configType, compressionKind);
+
+            var recordTimestamp = new DateTime(
+                recordTimestampRaw.Year,
+                recordTimestampRaw.Month,
+                recordTimestampRaw.Day,
+                recordTimestampRaw.Hour,
+                recordTimestampRaw.Minute,
+                recordTimestampRaw.Second,
+                recordTimestampRaw.Millisecond,
+                DateTimeKind.Utc);
+
+            var objectTimestamp = objectTimestampRaw == null ? (DateTime?)null : new DateTime(
+                objectTimestampRaw.Value.Year,
+                objectTimestampRaw.Value.Month,
+                objectTimestampRaw.Value.Day,
+                objectTimestampRaw.Value.Hour,
+                objectTimestampRaw.Value.Minute,
+                objectTimestampRaw.Value.Second,
+                objectTimestampRaw.Value.Millisecond,
+                DateTimeKind.Utc);
+
+            var identifierType = identifierAssemblyQualifiedNameWithVersion.ToTypeRepresentationFromAssemblyQualifiedName().ToWithAndWithoutVersion();
+            var objectType = objectAssemblyQualifiedNameWithVersion.ToTypeRepresentationFromAssemblyQualifiedName().ToWithAndWithoutVersion();
+            var metadata = new StreamRecordMetadata(
+                operation.StringSerializedId,
+                serializerRepresentation,
+                identifierType,
+                objectType,
+                tags,
+                recordTimestamp,
+                objectTimestamp);
+
+            return metadata;
         }
 
         /// <inheritdoc />
