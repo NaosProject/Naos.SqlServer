@@ -27,7 +27,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Gets the identifier.
                 /// </summary>
-                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new IntSqlDataTypeRepresentation());
+                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the record created UTC.
