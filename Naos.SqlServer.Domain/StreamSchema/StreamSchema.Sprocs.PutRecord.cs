@@ -217,10 +217,10 @@ BEGIN TRANSACTION [{nameof(PutRecord)}]
 			[{Tables.Tag.TagValue.Name}] {Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax} NULL)
 		  INSERT INTO @{tagsTable}
 		  SELECT
-		    C.value('({TagConversionTool.TagEntryElementName}/@{TagConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
-		  , C.value('({TagConversionTool.TagEntryElementName}/@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagValue.Name}]
+		    C.value('(@{TagConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
+		  , C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagValue.Name}]
 		  FROM
-			@{nameof(InputParamName.TagsXml)}.nodes('/{TagConversionTool.TagSetElementName}') AS T(C)
+			@{nameof(InputParamName.TagsXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
 
 		  UPDATE @{tagsTable} SET [{Tables.Tag.TagValue.Name}] = null WHERE [{Tables.Tag.TagValue.Name}] = '{TagConversionTool.NullCanaryValue}'
 
