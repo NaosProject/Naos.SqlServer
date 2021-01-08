@@ -235,7 +235,7 @@ BEGIN
 
     SELECT @{OutputParamName.TagsXml} = (SELECT
 		{Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
-		{Tables.Tag.TagValue.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
+		ISNULL({Tables.Tag.TagValue.Name},'{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
 	FROM [{streamName}].[{Tables.Tag.Table.Name}]
 	WHERE [{Tables.Tag.RecordId.Name}] = 1
 	FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))

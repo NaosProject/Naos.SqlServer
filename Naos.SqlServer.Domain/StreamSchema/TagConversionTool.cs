@@ -39,6 +39,11 @@ namespace Naos.SqlServer.Domain
         public const string TagEntryValueAttributeName = "Value";
 
         /// <summary>
+        /// Canary value to pass null through XML to Sql Server.
+        /// </summary>
+        public const string NullCanaryValue = "---NULL---";
+
+        /// <summary>
         /// Gets the tag set as a <see cref="IReadOnlyDictionary{TKey,TValue}"/> from the provided XML as a string.
         /// </summary>
         /// <param name="tagsAsXml">The tags in XML as a string.</param>
@@ -61,6 +66,11 @@ namespace Naos.SqlServer.Domain
                 var value = (tag.Attribute(TagEntryValueAttributeName)
                           ?? throw new NotSupportedException(Invariant($"Could not find the '{TagEntryValueAttributeName}' attribute in XML node: '{tag}'.")))
                    .Value; // value is allowed to be null...
+
+                if (value == NullCanaryValue)
+                {
+                    value = null;
+                }
 
                 result.Add(key, value);
             }
@@ -86,16 +96,9 @@ namespace Naos.SqlServer.Domain
             foreach (var tag in tags ?? new Dictionary<string, string>())
             {
                 var escapedKey = new XElement("ForEscapingOnly", tag.Key).LastNode.ToString();
-                var escapedValue = tag.Value == null ? null : new XElement("ForEscapingOnly", tag.Value).LastNode.ToString();
+                var escapedValue = tag.Value == null ? NullCanaryValue : new XElement("ForEscapingOnly", tag.Value).LastNode.ToString();
                 tagsXmlBuilder.Append(Invariant($"<{TagEntryElementName} "));
-                if (escapedValue == null)
-                {
-                    tagsXmlBuilder.Append(FormattableString.Invariant($"{TagEntryKeyAttributeName}=\"{escapedKey}\" {TagEntryValueAttributeName}=null"));
-                }
-                else
-                {
-                    tagsXmlBuilder.Append(FormattableString.Invariant($"{TagEntryKeyAttributeName}=\"{escapedKey}\" {TagEntryValueAttributeName}=\"{escapedValue}\""));
-                }
+                tagsXmlBuilder.Append(FormattableString.Invariant($"{TagEntryKeyAttributeName}=\"{escapedKey}\" {TagEntryValueAttributeName}=\"{escapedValue}\""));
 
                 tagsXmlBuilder.Append("/>");
             }
