@@ -134,8 +134,8 @@ namespace Naos.SqlServer.Protocol.Client
             var storedProcOp = StreamSchema.Sprocs.GetLatestRecordById.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.StringSerializedId,
-                operation.IdentifierType.ToWithAndWithoutVersion(),
-                operation.ObjectType.ToWithAndWithoutVersion(),
+                operation.IdentifierType?.ToWithAndWithoutVersion(),
+                operation.ObjectType?.ToWithAndWithoutVersion(),
                 TypeVersionMatchStrategy.Any);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
@@ -225,8 +225,8 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 operation.Concern,
                 ResourceDetails,
-                operation.IdentifierType.ToWithAndWithoutVersion(),
-                operation.ObjectType.ToWithAndWithoutVersion(),
+                operation.IdentifierType?.ToWithAndWithoutVersion(),
+                operation.ObjectType?.ToWithAndWithoutVersion(),
                 operation.OrderRecordsStrategy,
                 TypeVersionMatchStrategy.Any);
 
@@ -596,8 +596,8 @@ namespace Naos.SqlServer.Protocol.Client
             var storedProcOp = StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.StringSerializedId,
-                operation.IdentifierType.ToWithAndWithoutVersion(),
-                operation.ObjectType.ToWithAndWithoutVersion(),
+                operation.IdentifierType?.ToWithAndWithoutVersion(),
+                operation.ObjectType?.ToWithAndWithoutVersion(),
                 TypeVersionMatchStrategy.Any);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
