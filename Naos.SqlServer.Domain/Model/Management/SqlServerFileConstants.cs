@@ -6,6 +6,9 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using System.Diagnostics.CodeAnalysis;
+    using Naos.CodeAnalysis.Recipes;
+
     /// <summary>
     /// Constants used in project.
     /// </summary>
@@ -29,11 +32,13 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// The default size of the data and log files for MS SQL Server.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = NaosSuppressBecause.CA1709_IdentifiersShouldBeCasedCorrectly_CasingIsAsPreferred)]
         public const long MicrosoftSqlDefaultCurrentFileSizeInKb = 8000L;
 
         /// <summary>
         /// The default size of growth for the data and log files for MS SQL Server.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = NaosSuppressBecause.CA1709_IdentifiersShouldBeCasedCorrectly_CasingIsAsPreferred)]
         public const long MicrosoftSqlDefaultFileGrowthSizeInKb = 64000L;
     }
 }

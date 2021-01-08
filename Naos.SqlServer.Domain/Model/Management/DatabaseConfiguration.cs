@@ -6,7 +6,6 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using Naos.CodeAnalysis.Recipes;
@@ -207,7 +206,8 @@ namespace Naos.SqlServer.Domain
         /// <param name="logFileMaxSizeInKb">The log file maximum size in kb.</param>
         /// <param name="logFileGrowthSizeInKb">The log file growth size in kb.</param>
         /// <returns>DatabaseConfiguration.</returns>
-        public static DatabaseConfiguration BuildDatabaseConfiguration(
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = NaosSuppressBecause.CA1709_IdentifiersShouldBeCasedCorrectly_CasingIsAsPreferred)]
+        public static DatabaseConfiguration BuildDatabaseConfigurationUsingDefaultsAsNecessary(
             string databaseName,
             string dataDirectory,
             DatabaseType databaseType = DatabaseType.User,
