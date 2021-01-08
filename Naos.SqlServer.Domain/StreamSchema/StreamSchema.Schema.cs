@@ -22,7 +22,7 @@ namespace Naos.SqlServer.Domain
             string streamName)
         {
             var result = FormattableString.Invariant($@"
-			CREATE SCHEMA {streamName} AUTHORIZATION db_owner
+			CREATE SCHEMA [{streamName}] AUTHORIZATION db_owner
 			");
 
             return result;
