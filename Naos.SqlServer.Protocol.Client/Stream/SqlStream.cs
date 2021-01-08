@@ -41,20 +41,8 @@ namespace Naos.SqlServer.Protocol.Client
                                      ISyncAndAsyncReturningProtocol<GetIdAddIfNecessarySerializerRepresentationOp, int>,
                                      ISyncAndAsyncVoidProtocol<CreateStreamUserOp>
     {
-        private static readonly object ResourceDetailsSync = new object();
-        private static readonly string ResourceDetails;
         private readonly IDictionary<SerializerRepresentation, DescribedSerializer> serializerDescriptionToDescribedSerializerMap = new Dictionary<SerializerRepresentation, DescribedSerializer>();
         private readonly SqlServerLocator singleLocator;
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Only want to manage one thing here.")]
-        static SqlStream()
-        {
-            lock (ResourceDetailsSync)
-            {
-                // get process and machine name here?
-                ResourceDetails = Guid.NewGuid().ToString().ToUpperInvariant();
-            }
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlStream"/> class.
@@ -66,6 +54,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="defaultSerializationFormat">Default serializer format.</param>
         /// <param name="serializerFactory">The factory to get a serializer to use for objects.</param>
         /// <param name="resourceLocatorProtocol">The protocols for getting locators.</param>
+        /// <param name="handlingResourceDetails">The optional details to be attached to any handling of records; DEFAULT is a new Guid.</param>
         public SqlStream(
             string name,
             TimeSpan defaultConnectionTimeout,
@@ -73,7 +62,8 @@ namespace Naos.SqlServer.Protocol.Client
             SerializerRepresentation defaultSerializerRepresentation,
             SerializationFormat defaultSerializationFormat,
             ISerializerFactory serializerFactory,
-            IResourceLocatorProtocols resourceLocatorProtocol)
+            IResourceLocatorProtocols resourceLocatorProtocol,
+            string handlingResourceDetails = null)
         : base(name, resourceLocatorProtocol, serializerFactory, defaultSerializerRepresentation, defaultSerializationFormat)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
@@ -84,6 +74,7 @@ namespace Naos.SqlServer.Protocol.Client
             this.StreamRepresentation = new StreamRepresentation(this.Name);
             this.DefaultConnectionTimeout = defaultConnectionTimeout;
             this.DefaultCommandTimeout = defaultCommandTimeout;
+            this.HandlingResourceDetails = handlingResourceDetails ?? Guid.NewGuid().ToString().ToUpperInvariant();
 
             var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
             this.singleLocator = allLocators.Count == 1 ? allLocators.Single().ConfirmAndConvert<SqlServerLocator>() : null;
@@ -100,6 +91,12 @@ namespace Naos.SqlServer.Protocol.Client
         /// </summary>
         /// <value>The default command timeout.</value>
         public TimeSpan DefaultCommandTimeout { get; private set; }
+
+        /// <summary>
+        /// Gets the handling resource details.
+        /// </summary>
+        /// <value>The handling resource details.</value>
+        public string HandlingResourceDetails { get; private set; }
 
         /// <inheritdoc />
         public override long Execute(
@@ -224,7 +221,7 @@ namespace Naos.SqlServer.Protocol.Client
             var storedProcOp = StreamSchema.Sprocs.TryHandleRecord.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.Concern,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 operation.IdentifierType?.ToWithAndWithoutVersion(),
                 operation.ObjectType?.ToWithAndWithoutVersion(),
                 operation.OrderRecordsStrategy,
@@ -339,7 +336,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 Concerns.RecordHandlingConcern,
                 Concerns.GlobalBlockingRecordId,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 HandlingStatus.Blocked,
                 typeof(HandlingStatus).GetAllPossibleEnumValues()
                                       .Cast<HandlingStatus>()
@@ -368,7 +365,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 Concerns.RecordHandlingConcern,
                 Concerns.GlobalBlockingRecordId,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 HandlingStatus.Requested,
                 new[] { HandlingStatus.Blocked },
                 operation.Details);
@@ -387,7 +384,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 operation.Concern,
                 operation.Id,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 HandlingStatus.Canceled,
                 new[] { HandlingStatus.Requested, HandlingStatus.Running, HandlingStatus.Failed },
                 operation.Details);
@@ -406,7 +403,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 operation.Concern,
                 operation.Id,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 HandlingStatus.CanceledRunning,
                 new[] { HandlingStatus.Running },
                 operation.Details);
@@ -425,7 +422,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 operation.Concern,
                 operation.Id,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 HandlingStatus.Completed,
                 new[] { HandlingStatus.Running },
                 operation.Details);
@@ -444,7 +441,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 operation.Concern,
                 operation.Id,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 HandlingStatus.Failed,
                 new[] { HandlingStatus.Running },
                 operation.Details);
@@ -463,7 +460,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 operation.Concern,
                 operation.Id,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 HandlingStatus.SelfCanceledRunning,
                 new[] { HandlingStatus.Running },
                 operation.Details);
@@ -482,7 +479,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 operation.Concern,
                 operation.Id,
-                ResourceDetails,
+                this.HandlingResourceDetails,
                 HandlingStatus.RetryFailed,
                 new[] { HandlingStatus.Failed },
                 operation.Details);
