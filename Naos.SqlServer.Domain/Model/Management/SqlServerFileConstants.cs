@@ -25,5 +25,15 @@ namespace Naos.SqlServer.Domain
         /// The value to be specified for unlimited file growth in an MS SQL Server file.
         /// </summary>
         public const int InfinityMaxSize = -1;
+
+        /// <summary>
+        /// The default size of the data and log files for MS SQL Server.
+        /// </summary>
+        public const long MicrosoftSqlDefaultCurrentFileSizeInKb = 8000L;
+
+        /// <summary>
+        /// The default size of growth for the data and log files for MS SQL Server.
+        /// </summary>
+        public const long MicrosoftSqlDefaultFileGrowthSizeInKb = 64000L;
     }
 }

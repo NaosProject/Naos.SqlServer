@@ -146,7 +146,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
+    <Compile Include="Protocols\SqlOperationsProtocol.DeleteDatabase.cs" />
     <Compile Include="Protocols\SqlOperationsProtocol.cs" />
+    <Compile Include="Protocols\SqlOperationsProtocol.CreateDatabase.cs" />
     <Compile Include="Protocols\SqlOperationsProtocol.ExecuteSproc.cs" />
     <Compile Include="Stream\SqlStream.cs" />
     <Compile Include="Utility\SqlParameterRepresentationExtensions.cs" />

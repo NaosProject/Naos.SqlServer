@@ -105,16 +105,16 @@
     <Compile Include="Legacy\SqlServerConnectionDefinition.designer.cs">
       <DependentUpon>SqlServerConnectionDefinition.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\CreationBackupRestore\BackupSqlServerDatabaseDetails.designer.cs">
+    <Compile Include="Model\Management\BackupSqlServerDatabaseDetails.designer.cs">
       <DependentUpon>BackupSqlServerDatabaseDetails.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\CreationBackupRestore\DatabaseConfiguration.designer.cs">
+    <Compile Include="Model\Management\DatabaseConfiguration.designer.cs">
       <DependentUpon>DatabaseConfiguration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\CreationBackupRestore\RestoreFile.designer.cs">
+    <Compile Include="Model\Management\RestoreFile.designer.cs">
       <DependentUpon>RestoreFile.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\CreationBackupRestore\RestoreSqlServerDatabaseDetails.designer.cs">
+    <Compile Include="Model\Management\RestoreSqlServerDatabaseDetails.designer.cs">
       <DependentUpon>RestoreSqlServerDatabaseDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\DataTypeRepresentation\BinarySqlDataTypeRepresentation.cs" />
@@ -195,6 +195,8 @@
     <Compile Include="Model\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="Operations\DeleteDatabaseOp.cs" />
+    <Compile Include="Operations\CreateDatabaseOp.cs" />
     <Compile Include="Operations\ExecuteStoredProcedureOp.cs" />
     <Compile Include="Operations\ExecuteStoredProcedureOp.designer.cs">
       <DependentUpon>ExecuteStoredProcedureOp.cs</DependentUpon>
@@ -227,23 +229,23 @@
     <Compile Include="StreamSchema\StreamSchema.Tables.Tag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithoutVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithVersion.cs" />
-    <Compile Include="Model\CreationBackupRestore\BackupSqlServerDatabaseDetails.cs" />
-    <Compile Include="Model\CreationBackupRestore\ChecksumOption.cs" />
-    <Compile Include="Model\CreationBackupRestore\Cipher.cs" />
+    <Compile Include="Model\Management\BackupSqlServerDatabaseDetails.cs" />
+    <Compile Include="Model\Management\ChecksumOption.cs" />
+    <Compile Include="Model\Management\Cipher.cs" />
     <Compile Include="Model\SchemaRepresentation\ColumnDescription.cs" />
-    <Compile Include="Model\CreationBackupRestore\CompressionOption.cs" />
-    <Compile Include="Model\CreationBackupRestore\DatabaseConfiguration.cs" />
-    <Compile Include="Model\CreationBackupRestore\DatabaseType.cs" />
-    <Compile Include="Model\CreationBackupRestore\Device.cs" />
-    <Compile Include="Model\CreationBackupRestore\EncryptionCipher.cs" />
-    <Compile Include="Model\CreationBackupRestore\Encryptor.cs" />
-    <Compile Include="Model\CreationBackupRestore\ErrorHandling.cs" />
-    <Compile Include="Model\CreationBackupRestore\SqlServerFileConstants.cs" />
-    <Compile Include="Model\CreationBackupRestore\RecoveryMode.cs" />
-    <Compile Include="Model\CreationBackupRestore\RecoveryOption.cs" />
-    <Compile Include="Model\CreationBackupRestore\RestoreFile.cs" />
-    <Compile Include="Model\CreationBackupRestore\RestoreSqlServerDatabaseDetails.cs" />
-    <Compile Include="Model\CreationBackupRestore\RestrictedUserOption.cs" />
+    <Compile Include="Model\Management\CompressionOption.cs" />
+    <Compile Include="Model\Management\DatabaseConfiguration.cs" />
+    <Compile Include="Model\Management\DatabaseType.cs" />
+    <Compile Include="Model\Management\Device.cs" />
+    <Compile Include="Model\Management\EncryptionCipher.cs" />
+    <Compile Include="Model\Management\Encryptor.cs" />
+    <Compile Include="Model\Management\ErrorHandling.cs" />
+    <Compile Include="Model\Management\SqlServerFileConstants.cs" />
+    <Compile Include="Model\Management\RecoveryMode.cs" />
+    <Compile Include="Model\Management\RecoveryOption.cs" />
+    <Compile Include="Model\Management\RestoreFile.cs" />
+    <Compile Include="Model\Management\RestoreSqlServerDatabaseDetails.cs" />
+    <Compile Include="Model\Management\RestrictedUserOption.cs" />
     <Compile Include="Model\Scripting\ScriptedObject.cs" />
     <Compile Include="Model\SchemaRepresentation\TableDescription.cs" />
     <Compile Include="SqlInjectorChecker.cs" />

@@ -11,7 +11,10 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Protocols for SQL Operations.
     /// </summary>
-    public interface IProtocolSqlOperations : ISyncAndAsyncReturningProtocol<ExecuteStoredProcedureOp, StoredProcedureExecutionResult>
+    public interface IProtocolSqlOperations
+        : ISyncAndAsyncReturningProtocol<ExecuteStoredProcedureOp, StoredProcedureExecutionResult>,
+          ISyncAndAsyncVoidProtocol<CreateDatabaseOp>,
+          ISyncAndAsyncVoidProtocol<DeleteDatabaseOp>
     {
     }
 }

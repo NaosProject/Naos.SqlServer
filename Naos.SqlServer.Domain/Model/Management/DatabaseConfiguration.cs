@@ -6,10 +6,13 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using Naos.CodeAnalysis.Recipes;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+    using static System.FormattableString;
 
     /// <summary>
     /// Detailed information about the database's configuration (file size and name type stuff).
@@ -32,7 +35,11 @@ namespace Naos.SqlServer.Domain
         /// <param name="logFileCurrentSizeInKb">The log file current size in kilobytes.</param>
         /// <param name="logFileMaxSizeInKb">The log file maximum size in kilobytes.</param>
         /// <param name="logFileGrowthSizeInKb">The log file growth size in kilobytes.</param>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Name is correct in context.")]
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1709:IdentifiersShouldBeCasedCorrectly",
+            MessageId = "Kb",
+            Justification = "Name is correct in context.")]
         public DatabaseConfiguration(
             string databaseName,
             DatabaseType databaseType,
@@ -119,19 +126,31 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the current size of data file in kilobytes.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1709:IdentifiersShouldBeCasedCorrectly",
+            MessageId = "Kb",
+            Justification = "Spelling/name is correct.")]
         public long DataFileCurrentSizeInKb { get; private set; }
 
         /// <summary>
         /// Gets the max size of data file in kilobytes.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1709:IdentifiersShouldBeCasedCorrectly",
+            MessageId = "Kb",
+            Justification = "Spelling/name is correct.")]
         public long DataFileMaxSizeInKb { get; private set; }
 
         /// <summary>
         /// Gets the size of growth interval of data file in kilobytes.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1709:IdentifiersShouldBeCasedCorrectly",
+            MessageId = "Kb",
+            Justification = "Spelling/name is correct.")]
         public long DataFileGrowthSizeInKb { get; private set; }
 
         /// <summary>
@@ -142,19 +161,91 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the current size of log file in kilobytes.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1709:IdentifiersShouldBeCasedCorrectly",
+            MessageId = "Kb",
+            Justification = "Spelling/name is correct.")]
         public long LogFileCurrentSizeInKb { get; private set; }
 
         /// <summary>
         /// Gets the max size of data file in kilobytes.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1709:IdentifiersShouldBeCasedCorrectly",
+            MessageId = "Kb",
+            Justification = "Spelling/name is correct.")]
         public long LogFileMaxSizeInKb { get; private set; }
 
         /// <summary>
         /// Gets the size of growth interval of log file in kilobytes.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = "Spelling/name is correct.")]
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1709:IdentifiersShouldBeCasedCorrectly",
+            MessageId = "Kb",
+            Justification = "Spelling/name is correct.")]
         public long LogFileGrowthSizeInKb { get; private set; }
+
+        /// <summary>
+        /// Builds the database configuration using defaults in substitute of any direct specification not provided.
+        /// </summary>
+        /// <param name="databaseName">Name of the database.</param>
+        /// <param name="dataDirectory">The data directory.</param>
+        /// <param name="databaseType">The database type.</param>
+        /// <param name="logDirectory">The log directory.</param>
+        /// <param name="recoveryMode">The recovery mode.</param>
+        /// <param name="dataFileLogicalName">Name of the data file logical.</param>
+        /// <param name="dataFileNameOnDisk">The data file name on disk.</param>
+        /// <param name="dataFileCurrentSizeInKb">The data file current size in kb.</param>
+        /// <param name="dataFileMaxSizeInKb">The data file maximum size in kb.</param>
+        /// <param name="dataFileGrowthSizeInKb">The data file growth size in kb.</param>
+        /// <param name="logFileLogicalName">Name of the log file logical.</param>
+        /// <param name="logFileNameOnDisk">The log file name on disk.</param>
+        /// <param name="logFileCurrentSizeInKb">The log file current size in kb.</param>
+        /// <param name="logFileMaxSizeInKb">The log file maximum size in kb.</param>
+        /// <param name="logFileGrowthSizeInKb">The log file growth size in kb.</param>
+        /// <returns>DatabaseConfiguration.</returns>
+        public static DatabaseConfiguration BuildDatabaseConfiguration(
+            string databaseName,
+            string dataDirectory,
+            DatabaseType databaseType = DatabaseType.User,
+            string logDirectory = null,
+            RecoveryMode recoveryMode = RecoveryMode.Simple,
+            string dataFileLogicalName = null,
+            string dataFileNameOnDisk = null,
+            long? dataFileCurrentSizeInKb = null,
+            long? dataFileMaxSizeInKb = null,
+            long? dataFileGrowthSizeInKb = null,
+            string logFileLogicalName = null,
+            string logFileNameOnDisk = null,
+            long? logFileCurrentSizeInKb = null,
+            long? logFileMaxSizeInKb = null,
+            long? logFileGrowthSizeInKb = null)
+        {
+            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace();
+
+            var databaseConfiguration = new DatabaseConfiguration(
+                databaseName,
+                databaseType,
+                recoveryMode,
+                dataFileLogicalName ?? Invariant($"{databaseName}Data"),
+                Path.Combine(
+                    dataDirectory,
+                    dataFileNameOnDisk ?? Invariant($"{databaseName}Data.{SqlServerFileConstants.MicrosoftSqlDataFileExtension}")),
+                dataFileCurrentSizeInKb ?? SqlServerFileConstants.MicrosoftSqlDefaultCurrentFileSizeInKb,
+                dataFileMaxSizeInKb     ?? SqlServerFileConstants.InfinityMaxSize,
+                dataFileGrowthSizeInKb  ?? SqlServerFileConstants.MicrosoftSqlDefaultFileGrowthSizeInKb,
+                logFileLogicalName      ?? Invariant($"{databaseName}Log"),
+                Path.Combine(
+                    logDirectory      ?? dataDirectory,
+                    logFileNameOnDisk ?? Invariant($"{databaseName}Log.{SqlServerFileConstants.MicrosoftSqlLogFileExtension}")),
+                logFileCurrentSizeInKb ?? SqlServerFileConstants.MicrosoftSqlDefaultCurrentFileSizeInKb,
+                logFileMaxSizeInKb     ?? SqlServerFileConstants.InfinityMaxSize,
+                logFileGrowthSizeInKb  ?? SqlServerFileConstants.MicrosoftSqlDefaultFileGrowthSizeInKb);
+
+            return databaseConfiguration;
+        }
     }
 }

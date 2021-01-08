@@ -27,15 +27,15 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="defaultCommandTimeout">The default command timeout.</param>
         public SqlOperationsProtocol(
             ISqlServerLocator sqlServerLocator,
-            TimeSpan defaultConnectionTimeout,
-            TimeSpan defaultCommandTimeout)
+            TimeSpan defaultConnectionTimeout = default(TimeSpan),
+            TimeSpan defaultCommandTimeout = default(TimeSpan))
         {
             sqlServerLocator.MustForArg(nameof(sqlServerLocator)).NotBeNull();
 
             this.sqlServerLocator = sqlServerLocator;
 
-            this.defaultConnectionTimeout = defaultConnectionTimeout;
-            this.defaultCommandTimeout = defaultCommandTimeout;
+            this.defaultConnectionTimeout = defaultConnectionTimeout == default(TimeSpan) ? TimeSpan.FromSeconds(30) : defaultConnectionTimeout;
+            this.defaultCommandTimeout = defaultCommandTimeout == default(TimeSpan) ? TimeSpan.FromSeconds(30) : defaultCommandTimeout;
         }
     }
 }
