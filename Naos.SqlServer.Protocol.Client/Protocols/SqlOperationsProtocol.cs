@@ -15,7 +15,7 @@ namespace Naos.SqlServer.Protocol.Client
     /// </summary>
     public partial class SqlOperationsProtocol : IProtocolSqlOperations
     {
-        private readonly ISqlServerLocator sqlServerLocator;
+        private readonly SqlServerLocator sqlServerLocator;
         private readonly TimeSpan defaultConnectionTimeout;
         private readonly TimeSpan defaultCommandTimeout;
 
@@ -26,7 +26,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="defaultConnectionTimeout">The default connection timeout.</param>
         /// <param name="defaultCommandTimeout">The default command timeout.</param>
         public SqlOperationsProtocol(
-            ISqlServerLocator sqlServerLocator,
+            SqlServerLocator sqlServerLocator,
             TimeSpan defaultConnectionTimeout = default(TimeSpan),
             TimeSpan defaultCommandTimeout = default(TimeSpan))
         {

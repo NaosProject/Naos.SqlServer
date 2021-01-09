@@ -21,7 +21,11 @@ namespace Naos.SqlServer.Protocol.Client
         {
             operation.MustForArg(nameof(operation)).NotBeNull();
 
-            var connectionString = this.sqlServerLocator.BuildConnectionString(this.defaultConnectionTimeout);
+            // Change to master database since it is guaranteed to be there.
+            var connectionString = this.sqlServerLocator
+                                       .DeepCloneWithDatabaseName(SqlServerDatabaseManager.MasterDatabaseName)
+                                       .BuildConnectionString(this.defaultConnectionTimeout);
+
             SqlServerDatabaseManager.Create(connectionString, operation.DatabaseConfiguration, this.defaultCommandTimeout);
         }
 
