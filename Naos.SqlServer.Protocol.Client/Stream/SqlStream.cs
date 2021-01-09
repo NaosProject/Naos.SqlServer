@@ -707,12 +707,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.SerializerRepresentation.CompressionKind,
                 UnregisteredTypeEncounteredStrategy.Attempt);
 
-            var locator = operation.ResourceLocator;
-            if (!(locator is ISqlServerLocator sqlLocator))
-            {
-                throw new NotSupportedException(FormattableString.Invariant($"Cannot support locator of type: {locator.GetType().ToStringReadable()}"));
-            }
-
+            var sqlLocator = this.TryGetLocator(operation);
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
             var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.OutputParamName.Id)]
@@ -734,7 +729,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="sqlLocator">The SQL locator.</param>
         /// <returns>IProtocolSqlOperations.</returns>
         public IProtocolSqlOperations BuildSqlOperationsProtocol(
-            ISqlServerLocator sqlLocator)
+            SqlServerLocator sqlLocator)
         {
             var result = new SqlOperationsProtocol(sqlLocator, this.DefaultConnectionTimeout, this.DefaultCommandTimeout);
             return result;

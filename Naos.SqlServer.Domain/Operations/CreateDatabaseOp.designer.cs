@@ -15,6 +15,8 @@ namespace Naos.SqlServer.Domain
     using global::System.Globalization;
     using global::System.Linq;
 
+    using global::Naos.Protocol.Domain;
+
     using global::OBeautifulCode.Equality.Recipes;
     using global::OBeautifulCode.Type;
     using global::OBeautifulCode.Type.Recipes;
@@ -22,15 +24,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class BinarySqlDataTypeRepresentation : IModel<BinarySqlDataTypeRepresentation>
+    public partial class CreateDatabaseOp : IModel<CreateDatabaseOp>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="BinarySqlDataTypeRepresentation"/> are equal.
+        /// Determines whether two objects of type <see cref="CreateDatabaseOp"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(BinarySqlDataTypeRepresentation left, BinarySqlDataTypeRepresentation right)
+        public static bool operator ==(CreateDatabaseOp left, CreateDatabaseOp right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -48,15 +50,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="BinarySqlDataTypeRepresentation"/> are not equal.
+        /// Determines whether two objects of type <see cref="CreateDatabaseOp"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(BinarySqlDataTypeRepresentation left, BinarySqlDataTypeRepresentation right) => !(left == right);
+        public static bool operator !=(CreateDatabaseOp left, CreateDatabaseOp right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(BinarySqlDataTypeRepresentation other)
+        public bool Equals(CreateDatabaseOp other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -68,27 +70,27 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.SupportedLength.IsEqualTo(other.SupportedLength);
+            var result = this.DatabaseConfiguration.IsEqualTo(other.DatabaseConfiguration);
 
             return result;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as BinarySqlDataTypeRepresentation);
+        public override bool Equals(object obj) => this == (obj as CreateDatabaseOp);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.SupportedLength)
+            .Hash(this.DatabaseConfiguration)
             .Value;
 
         /// <inheritdoc />
-        public new BinarySqlDataTypeRepresentation DeepClone() => (BinarySqlDataTypeRepresentation)this.DeepCloneInternal();
+        public new CreateDatabaseOp DeepClone() => (CreateDatabaseOp)this.DeepCloneInternal();
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="SupportedLength" />.
+        /// Deep clones this object with a new <see cref="DatabaseConfiguration" />.
         /// </summary>
-        /// <param name="supportedLength">The new <see cref="SupportedLength" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="BinarySqlDataTypeRepresentation" /> using the specified <paramref name="supportedLength" /> for <see cref="SupportedLength" /> and a deep clone of every other property.</returns>
+        /// <param name="databaseConfiguration">The new <see cref="DatabaseConfiguration" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="CreateDatabaseOp" /> using the specified <paramref name="databaseConfiguration" /> for <see cref="DatabaseConfiguration" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -104,19 +106,19 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public BinarySqlDataTypeRepresentation DeepCloneWithSupportedLength(int supportedLength)
+        public CreateDatabaseOp DeepCloneWithDatabaseConfiguration(DatabaseConfiguration databaseConfiguration)
         {
-            var result = new BinarySqlDataTypeRepresentation(
-                                 supportedLength);
+            var result = new CreateDatabaseOp(
+                                 databaseConfiguration);
 
             return result;
         }
 
         /// <inheritdoc />
-        protected override SqlDataTypeRepresentationBase DeepCloneInternal()
+        protected override OperationBase DeepCloneInternal()
         {
-            var result = new BinarySqlDataTypeRepresentation(
-                                 this.SupportedLength);
+            var result = new CreateDatabaseOp(
+                                 this.DatabaseConfiguration?.DeepClone());
 
             return result;
         }
@@ -125,7 +127,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.BinarySqlDataTypeRepresentation: SupportedLength = {this.SupportedLength.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.CreateDatabaseOp: DatabaseConfiguration = {this.DatabaseConfiguration?.ToString() ?? "<null>"}.");
 
             return result;
         }

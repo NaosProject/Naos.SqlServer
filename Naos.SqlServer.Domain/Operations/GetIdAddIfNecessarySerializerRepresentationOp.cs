@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
+    using Naos.Database.Domain;
     using Naos.Protocol.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Serialization;
@@ -14,21 +15,21 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Find the identity of a <see cref="SerializerRepresentation"/>.
     /// </summary>
-    public partial class GetIdAddIfNecessarySerializerRepresentationOp : ReturningOperationBase<int>
+    public partial class GetIdAddIfNecessarySerializerRepresentationOp : ReturningOperationBase<int>, ISpecifyResourceLocator
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GetIdAddIfNecessarySerializerRepresentationOp"/> class.
         /// </summary>
-        /// <param name="resourceLocator">Stream locator to inspect.</param>
+        /// <param name="specifiedResourceLocator">Stream locator to inspect.</param>
         /// <param name="serializerRepresentation">The serialization description.</param>
         /// <param name="serializationFormat">The serialization format.</param>
         /// <exception cref="System.ArgumentNullException">serializerRepresentation.</exception>
         public GetIdAddIfNecessarySerializerRepresentationOp(
-            SqlServerLocator resourceLocator,
+            IResourceLocator specifiedResourceLocator,
             SerializerRepresentation serializerRepresentation,
             SerializationFormat serializationFormat)
         {
-            this.ResourceLocator = resourceLocator ?? throw new ArgumentNullException(nameof(resourceLocator));
+            this.SpecifiedResourceLocator = specifiedResourceLocator ?? throw new ArgumentNullException(nameof(specifiedResourceLocator));
             this.SerializerRepresentation = serializerRepresentation ?? throw new ArgumentNullException(nameof(serializerRepresentation));
 
             if (serializationFormat == SerializationFormat.Invalid)
@@ -51,10 +52,7 @@ namespace Naos.SqlServer.Domain
         /// <value>The serialization format.</value>
         public SerializationFormat SerializationFormat { get; private set; }
 
-        /// <summary>
-        /// Gets the stream locator.
-        /// </summary>
-        /// <value>The stream locator.</value>
-        public SqlServerLocator ResourceLocator { get; private set; }
+        /// <inheritdoc />
+        public IResourceLocator SpecifiedResourceLocator { get; private set; }
     }
 }

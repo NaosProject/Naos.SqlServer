@@ -15,22 +15,25 @@ namespace Naos.SqlServer.Domain
     using global::System.Globalization;
     using global::System.Linq;
 
+    using global::Naos.Protocol.Domain;
+
     using global::OBeautifulCode.Equality.Recipes;
+    using global::OBeautifulCode.Representation.System;
     using global::OBeautifulCode.Type;
     using global::OBeautifulCode.Type.Recipes;
 
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlInputParameterRepresentation<TValue> : IModel<SqlInputParameterRepresentation<TValue>>
+    public partial class CreateStreamUserOp : IModel<CreateStreamUserOp>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlInputParameterRepresentation{TValue}"/> are equal.
+        /// Determines whether two objects of type <see cref="CreateStreamUserOp"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlInputParameterRepresentation<TValue> left, SqlInputParameterRepresentation<TValue> right)
+        public static bool operator ==(CreateStreamUserOp left, CreateStreamUserOp right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -48,15 +51,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlInputParameterRepresentation{TValue}"/> are not equal.
+        /// Determines whether two objects of type <see cref="CreateStreamUserOp"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlInputParameterRepresentation<TValue> left, SqlInputParameterRepresentation<TValue> right) => !(left == right);
+        public static bool operator !=(CreateStreamUserOp left, CreateStreamUserOp right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlInputParameterRepresentation<TValue> other)
+        public bool Equals(CreateStreamUserOp other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -68,27 +71,31 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.Name.IsEqualTo(other.Name, StringComparer.Ordinal)
-                      && this.DataType.IsEqualTo(other.DataType)
-                      && this.Value.IsEqualTo(other.Value);
+            var result = this.UserName.IsEqualTo(other.UserName, StringComparer.Ordinal)
+                      && this.ClearTextPassword.IsEqualTo(other.ClearTextPassword, StringComparer.Ordinal)
+                      && this.ProtocolsToGrantAccessFor.IsEqualTo(other.ProtocolsToGrantAccessFor);
 
             return result;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as SqlInputParameterRepresentation<TValue>);
+        public override bool Equals(object obj) => this == (obj as CreateStreamUserOp);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.Name)
-            .Hash(this.DataType)
-            .Hash(this.Value)
+            .Hash(this.UserName)
+            .Hash(this.ClearTextPassword)
+            .Hash(this.ProtocolsToGrantAccessFor)
             .Value;
 
         /// <inheritdoc />
-        public new SqlInputParameterRepresentation<TValue> DeepClone() => (SqlInputParameterRepresentation<TValue>)this.DeepCloneInternal();
+        public new CreateStreamUserOp DeepClone() => (CreateStreamUserOp)this.DeepCloneInternal();
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Deep clones this object with a new <see cref="UserName" />.
+        /// </summary>
+        /// <param name="userName">The new <see cref="UserName" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="CreateStreamUserOp" /> using the specified <paramref name="userName" /> for <see cref="UserName" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -104,47 +111,21 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override SqlParameterRepresentationBase DeepCloneWithName(string name)
+        public CreateStreamUserOp DeepCloneWithUserName(string userName)
         {
-            var result = new SqlInputParameterRepresentation<TValue>(
-                                 name,
-                                 this.DataType?.DeepClone(),
-                                 DeepCloneGeneric(this.Value));
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override SqlParameterRepresentationBase DeepCloneWithDataType(SqlDataTypeRepresentationBase dataType)
-        {
-            var result = new SqlInputParameterRepresentation<TValue>(
-                                 this.Name?.DeepClone(),
-                                 dataType,
-                                 DeepCloneGeneric(this.Value));
+            var result = new CreateStreamUserOp(
+                                 userName,
+                                 this.ClearTextPassword?.DeepClone(),
+                                 this.ProtocolsToGrantAccessFor?.Select(i => i?.DeepClone()).ToList());
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="Value" />.
+        /// Deep clones this object with a new <see cref="ClearTextPassword" />.
         /// </summary>
-        /// <param name="value">The new <see cref="Value" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlInputParameterRepresentation{TValue}" /> using the specified <paramref name="value" /> for <see cref="Value" /> and a deep clone of every other property.</returns>
+        /// <param name="clearTextPassword">The new <see cref="ClearTextPassword" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="CreateStreamUserOp" /> using the specified <paramref name="clearTextPassword" /> for <see cref="ClearTextPassword" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -160,73 +141,62 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlInputParameterRepresentation<TValue> DeepCloneWithValue(TValue value)
+        public CreateStreamUserOp DeepCloneWithClearTextPassword(string clearTextPassword)
         {
-            var result = new SqlInputParameterRepresentation<TValue>(
-                                 this.Name?.DeepClone(),
-                                 this.DataType?.DeepClone(),
-                                 value);
+            var result = new CreateStreamUserOp(
+                                 this.UserName?.DeepClone(),
+                                 clearTextPassword,
+                                 this.ProtocolsToGrantAccessFor?.Select(i => i?.DeepClone()).ToList());
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <see cref="ProtocolsToGrantAccessFor" />.
+        /// </summary>
+        /// <param name="protocolsToGrantAccessFor">The new <see cref="ProtocolsToGrantAccessFor" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="CreateStreamUserOp" /> using the specified <paramref name="protocolsToGrantAccessFor" /> for <see cref="ProtocolsToGrantAccessFor" /> and a deep clone of every other property.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public CreateStreamUserOp DeepCloneWithProtocolsToGrantAccessFor(IReadOnlyCollection<TypeRepresentation> protocolsToGrantAccessFor)
+        {
+            var result = new CreateStreamUserOp(
+                                 this.UserName?.DeepClone(),
+                                 this.ClearTextPassword?.DeepClone(),
+                                 protocolsToGrantAccessFor);
 
             return result;
         }
 
         /// <inheritdoc />
-        protected override SqlParameterRepresentationBase DeepCloneInternal()
+        protected override OperationBase DeepCloneInternal()
         {
-            var result = new SqlInputParameterRepresentation<TValue>(
-                                 this.Name?.DeepClone(),
-                                 this.DataType?.DeepClone(),
-                                 DeepCloneGeneric(this.Value));
+            var result = new CreateStreamUserOp(
+                                 this.UserName?.DeepClone(),
+                                 this.ClearTextPassword?.DeepClone(),
+                                 this.ProtocolsToGrantAccessFor?.Select(i => i?.DeepClone()).ToList());
 
             return result;
-        }
-
-        private static TValue DeepCloneGeneric(TValue value)
-        {
-            object result;
-
-            var type = typeof(TValue);
-
-            if (type.IsValueType)
-            {
-                result = value;
-            }
-            else
-            {
-                if (ReferenceEquals(value, null))
-                {
-                    result = default;
-                }
-                else if (value is IDeepCloneable<TValue> deepCloneableValue)
-                {
-                    result = deepCloneableValue.DeepClone();
-                }
-                else if (value is string valueAsString)
-                {
-                    result = valueAsString.DeepClone();
-                }
-                else if (value is global::System.Version valueAsVersion)
-                {
-                    result = valueAsVersion.DeepClone();
-                }
-                else if (value is global::System.Uri valueAsUri)
-                {
-                    result = valueAsUri.DeepClone();
-                }
-                else
-                {
-                    throw new NotSupportedException(Invariant($"I do not know how to deep clone an object of type '{type.ToStringReadable()}'"));
-                }
-            }
-
-            return (TValue)result;
         }
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.{this.GetType().ToStringReadable()}: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DataType = {this.DataType?.ToString() ?? "<null>"}, Value = {this.Value?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.CreateStreamUserOp: UserName = {this.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ClearTextPassword = {this.ClearTextPassword?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ProtocolsToGrantAccessFor = {this.ProtocolsToGrantAccessFor?.ToString() ?? "<null>"}.");
 
             return result;
         }

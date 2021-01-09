@@ -282,6 +282,14 @@
       <DependentUpon>ColumnRepresentationTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ConsoleAbstraction.cs" />
+    <Compile Include="CreateDatabaseOpTest.cs" />
+    <Compile Include="CreateDatabaseOpTest.designer.cs">
+      <DependentUpon>CreateDatabaseOpTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateStreamUserOpTest.cs" />
+    <Compile Include="CreateStreamUserOpTest.designer.cs">
+      <DependentUpon>CreateStreamUserOpTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="DatabaseConfigurationTest.cs" />
     <Compile Include="DatabaseConfigurationTest.designer.cs">
       <DependentUpon>DatabaseConfigurationTest.cs</DependentUpon>
@@ -289,6 +297,10 @@
     <Compile Include="DecimalSqlDataTypeRepresentationTest.cs" />
     <Compile Include="DecimalSqlDataTypeRepresentationTest.designer.cs">
       <DependentUpon>DecimalSqlDataTypeRepresentationTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeleteDatabaseOpTest.cs" />
+    <Compile Include="DeleteDatabaseOpTest.designer.cs">
+      <DependentUpon>DeleteDatabaseOpTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ExecuteStoredProcedureOpTest.cs" />
     <Compile Include="ExecuteStoredProcedureOpTest.designer.cs">

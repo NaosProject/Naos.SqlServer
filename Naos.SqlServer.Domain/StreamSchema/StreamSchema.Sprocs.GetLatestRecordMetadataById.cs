@@ -188,6 +188,8 @@ namespace Naos.SqlServer.Domain
                     const string serializerConfigTypeId = "SerializerConfigTypeId";
                     const string identifierTypeWithVersionId = "IdentifierTypeWithVersionId";
                     const string objectTypeWithVersionId = "ObjectTypeWithVersionId";
+                    const string identifierTypeWithVersionIdQuery = "IdentifierTypeWithVersionIdQuery";
+                    const string objectTypeWithVersionIdQuery = "ObjectTypeWithVersionIdQuery";
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{GetLatestRecordMetadataById.Name}(
@@ -208,6 +210,10 @@ CREATE PROCEDURE [{streamName}].{GetLatestRecordMetadataById.Name}(
 )
 AS
 BEGIN
+
+	DECLARE @{identifierTypeWithVersionIdQuery} int
+	DECLARE @{objectTypeWithVersionIdQuery} int
+    SELECT @{objectTypeWithVersionIdQuery} = []
 
     DECLARE @{serializerRepresentationId} int   
 	DECLARE @{identifierTypeWithVersionId} int

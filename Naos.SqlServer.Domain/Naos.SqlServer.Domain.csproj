@@ -195,8 +195,17 @@
     <Compile Include="Model\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="Operations\CreateDatabaseOp.designer.cs">
+      <DependentUpon>CreateDatabaseOp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\CreateStreamUserOp.designer.cs">
+      <DependentUpon>CreateStreamUserOp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Operations\DeleteDatabaseOp.cs" />
     <Compile Include="Operations\CreateDatabaseOp.cs" />
+    <Compile Include="Operations\DeleteDatabaseOp.designer.cs">
+      <DependentUpon>DeleteDatabaseOp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Operations\ExecuteStoredProcedureOp.cs" />
     <Compile Include="Operations\ExecuteStoredProcedureOp.designer.cs">
       <DependentUpon>ExecuteStoredProcedureOp.cs</DependentUpon>
