@@ -150,6 +150,9 @@
     <Compile Include="Protocols\SqlOperationsProtocol.cs" />
     <Compile Include="Protocols\SqlOperationsProtocol.CreateDatabase.cs" />
     <Compile Include="Protocols\SqlOperationsProtocol.ExecuteSproc.cs" />
+    <Compile Include="Stream\SqlStream.SerializerRepresentationCaching.cs" />
+    <Compile Include="Stream\SqlStream.TagCaching.cs" />
+    <Compile Include="Stream\SqlStream.TypeCaching.cs" />
     <Compile Include="Stream\SqlStream.cs" />
     <Compile Include="Utility\SqlParameterRepresentationExtensions.cs" />
     <Compile Include="Legacy\SqlServerDatabaseManager.cs" />

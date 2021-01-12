@@ -145,7 +145,7 @@
     <Compile Include="Model\DataTypeRepresentation\UtcDateTimeSqlDataTypeRepresentation.designer.cs">
       <DependentUpon>UtcDateTimeSqlDataTypeRepresentation.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\DescribedSerializer.cs" />
+    <Compile Include="Model\IdentifiedSerializerRepresentation.cs" />
     <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentationBase.cs" />
     <Compile Include="Model\ParameterRepresentation\SqlInputParameterRepresentationBase.designer.cs">
       <DependentUpon>SqlInputParameterRepresentationBase.cs</DependentUpon>
@@ -189,6 +189,7 @@
     <Compile Include="Model\ResourceLocation\SqlServerLocator.designer.cs">
       <DependentUpon>SqlServerLocator.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\IdentifiedType.cs" />
     <Compile Include="Model\StoredProcedureExecutionResult.cs" />
     <Compile Include="Model\SchemaRepresentation\ColumnRepresentation.cs" />
     <Compile Include="Model\SchemaRepresentation\TableRepresentation.cs" />
@@ -220,11 +221,15 @@
     <Compile Include="Legacy\SqlServerConnectionDefinition.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
     <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
-    <Compile Include="StreamSchema\StreamSchema.Sprocs.AddHandlingEntry.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetTypeFromId.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetSerializerRepresentationFromId.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetTagSetFromIds.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.PutHandling.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.TryHandleRecord.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordMetadataById.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetNextUniqueLong.cs" />
-    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryResource.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessarySerializerDescription.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.cs" />
@@ -232,9 +237,10 @@
     <Compile Include="StreamSchema\StreamSchema.Sprocs.PutRecord.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Record.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.NextUniqueLong.cs" />
-    <Compile Include="StreamSchema\StreamSchema.Tables.Resource.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.HandlingTag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.SerializerDescription.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Handling.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.RecordTag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Tag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithoutVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithVersion.cs" />
