@@ -118,11 +118,6 @@ namespace Naos.SqlServer.Protocol.Client
         public override StreamRecord Execute(
             GetLatestRecordByIdOp operation)
         {
-            if (operation.TypeVersionMatchStrategy != TypeVersionMatchStrategy.Any)
-            {
-                throw new NotSupportedException(Invariant($"Only {nameof(TypeVersionMatchStrategy)} supported is {nameof(TypeVersionMatchStrategy.Any)}.  Not {operation.TypeVersionMatchStrategy}."));
-            }
-
             var sqlServerLocator = this.TryGetLocator(operation);
             var identifierTypeQuery = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.IdentifierType?.ToWithAndWithoutVersion());
             var objectTypeQuery = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.ObjectType?.ToWithAndWithoutVersion());
@@ -567,14 +562,17 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetTypeFromId.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.BuildCreationScript(this.Name),
-                                                      StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetSerializerRepresentationFromId.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetTagSetFromIds.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name),
-                                                      StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name),
-                                                      // add missing sprocs...
+                                                      StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name),
                                                   };
 
                             foreach (var script in creationScripts)
@@ -624,29 +622,33 @@ namespace Naos.SqlServer.Protocol.Client
             GetLatestRecordMetadataByIdOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
+            var identifierTypeQuery = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.IdentifierType?.ToWithAndWithoutVersion());
+            var objectTypeQuery = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.ObjectType?.ToWithAndWithoutVersion());
+
             var storedProcOp = StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.StringSerializedId,
-                operation.IdentifierType?.ToWithAndWithoutVersion(),
-                operation.ObjectType?.ToWithAndWithoutVersion(),
-                TypeVersionMatchStrategy.Any);
+                identifierTypeQuery,
+                objectTypeQuery,
+                operation.TypeVersionMatchStrategy,
+                operation.ExistingRecordNotEncounteredStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-            SerializationKind serializationKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.SerializationKind)].GetValue<SerializationKind>();
-            string serializationConfigAssemblyQualifiedNameWithoutVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion)].GetValue<string>();
-            CompressionKind compressionKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.CompressionKind)].GetValue<CompressionKind>();
-            string identifierAssemblyQualifiedNameWithVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.IdentifierAssemblyQualifiedNameWithVersion)].GetValue<string>();
-            string objectAssemblyQualifiedNameWithVersion = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.ObjectAssemblyQualifiedNameWithVersion)].GetValue<string>();
+            long internalRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.InternalRecordId)].GetValue<long>();
+            int serializerRepresentationId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.SerializerRepresentationId)].GetValue<int>();
+            int identifierTypeWithVersionId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.IdentifierTypeWithVersionId)].GetValue<int>();
+            int objectTypeWithVersionId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.ObjectTypeWithVersionId)].GetValue<int>();
             DateTime recordTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.RecordDateTime)].GetValue<DateTime>();
             DateTime? objectTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.ObjectDateTime)].GetValue<DateTime?>();
-            string tagsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.TagsXml)].GetValue<string>();
+            string tagIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.TagIdsXml)].GetValue<string>();
 
-            var tags = TagConversionTool.GetTagsFromXmlString(tagsXml);
-            var configType = serializationConfigAssemblyQualifiedNameWithoutVersion
-               .ToTypeRepresentationFromAssemblyQualifiedName();
-            var serializerRepresentation = new SerializerRepresentation(serializationKind, configType, compressionKind);
+            var identifiedSerializerRepresentation = this.GetSerializerRepresentationFromId(sqlServerLocator, serializerRepresentationId);
+            var identifierType = this.GetTypeById(sqlServerLocator, identifierTypeWithVersionId, true);
+            var objectType = this.GetTypeById(sqlServerLocator, objectTypeWithVersionId, true);
+            var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
+            var tags = this.GetTagsByIds(sqlServerLocator, tagIds.Values.ToList());
 
             var recordTimestamp = new DateTime(
                 recordTimestampRaw.Year,
@@ -668,11 +670,9 @@ namespace Naos.SqlServer.Protocol.Client
                 objectTimestampRaw.Value.Millisecond,
                 DateTimeKind.Utc);
 
-            var identifierType = identifierAssemblyQualifiedNameWithVersion.ToTypeRepresentationFromAssemblyQualifiedName().ToWithAndWithoutVersion();
-            var objectType = objectAssemblyQualifiedNameWithVersion.ToTypeRepresentationFromAssemblyQualifiedName().ToWithAndWithoutVersion();
             var metadata = new StreamRecordMetadata(
                 operation.StringSerializedId,
-                serializerRepresentation,
+                identifiedSerializerRepresentation.SerializerRepresentation,
                 identifierType,
                 objectType,
                 tags,
