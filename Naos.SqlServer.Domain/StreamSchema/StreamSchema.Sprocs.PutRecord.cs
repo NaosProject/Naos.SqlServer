@@ -8,7 +8,9 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
+    using Naos.Database.Domain;
 
     /// <summary>
     /// Container for schema.
@@ -39,22 +41,22 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The identifier assembly qualified name without version
                     /// </summary>
-                    IdentifierAssemblyQualifiedNameWithoutVersion,
+                    IdentifierTypeWithoutVersionId,
 
                     /// <summary>
                     /// The identifier assembly qualified name with version
                     /// </summary>
-                    IdentifierAssemblyQualifiedNameWithVersion,
+                    IdentifierTypeWithVersionId,
 
                     /// <summary>
                     /// The object assembly qualified name without version
                     /// </summary>
-                    ObjectAssemblyQualifiedNameWithoutVersion,
+                    ObjectTypeWithoutVersionId,
 
                     /// <summary>
                     /// The object assembly qualified name with version
                     /// </summary>
-                    ObjectAssemblyQualifiedNameWithVersion,
+                    ObjectTypeWithVersionId,
 
                     /// <summary>
                     /// The serializer description identifier.
@@ -79,7 +81,12 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The tags xml as a string.
                     /// </summary>
-                    TagsXml,
+                    TagIdsXml,
+
+                    /// <summary>
+                    /// The existing record encountered strategy.
+                    /// </summary>
+                    ExistingRecordEncounteredStrategy,
                 }
 
                 /// <summary>
@@ -97,41 +104,46 @@ namespace Naos.SqlServer.Domain
                 /// Builds the execute stored procedure operation.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
-                /// <param name="identifierAssemblyQualifiedNameWithoutVersion">The identifier type assembly qualified name without version.</param>
-                /// <param name="identifierAssemblyQualifiedNameWithVersion">The identifier type assembly qualified name with version.</param>
-                /// <param name="objectAssemblyQualifiedNameWithoutVersion">The object type assembly qualified name without version.</param>
-                /// <param name="objectAssemblyQualifiedNameWithVersion">The object type assembly qualified name with version.</param>
-                /// <param name="serializerDescriptionId">The serializer description identifier.</param>
+                /// <param name="serializerRepresentation">The serializer representation.</param>
+                /// <param name="identifierType">The identifier type.</param>
+                /// <param name="objectType">The object type.</param>
                 /// <param name="serializedObjectId">The serialized object identifier.</param>
                 /// <param name="serializedObjectString">The serialized object as a string (should have data IFF the serializer is set to SerializationFormat.String, otherwise null).</param>
                 /// <param name="objectDateTimeUtc">The date time of the object if exists.</param>
-                /// <param name="tagsXml">The tags in xml structure.</param>
+                /// <param name="tagIdsXml">The tags in xml structure.</param>
+                /// <param name="existingRecordEncounteredStrategy">Existing record encountered strategy.</param>
                 /// <returns>ExecuteStoredProcedureOp.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
-                    string identifierAssemblyQualifiedNameWithoutVersion,
-                    string identifierAssemblyQualifiedNameWithVersion,
-                    string objectAssemblyQualifiedNameWithoutVersion,
-                    string objectAssemblyQualifiedNameWithVersion,
-                    int serializerDescriptionId,
+                    IdentifiedSerializerRepresentation serializerRepresentation,
+                    IdentifiedType identifierType,
+                    IdentifiedType objectType,
                     string serializedObjectId,
                     string serializedObjectString,
                     DateTime? objectDateTimeUtc,
-                    string tagsXml)
+                    string tagIdsXml,
+                    ExistingRecordEncounteredStrategy existingRecordEncounteredStrategy)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(PutRecord)}");
 
+                    if (tagIdsXml == null)
+                    {
+                        var tagIds = new Dictionary<string, string>();
+                        tagIdsXml = TagConversionTool.GetTagsXmlString(tagIds);
+                    }
+
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, identifierAssemblyQualifiedNameWithoutVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, identifierAssemblyQualifiedNameWithVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithoutVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectAssemblyQualifiedNameWithVersion),
-                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType, serializerDescriptionId),
+                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType, serializerRepresentation.Id),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.DataType, identifierType?.IdWithoutVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.DataType, identifierType?.IdWithVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.DataType, objectType?.IdWithoutVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, serializedObjectId),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType, serializedObjectString),
                                          new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.DataType, objectDateTimeUtc),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagsXml), new StringSqlDataTypeRepresentation(true, -1), tagsXml),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, -1), tagIdsXml),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ExistingRecordEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordEncounteredStrategy.ToString()),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
                                      };
 
@@ -202,7 +214,7 @@ BEGIN TRANSACTION [{nameof(PutRecord)}]
 
       SET @{OutputParamName.Id} = SCOPE_IDENTITY()
 	  
-	  IF (@{nameof(InputParamName.TagsXml)} IS NOT NULL)
+	  IF (@{nameof(InputParamName.TagIdsXml)} IS NOT NULL)
 	  BEGIN
 		  DECLARE @{tagsTable} TABLE(
 			[{Tables.Tag.TagKey.Name}] {Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax} NOT NULL,
@@ -212,11 +224,11 @@ BEGIN TRANSACTION [{nameof(PutRecord)}]
 		    C.value('(@{TagConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
 		  , C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagValue.Name}]
 		  FROM
-			@{nameof(InputParamName.TagsXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
+			@{nameof(InputParamName.TagIdsXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
 
 		  UPDATE @{tagsTable} SET [{Tables.Tag.TagValue.Name}] = null WHERE [{Tables.Tag.TagValue.Name}] = '{TagConversionTool.NullCanaryValue}'
 
-	      INSERT INTO [{streamName}].Tag
+	      INSERT INTO [{streamName}].[]
           SELECT 
   		    @{OutputParamName.Id}
           , @{objectTypeWithoutVersionId}
