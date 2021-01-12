@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
@@ -51,29 +52,29 @@ namespace Naos.SqlServer.Domain
                     Concern,
 
                     /// <summary>
-                    /// The resource details.
+                    /// The details.
                     /// </summary>
-                    ResourceDetails,
+                    Details,
 
                     /// <summary>
                     /// The identifier assembly qualified name without version
                     /// </summary>
-                    IdentifierAssemblyQualifiedNameWithoutVersionQuery,
+                    IdentifierTypeWithoutVersionIdQuery,
 
                     /// <summary>
                     /// The identifier assembly qualified name with version
                     /// </summary>
-                    IdentifierAssemblyQualifiedNameWithVersionQuery,
+                    IdentifierTypeWithVersionIdQuery,
 
                     /// <summary>
                     /// The object assembly qualified name without version
                     /// </summary>
-                    ObjectAssemblyQualifiedNameWithoutVersionQuery,
+                    ObjectTypeWithoutVersionIdQuery,
 
                     /// <summary>
                     /// The object assembly qualified name with version
                     /// </summary>
-                    ObjectAssemblyQualifiedNameWithVersionQuery,
+                    ObjectTypeWithVersionIdQuery,
 
                     /// <summary>
                     /// The order record strategy
@@ -84,6 +85,11 @@ namespace Naos.SqlServer.Domain
                     /// The type version match strategy
                     /// </summary>
                     TypeVersionMatchStrategy,
+
+                    /// <summary>
+                    /// The tag identifiers as XML.
+                    /// </summary>
+                    TagIdsForEntryXml,
                 }
 
                 /// <summary>
@@ -103,34 +109,19 @@ namespace Naos.SqlServer.Domain
                     InternalRecordId,
 
                     /// <summary>
-                    /// The serialization kind
-                    /// </summary>
-                    SerializationKind,
-
-                    /// <summary>
-                    /// The serialization format
-                    /// </summary>
-                    SerializationFormat,
-
-                    /// <summary>
                     /// The serialization configuration assembly qualified name without version
                     /// </summary>
-                    SerializationConfigAssemblyQualifiedNameWithoutVersion,
-
-                    /// <summary>
-                    /// The compression kind
-                    /// </summary>
-                    CompressionKind,
+                    SerializerRepresentationId,
 
                     /// <summary>
                     /// The identifier assembly qualified name with version
                     /// </summary>
-                    IdentifierAssemblyQualifiedNameWithVersion,
+                    IdentifierTypeWithVersionId,
 
                     /// <summary>
                     /// The object assembly qualified name with version
                     /// </summary>
-                    ObjectAssemblyQualifiedNameWithVersion,
+                    ObjectTypeWithVersionId,
 
                     /// <summary>
                     /// The serialized object identifier
@@ -155,7 +146,7 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// Any tags returned as an XML tag set that can be converted using <see cref="TagConversionTool"/>.
                     /// </summary>
-                    TagsXml,
+                    TagIdsXml,
 
                     /// <summary>
                     /// An indicator of whether or not to handle.
@@ -164,51 +155,51 @@ namespace Naos.SqlServer.Domain
                 }
 
                 /// <summary>
-                /// Builds the execute stored procedure operation.
+                /// Builds the execute stored procedure op.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">The concern.</param>
-                /// <param name="resourceDetails">The resource details.</param>
-                /// <param name="identifierType">The identifier assembly qualified name with and without version.</param>
-                /// <param name="objectType">The object assembly qualified name with and without version.</param>
-                /// <param name="orderRecordsStrategy">The <see cref="OrderRecordsStrategy"/>.</param>
+                /// <param name="details">The details.</param>
+                /// <param name="identifierType">Type of the identifier.</param>
+                /// <param name="objectType">Type of the object.</param>
+                /// <param name="orderRecordsStrategy">The order records strategy.</param>
                 /// <param name="typeVersionMatchStrategy">The type version match strategy.</param>
+                /// <param name="tagIdsXml">The tag identifiers as XML.</param>
                 /// <returns>ExecuteStoredProcedureOp.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,
-                    string resourceDetails,
-                    TypeRepresentationWithAndWithoutVersion identifierType,
-                    TypeRepresentationWithAndWithoutVersion objectType,
+                    string details,
+                    IdentifiedType identifierType,
+                    IdentifiedType objectType,
                     OrderRecordsStrategy orderRecordsStrategy,
-                    TypeVersionMatchStrategy typeVersionMatchStrategy)
+                    TypeVersionMatchStrategy typeVersionMatchStrategy,
+                    string tagIdsXml)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(TryHandleRecord)}");
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ResourceDetails), Tables.Resource.Details.DataType, resourceDetails),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.Handling.Details.DataType, details),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.OrderRecordsStrategy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsStrategy.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, identifierType?.WithoutVersion.BuildAssemblyQualifiedName()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, identifierType?.WithVersion.BuildAssemblyQualifiedName()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectType?.WithoutVersion.BuildAssemblyQualifiedName()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectType?.WithVersion.BuildAssemblyQualifiedName()),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, identifierType?.IdWithoutVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, identifierType?.IdWithVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, objectType?.IdWithoutVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsForEntryXml), new StringSqlDataTypeRepresentation(true, -1), tagIdsXml),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType),
-                                         new SqlOutputParameterRepresentation<SerializationKind>(nameof(OutputParamName.SerializationKind), Tables.SerializerRepresentation.SerializationKind.DataType),
-                                         new SqlOutputParameterRepresentation<SerializationFormat>(nameof(OutputParamName.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.DataType),
-                                         new SqlOutputParameterRepresentation<CompressionKind>(nameof(OutputParamName.CompressionKind), Tables.SerializerRepresentation.CompressionKind.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.IdentifierAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.AssemblyQualifiedName.DataType),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.AssemblyQualifiedName.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType),
                                          new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
                                          new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagsXml), new StringSqlDataTypeRepresentation(true, -1)),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, -1)),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -236,40 +227,37 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    const string serializerRepresentationId = "SerializerRepresentationId";
-                    const string serializerConfigTypeId = "SerializerConfigTypeId";
-                    const string identifierTypeWithVersionId = "IdentifierTypeWithVersionId";
-                    const string objectTypeWithVersionId = "ObjectTypeWithVersionId";
-                    const string objectTypeWithoutVersionIdQuery = "ObjectTypeWithoutVersionIdQuery";
-                    const string objectTypeWithVersionIdQuery = "ObjectTypeWithVersionIdQuery";
                     const string recordToHandleId = "RecordToHandleId";
                     const string transaction = "Transaction";
-                    const string resourceId = "ResourceId";
                     const string blockedStatus = "BlockedStatus";
+                    string acceptableNoneStatusXml = TagConversionTool.GetTagsXmlString(
+                        new Dictionary<string, string>
+                        {
+                            { 1.ToString(CultureInfo.InvariantCulture), HandlingStatus.None.ToString() },
+                        });
+
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{TryHandleRecord.Name}(
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ResourceDetails} AS {Tables.Resource.Details.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.IdentifierTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ObjectTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ObjectTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS varchar(10)
+, @{InputParamName.TagIdsForEntryXml} AS {new StringSqlDataTypeRepresentation(true, -1).DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.SerializationKind} AS {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.SerializationFormat} AS {Tables.SerializerRepresentation.SerializationFormat.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.CompressionKind} AS {Tables.SerializerRepresentation.CompressionKind.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.TagsXml} AS {new StringSqlDataTypeRepresentation(true, -1).DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.TagIdsXml} AS {new StringSqlDataTypeRepresentation(true, -1).DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ShouldHandle} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
@@ -280,14 +268,6 @@ BEGIN
 
 	IF ((@{blockedStatus} IS NULL) OR (@{blockedStatus} <> '{HandlingStatus.Blocked}'))
 	BEGIN
-		DECLARE @{resourceId} {Tables.Resource.Id.DataType.DeclarationInSqlSyntax}
-		EXEC [{streamName}].[{GetIdAddIfNecessaryResource.Name}] @{InputParamName.ResourceDetails}, @{resourceId} OUTPUT
-
-		DECLARE @{objectTypeWithoutVersionIdQuery} {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
-		EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithoutVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery}, @{objectTypeWithoutVersionIdQuery} OUTPUT
-		DECLARE @{objectTypeWithVersionIdQuery} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
-		EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery}, @{objectTypeWithVersionIdQuery} OUTPUT
-
 		DECLARE @{recordToHandleId} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
 		BEGIN TRANSACTION [{transaction}]
 	  BEGIN TRY
@@ -298,9 +278,32 @@ BEGIN
 			  BEGIN
 			      SELECT TOP 1 @{recordToHandleId} = h.[{Tables.Handling.RecordId.Name}]
 				  FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+                  INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
 			      WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 			        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
 					AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
+				    AND (
+				            -- No Type filter at all
+				            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
+				            OR
+				            -- Specific Only Id
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
+				            OR
+				            -- Specific Only Object
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+				            OR
+				            -- Specific Both
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+				            OR
+				            -- Any Only Id
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
+				            OR
+				            -- Any Only Object
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+				            OR
+				            -- Any Both
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+				        )
 				  ORDER BY h.[{Tables.Record.Id.Name}] ASC
 			  END
 
@@ -311,8 +314,29 @@ BEGIN
 			      FROM [{streamName}].[{Tables.Record.Table.Name}] r
 				  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
 			      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-			      WHERE r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{objectTypeWithoutVersionIdQuery}
-					AND h.[{Tables.Handling.Id.Name}] IS NULL
+			      WHERE [{Tables.Handling.Id.Name}] IS NULL
+				    AND (
+				            -- No Type filter at all
+				            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
+				            OR
+				            -- Specific Only Id
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
+				            OR
+				            -- Specific Only Object
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+				            OR
+				            -- Specific Both
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+				            OR
+				            -- Any Only Id
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
+				            OR
+				            -- Any Only Object
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+				            OR
+				            -- Any Both
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+				        )
 				  ORDER BY r.[{Tables.Record.Id.Name}] ASC
 			  END
           END
@@ -324,9 +348,30 @@ BEGIN
 			      FROM [{streamName}].[{Tables.Record.Table.Name}] r
 				  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
 			      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-			      WHERE r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{objectTypeWithoutVersionIdQuery}
-					AND h.[{Tables.Handling.Id.Name}] IS NULL
-				  ORDER BY r.[{Tables.Record.Id.Name}] DESC
+			      WHERE [{Tables.Handling.Id.Name}] IS NULL
+				    AND (
+				            -- No Type filter at all
+				            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
+				            OR
+				            -- Specific Only Id
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
+				            OR
+				            -- Specific Only Object
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+				            OR
+				            -- Specific Both
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+				            OR
+				            -- Any Only Id
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
+				            OR
+				            -- Any Only Object
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+				            OR
+				            -- Any Both
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+				        )
+				  ORDER BY r.[{Tables.Record.Id.Name}] ASC
 			  END
 
 			  -- See if any reprocessing is needed
@@ -334,10 +379,33 @@ BEGIN
 			  BEGIN
 			      SELECT TOP 1 @{recordToHandleId} = h.[{Tables.Handling.RecordId.Name}]
 				  FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+                  INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
 			      WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 			        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
 					AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
-				  ORDER BY h.[{Tables.Record.Id.Name}] DESC
+				    AND (
+				            -- No Type filter at all
+				            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
+				            OR
+				            -- Specific Only Id
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
+				            OR
+				            -- Specific Only Object
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+				            OR
+				            -- Specific Both
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+				            OR
+				            -- Any Only Id
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
+				            OR
+				            -- Any Only Object
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+				            OR
+				            -- Any Both
+				            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+				        )
+				  ORDER BY h.[{Tables.Record.Id.Name}] ASC
 			  END
       ELSE
 		   BEGIN
@@ -350,23 +418,15 @@ BEGIN
 		   END
 	IF (@{recordToHandleId} IS NOT NULL)
 	BEGIN
-		INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] (
-		    [{Tables.Handling.Concern.Name}]
-		  , [{Tables.Handling.RecordId.Name}]
-		  , [{Tables.Handling.ResourceId.Name}]
-		  , [{Tables.Handling.Status.Name}]
-		  , [{Tables.Handling.Details.Name}]
-		  , [{Tables.Handling.RecordCreatedUtc.Name}]
-		  ) VALUES (
-	        @{InputParamName.Concern}
-	      , @{recordToHandleId}
-	      , @{resourceId}
-	      , '{HandlingStatus.Running}'
-	      , 'Created by {nameof(TryHandleRecord)}'
-		  , GETUTCDATE()
-		  )
+        EXEC [{streamName}].[{PutHandling.Name}] 
+@{PutHandling.InputParamName.Concern} = @{InputParamName.Concern}, 
+@{PutHandling.InputParamName.Details} = @{InputParamName.Details}, 
+@{PutHandling.InputParamName.RecordId} = @{recordToHandleId}, 
+@{PutHandling.InputParamName.NewStatus} = '@{HandlingStatus.Running}', 
+@{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '@{acceptableNoneStatusXml}', 
+@{PutHandling.InputParamName.TagIdsXml} = @{InputParamName.TagIdsForEntryXml}, 
+@{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
 
-	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
 		  SET @{OutputParamName.ShouldHandle} = 1
 		END
 
@@ -389,13 +449,10 @@ BEGIN
 
     IF (@{OutputParamName.ShouldHandle} = 1)
 	BEGIN
-	    DECLARE @{serializerRepresentationId} int   
-		DECLARE @{identifierTypeWithVersionId} int
-		DECLARE @{objectTypeWithVersionId} int
 	    SELECT TOP 1
-		   @{serializerRepresentationId} = [{Tables.Record.SerializerRepresentationId.Name}]
-		 , @{identifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
-		 , @{objectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
+		   @{OutputParamName.SerializerRepresentationId} = [{Tables.Record.SerializerRepresentationId.Name}]
+		 , @{OutputParamName.IdentifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
+		 , @{OutputParamName.ObjectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
 		 , @{OutputParamName.StringSerializedId} = [{Tables.Record.StringSerializedId.Name}]
 		 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
 		 , @{OutputParamName.InternalRecordId} = [{Tables.Record.Id.Name}]
@@ -404,23 +461,11 @@ BEGIN
 		FROM [{streamName}].[{Tables.Record.Table.Name}]
 		WHERE [{Tables.Record.Id.Name}] = @{recordToHandleId}
 
-		DECLARE @{serializerConfigTypeId} int
-		SELECT 
-			@{serializerConfigTypeId} = [{Tables.SerializerRepresentation.SerializationConfigurationTypeWithoutVersionId.Name}] 
-		  , @{OutputParamName.SerializationKind} = [{Tables.SerializerRepresentation.SerializationKind.Name}]
-		  , @{OutputParamName.SerializationFormat} = [{Tables.SerializerRepresentation.SerializationFormat.Name}]
-		  , @{OutputParamName.CompressionKind} = [{Tables.SerializerRepresentation.CompressionKind.Name}]
-		FROM [{streamName}].[{Tables.SerializerRepresentation.Table.Name}] WHERE [{Tables.SerializerRepresentation.Id.Name}] = @{serializerRepresentationId}
-
-		SELECT @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithoutVersion)}] WHERE [{Tables.TypeWithoutVersion.Id.Name}] = @{serializerConfigTypeId}
-		SELECT @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WHERE [{Tables.TypeWithVersion.Id.Name}] = @{identifierTypeWithVersionId}
-		SELECT @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WHERE [{Tables.TypeWithVersion.Id.Name}] = @{objectTypeWithVersionId}
-
-	    SELECT @{OutputParamName.TagsXml} = (SELECT
-			{Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
-			ISNULL({Tables.Tag.TagValue.Name},'{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
-		FROM [{streamName}].[{Tables.Tag.Table.Name}]
-		WHERE [{Tables.Tag.RecordId.Name}] = 1
+	    SELECT @{OutputParamName.TagIdsXml} = (SELECT
+			ROW_NUMBER() AS [@{TagConversionTool.TagEntryKeyAttributeName}],
+			{Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
+		FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
+		WHERE [{Tables.RecordTag.RecordId.Name}] = @{recordToHandleId}
 		FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 	END
     ELSE
@@ -428,17 +473,14 @@ BEGIN
 		SET @{OutputParamName.ShouldHandle} = 0
 		SET @{OutputParamName.Id} = -1
 		SET @{OutputParamName.InternalRecordId} = -1
-		SET @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} = 'Fake'
-		SET @{OutputParamName.SerializationKind} = 'Json'
-		SET @{OutputParamName.SerializationFormat} = 'String'
-		SET @{OutputParamName.CompressionKind} = 'None'
-		SET @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} = 'Fake'
-		SET @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} = 'Fake'
+		SET @{OutputParamName.SerializerRepresentationId} = -1
+		SET @{OutputParamName.IdentifierTypeWithVersionId} = 'Fake'
+		SET @{OutputParamName.ObjectTypeWithVersionId} = 'Fake'
 		SET @{OutputParamName.StringSerializedId} = 'Fake'
 		SET @{OutputParamName.StringSerializedObject} = 'Fake'
 		SET @{OutputParamName.ObjectDateTime} = GETUTCDATE()
 		SET @{OutputParamName.RecordDateTime} = GETUTCDATE()
-		SET @{OutputParamName.TagsXml} = null
+		SET @{OutputParamName.TagIdsXml} = null
 	END
 END
 

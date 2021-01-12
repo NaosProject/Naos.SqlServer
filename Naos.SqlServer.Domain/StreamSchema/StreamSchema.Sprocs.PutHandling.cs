@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StreamSchema.Sprocs.AddHandlingEntry.cs" company="Naos Project">
+// <copyright file="StreamSchema.Sprocs.PutHandling.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -28,13 +28,13 @@ namespace Naos.SqlServer.Domain
             /// <summary>
             /// Stored procedure: AddHandlingEntry.
             /// </summary>
-            public static class AddHandlingEntry
+            public static class PutHandling
             {
                 /// <summary>
                 /// Gets the name of the stored procedure.
                 /// </summary>
                 /// <value>The name of the stored procedure.</value>
-                public static string Name => nameof(AddHandlingEntry);
+                public static string Name => nameof(PutHandling);
 
                 /// <summary>
                 /// Input parameter names.
@@ -52,11 +52,6 @@ namespace Naos.SqlServer.Domain
                     RecordId,
 
                     /// <summary>
-                    /// The resource details
-                    /// </summary>
-                    ResourceDetails,
-
-                    /// <summary>
                     /// The details about the resource.
                     /// </summary>
                     Details,
@@ -70,6 +65,11 @@ namespace Naos.SqlServer.Domain
                     /// The acceptable current statuses XML.
                     /// </summary>
                     AcceptableCurrentStatusesXml,
+
+                    /// <summary>
+                    /// The tag identifiers XML.
+                    /// </summary>
+                    TagIdsXml,
                 }
 
                 /// <summary>
@@ -88,39 +88,42 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">The concern.</param>
+                /// <param name="details">The details.</param>
                 /// <param name="recordId">The record identifier.</param>
-                /// <param name="resourceDetails">The resource details.</param>
                 /// <param name="newStatus">The new status.</param>
                 /// <param name="acceptableCurrentStatuses">The acceptable current statuses.</param>
-                /// <param name="details">The details.</param>
+                /// <param name="tagIdsXml">The tag identifiers as XML.</param>
                 /// <returns>ExecuteStoredProcedureOp.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,
+                    string details,
                     long recordId,
-                    string resourceDetails,
                     HandlingStatus newStatus,
                     IReadOnlyCollection<HandlingStatus> acceptableCurrentStatuses,
-                    string details)
+                    string tagIdsXml)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(AddHandlingEntry)}");
+                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(PutHandling)}");
 
-                    var acceptableCurrentStatusesDictionary = new Dictionary<string, string>();
-                    for (var idx = 0; idx < acceptableCurrentStatuses.Count; idx++)
+                    if (tagIdsXml == null)
                     {
-                        acceptableCurrentStatusesDictionary.Add(idx.ToString(CultureInfo.InvariantCulture), acceptableCurrentStatuses.ElementAt(idx).ToString());
+                        var tagIds = new Dictionary<string, string>();
+                        tagIdsXml = TagConversionTool.GetTagsXmlString(tagIds);
                     }
+
+                    var acceptableCurrentStatusesDictionary = acceptableCurrentStatuses.ToList().ToOrdinalDictionary();
 
                     var acceptableCurrentStatusesXml = TagConversionTool.GetTagsXmlString(acceptableCurrentStatusesDictionary);
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Details.DataType, concern),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.Handling.Details.DataType, details),
                                          new SqlInputParameterRepresentation<long>(nameof(InputParamName.RecordId), Tables.Handling.RecordId.DataType, recordId),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.Handling.Details.DataType, details),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ResourceDetails), Tables.Resource.Details.DataType, resourceDetails),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.NewStatus), Tables.Handling.Status.DataType, newStatus.ToString()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.AcceptableCurrentStatusesXml), new StringSqlDataTypeRepresentation(true, -1), acceptableCurrentStatusesXml),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, -1), tagIdsXml),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
                                      };
 
@@ -144,23 +147,27 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    var resourceId = "ResourceId";
-                    var transaction = Invariant($"{nameof(AddHandlingEntry)}Transaction");
+                    var recordCreatedUtc = "RecordCreatedUtc";
+                    var transaction = Invariant($"{nameof(PutHandling)}Transaction");
                     var currentStatus = "CurrentStatus";
                     var currentStatusAccepted = "CurrentStatusAccepted";
+                    var tagIdsTable = "TagIdsTable";
                     return Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{AddHandlingEntry.Name}(
+CREATE PROCEDURE [{streamName}].{PutHandling.Name}(
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.RecordId} AS {Tables.Handling.RecordId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ResourceDetails} AS {Tables.Resource.Details.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.RecordId} AS {Tables.Handling.RecordId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.NewStatus} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.AcceptableCurrentStatusesXml} AS [Xml]
+, @{InputParamName.TagIdsXml} AS [Xml]
 , @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
+
+{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableDeclarationSyntax(tagIdsTable, false)}
+SET @{tagIdsTable} = EXEC [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}] @{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.TagsXml}, @{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.IncludeId}=0
 
 DECLARE @{currentStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
 SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
@@ -172,11 +179,13 @@ IF @{currentStatus} IS NULL
 BEGIN
     SET @{currentStatus} = '{HandlingStatus.Requested}'
 END
-
+//should we guard against this changing while inserting?  if so we need the exclusive table lock for a time to live and do everything after...
 DECLARE @{currentStatusAccepted} BIT
+
+// change this to use xml conversion func
 SELECT @{currentStatusAccepted} = 1
-    FROM @{nameof(InputParamName.AcceptableCurrentStatusesXml)}.nodes('/{TagConversionTool.TagSetElementName}') AS T(C)
-    WHERE C.value('({TagConversionTool.TagEntryElementName}/@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Handling.Status.DataType.DeclarationInSqlSyntax}') = @{currentStatus}
+    FROM @{nameof(InputParamName.AcceptableCurrentStatusesXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
+    WHERE C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Handling.Status.DataType.DeclarationInSqlSyntax}') = @{currentStatus}
 
 IF (@{currentStatusAccepted} = 0)
 BEGIN
@@ -187,30 +196,43 @@ BEGIN
       SELECT @NotValidStatusErrorMessage = 'Invalid current status: ' + @{currentStatus} + ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @NotValidStatusErrorSeverity = ERROR_SEVERITY(), @NotValidStatusErrorState = ERROR_STATE()
       RAISERROR (@NotValidStatusErrorMessage, @NotValidStatusErrorSeverity, @NotValidStatusErrorState)
 END
-
-DECLARE @{resourceId} {Tables.Resource.Id.DataType.DeclarationInSqlSyntax}
-EXEC [{streamName}].[{GetIdAddIfNecessaryResource.Name}] @{InputParamName.ResourceDetails}, @{resourceId} OUTPUT
  
 BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
 	  BEGIN
-	      INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] (
+	      DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
+	      SET @{recordCreatedUtc} = GETUTCDATE()
+	      INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] WITH (TABLOCKX) -- get an exclusive lock to prevent other from doing same
+           (
 		    [{Tables.Handling.Concern.Name}]
 		  , [{Tables.Handling.RecordId.Name}]
-		  , [{Tables.Handling.ResourceId.Name}]
 		  , [{Tables.Handling.Status.Name}]
 		  , [{Tables.Handling.Details.Name}]
 		  , [{Tables.Handling.RecordCreatedUtc.Name}]
 		  ) VALUES (
 	        @{InputParamName.Concern}
 	      , @{InputParamName.RecordId}
-	      , @{resourceId}
 	      , @{InputParamName.NewStatus}
 	      , @{InputParamName.Details}
-		  , GETUTCDATE()
+		  , @{recordCreatedUtc}
 		  )
 
 	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+          
+	      INSERT INTO [{streamName}].[{Tables.HandlingTag.Table.Name}] (
+		    [{Tables.HandlingTag.HandlingId.Name}]
+		  , [{Tables.HandlingTag.TagId.Name}]
+		  , [{Tables.HandlingTag.RecordCreatedUtc.Name}]
+		  ) VALUES (
+         SELECT 
+            @{OutputParamName.Id}
+	      ,	@{Tables.Tag.TagValue.Name}
+		  , @{recordCreatedUtc}
+         FROM @{tagIdsTable}
+		  )
+)
+
+
 	  END
 
       COMMIT TRANSACTION [{transaction}]

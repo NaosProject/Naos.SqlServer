@@ -55,12 +55,6 @@ namespace Naos.SqlServer.Domain
                 public static ColumnRepresentation Details => new ColumnRepresentation(nameof(Details), new StringSqlDataTypeRepresentation(true, -1));
 
                 /// <summary>
-                /// Gets the resource identifier.
-                /// </summary>
-                /// <value>The resource identifier.</value>
-                public static ColumnRepresentation ResourceId => new ColumnRepresentation(nameof(ResourceId), new IntSqlDataTypeRepresentation());
-
-                /// <summary>
                 /// Gets the entry created in UTC.
                 /// </summary>
                 /// <value>The entry created in UTC.</value>
@@ -79,7 +73,6 @@ namespace Naos.SqlServer.Domain
                         Concern,
                         Status,
                         Details,
-                        ResourceId,
                         RecordCreatedUtc,
                     }.ToDictionary(k => k.Name, v => v));
 
@@ -102,7 +95,6 @@ SET QUOTED_IDENTIFIER ON
 CREATE TABLE [{streamName}].[Handling](
 	[{nameof(Id)}] {Id.DataType.DeclarationInSqlSyntax} IDENTITY(1,1) NOT NULL,
 	[{nameof(RecordId)}] {RecordId.DataType.DeclarationInSqlSyntax} NOT NULL,
-	[{nameof(ResourceId)}] {ResourceId.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(Concern)}] {Concern.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(Status)}] {Status.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(Details)}] {Details.DataType.DeclarationInSqlSyntax} NULL,
@@ -118,12 +110,6 @@ ALTER TABLE [{streamName}].[{nameof(Handling)}]  WITH CHECK ADD  CONSTRAINT [FK_
 REFERENCES [{streamName}].[{nameof(Record)}] ([{nameof(Record.Id)}])
 
 ALTER TABLE [{streamName}].[{nameof(Handling)}] CHECK CONSTRAINT [FK_{nameof(Handling)}_{nameof(Record)}]
-
-
-ALTER TABLE [{streamName}].[{nameof(Handling)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(Handling)}_{nameof(Resource)}] FOREIGN KEY([{nameof(ResourceId)}])
-REFERENCES [{streamName}].[{nameof(Resource)}] ([{nameof(Resource.Id)}])
-
-ALTER TABLE [{streamName}].[Handling] CHECK CONSTRAINT [FK_{nameof(Handling)}_{nameof(Resource)}]
 
 
 SET ANSI_PADDING ON
@@ -148,10 +134,6 @@ CREATE NONCLUSTERED INDEX [IX_{nameof(Handling)}_{nameof(Status)}_Asc] ON [{stre
 	[{nameof(Status)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Handling)}_{nameof(ResourceId)}_Desc] ON [{streamName}].[Handling]
-(
-	[{nameof(ResourceId)}] DesC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 			");
 
                     return result;
