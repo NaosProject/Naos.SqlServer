@@ -83,12 +83,15 @@ CREATE TABLE [{streamName}].[Tag](
 	[{nameof(TagKey)}] {TagKey.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(TagValue)}] {TagValue.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
+-- Got this warning trying to add that constraint...
+-- Warning! The maximum key length for a nonclustered index is 1700 bytes. The index 'UQ_TagKey_TagValue' has maximum length of 8900 bytes. For some combination of large values, the insert/update operation will fail.
+-- CONSTRAINT [UQ_{Tables.Tag.TagKey.Name}_{Tables.Tag.TagValue.Name}] UNIQUE([{Tables.Tag.TagKey.Name}],[{Tables.Tag.TagValue.Name}])
+
  CONSTRAINT [PK_{nameof(Tag)}] PRIMARY KEY CLUSTERED 
 (
 	[{nameof(Id)}] DESC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
- CONSTRAINT [UQ_{Tables.Tag.TagKey.Name}_{Tables.Tag.TagValue.Name}] UNIQUE([{Tables.Tag.TagKey.Name},{Tables.Tag.TagValue.Name}])
 
 SET ANSI_PADDING ON
 
