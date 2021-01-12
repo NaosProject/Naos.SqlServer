@@ -62,8 +62,7 @@ namespace Naos.SqlServer.Protocol.Client
             SerializerRepresentation defaultSerializerRepresentation,
             SerializationFormat defaultSerializationFormat,
             ISerializerFactory serializerFactory,
-            IResourceLocatorProtocols resourceLocatorProtocol,
-            string handlingResourceDetails = null)
+            IResourceLocatorProtocols resourceLocatorProtocol)
         : base(name, resourceLocatorProtocol, serializerFactory, defaultSerializerRepresentation, defaultSerializationFormat)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
@@ -91,12 +90,6 @@ namespace Naos.SqlServer.Protocol.Client
         /// </summary>
         /// <value>The default command timeout.</value>
         public TimeSpan DefaultCommandTimeout { get; private set; }
-
-        /// <summary>
-        /// Gets the handling resource details.
-        /// </summary>
-        /// <value>The handling resource details.</value>
-        public string HandlingResourceDetails { get; private set; }
 
         /// <inheritdoc />
         public override long Execute(
