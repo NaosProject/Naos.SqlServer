@@ -8,9 +8,11 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Xml.Linq;
+    using OBeautifulCode.Assertion.Recipes;
     using static System.FormattableString;
 
     /// <summary>
@@ -105,6 +107,29 @@ namespace Naos.SqlServer.Domain
 
             tagsXmlBuilder.Append(Invariant($"</{TagSetElementName}>"));
             var result = tagsXmlBuilder.ToString();
+            return result;
+        }
+
+        /// <summary>
+        /// Converts to list of items to a string/string dictionary with a numeric (specified)-based key and the element's <see cref="object.ToString"/>.
+        /// </summary>
+        /// <typeparam name="TElement">The type of the element.</typeparam>
+        /// <param name="elements">The elements.</param>
+        /// <param name="startAtOneInsteadOfZero">Optionally choose to start at 1/one instead of 0/zero; DEFAULT is 0/zero.</param>
+        /// <returns>Ordinal dictionary of the elements.</returns>
+        public static IReadOnlyDictionary<string, string> ToOrdinalDictionary<TElement>(this IReadOnlyList<TElement> elements, bool startAtOneInsteadOfZero = false)
+        {
+            var result = new Dictionary<string, string>();
+            if (elements != null)
+            {
+                for (var idx =  startAtOneInsteadOfZero ? 1 : 0;
+                    idx < elements.Count;
+                    idx++)
+                {
+                    result.Add(idx.ToString(CultureInfo.InvariantCulture), elements[idx]?.ToString());
+                }
+            }
+
             return result;
         }
     }
