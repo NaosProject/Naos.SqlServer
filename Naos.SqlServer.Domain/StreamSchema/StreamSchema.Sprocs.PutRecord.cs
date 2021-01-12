@@ -158,15 +158,16 @@ namespace Naos.SqlServer.Domain
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{nameof(PutRecord)}(
-  @{InputParamName.IdentifierAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.SerializerRepresentationId} AS {Tables.Record.SerializerRepresentationId.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.IdentifierTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ObjectTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.TagsXml} AS xml
+, @{InputParamName.TagIdsXml} AS xml
+, @{InputParamName.ExistingRecordEncounteredStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
@@ -174,16 +175,7 @@ BEGIN
 
 BEGIN TRANSACTION [{nameof(PutRecord)}]
   BEGIN TRY
-      DECLARE @{identifierTypeWithoutVersionId} {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
-      EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithoutVersion.Name}] @{InputParamName.IdentifierAssemblyQualifiedNameWithoutVersion}, @{identifierTypeWithoutVersionId} OUTPUT
-      DECLARE @{identifierTypeWithVersionId} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
-      EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}] @{InputParamName.IdentifierAssemblyQualifiedNameWithVersion}, @{identifierTypeWithVersionId} OUTPUT
-
-      DECLARE @{objectTypeWithoutVersionId} {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
-      EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithoutVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersion}, @{objectTypeWithoutVersionId} OUTPUT
-      DECLARE @{objectTypeWithVersionId} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
-      EXEC [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}] @{InputParamName.ObjectAssemblyQualifiedNameWithVersion}, @{objectTypeWithVersionId} OUTPUT
-
+// SEE if the strategy needs honoring...do we table lock here???
 	  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 	  SET @RecordCreatedUtc = GETUTCDATE()
 	  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
