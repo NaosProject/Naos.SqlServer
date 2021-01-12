@@ -662,59 +662,6 @@ namespace Naos.SqlServer.Protocol.Client
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Gets the described serializer.
-        /// </summary>
-        /// <param name="resourceLocator">The stream locator in case it needs to look up.</param>
-        /// <param name="serializerRepresentation">Optional <see cref="SerializerRepresentation"/>; default is DefaultSerializerRepresentation.</param>
-        /// <param name="serializationFormat">Optional <see cref="SerializationFormat"/>; default is <see cref="SerializationFormat.String"/>.</param>
-        /// <returns>DescribedSerializer.</returns>
-        public DescribedSerializer GetDescribedSerializer(
-            SqlServerLocator resourceLocator,
-            SerializerRepresentation serializerRepresentation = null,
-            SerializationFormat serializationFormat = SerializationFormat.String)
-        {
-            var localSerializerRepresentation = serializerRepresentation ?? this.DefaultSerializerRepresentation;
-            if (this.serializerDescriptionToDescribedSerializerMap.ContainsKey(localSerializerRepresentation))
-            {
-                return this.serializerDescriptionToDescribedSerializerMap[localSerializerRepresentation];
-            }
-
-            var serializer = this.SerializerFactory.BuildSerializer(
-                localSerializerRepresentation);
-
-            var serializerDescriptionId = this.Execute(new GetIdAddIfNecessarySerializerRepresentationOp(resourceLocator, localSerializerRepresentation, serializationFormat));
-            var result = new DescribedSerializer(localSerializerRepresentation, serializationFormat, serializer, serializerDescriptionId);
-            this.serializerDescriptionToDescribedSerializerMap.Add(localSerializerRepresentation, result);
-            return result;
-        }
-
-        /// <inheritdoc />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Should dispose correctly.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Built internally and should be safe from injection.")]
-        public int Execute(
-            GetIdAddIfNecessarySerializerRepresentationOp operation)
-        {
-            var serializationConfigurationTypeWithoutVersion = operation.SerializerRepresentation.SerializationConfigType.RemoveAssemblyVersions().BuildAssemblyQualifiedName();
-            var serializationConfigurationTypeWithVersion = operation.SerializerRepresentation.SerializationConfigType.BuildAssemblyQualifiedName();
-
-            var storedProcOp = StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.BuildExecuteStoredProcedureOp(
-                this.Name,
-                serializationConfigurationTypeWithoutVersion,
-                serializationConfigurationTypeWithVersion,
-                operation.SerializerRepresentation.SerializationKind,
-                operation.SerializationFormat,
-                operation.SerializerRepresentation.CompressionKind,
-                UnregisteredTypeEncounteredStrategy.Attempt);
-
-            var sqlLocator = this.TryGetLocator(operation);
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-            var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.OutputParamName.Id)]
-                                    .GetValue<int>();
-            return result;
-        }
-
         /// <inheritdoc />
         public async Task<int> ExecuteAsync(
             GetIdAddIfNecessarySerializerRepresentationOp operation)
