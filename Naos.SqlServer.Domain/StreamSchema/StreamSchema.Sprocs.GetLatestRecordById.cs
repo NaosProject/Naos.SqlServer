@@ -53,27 +53,32 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The identifier assembly qualified name without version
                     /// </summary>
-                    IdentifierAssemblyQualifiedNameWithoutVersionQuery,
+                    IdentifierTypeWithoutVersionIdQuery,
 
                     /// <summary>
                     /// The identifier assembly qualified name with version
                     /// </summary>
-                    IdentifierAssemblyQualifiedNameWithVersionQuery,
+                    IdentifierTypeWithVersionIdQuery,
 
                     /// <summary>
                     /// The object assembly qualified name without version
                     /// </summary>
-                    ObjectAssemblyQualifiedNameWithoutVersionQuery,
+                    ObjectTypeWithoutVersionIdQuery,
 
                     /// <summary>
                     /// The object assembly qualified name with version
                     /// </summary>
-                    ObjectAssemblyQualifiedNameWithVersionQuery,
+                    ObjectTypeWithVersionIdQuery,
 
                     /// <summary>
                     /// The type version match strategy
                     /// </summary>
                     TypeVersionMatchStrategy,
+
+                    /// <summary>
+                    /// The existing record not encountered strategy.
+                    /// </summary>
+                    ExistingRecordNotEncounteredStrategy,
                 }
 
                 /// <summary>
@@ -90,32 +95,17 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The serialization kind
                     /// </summary>
-                    SerializationKind,
-
-                    /// <summary>
-                    /// The serialization format
-                    /// </summary>
-                    SerializationFormat,
-
-                    /// <summary>
-                    /// The serialization configuration assembly qualified name without version
-                    /// </summary>
-                    SerializationConfigAssemblyQualifiedNameWithoutVersion,
-
-                    /// <summary>
-                    /// The compression kind
-                    /// </summary>
-                    CompressionKind,
+                    SerializerRepresentationId,
 
                     /// <summary>
                     /// The identifier assembly qualified name with version
                     /// </summary>
-                    IdentifierAssemblyQualifiedNameWithVersion,
+                    IdentifierTypeWithVersionId,
 
                     /// <summary>
                     /// The object assembly qualified name with version
                     /// </summary>
-                    ObjectAssemblyQualifiedNameWithVersion,
+                    ObjectTypeWithVersionId,
 
                     /// <summary>
                     /// The serialized object string
@@ -135,7 +125,7 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// Any tags returned as an XML tag set that can be converted using <see cref="TagConversionTool"/>.
                     /// </summary>
-                    TagsXml,
+                    TagIdsXml,
                 }
 
                 /// <summary>
@@ -146,35 +136,35 @@ namespace Naos.SqlServer.Domain
                 /// <param name="identifierType">The identifier assembly qualified name with and without version.</param>
                 /// <param name="objectType">The object assembly qualified name with and without version.</param>
                 /// <param name="typeVersionMatchStrategy">The type version match strategy.</param>
+                /// <param name="existingRecordNotEncounteredStrategy">The existing record not encountered strategy.</param>
                 /// <returns>ExecuteStoredProcedureOp.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string stringSerializedId,
-                    TypeRepresentationWithAndWithoutVersion identifierType,
-                    TypeRepresentationWithAndWithoutVersion objectType,
-                    TypeVersionMatchStrategy typeVersionMatchStrategy)
+                    IdentifiedType identifierType,
+                    IdentifiedType objectType,
+                    TypeVersionMatchStrategy typeVersionMatchStrategy,
+                    ExistingRecordNotEncounteredStrategy existingRecordNotEncounteredStrategy)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetLatestRecordById)}");
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, stringSerializedId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, identifierType?.WithoutVersion.BuildAssemblyQualifiedName()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, identifierType?.WithVersion.BuildAssemblyQualifiedName()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType, objectType?.WithoutVersion.BuildAssemblyQualifiedName()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery), Tables.TypeWithVersion.AssemblyQualifiedName.DataType, objectType?.WithVersion.BuildAssemblyQualifiedName()),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, identifierType?.IdWithoutVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, identifierType?.IdWithVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, objectType?.IdWithoutVersion),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ExistingRecordNotEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordNotEncounteredStrategy.ToString()),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType),
-                                         new SqlOutputParameterRepresentation<SerializationKind>(nameof(OutputParamName.SerializationKind), Tables.SerializerRepresentation.SerializationKind.DataType),
-                                         new SqlOutputParameterRepresentation<SerializationFormat>(nameof(OutputParamName.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.DataType),
-                                         new SqlOutputParameterRepresentation<CompressionKind>(nameof(OutputParamName.CompressionKind), Tables.SerializerRepresentation.CompressionKind.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.IdentifierAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ObjectAssemblyQualifiedNameWithVersion), Tables.TypeWithVersion.AssemblyQualifiedName.DataType),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType),
                                          new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
                                          new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagsXml), new StringSqlDataTypeRepresentation(true, -1)),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, -1)),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -202,66 +192,67 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    const string serializerRepresentationId = "SerializerRepresentationId";
-                    const string serializerConfigTypeId = "SerializerConfigTypeId";
-                    const string identifierTypeWithVersionId = "IdentifierTypeWithVersionId";
-                    const string objectTypeWithVersionId = "ObjectTypeWithVersionId";
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{GetLatestRecordById.Name}(
   @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectAssemblyQualifiedNameWithoutVersionQuery} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectAssemblyQualifiedNameWithVersionQuery} AS {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.IdentifierTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ObjectTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.ObjectTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS varchar(10)
 , @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.SerializationKind} AS {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.SerializationFormat} AS {Tables.SerializerRepresentation.SerializationFormat.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.CompressionKind} AS {Tables.SerializerRepresentation.CompressionKind.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} AS {Tables.TypeWithoutVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.TagsXml} AS [NVARCHAR](MAX) OUTPUT
+, @{OutputParamName.TagIdsXml} AS {new StringSqlDataTypeRepresentation(true, -1)} OUTPUT
 )
 AS
 BEGIN
-
-    DECLARE @{serializerRepresentationId} int   
-	DECLARE @{identifierTypeWithVersionId} int
-	DECLARE @{objectTypeWithVersionId} int
     SELECT TOP 1
-	   @{serializerRepresentationId} = [{Tables.Record.SerializerRepresentationId.Name}]
-	 , @{identifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
-	 , @{objectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
+	   @{OutputParamName.SerializerRepresentationId} = [{Tables.Record.SerializerRepresentationId.Name}]
+	 , @{OutputParamName.IdentifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
+	 , @{OutputParamName.ObjectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
 	 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
 	 , @{OutputParamName.InternalRecordId} = [{Tables.Record.Id.Name}]
 	 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]
 	 , @{OutputParamName.ObjectDateTime} = [{Tables.Record.ObjectDateTimeUtc.Name}]
 	FROM [{streamName}].[{Tables.Record.Table.Name}]
 	WHERE [{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId}
+    AND (
+            -- No Type filter at all
+            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
+            OR
+            -- Specific Only Id
+            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
+            OR
+            -- Specific Only Object
+            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+            OR
+            -- Specific Both
+            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
+            OR
+            -- Any Only Id
+            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
+            OR
+            -- Any Only Object
+            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+            OR
+            -- Any Both
+            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery}) AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
+        )
 	ORDER BY [{Tables.Record.Id.Name}] DESC
---check for record count and update contract to have an understanding of nothing found
-	DECLARE @{serializerConfigTypeId} int
-	SELECT 
-		@{serializerConfigTypeId} = [{Tables.SerializerRepresentation.SerializationConfigurationTypeWithoutVersionId.Name}] 
-	  , @{OutputParamName.SerializationKind} = [{Tables.SerializerRepresentation.SerializationKind.Name}]
-	  , @{OutputParamName.SerializationFormat} = [{Tables.SerializerRepresentation.SerializationFormat.Name}]
-	  , @{OutputParamName.CompressionKind} = [{Tables.SerializerRepresentation.CompressionKind.Name}]
-	FROM [{streamName}].[{Tables.SerializerRepresentation.Table.Name}] WHERE [{Tables.SerializerRepresentation.Id.Name}] = @{serializerRepresentationId}
 
-	SELECT @{OutputParamName.SerializationConfigAssemblyQualifiedNameWithoutVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithoutVersion)}] WHERE [{Tables.TypeWithoutVersion.Id.Name}] = @{serializerConfigTypeId}
-	SELECT @{OutputParamName.IdentifierAssemblyQualifiedNameWithVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WHERE [{Tables.TypeWithVersion.Id.Name}] = @{identifierTypeWithVersionId}
-	SELECT @{OutputParamName.ObjectAssemblyQualifiedNameWithVersion} = [{Tables.TypeWithoutVersion.AssemblyQualifiedName.Name}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WHERE [{Tables.TypeWithVersion.Id.Name}] = @{objectTypeWithVersionId}
+//check that we have  {OutputParamName.InternalRecordId} and {InputParamName.ExistingRecordNotEncounteredStrategy} for action...
 
-    SELECT @{OutputParamName.TagsXml} = (SELECT
-		{Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
-		ISNULL({Tables.Tag.TagValue.Name},'{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
-	FROM [{streamName}].[{Tables.Tag.Table.Name}]
-	WHERE [{Tables.Tag.RecordId.Name}] = 1
+    SELECT @{OutputParamName.TagIdsXml} = (SELECT
+		  ROW_NUMBER() AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+		, t.[{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
+	FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
+	WHERE [{Tables.RecordTag.RecordId.Name}] = 1
 	FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 END
 
