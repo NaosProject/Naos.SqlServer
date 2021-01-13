@@ -70,6 +70,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="serializerRepresentation">Optional <see cref="SerializerRepresentation"/>; default is DefaultSerializerRepresentation.</param>
         /// <param name="serializationFormat">Optional <see cref="SerializationFormat"/>; default is <see cref="SerializationFormat.String"/>.</param>
         /// <returns>DescribedSerializer.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "This is the prefered type.")]
         public IdentifiedSerializerRepresentation GetIdAddIfNecessarySerializerRepresentation(
             SqlServerLocator resourceLocator,
             SerializerRepresentation serializerRepresentation = null,

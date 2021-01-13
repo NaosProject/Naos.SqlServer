@@ -12,6 +12,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
     using System.Text;
     using System.Xml.Linq;
+    using Naos.CodeAnalysis.Recipes;
     using OBeautifulCode.Assertion.Recipes;
     using static System.FormattableString;
 
@@ -117,6 +118,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="elements">The elements.</param>
         /// <param name="startAtOneInsteadOfZero">Optionally choose to start at 1/one instead of 0/zero; DEFAULT is 0/zero.</param>
         /// <returns>Ordinal dictionary of the elements.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "AtOne", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
         public static IReadOnlyDictionary<string, string> ToOrdinalDictionary<TElement>(this IReadOnlyList<TElement> elements, bool startAtOneInsteadOfZero = false)
         {
             var result = new Dictionary<string, string>();
