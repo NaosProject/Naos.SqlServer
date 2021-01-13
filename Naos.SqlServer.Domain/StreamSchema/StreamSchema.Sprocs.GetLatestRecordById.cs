@@ -247,14 +247,25 @@ BEGIN
         )
 	ORDER BY [{Tables.Record.Id.Name}] DESC
 
---TODO://check that we have  {OutputParamName.InternalRecordId} and {InputParamName.ExistingRecordNotEncounteredStrategy} for action...
-
-    SELECT @{OutputParamName.TagIdsXml} = (SELECT
-          ROW_NUMBER() OVER (ORDER BY [{Tables.RecordTag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-		, [{Tables.RecordTag.TagId.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
-	FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
-	WHERE [{Tables.RecordTag.RecordId.Name}] = @{OutputParamName.InternalRecordId}
-	FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+    IF (@{OutputParamName.InternalRecordId} IS NULL)
+    BEGIN
+        SET @{OutputParamName.SerializerRepresentationId} = -1
+	    SET @{OutputParamName.IdentifierTypeWithVersionId} = -1
+	    SET @{OutputParamName.ObjectTypeWithVersionId} = -1
+	    SET @{OutputParamName.InternalRecordId} = -1
+	    SET @{OutputParamName.ObjectDateTime} = NULL
+	    SET @{OutputParamName.TagIdsXml} = NULL
+	    SET @{OutputParamName.RecordDateTime} = GETUTCDATE()
+    END
+    ELSE
+    BEGIN
+        SELECT @{OutputParamName.TagIdsXml} = (SELECT
+              ROW_NUMBER() OVER (ORDER BY [{Tables.RecordTag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+		    , [{Tables.RecordTag.TagId.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
+	    FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
+	    WHERE [{Tables.RecordTag.RecordId.Name}] = @{OutputParamName.InternalRecordId}
+	    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+    END
 END
 
 			");
