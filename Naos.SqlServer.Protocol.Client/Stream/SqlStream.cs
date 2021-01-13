@@ -560,6 +560,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.Handling.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.HandlingTag.BuildCreationScript(this.Name),
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name),
+                                                      StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetTypeFromId.BuildCreationScript(this.Name),

@@ -61,16 +61,16 @@ namespace Naos.SqlServer.Domain
                 /// <returns>ExecuteStoredProcedureOp.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
-                    IReadOnlyList<int> tagIds)
+                    IReadOnlyList<long> tagIds)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetIdsAddIfNecessaryTagSet)}");
+                    var sprocName = FormattableString.Invariant($"[{streamName}].{Name}");
                     var tagIdsDictionary = tagIds.ToOrdinalDictionary(true);
                     var tagsXml = TagConversionTool.GetTagsXmlString(tagIdsDictionary);
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(
                                              nameof(InputParamName.TagIdsXml),
-                                             Tables.TypeWithVersion.AssemblyQualifiedName.DataType,
+                                             new StringSqlDataTypeRepresentation(true, -1),
                                              tagsXml),
                                          new SqlOutputParameterRepresentation<string>(
                                              nameof(OutputParamName.TagsXml),
@@ -104,7 +104,7 @@ BEGIN
 	    {Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
 	    ISNULL({Tables.Tag.TagValue.Name},'{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
     FROM [{streamName}].[{Tables.Tag.Table.Name}]    
-    WHERE [{Tables.Tag.Id.Name}] IN (SELECT {Tables.Tag.TagValue.Name} FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.TagsXml}))
+    WHERE [{Tables.Tag.Id.Name}] IN (SELECT {Tables.Tag.TagValue.Name} FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml}))
     FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 
 END");

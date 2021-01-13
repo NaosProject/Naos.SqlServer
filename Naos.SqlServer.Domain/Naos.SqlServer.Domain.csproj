@@ -220,6 +220,7 @@
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Legacy\SqlServerConnectionDefinition.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.cs" />
     <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetTypeFromId.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetSerializerRepresentationFromId.cs" />

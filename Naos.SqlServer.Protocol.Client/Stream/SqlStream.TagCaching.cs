@@ -69,7 +69,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             var storedProcWithVersionOp = StreamSchema.Sprocs.GetTagSetFromIds.BuildExecuteStoredProcedureOp(
                 this.Name,
-                tagIds.Select(int.Parse).ToList());
+                tagIds.Select(long.Parse).ToList());
             var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
             var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValue<string>();
             var result = TagConversionTool.GetTagsFromXmlString(tagsXml);
