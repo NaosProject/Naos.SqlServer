@@ -63,7 +63,7 @@ namespace Naos.SqlServer.Protocol.Client
             if (remaining.Any())
             {
                 var orderedRemaining = remaining.OrderBy(_ => _.Key).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
-                var remainingTags = orderedRemaining.ToOrdinalDictionary();
+                var remainingTags = orderedRemaining.ToDictionary(k => k.Key, v => v.Value);
                 var storedProcWithVersionOp = StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.BuildExecuteStoredProcedureOp(
                     this.Name,
                     remainingTags);
