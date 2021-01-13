@@ -474,8 +474,8 @@ BEGIN
 		SET @{OutputParamName.Id} = -1
 		SET @{OutputParamName.InternalRecordId} = -1
 		SET @{OutputParamName.SerializerRepresentationId} = -1
-		SET @{OutputParamName.IdentifierTypeWithVersionId} = 'Fake'
-		SET @{OutputParamName.ObjectTypeWithVersionId} = 'Fake'
+		SET @{OutputParamName.IdentifierTypeWithVersionId} = -1
+		SET @{OutputParamName.ObjectTypeWithVersionId} = -1
 		SET @{OutputParamName.StringSerializedId} = 'Fake'
 		SET @{OutputParamName.StringSerializedObject} = 'Fake'
 		SET @{OutputParamName.ObjectDateTime} = GETUTCDATE()
