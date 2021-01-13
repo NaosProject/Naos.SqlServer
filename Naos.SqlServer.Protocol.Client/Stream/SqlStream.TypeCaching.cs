@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
@@ -39,6 +40,9 @@ namespace Naos.SqlServer.Protocol.Client
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = NaosSuppressBecause.CA1711_IdentifiersShouldNotHaveIncorrectSuffix_TypeNameAddedAsSuffixForTestsWhereTypeIsPrimaryConcern)]
     public partial class SqlStream
     {
+        private readonly ConcurrentDictionary<int, TypeRepresentationWithAndWithoutVersion> assemblyQualifiedNameWithVersionIdToIdentifiedTypeMap = new ConcurrentDictionary<int, TypeRepresentationWithAndWithoutVersion>();
+        private readonly ConcurrentDictionary<string, IdentifiedType> assemblyQualifiedNameWithVersionToIdentifiedTypeMap = new ConcurrentDictionary<string, IdentifiedType>();
+
         /// <summary>
         /// Gets the type of the ids add if necessary.
         /// </summary>
@@ -52,27 +56,39 @@ namespace Naos.SqlServer.Protocol.Client
                 return null;
             }
 
-            var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
-
-            // TODO: add caching by assembly qualified name
-            var assemblyQualifiedNameWithoutVersion = typeRepresentation.WithoutVersion.BuildAssemblyQualifiedName();
-            var storedProcWithoutVersionOp = StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildExecuteStoredProcedureOp(
-                                                              this.Name,
-                                                              assemblyQualifiedNameWithoutVersion);
-
-            var sprocResultWithoutVersion = sqlProtocol.Execute(storedProcWithoutVersionOp);
-            var withoutVersionId = sprocResultWithoutVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.OutputParamName.Id)].GetValue<int>();
-
-            // TODO: add caching by assembly qualified name
             var assemblyQualifiedNameWithVersion = typeRepresentation.WithVersion.BuildAssemblyQualifiedName();
-            var storedProcWithVersionOp = StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildExecuteStoredProcedureOp(
-                this.Name,
-                assemblyQualifiedNameWithVersion);
-            var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
-            var withVersionId = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.OutputParamName.Id)].GetValue<int>();
+            var found = this.assemblyQualifiedNameWithVersionToIdentifiedTypeMap.TryGetValue(assemblyQualifiedNameWithVersion, out var result);
+            if (found)
+            {
+                return result;
+            }
+            else
+            {
+                var assemblyQualifiedNameWithoutVersion = typeRepresentation.WithoutVersion.BuildAssemblyQualifiedName();
 
-            var result = new IdentifiedType(withoutVersionId, withVersionId);
-            return result;
+                var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
+                var storedProcWithoutVersionOp = StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    assemblyQualifiedNameWithoutVersion);
+
+                var sprocResultWithoutVersion = sqlProtocol.Execute(storedProcWithoutVersionOp);
+                var withoutVersionId = sprocResultWithoutVersion
+                                      .OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.OutputParamName.Id)]
+                                      .GetValue<int>();
+                var storedProcWithVersionOp = StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    assemblyQualifiedNameWithVersion);
+                var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
+                var withVersionId = sprocResultWithVersion
+                                   .OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.OutputParamName.Id)]
+                                   .GetValue<int>();
+
+                var item = new IdentifiedType(withoutVersionId, withVersionId);
+                this.assemblyQualifiedNameWithVersionToIdentifiedTypeMap.TryAdd(assemblyQualifiedNameWithVersion, item);
+                var newFound = this.assemblyQualifiedNameWithVersionToIdentifiedTypeMap.TryGetValue(assemblyQualifiedNameWithVersion, out var newResult);
+                newFound.MustForOp("failedToFindSerializationRepresentationAfterAdding").BeTrue();
+                return newResult;
+            }
         }
 
         /// <summary>
@@ -88,18 +104,31 @@ namespace Naos.SqlServer.Protocol.Client
             bool versioned)
         {
             versioned.MustForArg(nameof(versioned)).BeTrue("Can't allow until I can confirm the that a null versioned type rep doesn't matter.");
-            var storedProcOp = StreamSchema.Sprocs.GetTypeFromId.BuildExecuteStoredProcedureOp(
-                this.Name,
-                typeWithVersionId,
-                versioned);
+            var found = this.assemblyQualifiedNameWithVersionIdToIdentifiedTypeMap.TryGetValue(typeWithVersionId, out var result);
+            if (found)
+            {
+                return result;
+            }
+            else
+            {
+                var storedProcOp = StreamSchema.Sprocs.GetTypeFromId.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    typeWithVersionId,
+                    versioned);
 
-            var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-            var assemblyQualifiedName = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetTypeFromId.OutputParamName.AssemblyQualifiedName)].GetValue<string>();
-            var typeRep = assemblyQualifiedName.ToTypeRepresentationFromAssemblyQualifiedName();
-            var result = typeRep.ToWithAndWithoutVersion();
+                var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
+                var sprocResult = sqlProtocol.Execute(storedProcOp);
+                var assemblyQualifiedName = sprocResult
+                                           .OutputParameters[nameof(StreamSchema.Sprocs.GetTypeFromId.OutputParamName.AssemblyQualifiedName)]
+                                           .GetValue<string>();
+                var typeRep = assemblyQualifiedName.ToTypeRepresentationFromAssemblyQualifiedName();
+                var item = typeRep.ToWithAndWithoutVersion();
+                this.assemblyQualifiedNameWithVersionIdToIdentifiedTypeMap.TryAdd(typeWithVersionId, item);
 
-            return result;
+                var newFound = this.assemblyQualifiedNameWithVersionIdToIdentifiedTypeMap.TryGetValue(typeWithVersionId, out var newResult);
+                newFound.MustForOp("failedToFindSerializationRepresentationAfterAdding").BeTrue();
+                return newResult;
+            }
         }
     }
 }

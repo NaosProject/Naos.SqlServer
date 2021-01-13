@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
@@ -31,6 +32,9 @@ namespace Naos.SqlServer.Protocol.Client
 
     public partial class SqlStream
     {
+        private readonly ConcurrentDictionary<long, KeyValuePair<string, string>> tagIdToKeyValueMap = new ConcurrentDictionary<long, KeyValuePair<string, string>>();
+        private readonly ConcurrentDictionary<KeyValuePair<string, string>, long> tagKeyValueToIdMap = new ConcurrentDictionary<KeyValuePair<string, string>, long>();
+
         /// <summary>
         /// Gets the ids add if necessary tag.
         /// </summary>
@@ -40,14 +44,46 @@ namespace Naos.SqlServer.Protocol.Client
         public IReadOnlyList<long> GetIdsAddIfNecessaryTag(SqlServerLocator locator, IReadOnlyDictionary<string, string> tags)
         {
             var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
+            var result = new List<long>();
+            var remaining = new List<KeyValuePair<string, string>>();
 
-            var storedProcWithVersionOp = StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.BuildExecuteStoredProcedureOp(
-                this.Name,
-                tags);
-            var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
-            var tagIdsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.OutputParamName.TagIdsXml)].GetValue<string>();
-            var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-            var result = tagIds.Values.Select(long.Parse).ToList();
+            foreach (var keyValuePair in tags)
+            {
+                var found = this.tagKeyValueToIdMap.TryGetValue(keyValuePair, out var id);
+                if (found)
+                {
+                    result.Add(id);
+                }
+                else
+                {
+                    remaining.Add(keyValuePair);
+                }
+            }
+
+            if (remaining.Any())
+            {
+                var orderedRemaining = remaining.OrderBy(_ => _.Key).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
+                var remainingTags = orderedRemaining.ToOrdinalDictionary();
+                var storedProcWithVersionOp = StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    remainingTags);
+                var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
+                var tagIdsXml = sprocResultWithVersion
+                               .OutputParameters[nameof(StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.OutputParamName.TagIdsXml)]
+                               .GetValue<string>();
+                var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
+                var additional = tagIds.Values.Select(long.Parse).ToList();
+                additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
+                for (int idx = 0;
+                    idx < orderedRemaining.Count;
+                    idx++)
+                {
+                    this.tagKeyValueToIdMap.TryAdd(orderedRemaining[idx], additional[idx]);
+                    this.tagIdToKeyValueMap.TryAdd(additional[idx], orderedRemaining[idx]);
+                }
+
+                result.AddRange(additional);
+            }
 
             return result;
         }
@@ -65,14 +101,47 @@ namespace Naos.SqlServer.Protocol.Client
                 return new Dictionary<string, string>();
             }
 
-            var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
+            var tagIdsLong = tagIds.Select(long.Parse).ToList();
+            var result = new Dictionary<string, string>();
+            var remaining = new List<long>();
 
-            var storedProcWithVersionOp = StreamSchema.Sprocs.GetTagSetFromIds.BuildExecuteStoredProcedureOp(
-                this.Name,
-                tagIds.Select(long.Parse).ToList());
-            var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
-            var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValue<string>();
-            var result = TagConversionTool.GetTagsFromXmlString(tagsXml);
+            foreach (var id in tagIdsLong)
+            {
+                var found = this.tagIdToKeyValueMap.TryGetValue(id, out var keyValuePair);
+                if (found)
+                {
+                    result.Add(keyValuePair.Key, keyValuePair.Value);
+                }
+                else
+                {
+                    remaining.Add(id);
+                }
+            }
+
+            if (remaining.Any())
+            {
+                var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
+
+                var storedProcWithVersionOp = StreamSchema.Sprocs.GetTagSetFromIds.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    tagIds.Select(long.Parse).ToList());
+                var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
+                var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValue<string>();
+                var additionalTags = TagConversionTool.GetTagsFromXmlString(tagsXml);
+                var additional = additionalTags.OrderBy(_ => _.Key).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
+
+                additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
+
+                for (int idx = 0;
+                    idx < remaining.Count;
+                    idx++)
+                {
+                    this.tagKeyValueToIdMap.TryAdd(additional[idx], remaining[idx]);
+                    this.tagIdToKeyValueMap.TryAdd(remaining[idx], additional[idx]);
+                    result.Add(additional[idx].Key, additional[idx].Value);
+                }
+            }
+
             return result;
         }
     }
