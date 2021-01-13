@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
@@ -31,7 +32,8 @@ namespace Naos.SqlServer.Protocol.Client
 
     public partial class SqlStream
     {
-        private readonly IDictionary<SerializerRepresentation, IdentifiedSerializerRepresentation> serializerDescriptionToDescribedSerializerMap = new Dictionary<SerializerRepresentation, IdentifiedSerializerRepresentation>();
+        private readonly ConcurrentDictionary<SerializerRepresentation, IdentifiedSerializerRepresentation> serializerRepresentationToIdentifiedSerializerMap = new ConcurrentDictionary<SerializerRepresentation, IdentifiedSerializerRepresentation>();
+        private readonly ConcurrentDictionary<int, IdentifiedSerializerRepresentation> serializerRepresentationIdToIdentifiedSerializerMap = new ConcurrentDictionary<int, IdentifiedSerializerRepresentation>();
 
         /// <summary>
         /// Gets the serializer representation from identifier (first by cache and then by database).
@@ -43,24 +45,52 @@ namespace Naos.SqlServer.Protocol.Client
             SqlServerLocator sqlServerLocator,
             int serializerRepresentationId)
         {
-            var storedProcOp = StreamSchema.Sprocs.GetSerializerRepresentationFromId.BuildExecuteStoredProcedureOp(
-                this.Name,
-                serializerRepresentationId);
+            var found = this.serializerRepresentationIdToIdentifiedSerializerMap.TryGetValue(serializerRepresentationId, out var result);
+            if (found)
+            {
+                return result;
+            }
+            else
+            {
+                var storedProcOp = StreamSchema.Sprocs.GetSerializerRepresentationFromId.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    serializerRepresentationId);
 
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
+                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+                var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-            SerializationKind serializationKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetSerializerRepresentationFromId.OutputParamName.SerializationKind)].GetValue<SerializationKind>();
-            int configTypeWithVersionId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetSerializerRepresentationFromId.OutputParamName.ConfigTypeWithVersionId)].GetValue<int>();
-            CompressionKind compressionKind = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetSerializerRepresentationFromId.OutputParamName.CompressionKind)].GetValue<CompressionKind>();
-            SerializationFormat serializationFormat = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetSerializerRepresentationFromId.OutputParamName.SerializationFormat)].GetValue<SerializationFormat>();
+                SerializationKind serializationKind = sprocResult
+                                                     .OutputParameters[nameof(StreamSchema
+                                                                             .Sprocs.GetSerializerRepresentationFromId.OutputParamName
+                                                                             .SerializationKind)]
+                                                     .GetValue<SerializationKind>();
+                int configTypeWithVersionId = sprocResult
+                                             .OutputParameters[nameof(StreamSchema
+                                                                     .Sprocs.GetSerializerRepresentationFromId.OutputParamName
+                                                                     .ConfigTypeWithVersionId)]
+                                             .GetValue<int>();
+                CompressionKind compressionKind = sprocResult
+                                                 .OutputParameters[nameof(StreamSchema
+                                                                         .Sprocs.GetSerializerRepresentationFromId.OutputParamName
+                                                                         .CompressionKind)]
+                                                 .GetValue<CompressionKind>();
+                SerializationFormat serializationFormat = sprocResult
+                                                         .OutputParameters[nameof(StreamSchema
+                                                                                 .Sprocs.GetSerializerRepresentationFromId.OutputParamName
+                                                                                 .SerializationFormat)]
+                                                         .GetValue<SerializationFormat>();
 
-            var configType = this.GetTypeById(sqlServerLocator, configTypeWithVersionId, true);
+                var configType = this.GetTypeById(sqlServerLocator, configTypeWithVersionId, true);
 
-            var rep = new SerializerRepresentation(serializationKind, configType.WithVersion, compressionKind);
-            var result = new IdentifiedSerializerRepresentation(serializerRepresentationId, rep, serializationFormat);
+                var rep = new SerializerRepresentation(serializationKind, configType.WithVersion, compressionKind);
+                var item = new IdentifiedSerializerRepresentation(serializerRepresentationId, rep, serializationFormat);
 
-            return result;
+                this.serializerRepresentationIdToIdentifiedSerializerMap.TryAdd(item.Id, item);
+                this.serializerRepresentationToIdentifiedSerializerMap.TryAdd(item.SerializerRepresentation, item);
+                var newFound = this.serializerRepresentationIdToIdentifiedSerializerMap.TryGetValue(serializerRepresentationId, out var newResult);
+                newFound.MustForOp("failedToFindSerializationRepresentationAfterAdding").BeTrue();
+                return newResult;
+            }
         }
 
         /// <summary>
@@ -77,15 +107,24 @@ namespace Naos.SqlServer.Protocol.Client
             SerializationFormat serializationFormat = SerializationFormat.String)
         {
             var localSerializerRepresentation = serializerRepresentation ?? this.DefaultSerializerRepresentation;
-            if (this.serializerDescriptionToDescribedSerializerMap.ContainsKey(localSerializerRepresentation))
-            {
-                return this.serializerDescriptionToDescribedSerializerMap[localSerializerRepresentation];
-            }
 
-            var id = this.Execute(new GetIdAddIfNecessarySerializerRepresentationOp(resourceLocator, localSerializerRepresentation, serializationFormat));
-            var result = new IdentifiedSerializerRepresentation(id, localSerializerRepresentation, serializationFormat);
-            this.serializerDescriptionToDescribedSerializerMap.Add(localSerializerRepresentation, result);
-            return result;
+            var found = this.serializerRepresentationToIdentifiedSerializerMap.TryGetValue(serializerRepresentation, out var result);
+            if (found)
+            {
+                return result;
+            }
+            else
+            {
+
+                var id = this.Execute(
+                    new GetIdAddIfNecessarySerializerRepresentationOp(resourceLocator, localSerializerRepresentation, serializationFormat));
+                var item = new IdentifiedSerializerRepresentation(id, localSerializerRepresentation, serializationFormat);
+                this.serializerRepresentationIdToIdentifiedSerializerMap.TryAdd(item.Id, item);
+                this.serializerRepresentationToIdentifiedSerializerMap.TryAdd(item.SerializerRepresentation, item);
+                var newFound = this.serializerRepresentationToIdentifiedSerializerMap.TryGetValue(serializerRepresentation, out var newResult);
+                newFound.MustForOp("failedToFindSerializationRepresentationAfterAdding").BeTrue();
+                return newResult;
+            }
         }
 
         /// <inheritdoc />
