@@ -92,24 +92,19 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    const string tagIdsTable = "TagIdsTable";
-
                     return FormattableString.Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{nameof(GetIdsAddIfNecessaryTagSet)}(
+CREATE PROCEDURE [{streamName}].{Name}(
   @{nameof(InputParamName.TagIdsXml)} [xml],
   @{nameof(OutputParamName.TagsXml)} [NVARCHAR](MAX) OUTPUT
   )
 AS
-BEGIN
-    {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableDeclarationSyntax(tagIdsTable, false)}
-    @{tagIdsTable} = EXEC [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}] @{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.TagsXml}, @{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.IncludeId}=0
-      
+BEGIN      
     SELECT @{OutputParamName.TagsXml} = (SELECT
 	    {Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
 	    ISNULL({Tables.Tag.TagValue.Name},'{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
     FROM [{streamName}].[{Tables.Tag.Table.Name}]    
-    WHERE [{Tables.Tag.Id.Name}] IN (SELECT {Tables.Tag.TagValue.Name} FROM @{tagIdsTable})
+    WHERE [{Tables.Tag.Id.Name}] IN (SELECT {Tables.Tag.TagValue.Name} FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.TagsXml}))
     FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 
 END");

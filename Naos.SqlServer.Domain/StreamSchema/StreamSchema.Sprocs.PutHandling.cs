@@ -151,7 +151,6 @@ namespace Naos.SqlServer.Domain
                     var transaction = Invariant($"{nameof(PutHandling)}Transaction");
                     var currentStatus = "CurrentStatus";
                     var currentStatusAccepted = "CurrentStatusAccepted";
-                    var tagIdsTable = "TagIdsTable";
                     return Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{PutHandling.Name}(
@@ -166,9 +165,6 @@ CREATE PROCEDURE [{streamName}].{PutHandling.Name}(
 AS
 BEGIN
 
-{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableDeclarationSyntax(tagIdsTable, false)}
-SET @{tagIdsTable} = EXEC [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}] @{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.TagsXml}, @{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.IncludeId}=0
-
 DECLARE @{currentStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
 SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
     FROM [{streamName}].[{Tables.Handling.Table.Name}]
@@ -179,13 +175,12 @@ IF @{currentStatus} IS NULL
 BEGIN
     SET @{currentStatus} = '{HandlingStatus.Requested}'
 END
-//should we guard against this changing while inserting?  if so we need the exclusive table lock for a time to live and do everything after...
+--TODO://should we guard against this changing while inserting?  if so we need the exclusive table lock for a time to live and do everything after...
 DECLARE @{currentStatusAccepted} BIT
 
-// change this to use xml conversion func
-SELECT @{currentStatusAccepted} = 1
-    FROM @{nameof(InputParamName.AcceptableCurrentStatusesXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
-    WHERE C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Handling.Status.DataType.DeclarationInSqlSyntax}') = @{currentStatus}
+SELECT @{currentStatusAccepted} = 1 FROM
+[{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.AcceptableCurrentStatusesXml}) t
+WHERE [{Tables.Tag.TagValue.Name}] = @{currentStatus}
 
 IF (@{currentStatusAccepted} = 0)
 BEGIN
@@ -199,7 +194,6 @@ END
  
 BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
-	  BEGIN
 	      DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 	      SET @{recordCreatedUtc} = GETUTCDATE()
 	      INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] WITH (TABLOCKX) -- get an exclusive lock to prevent other from doing same
@@ -223,17 +217,12 @@ BEGIN TRANSACTION [{transaction}]
 		    [{Tables.HandlingTag.HandlingId.Name}]
 		  , [{Tables.HandlingTag.TagId.Name}]
 		  , [{Tables.HandlingTag.RecordCreatedUtc.Name}]
-		  ) VALUES (
-         SELECT 
-            @{OutputParamName.Id}
-	      ,	@{Tables.Tag.TagValue.Name}
-		  , @{recordCreatedUtc}
-         FROM @{tagIdsTable}
 		  )
-)
-
-
-	  END
+         SELECT 
+  		    @{OutputParamName.Id}
+		  , t.[{Tables.Tag.TagValue.Name}]
+		  , @{recordCreatedUtc}
+         FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagIdsXml}) t
 
       COMMIT TRANSACTION [{transaction}]
 

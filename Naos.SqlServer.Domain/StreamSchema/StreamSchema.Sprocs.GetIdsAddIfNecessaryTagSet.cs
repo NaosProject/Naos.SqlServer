@@ -91,7 +91,6 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    const string tagsTable = "TagsTable";
                     const string tagIdsTable = "TagIdsTable";
 
                     return FormattableString.Invariant(
@@ -103,38 +102,47 @@ CREATE PROCEDURE [{streamName}].{nameof(GetIdsAddIfNecessaryTagSet)}(
 AS
 BEGIN
 
-        {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableDeclarationSyntax(tagIdsTable, true)}
-        @{tagsTable} = EXEC [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}] @{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.TagsXml}, @{Funcs.GetTagsTableVariableFromTagsXml.InputParamName.IncludeId}=1
+        {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithIdDeclarationSyntax(tagIdsTable)}
 
         INSERT INTO @{tagIdsTable}
             SELECT
                 e.[{Tables.Tag.Id.Name}]
 		      , n.[{Tables.Tag.TagKey.Name}]
 		      , n.[{Tables.Tag.TagValue.Name}]
-		    FROM @{tagsTable}
-            LEFT JOIN @{Tables.Tag.Table.Name} e ON (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND n.[{Tables.Tag.TagValue.Name}] =  e.[{Tables.Tag.TagValue.Name}])
-        IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} t WHERE t.[{Tables.Tag.Id}] IS NULL)
+		    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagsXml}) n
+            LEFT JOIN [{streamName}].[{Tables.Tag.Table.Name}] e ON (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND n.[{Tables.Tag.TagValue.Name}] =  e.[{Tables.Tag.TagValue.Name}])
+        IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} t WHERE t.[{Tables.Tag.Id.Name}] IS NULL)
         BEGIN
             BEGIN TRANSACTION [{nameof(GetIdsAddIfNecessaryTagSet)}]
               BEGIN TRY
 	            INSERT INTO [{streamName}].[{Tables.Tag.Table.Name}] WITH (TABLOCKX) -- get an exclusive lock to prevent other from doing same
                 SELECT 
-		            t.[{Tables.Tag.TagKey.Name}]
-		          , t.[{Tables.Tag.TagValue.Name}]
+		            n.[{Tables.Tag.TagKey.Name}]
+		          , n.[{Tables.Tag.TagValue.Name}]
 		          , GETUTCDATE()
-		        FROM @{tagIdsTable}
-                LEFT JOIN @{Tables.Tag.Table.Name} e ON (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND n.[{Tables.Tag.TagValue.Name}] =  e.[{Tables.Tag.TagValue.Name}])
+		        FROM @{tagIdsTable} n
+                LEFT JOIN [{streamName}].[{Tables.Tag.Table.Name}] e ON (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND n.[{Tables.Tag.TagValue.Name}] =  e.[{Tables.Tag.TagValue.Name}])
                 WHERE e.[{Tables.Tag.Id.Name}] IS NULL
 
       COMMIT TRANSACTION [{nameof(GetIdsAddIfNecessaryTagSet)}]
       
-      
-    SELECT @{OutputParamName.TagIdsXml} = (SELECT
-	    {Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
-	    ISNULL({Tables.Tag.TagValue.Name},'{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
-    FROM [{streamName}].[{Tables.Tag.Table.Name}]
-    WHERE [matching?] = 1
-    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+      IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} WHERE [{Tables.Tag.Id.Name}] IS NULL)
+      BEGIN
+        SELECT @{OutputParamName.TagIdsXml} = (SELECT
+	        ROW_NUMBER() OVER (ORDER BY n.id) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
+	        n.{Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
+        FROM @{tagIdsTable} e
+        INNER JOIN [{streamName}].[{Tables.Tag.Table.Name}] n ON (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND n.[{Tables.Tag.TagValue.Name}] = e.[{Tables.Tag.TagValue.Name}])
+        FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+      END
+      ELSE
+      BEGIN
+        SELECT @{OutputParamName.TagIdsXml} = (SELECT
+            ROW_NUMBER() OVER (ORDER BY e.id) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
+	        e.{Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
+        FROM @{tagIdsTable} e
+        FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+      END
 
   END TRY
   BEGIN CATCH
@@ -151,6 +159,7 @@ BEGIN
       END
     RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
   END CATCH
+END
 END");
                 }
             }

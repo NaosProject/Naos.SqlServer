@@ -162,11 +162,6 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(string streamName)
                 {
                     const string recordCreatedUtc = "RecordCreatedUtc";
-                    const string identifierTypeWithoutVersionId = "IdentifierTypeWithoutVersionId";
-                    const string identifierTypeWithVersionId = "IdentifierTypeWithVersionId";
-                    const string objectTypeWithoutVersionId = "ObjectTypeWithoutVersionId";
-                    const string objectTypeWithVersionId = "ObjectTypeWithVersionId";
-                    const string tagsTable = "TagsTable";
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].{nameof(PutRecord)}(
@@ -187,7 +182,7 @@ BEGIN
 
 BEGIN TRANSACTION [{nameof(PutRecord)}]
   BEGIN TRY
-// SEE if the strategy needs honoring...do we table lock here???
+--TODO:Support {InputParamName.ExistingRecordEncounteredStrategy}// SEE if the strategy needs honoring...do we table lock here???
 	  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 	  SET @RecordCreatedUtc = GETUTCDATE()
 	  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
@@ -201,43 +196,29 @@ BEGIN TRANSACTION [{nameof(PutRecord)}]
 		, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
 		, [{nameof(Tables.Record.RecordCreatedUtc)}]
 		) VALUES (
-		  @{identifierTypeWithoutVersionId}
-		, @{identifierTypeWithVersionId}
-		, @{objectTypeWithoutVersionId}
-		, @{objectTypeWithVersionId}
-		, @{nameof(InputParamName.SerializerRepresentationId)}
-		, @{nameof(InputParamName.StringSerializedId)}
-		, @{nameof(InputParamName.StringSerializedObject)}
-		, @{nameof(InputParamName.ObjectDateTimeUtc)}
+		  @{InputParamName.IdentifierTypeWithoutVersionId}
+		, @{InputParamName.IdentifierTypeWithVersionId}
+		, @{InputParamName.ObjectTypeWithoutVersionId}
+		, @{InputParamName.ObjectTypeWithVersionId}
+		, @{InputParamName.SerializerRepresentationId}
+		, @{InputParamName.StringSerializedId}
+		, @{InputParamName.StringSerializedObject}
+		, @{InputParamName.ObjectDateTimeUtc}
 		, @{recordCreatedUtc}
 		)
 
       SET @{OutputParamName.Id} = SCOPE_IDENTITY()
 	  
-	  IF (@{nameof(InputParamName.TagIdsXml)} IS NOT NULL)
-	  BEGIN
-		  DECLARE @{tagsTable} TABLE(
-			[{Tables.Tag.TagKey.Name}] {Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax} NOT NULL,
-			[{Tables.Tag.TagValue.Name}] {Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax} NULL)
-		  INSERT INTO @{tagsTable}
-		  SELECT
-		    C.value('(@{TagConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
-		  , C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagValue.Name}]
-		  FROM
-			@{nameof(InputParamName.TagIdsXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
-
-		  UPDATE @{tagsTable} SET [{Tables.Tag.TagValue.Name}] = null WHERE [{Tables.Tag.TagValue.Name}] = '{TagConversionTool.NullCanaryValue}'
-
-	      INSERT INTO [{streamName}].[]
-          SELECT 
-  		    @{OutputParamName.Id}
-          , @{objectTypeWithoutVersionId}
-		  , t.[{Tables.Tag.TagKey.Name}]
-		  , t.[{Tables.Tag.TagValue.Name}]
-		  , @{recordCreatedUtc} as {Tables.Tag.RecordCreatedUtc.Name}
-		FROM @{tagsTable} t
-
-	  END
+      INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
+	    [{Tables.RecordTag.RecordId.Name}]
+	  , [{Tables.RecordTag.TagId.Name}]
+	  , [{Tables.RecordTag.RecordCreatedUtc.Name}]
+	  )
+     SELECT 
+  	    @{OutputParamName.Id}
+	  , t.[{Tables.Tag.TagValue.Name}]
+	  , @{recordCreatedUtc}
+     FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagIdsXml}) t
 
       COMMIT TRANSACTION [{nameof(PutRecord)}]
 

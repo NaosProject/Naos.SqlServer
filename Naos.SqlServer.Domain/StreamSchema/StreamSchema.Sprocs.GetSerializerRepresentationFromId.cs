@@ -118,10 +118,10 @@ namespace Naos.SqlServer.Domain
                         $@"
 CREATE PROCEDURE [{streamName}].{Name}(
     @{InputParamName.Id} {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax}
-  , @{OutputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind} OUTPUT
-  , @{OutputParamName.ConfigTypeWithVersionId} {Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId} OUTPUT
-  , @{OutputParamName.CompressionKind} {Tables.SerializerRepresentation.CompressionKind} OUTPUT
-  , @{OutputParamName.SerializationFormat} {Tables.SerializerRepresentation.SerializationFormat} OUTPUT
+  , @{OutputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax} OUTPUT
+  , @{OutputParamName.ConfigTypeWithVersionId} {Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.DataType.DeclarationInSqlSyntax} OUTPUT
+  , @{OutputParamName.CompressionKind} {Tables.SerializerRepresentation.CompressionKind.DataType.DeclarationInSqlSyntax} OUTPUT
+  , @{OutputParamName.SerializationFormat} {Tables.SerializerRepresentation.SerializationFormat.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN

@@ -40,11 +40,6 @@ namespace Naos.SqlServer.Domain
                     /// The tag set as XML.
                     /// </summary>
                     TagsXml,
-
-                    /// <summary>
-                    /// Include the identifier.
-                    /// </summary>
-                    IncludeId,
                 }
 
                 /// <summary>
@@ -55,44 +50,22 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    const string tagsTable = "TagsTable";
-
                     return FormattableString.Invariant(
                         $@"
 CREATE FUNCTION [{streamName}].[{GetTagsTableVariableFromTagsXml.Name}] (
       @{InputParamName.TagsXml} [xml]
-    , @{InputParamName.IncludeId} [bit]
 )
 RETURNS TABLE
 AS
-        IF (@{InputParamName.IncludeId} = 1)
-            BEGIN
-             {BuildTagsTableDeclarationSyntax(tagsTable, true)}
-             
-		      INSERT INTO @{tagsTable}
-		      SELECT
-                null
-		      , C.value('(@{TagConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
-		      , C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagValue.Name}]
-		      FROM
-			    @{nameof(InputParamName.TagsXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
-
-		      UPDATE @{tagsTable} SET [{Tables.Tag.TagValue.Name}] = null WHERE [{Tables.Tag.TagValue.Name}] = '{TagConversionTool.NullCanaryValue}'
-              RETURN @{tagsTable}
-            END
-        ELSE
-            BEGIN
-             {BuildTagsTableDeclarationSyntax(tagsTable, false)}
-		      INSERT INTO @{tagsTable}
+RETURN 
 		      SELECT
 		        C.value('(@{TagConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
-		      , C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagValue.Name}]
+		      , [{Tables.Tag.TagValue.Name}] = CASE C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax}')
+			     WHEN '---NULL---' THEN NULL
+				 ELSE C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax}')
+				 END
 		      FROM
 			    @{nameof(InputParamName.TagsXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
-
-		      UPDATE @{tagsTable} SET [{Tables.Tag.TagValue.Name}] = null WHERE [{Tables.Tag.TagValue.Name}] = '{TagConversionTool.NullCanaryValue}'
-              RETURN @{tagsTable}
-            END
 ");
                 }
 
@@ -100,17 +73,33 @@ AS
                 /// Builds the declaration and execution SQL syntax.
                 /// </summary>
                 /// <param name="tagsTableVariableName">Name of the tags table variable.</param>
-                /// <param name="includeId">Include the identifier column.</param>
                 /// <returns>System.String.</returns>
                 public static string BuildTagsTableDeclarationSyntax(
-                    string tagsTableVariableName,
-                    bool includeId)
+                    string tagsTableVariableName)
                 {
                     var result = FormattableString.Invariant(
                         $@"
             DECLARE @{tagsTableVariableName} TABLE(
-{(includeId ? FormattableString.Invariant($"[{Tables.Tag.Id.Name}] {Tables.Tag.Id.DataType.DeclarationInSqlSyntax},") : string.Empty)}
 			[{Tables.Tag.TagKey.Name}] {Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax} NOT NULL,
+			[{Tables.Tag.TagValue.Name}] {Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax} NULL)
+");
+
+                    return result;
+                }
+
+                /// <summary>
+                /// Builds the declaration and execution SQL syntax.
+                /// </summary>
+                /// <param name="tagsTableVariableName">Name of the tags table variable.</param>
+                /// <returns>System.String.</returns>
+                public static string BuildTagsTableWithIdDeclarationSyntax(
+                    string tagsTableVariableName)
+                {
+                    var result = FormattableString.Invariant(
+                        $@"
+            DECLARE @{tagsTableVariableName} TABLE(
+			[{Tables.Tag.Id.Name}] {Tables.Tag.Id.DataType.DeclarationInSqlSyntax} NULL,
+			[{Tables.Tag.TagKey.Name}] {Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax} NULL,
 			[{Tables.Tag.TagValue.Name}] {Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax} NULL)
 ");
 
