@@ -145,7 +145,7 @@ BEGIN
     IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} WHERE [{Tables.Tag.Id.Name}] IS NULL)
     BEGIN
         SELECT @{OutputParamName.TagIdsXml} = (SELECT
-	        ROW_NUMBER() OVER (ORDER BY n.id) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
+	        ROW_NUMBER() OVER (ORDER BY n.[{Tables.Tag.TagKey.Name}], ISNULL(n.[{Tables.Tag.TagValue.Name}], '{TagConversionTool.NullCanaryValue}')) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
 	        n.{Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
         FROM @{tagIdsTable} e
         INNER JOIN [{streamName}].[{Tables.Tag.Table.Name}] n ON
@@ -155,7 +155,7 @@ BEGIN
     ELSE
     BEGIN
         SELECT @{OutputParamName.TagIdsXml} = (SELECT
-            ROW_NUMBER() OVER (ORDER BY e.id) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
+            ROW_NUMBER() OVER (ORDER BY e.[{Tables.Tag.TagKey.Name}], ISNULL(e.[{Tables.Tag.TagValue.Name}], '{TagConversionTool.NullCanaryValue}')) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
 	        e.{Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
         FROM @{tagIdsTable} e
         FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
