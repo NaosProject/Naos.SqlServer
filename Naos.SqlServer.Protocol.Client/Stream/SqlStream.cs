@@ -222,7 +222,7 @@ namespace Naos.SqlServer.Protocol.Client
             var storedProcOp = StreamSchema.Sprocs.TryHandleRecord.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.Concern,
-                Invariant($"Created by {nameof(TryHandleRecordOp)}."),
+                operation.Details ?? Invariant($"Created by {nameof(TryHandleRecordOp)}."),
                 identifierTypeQuery,
                 objectTypeQuery,
                 operation.OrderRecordsStrategy,
@@ -328,7 +328,10 @@ namespace Naos.SqlServer.Protocol.Client
             var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
             var sqlServerLocator = locator as SqlServerLocator
                                 ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-
+            var tagIdsXml = TagConversionTool.GetTagsXmlString(
+                operation.Tags == null
+                    ? new Dictionary<string, string>()
+                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
                 Concerns.RecordHandlingConcern,
@@ -343,7 +346,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                HandlingStatus.Blocked,
                                            })
                                       .ToList(),
-                null);
+                tagIdsXml);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -357,7 +360,10 @@ namespace Naos.SqlServer.Protocol.Client
             var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
             var sqlServerLocator = locator as SqlServerLocator
                                 ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-
+            var tagIdsXml = TagConversionTool.GetTagsXmlString(
+                operation.Tags == null
+                    ? new Dictionary<string, string>()
+                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
                 Concerns.RecordHandlingConcern,
@@ -365,7 +371,7 @@ namespace Naos.SqlServer.Protocol.Client
                 Concerns.GlobalBlockingRecordId,
                 HandlingStatus.Requested,
                 new[] { HandlingStatus.Blocked },
-                null);
+                tagIdsXml);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
