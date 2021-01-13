@@ -9,6 +9,8 @@ namespace Naos.SqlServer.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using OBeautifulCode.Compression;
+    using OBeautifulCode.Serialization;
 
     /// <summary>
     /// Container for schema.
@@ -85,16 +87,16 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.Id),
                                              Tables.SerializerRepresentation.Id.DataType,
                                              serializerRepresentationId),
-                                         new SqlOutputParameterRepresentation<string>(
+                                         new SqlOutputParameterRepresentation<SerializationKind>(
                                              nameof(OutputParamName.SerializationKind),
                                              Tables.SerializerRepresentation.SerializationKind.DataType),
                                          new SqlOutputParameterRepresentation<int>(
                                              nameof(OutputParamName.ConfigTypeWithVersionId),
                                              Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.DataType),
-                                         new SqlOutputParameterRepresentation<string>(
+                                         new SqlOutputParameterRepresentation<CompressionKind>(
                                              nameof(OutputParamName.CompressionKind),
                                              Tables.SerializerRepresentation.CompressionKind.DataType),
-                                         new SqlOutputParameterRepresentation<string>(
+                                         new SqlOutputParameterRepresentation<SerializationFormat>(
                                              nameof(OutputParamName.SerializationFormat),
                                              Tables.SerializerRepresentation.SerializationFormat.DataType),
                                      };
@@ -127,7 +129,7 @@ AS
 BEGIN
 SELECT 
 	    @{OutputParamName.SerializationKind} = [{Tables.SerializerRepresentation.SerializationKind.Name}]
-	  , @{OutputParamName.SerializationFormat} = [{Tables.SerializerRepresentation.SerializationFormat.Name}]
+	  , @{OutputParamName.ConfigTypeWithVersionId} = [{Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.Name}]
 	  , @{OutputParamName.CompressionKind} = [{Tables.SerializerRepresentation.CompressionKind.Name}]
 	  , @{OutputParamName.SerializationFormat} = [{Tables.SerializerRepresentation.SerializationFormat.Name}]
 	FROM [{streamName}].[{Tables.SerializerRepresentation.Table.Name}] WHERE [{Tables.SerializerRepresentation.Id.Name}] = @{InputParamName.Id}
