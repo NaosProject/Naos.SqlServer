@@ -115,7 +115,6 @@ namespace Naos.SqlServer.Protocol.Client
             }
             else
             {
-
                 var id = this.Execute(
                     new GetIdAddIfNecessarySerializerRepresentationOp(resourceLocator, localSerializerRepresentation, serializationFormat));
                 var item = new IdentifiedSerializerRepresentation(id, localSerializerRepresentation, serializationFormat);
