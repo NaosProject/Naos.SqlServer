@@ -125,10 +125,10 @@ namespace Naos.SqlServer.Domain
             if (elements != null)
             {
                 for (var idx =  startAtOneInsteadOfZero ? 1 : 0;
-                    idx < elements.Count;
+                    idx < elements.Count + (startAtOneInsteadOfZero ? 1 : 0);
                     idx++)
                 {
-                    result.Add(idx.ToString(CultureInfo.InvariantCulture), elements[idx]?.ToString());
+                    result.Add(idx.ToString(CultureInfo.InvariantCulture), elements[idx - (startAtOneInsteadOfZero ? 1 : 0)]?.ToString());
                 }
             }
 
