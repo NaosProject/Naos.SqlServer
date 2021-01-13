@@ -71,7 +71,7 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.AssemblyQualifiedNameWithVersion),
                                              Tables.TypeWithVersion.AssemblyQualifiedName.DataType,
                                              assemblyQualifiedNameWithVersion),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.TypeWithVersion.Id.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
