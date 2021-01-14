@@ -215,6 +215,7 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         /// <inheritdoc />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         public override HandlingStatus Execute(
             GetHandlingStatusOfRecordSetByTagOp operation)
         {

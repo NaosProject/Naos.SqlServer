@@ -37,10 +37,19 @@ namespace Naos.SqlServer.Domain
                 /// <value>The name of the stored procedure.</value>
                 public static string Name => nameof(GetCompositeHandlingStatus);
 
+                /// <summary>
+                /// Input parameter names.
+                /// </summary>
                 public enum InputParamName
                 {
+                    /// <summary>
+                    /// The concern.
+                    /// </summary>
                     Concern,
 
+                    /// <summary>
+                    /// The tag identifiers as XML.
+                    /// </summary>
                     TagIdsXml,
                 }
 
@@ -123,7 +132,6 @@ BEGIN
         SET @{OutputParamName.Status} = '{HandlingStatus.None}'
     END
 END");
-
                 }
             }
         }

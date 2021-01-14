@@ -32,6 +32,9 @@ namespace Naos.SqlServer.Domain
                 /// <value>The name of the function.</value>
                 public static string Name => nameof(GetStatusSortOrderTableVariable);
 
+                /// <summary>
+                /// Output table column names.
+                /// </summary>
                 public enum OutputColumnName
                 {
                     /// <summary>
