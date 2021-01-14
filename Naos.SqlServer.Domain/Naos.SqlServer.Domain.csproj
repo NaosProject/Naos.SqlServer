@@ -105,6 +105,7 @@
     <Compile Include="Legacy\SqlServerConnectionDefinition.designer.cs">
       <DependentUpon>SqlServerConnectionDefinition.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\DataTypeRepresentation\XmlSqlDataTypeRepresentation.cs" />
     <Compile Include="Model\Management\BackupSqlServerDatabaseDetails.designer.cs">
       <DependentUpon>BackupSqlServerDatabaseDetails.cs</DependentUpon>
     </Compile>
@@ -220,8 +221,10 @@
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Legacy\SqlServerConnectionDefinition.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Funcs.GetStatusSortOrderTableVariable.cs" />
     <Compile Include="StreamSchema\StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.cs" />
     <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetCompositeHandlingStatus.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetTypeFromId.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetSerializerRepresentationFromId.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetTagSetFromIds.cs" />

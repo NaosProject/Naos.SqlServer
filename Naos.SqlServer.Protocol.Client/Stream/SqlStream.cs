@@ -218,7 +218,49 @@ namespace Naos.SqlServer.Protocol.Client
         public override HandlingStatus Execute(
             GetHandlingStatusOfRecordSetByTagOp operation)
         {
-            throw new NotImplementedException();
+            if (operation.HandlingStatusCompositionStrategy != null)
+            {
+                operation
+                   .HandlingStatusCompositionStrategy
+                   .IgnoreCancel
+                   .MustForArg(Invariant($"{nameof(GetHandlingStatusOfRecordSetByTagOp)}.{nameof(HandlingStatusCompositionStrategy)}.{nameof(HandlingStatusCompositionStrategy.IgnoreCancel)}"))
+                   .BeFalse(Invariant($"{nameof(HandlingStatusCompositionStrategy)}.{nameof(HandlingStatusCompositionStrategy.IgnoreCancel)} is not supported."));
+            }
+
+            if (operation.TagMatchStrategy != null)
+            {
+                operation.TagMatchStrategy.ScopeOfFindSet
+                         .MustForArg(Invariant($"{nameof(GetHandlingStatusOfRecordSetByTagOp)}.{nameof(TagMatchStrategy)}.{nameof(TagMatchStrategy.ScopeOfFindSet)}"))
+                         .BeEqualTo(Database.Domain.TagMatchScope.All);
+
+                operation.TagMatchStrategy.ScopeOfTarget
+                         .MustForArg(Invariant($"{nameof(GetHandlingStatusOfRecordSetByTagOp)}.{nameof(TagMatchStrategy)}.{nameof(TagMatchStrategy.ScopeOfTarget)}"))
+                         .BeEqualTo(Database.Domain.TagMatchScope.Any);
+            }
+
+            var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
+            var statusPerLocator = new List<HandlingStatus>();
+            foreach (var resourceLocator in allLocators)
+            {
+                var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
+                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+                var tagIds = this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.TagsToMatch);
+                var tagIdsXml = TagConversionTool.GetTagsXmlString(tagIds.ToOrdinalDictionary());
+                var op = StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    operation.Concern,
+                    tagIdsXml: tagIdsXml);
+
+                var sprocResult = sqlProtocol.Execute(op);
+
+                HandlingStatus status = sprocResult
+                                                 .OutputParameters[StreamSchema.Sprocs.GetCompositeHandlingStatus.OutputParamName.Status.ToString()]
+                                                 .GetValue<HandlingStatus>();
+                statusPerLocator.Add(status);
+            }
+
+            var result = statusPerLocator.ReduceToCompositeHandlingStatus(operation.HandlingStatusCompositionStrategy);
+            return result;
         }
 
         /// <inheritdoc />
@@ -582,6 +624,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.RecordTag.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.Handling.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.HandlingTag.BuildCreationScript(this.Name),
+                                                      StreamSchema.Funcs.GetStatusSortOrderTableVariable.BuildCreationScript(this.Name),
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),
@@ -596,6 +639,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name),
                                                   };
 
