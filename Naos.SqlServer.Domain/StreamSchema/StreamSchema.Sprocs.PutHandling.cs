@@ -152,7 +152,7 @@ namespace Naos.SqlServer.Domain
                     var currentStatusAccepted = "CurrentStatusAccepted";
                     return Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{PutHandling.Name}(
+CREATE PROCEDURE [{streamName}].[{PutHandling.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.RecordId} AS {Tables.Handling.RecordId.DataType.DeclarationInSqlSyntax}

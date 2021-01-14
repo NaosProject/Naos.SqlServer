@@ -164,7 +164,7 @@ namespace Naos.SqlServer.Domain
                     const string recordCreatedUtc = "RecordCreatedUtc";
                     var result = FormattableString.Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{nameof(PutRecord)}(
+CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
   @{InputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}

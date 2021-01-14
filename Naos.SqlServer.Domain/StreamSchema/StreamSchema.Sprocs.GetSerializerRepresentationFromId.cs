@@ -118,7 +118,7 @@ namespace Naos.SqlServer.Domain
                 {
                     return FormattableString.Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{Name}(
+CREATE PROCEDURE [{streamName}].[{GetSerializerRepresentationFromId.Name}](
     @{InputParamName.Id} {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax}
   , @{OutputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax} OUTPUT
   , @{OutputParamName.ConfigTypeWithVersionId} {Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.DataType.DeclarationInSqlSyntax} OUTPUT

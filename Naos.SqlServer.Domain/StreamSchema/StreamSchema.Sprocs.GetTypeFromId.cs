@@ -95,7 +95,7 @@ namespace Naos.SqlServer.Domain
                 {
                     return FormattableString.Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{Name}(
+CREATE PROCEDURE [{streamName}].[{GetTypeFromId.Name}](
     @{InputParamName.Id} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
   , @{InputParamName.Versioned} [BIT]
   , @{OutputParamName.AssemblyQualifiedName} {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT

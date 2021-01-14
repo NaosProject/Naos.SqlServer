@@ -84,7 +84,7 @@ namespace Naos.SqlServer.Domain
                 {
                     return FormattableString.Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{GetNextUniqueLong.Name}(
+CREATE PROCEDURE [{streamName}].[{GetNextUniqueLong.Name}](
   @{OutputParamName.Value} {Tables.NextUniqueLong.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS

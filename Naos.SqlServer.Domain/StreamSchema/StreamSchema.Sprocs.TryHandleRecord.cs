@@ -238,7 +238,7 @@ namespace Naos.SqlServer.Domain
 
                     var result = FormattableString.Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{TryHandleRecord.Name}(
+CREATE PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
@@ -422,8 +422,8 @@ BEGIN
 @{PutHandling.InputParamName.Concern} = @{InputParamName.Concern}, 
 @{PutHandling.InputParamName.Details} = @{InputParamName.Details}, 
 @{PutHandling.InputParamName.RecordId} = @{recordToHandleId}, 
-@{PutHandling.InputParamName.NewStatus} = '@{HandlingStatus.Running}', 
-@{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '@{acceptableNoneStatusXml}', 
+@{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}', 
+@{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '{acceptableNoneStatusXml}', 
 @{PutHandling.InputParamName.TagIdsXml} = @{InputParamName.TagIdsForEntryXml}, 
 @{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
 

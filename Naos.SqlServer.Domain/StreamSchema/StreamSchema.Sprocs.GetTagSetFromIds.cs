@@ -94,7 +94,7 @@ namespace Naos.SqlServer.Domain
                 {
                     return FormattableString.Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{Name}(
+CREATE PROCEDURE [{streamName}].[{GetTagSetFromIds.Name}](
   @{nameof(InputParamName.TagIdsXml)} [xml],
   @{nameof(OutputParamName.TagsXml)} [NVARCHAR](MAX) OUTPUT
   )

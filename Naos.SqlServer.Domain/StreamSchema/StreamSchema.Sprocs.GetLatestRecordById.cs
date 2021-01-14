@@ -194,7 +194,7 @@ namespace Naos.SqlServer.Domain
                 {
                     var result = FormattableString.Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].{GetLatestRecordById.Name}(
+CREATE PROCEDURE [{streamName}].[{GetLatestRecordById.Name}](
   @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
