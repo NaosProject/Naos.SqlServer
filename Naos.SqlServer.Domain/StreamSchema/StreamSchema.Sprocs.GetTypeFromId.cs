@@ -21,7 +21,7 @@ namespace Naos.SqlServer.Domain
         public static partial class Sprocs
         {
             /// <summary>
-            /// Class TypeWithVersion.
+            /// Container for stored procedure.
             /// </summary>
             public static class GetTypeFromId
             {
@@ -64,7 +64,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="typeId">The identifier.</param>
                 /// <param name="versioned">Including version.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     int typeId,

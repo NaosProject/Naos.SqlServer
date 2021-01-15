@@ -93,7 +93,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="newStatus">The new status.</param>
                 /// <param name="acceptableCurrentStatuses">The acceptable current statuses.</param>
                 /// <param name="tagIdsXml">The tag identifiers as XML.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,

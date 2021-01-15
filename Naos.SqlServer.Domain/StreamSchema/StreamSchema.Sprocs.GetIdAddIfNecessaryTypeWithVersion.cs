@@ -9,6 +9,7 @@ namespace Naos.SqlServer.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -21,7 +22,7 @@ namespace Naos.SqlServer.Domain
         public static partial class Sprocs
         {
             /// <summary>
-            /// Class TypeWithVersion.
+            /// Container for stored procedure.
             /// </summary>
             public static class GetIdAddIfNecessaryTypeWithVersion
             {
@@ -37,7 +38,7 @@ namespace Naos.SqlServer.Domain
                 public enum InputParamName
                 {
                     /// <summary>
-                    /// The object assembly qualified name With version.
+                    /// The object assembly qualified name with version.
                     /// </summary>
                     AssemblyQualifiedNameWithVersion,
                 }
@@ -58,12 +59,12 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="assemblyQualifiedNameWithVersion">The assembly qualified name.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string assemblyQualifiedNameWithVersion)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetIdAddIfNecessaryTypeWithVersion)}");
+                    var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetIdAddIfNecessaryTypeWithVersion)}]");
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
@@ -89,6 +90,7 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
+                    var transaction = Invariant($"{nameof(GetIdAddIfNecessaryTypeWithVersion)}Transaction");
                     return FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}](
@@ -98,36 +100,56 @@ CREATE PROCEDURE [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}](
 AS
 BEGIN
 
-BEGIN TRANSACTION [GetIdAddTypeWithVersion]
-  BEGIN TRY
-      SELECT @{nameof(OutputParamName.Id)} = [{nameof(Tables.TypeWithVersion.Id)}] FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}]
+    SELECT
+        @{nameof(OutputParamName.Id)} = [{nameof(Tables.TypeWithVersion.Id)}]
+    FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}]
         WHERE [{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}] = @{nameof(InputParamName.AssemblyQualifiedNameWithVersion)}
 
-	  IF (@{nameof(OutputParamName.Id)} IS NULL)
-	  BEGIN
-	      
-	      INSERT INTO [{streamName}].[{nameof(Tables.TypeWithVersion)}] ([{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}], [{nameof(Tables.TypeWithVersion.RecordCreatedUtc)}]) VALUES (@{nameof(InputParamName.AssemblyQualifiedNameWithVersion)}, GETUTCDATE())
-		  SET @{nameof(OutputParamName.Id)} = SCOPE_IDENTITY()
-	  END
+    IF (@{nameof(OutputParamName.Id)} IS NULL)
+    BEGIN
+        BEGIN TRANSACTION [{transaction}] WITH SERIALIZABLE
+        BEGIN TRY
+            SELECT
+                @{nameof(OutputParamName.Id)} = [{nameof(Tables.TypeWithVersion.Id)}]
+            FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}]
+                WHERE [{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}] = @{nameof(InputParamName.AssemblyQualifiedNameWithVersion)}
 
-      COMMIT TRANSACTION [GetIdAddTypeWithVersion]
+            IF (@{nameof(OutputParamName.Id)} IS NULL)
+            BEGIN
+                INSERT INTO [{streamName}].[{nameof(Tables.TypeWithVersion)}]
+                (
+                     [{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}]
+                   , [{nameof(Tables.TypeWithVersion.RecordCreatedUtc)}]
+                )
+                VALUES
+                (
+                      @{nameof(InputParamName.AssemblyQualifiedNameWithVersion)}
+                    , GETUTCDATE()
+                )
 
-  END TRY
-  BEGIN CATCH
-      SET @{nameof(OutputParamName.Id)} = NULL
-      DECLARE @ErrorMessage nvarchar(max), 
-              @ErrorSeverity int, 
-              @ErrorState int
+                SET @{nameof(OutputParamName.Id)} = SCOPE_IDENTITY()
+            END
 
-      SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+            COMMIT TRANSACTION [{transaction}]
+        END TRY
+        BEGIN CATCH
+            SET @{nameof(OutputParamName.Id)} = NULL
+            DECLARE @ErrorMessage nvarchar(max), 
+                  @ErrorSeverity int, 
+                  @ErrorState int
 
-      IF (@@trancount > 0)
-      BEGIN
-         ROLLBACK TRANSACTION [GetIdAddTypeWithVersion]
-      END
-    RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
-  END CATCH
-END");
+            SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+
+            IF (@@trancount > 0)
+            BEGIN
+                ROLLBACK TRANSACTION [{transaction}]
+            END
+
+            RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+        END CATCH
+    END
+END
+");
                 }
             }
         }

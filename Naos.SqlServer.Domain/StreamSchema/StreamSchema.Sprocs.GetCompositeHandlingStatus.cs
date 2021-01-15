@@ -8,13 +8,11 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using OBeautifulCode.Compression;
-    using OBeautifulCode.Serialization;
-
-    using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -27,7 +25,7 @@ namespace Naos.SqlServer.Domain
         public static partial class Sprocs
         {
             /// <summary>
-            /// Stored procedure: GetCompositeHandlingStatus.
+            /// Container for stored procedure.
             /// </summary>
             public static class GetCompositeHandlingStatus
             {
@@ -70,7 +68,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">The handling concern.</param>
                 /// <param name="tagIdsXml">The optional tag identifiers in xml.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,
@@ -97,20 +95,16 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <returns>Name of the put stored procedure.</returns>
-                [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                    "Microsoft.Naming",
-                    "CA1704:IdentifiersShouldBeSpelledCorrectly",
-                    MessageId = "Sproc",
-                    Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sproc", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    return FormattableString.Invariant(
+                    return Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetCompositeHandlingStatus.Name}](
-  @{InputParamName.Concern} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{OutputParamName.Status} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax} OUTPUT
+  @{InputParamName.Concern} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{OutputParamName.Status} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN

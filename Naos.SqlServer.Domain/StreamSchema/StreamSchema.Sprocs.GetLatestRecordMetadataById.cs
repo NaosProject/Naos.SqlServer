@@ -132,7 +132,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="objectType">The object assembly qualified name with and without version.</param>
                 /// <param name="typeVersionMatchStrategy">The type version match strategy.</param>
                 /// <param name="existingRecordNotEncounteredStrategy">The existing record not encountered strategy.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string stringSerializedId,
@@ -141,7 +141,7 @@ namespace Naos.SqlServer.Domain
                     TypeVersionMatchStrategy typeVersionMatchStrategy,
                     ExistingRecordNotEncounteredStrategy existingRecordNotEncounteredStrategy)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetLatestRecordMetadataById)}");
+                    var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetLatestRecordMetadataById)}]");
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {

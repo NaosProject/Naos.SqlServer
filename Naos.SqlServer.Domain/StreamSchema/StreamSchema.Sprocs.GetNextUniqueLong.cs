@@ -10,10 +10,8 @@ namespace Naos.SqlServer.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
-    using OBeautifulCode.Compression;
-    using OBeautifulCode.Serialization;
 
-    using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -51,11 +49,11 @@ namespace Naos.SqlServer.Domain
                 /// Builds the execute stored procedure operation.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetNextUniqueLong)}");
+                    var sprocName = Invariant($"[{streamName}].[{nameof(GetNextUniqueLong)}]");
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
@@ -82,7 +80,9 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    return FormattableString.Invariant(
+                    var transaction = Invariant($"{nameof(GetNextUniqueLong)}Transaction");
+
+                    return Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetNextUniqueLong.Name}](
   @{OutputParamName.Value} {Tables.NextUniqueLong.Id.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -90,10 +90,10 @@ CREATE PROCEDURE [{streamName}].[{GetNextUniqueLong.Name}](
 AS
 BEGIN
 
-BEGIN TRANSACTION [GetNextUniqueLong]
+BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
 	  BEGIN
-	      INSERT INTO [{streamName}].[{Tables.NextUniqueLong.Table.Name}] (
+	      INSERT INTO [{streamName}].[{Tables.NextUniqueLong.Table.Name}] WITH (TABLOCKX) (
 		    [{Tables.NextUniqueLong.RecordCreatedUtc.Name}]
 		  ) VALUES (
 		    GETUTCDATE()
@@ -102,7 +102,7 @@ BEGIN TRANSACTION [GetNextUniqueLong]
 	      SET @{OutputParamName.Value} = SCOPE_IDENTITY()
 	  END
 
-      COMMIT TRANSACTION [GetNextUniqueLong]
+      COMMIT TRANSACTION [{transaction}]
 
   END TRY
 
@@ -116,7 +116,7 @@ BEGIN TRANSACTION [GetNextUniqueLong]
 
       IF (@@trancount > 0)
       BEGIN
-         ROLLBACK TRANSACTION [GetNextUniqueLong]
+         ROLLBACK TRANSACTION [{transaction}]
       END
     RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
   END CATCH

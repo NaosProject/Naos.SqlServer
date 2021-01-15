@@ -23,7 +23,7 @@ namespace Naos.SqlServer.Domain
         public static partial class Sprocs
         {
             /// <summary>
-            /// Class TypeWithVersion.
+            /// Container for stored procedure.
             /// </summary>
             public static class GetSerializerRepresentationFromId
             {
@@ -75,7 +75,7 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="serializerRepresentationId">The identifier.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     int serializerRepresentationId)

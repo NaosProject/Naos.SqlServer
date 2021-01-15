@@ -8,9 +8,9 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using Naos.Database.Domain;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -112,7 +112,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="objectDateTimeUtc">The date time of the object if exists.</param>
                 /// <param name="tagIdsXml">The tags in xml structure.</param>
                 /// <param name="existingRecordEncounteredStrategy">Existing record encountered strategy.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     IdentifiedSerializerRepresentation serializerRepresentation,
@@ -162,6 +162,7 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(string streamName)
                 {
                     const string recordCreatedUtc = "RecordCreatedUtc";
+                    var transaction = Invariant($"{nameof(PutRecord)}Transaction");
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
@@ -180,7 +181,7 @@ CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
 AS
 BEGIN
 
-BEGIN TRANSACTION [{nameof(PutRecord)}]
+BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
 --TODO:Support {InputParamName.ExistingRecordEncounteredStrategy}// SEE if the strategy needs honoring...do we table lock here???
 	  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
@@ -220,7 +221,7 @@ BEGIN TRANSACTION [{nameof(PutRecord)}]
 	  , @{recordCreatedUtc}
      FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagIdsXml}) t
 
-      COMMIT TRANSACTION [{nameof(PutRecord)}]
+      COMMIT TRANSACTION [{transaction}]
 
   END TRY
   BEGIN CATCH
@@ -232,7 +233,7 @@ BEGIN TRANSACTION [{nameof(PutRecord)}]
 
       IF (@@trancount > 0)
       BEGIN
-         ROLLBACK TRANSACTION [{nameof(PutRecord)}]
+         ROLLBACK TRANSACTION [{transaction}]
       END
     RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
   END CATCH

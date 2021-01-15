@@ -132,19 +132,20 @@ namespace Naos.SqlServer.Protocol.Client
         public int Execute(
             GetIdAddIfNecessarySerializerRepresentationOp operation)
         {
-            var serializationConfigurationTypeWithoutVersion = operation.SerializerRepresentation.SerializationConfigType.RemoveAssemblyVersions().BuildAssemblyQualifiedName();
-            var serializationConfigurationTypeWithVersion = operation.SerializerRepresentation.SerializationConfigType.BuildAssemblyQualifiedName();
+            var sqlLocator = this.TryGetLocator(operation);
+
+            var configType = this.GetIdsAddIfNecessaryType(
+                sqlLocator,
+                operation.SerializerRepresentation.SerializationConfigType.ToWithAndWithoutVersion());
 
             var storedProcOp = StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.BuildExecuteStoredProcedureOp(
                 this.Name,
-                serializationConfigurationTypeWithoutVersion,
-                serializationConfigurationTypeWithVersion,
+                configType,
                 operation.SerializerRepresentation.SerializationKind,
                 operation.SerializationFormat,
                 operation.SerializerRepresentation.CompressionKind,
                 UnregisteredTypeEncounteredStrategy.Attempt);
 
-            var sqlLocator = this.TryGetLocator(operation);
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
             var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.OutputParamName.Id)]

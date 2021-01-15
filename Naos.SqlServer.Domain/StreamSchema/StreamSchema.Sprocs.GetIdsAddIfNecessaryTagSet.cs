@@ -9,6 +9,7 @@ namespace Naos.SqlServer.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -21,7 +22,7 @@ namespace Naos.SqlServer.Domain
         public static partial class Sprocs
         {
             /// <summary>
-            /// Class TypeWithVersion.
+            /// Container for stored procedure.
             /// </summary>
             public static class GetIdsAddIfNecessaryTagSet
             {
@@ -58,12 +59,12 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="tags">The tag set.</param>
-                /// <returns>ExecuteStoredProcedureOp.</returns>
+                /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     IReadOnlyDictionary<string, string> tags)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetIdsAddIfNecessaryTagSet)}");
+                    var sprocName = Invariant($"[{streamName}].[{nameof(GetIdsAddIfNecessaryTagSet)}]");
                     var tagsXml = TagConversionTool.GetTagsXmlString(tags);
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
@@ -92,6 +93,7 @@ namespace Naos.SqlServer.Domain
                     string streamName)
                 {
                     const string tagIdsTable = "TagIdsTable";
+                    var transaction = Invariant($"{nameof(GetIdsAddIfNecessaryTagSet)}Transaction");
 
                     return FormattableString.Invariant(
                         $@"
@@ -113,9 +115,9 @@ BEGIN
             (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND (n.[{Tables.Tag.TagValue.Name}] = e.[{Tables.Tag.TagValue.Name}] OR (n.[{Tables.Tag.TagValue.Name}] is null and e.[{Tables.Tag.TagValue.Name}] is null)))
     IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} t WHERE t.[{Tables.Tag.Id.Name}] IS NULL)
     BEGIN
-        BEGIN TRANSACTION [{nameof(GetIdsAddIfNecessaryTagSet)}]
+        BEGIN TRANSACTION [{transaction}]
           BEGIN TRY
-	        INSERT INTO [{streamName}].[{Tables.Tag.Table.Name}] WITH (TABLOCKX) -- get an exclusive lock to prevent other from doing same
+	        INSERT INTO [{streamName}].[{Tables.Tag.Table.Name}] WITH (TABLOCKX)
             SELECT 
 		        n.[{Tables.Tag.TagKey.Name}]
 		      , n.[{Tables.Tag.TagValue.Name}]
@@ -125,23 +127,25 @@ BEGIN
             (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND (n.[{Tables.Tag.TagValue.Name}] = e.[{Tables.Tag.TagValue.Name}] OR (n.[{Tables.Tag.TagValue.Name}] is null and e.[{Tables.Tag.TagValue.Name}] is null)))
             WHERE e.[{Tables.Tag.Id.Name}] IS NULL
 
-            COMMIT TRANSACTION [{nameof(GetIdsAddIfNecessaryTagSet)}]
-          END TRY
-          BEGIN CATCH
-                 SET @{nameof(OutputParamName.TagIdsXml)} = NULL
-          DECLARE @ErrorMessage nvarchar(max), 
+            COMMIT TRANSACTION [{transaction}]
+        END TRY
+        BEGIN CATCH
+            SET @{nameof(OutputParamName.TagIdsXml)} = NULL
+            DECLARE @ErrorMessage nvarchar(max), 
                   @ErrorSeverity int, 
                   @ErrorState int
 
-          SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+            SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
 
-          IF (@@trancount > 0)
-          BEGIN
-             ROLLBACK TRANSACTION [{nameof(GetIdsAddIfNecessaryTagSet)}]
-          END
-          RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
-          END CATCH
-     END  
+            IF (@@trancount > 0)
+            BEGIN
+                ROLLBACK TRANSACTION [{transaction}]
+            END
+
+            RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+        END CATCH
+    END  
+
     IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} WHERE [{Tables.Tag.Id.Name}] IS NULL)
     BEGIN
         SELECT @{OutputParamName.TagIdsXml} = (SELECT
