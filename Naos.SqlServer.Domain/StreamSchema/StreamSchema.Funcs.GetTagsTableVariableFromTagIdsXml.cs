@@ -52,7 +52,7 @@ namespace Naos.SqlServer.Domain
                 {
                     return FormattableString.Invariant(
                         $@"
-CREATE FUNCTION [{streamName}].[{Name}] (
+CREATE FUNCTION [{streamName}].[{GetTagsTableVariableFromTagIdsXml.Name}] (
       @{InputParamName.TagsXml} [xml]
 )
 RETURNS TABLE
