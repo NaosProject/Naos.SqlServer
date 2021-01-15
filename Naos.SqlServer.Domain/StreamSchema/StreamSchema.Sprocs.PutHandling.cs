@@ -221,7 +221,7 @@ BEGIN TRANSACTION [{transaction}]
   		    @{OutputParamName.Id}
 		  , t.[{Tables.Tag.TagValue.Name}]
 		  , @{recordCreatedUtc}
-         FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagIdsXml}) t
+         FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml}) t
 
       COMMIT TRANSACTION [{transaction}]
 

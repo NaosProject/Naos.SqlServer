@@ -90,6 +90,11 @@ namespace Naos.SqlServer.Domain
                     /// The tag identifiers as XML.
                     /// </summary>
                     TagIdsForEntryXml,
+
+                    /// <summary>
+                    /// Inherit the record's tags in handling.
+                    /// </summary>
+                    InheritRecordTags,
                 }
 
                 /// <summary>
@@ -189,6 +194,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsForEntryXml), new StringSqlDataTypeRepresentation(true, -1), tagIdsXml),
+                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), 1),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
@@ -230,6 +236,7 @@ namespace Naos.SqlServer.Domain
                     const string recordToHandleId = "RecordToHandleId";
                     const string transaction = "Transaction";
                     const string blockedStatus = "BlockedStatus";
+                    const string unionedIfNecessaryTagIdsXml = "UnionedIfNecessaryTagIdsXml";
                     string acceptableNoneStatusXml = TagConversionTool.GetTagsXmlString(
                         new Dictionary<string, string>
                         {
@@ -247,7 +254,8 @@ CREATE PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
 , @{InputParamName.ObjectTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS varchar(10)
-, @{InputParamName.TagIdsForEntryXml} AS {new StringSqlDataTypeRepresentation(true, -1).DeclarationInSqlSyntax} OUTPUT
+, @{InputParamName.TagIdsForEntryXml} AS {new StringSqlDataTypeRepresentation(true, -1).DeclarationInSqlSyntax}
+, @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -418,13 +426,33 @@ BEGIN
 		   END
 	IF (@{recordToHandleId} IS NOT NULL)
 	BEGIN
-        EXEC [{streamName}].[{PutHandling.Name}] 
+		DECLARE @{unionedIfNecessaryTagIdsXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+		
+        SELECT @{unionedIfNecessaryTagIdsXml} = (
+        SELECT
+				  ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+				, [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
+        FROM
+			(
+                SELECT DISTINCT [{Tables.Tag.Id.Name}] FROM
+				(
+					SELECT [{Tables.Tag.TagValue.Name}] AS [{Tables.Tag.Id.Name}]
+				    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsForEntryXml})
+			        UNION ALL
+					SELECT [{Tables.RecordTag.TagId.Name}] AS [{Tables.Tag.Id.Name}]
+                    FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
+					WHERE @{InputParamName.InheritRecordTags} = 1 AND [{Tables.RecordTag.RecordId.Name}] = @{recordToHandleId}
+				) AS u
+			) AS d
+	    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+
+EXEC [{streamName}].[{PutHandling.Name}] 
 @{PutHandling.InputParamName.Concern} = @{InputParamName.Concern}, 
 @{PutHandling.InputParamName.Details} = @{InputParamName.Details}, 
 @{PutHandling.InputParamName.RecordId} = @{recordToHandleId}, 
 @{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}', 
 @{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '{acceptableNoneStatusXml}', 
-@{PutHandling.InputParamName.TagIdsXml} = @{InputParamName.TagIdsForEntryXml}, 
+@{PutHandling.InputParamName.TagIdsXml} = @{unionedIfNecessaryTagIdsXml}, 
 @{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
 
 		  SET @{OutputParamName.ShouldHandle} = 1
