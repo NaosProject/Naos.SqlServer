@@ -277,7 +277,8 @@ BEGIN
 	IF ((@{blockedStatus} IS NULL) OR (@{blockedStatus} <> '{HandlingStatus.Blocked}'))
 	BEGIN
 		DECLARE @{recordToHandleId} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
-		BEGIN TRANSACTION [{transaction}] WITH SERIALIZABLE
+        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+		BEGIN TRANSACTION [{transaction}]
 	  BEGIN TRY
 	  IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdAscending}')
       BEGIN

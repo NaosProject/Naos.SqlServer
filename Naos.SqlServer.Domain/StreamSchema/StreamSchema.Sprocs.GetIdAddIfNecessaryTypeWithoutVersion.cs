@@ -107,7 +107,8 @@ BEGIN
 
     IF (@{nameof(OutputParamName.Id)} IS NULL)
     BEGIN
-        BEGIN TRANSACTION [{transaction}] WITH SERIALIZABLE
+        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+        BEGIN TRANSACTION [{transaction}]
         BEGIN TRY
             SELECT
                 @{nameof(OutputParamName.Id)} = [{nameof(Tables.TypeWithoutVersion.Id)}]
