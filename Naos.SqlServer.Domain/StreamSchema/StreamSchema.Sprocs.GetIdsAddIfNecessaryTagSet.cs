@@ -93,7 +93,7 @@ namespace Naos.SqlServer.Domain
                     string streamName)
                 {
                     const string tagIdsTable = "TagIdsTable";
-                    var transaction = Invariant($"{nameof(GetIdsAddIfNecessaryTagSet)}Transaction");
+                    const string transaction = "GetIdAddIfNecTagSetTrans";
 
                     return FormattableString.Invariant(
                         $@"

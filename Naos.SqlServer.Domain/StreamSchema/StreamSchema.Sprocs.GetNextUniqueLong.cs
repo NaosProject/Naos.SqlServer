@@ -80,7 +80,7 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    var transaction = Invariant($"{nameof(GetNextUniqueLong)}Transaction");
+                    var transaction = Invariant($"{nameof(GetNextUniqueLong)}Tran");
 
                     return Invariant(
                         $@"

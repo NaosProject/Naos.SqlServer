@@ -90,7 +90,7 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    var transaction = Invariant($"{nameof(GetIdAddIfNecessaryTypeWithVersion)}Transaction");
+                    const string transaction = "GetIdAddIfNecTypeWithVerTrans";
                     return FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}](

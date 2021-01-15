@@ -135,7 +135,7 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
-                    var transaction = Invariant($"{nameof(GetIdAddIfNecessarySerializerRepresentation)}Transaction");
+                    const string transaction = "GetIdAddIfSerializerRepTran";
                     return Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetIdAddIfNecessarySerializerRepresentation.Name}](
