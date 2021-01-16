@@ -174,7 +174,7 @@ IF @{currentStatus} IS NULL
 BEGIN
     SET @{currentStatus} = '{HandlingStatus.Requested}'
 END
---TODO://should we guard against this changing while inserting?  if so we need the exclusive table lock for a time to live and do everything after...
+--TODO: should we guard against this changing while inserting? (exclusive table lock for a time to live, et al)
 DECLARE @{currentStatusAccepted} BIT
 
 SELECT @{currentStatusAccepted} = 1 FROM
