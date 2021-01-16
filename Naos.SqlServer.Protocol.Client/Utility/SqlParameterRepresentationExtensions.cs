@@ -437,11 +437,21 @@ namespace Naos.SqlServer.Protocol.Client
                 var intValue = Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
                 result = new SqlOutputParameterRepresentationWithResult<int>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, intValue);
             }
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<int?>)
+            {
+                var intValue = rawValue == null ? (int?)null : Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
+                result = new SqlOutputParameterRepresentationWithResult<int?>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, intValue);
+            }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long>)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var longValue = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
                 result = new SqlOutputParameterRepresentationWithResult<long>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, longValue);
+            }
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long?>)
+            {
+                var longValue = rawValue == null ? (long?)null : Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
+                result = new SqlOutputParameterRepresentationWithResult<long?>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, longValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<string>)
             {
