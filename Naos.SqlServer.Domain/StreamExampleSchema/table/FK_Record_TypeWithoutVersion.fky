@@ -1,0 +1,8 @@
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[Example].[Record]') AND type in (N'U'))
+ALTER TABLE [Example].[Record] DROP CONSTRAINT IF EXISTS [FK_Record_TypeWithoutVersion]
+GO
+ALTER TABLE [Example].[Record]  WITH CHECK ADD  CONSTRAINT [FK_Record_TypeWithoutVersion] FOREIGN KEY([ObjectTypeWithoutVersionId])
+REFERENCES [Example].[TypeWithoutVersion] ([Id])
+ALTER TABLE [Example].[Record] CHECK CONSTRAINT [FK_Record_TypeWithoutVersion]
+GO
+

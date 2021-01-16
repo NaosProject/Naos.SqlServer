@@ -1,0 +1,21 @@
+DROP TABLE IF EXISTS [Example].[Handling]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Example].[Handling](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[RecordId] [bigint] NOT NULL,
+	[Concern] [nvarchar](450) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[Status] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[Details] [nvarchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[RecordCreatedUtc] [datetime2](7) NOT NULL,
+ CONSTRAINT [PK_Handling] PRIMARY KEY CLUSTERED 
+(
+	[Id] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+

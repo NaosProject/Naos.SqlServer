@@ -1,0 +1,8 @@
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[Example].[HandlingTag]') AND type in (N'U'))
+ALTER TABLE [Example].[HandlingTag] DROP CONSTRAINT IF EXISTS [FK_HandlingTag_Tag]
+GO
+ALTER TABLE [Example].[HandlingTag]  WITH CHECK ADD  CONSTRAINT [FK_HandlingTag_Tag] FOREIGN KEY([TagId])
+REFERENCES [Example].[Tag] ([Id])
+ALTER TABLE [Example].[HandlingTag] CHECK CONSTRAINT [FK_HandlingTag_Tag]
+GO
+

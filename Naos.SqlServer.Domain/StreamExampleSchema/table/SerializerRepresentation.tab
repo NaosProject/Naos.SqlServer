@@ -1,0 +1,32 @@
+DROP TABLE IF EXISTS [Example].[SerializerRepresentation]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Example].[SerializerRepresentation](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[SerializationKind] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[SerializationFormat] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[SerializationConfigurationTypeWithoutVersionId] [int] NOT NULL,
+	[SerializationConfigurationTypeWithVersionId] [int] NOT NULL,
+	[CompressionKind] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[UnregisteredTypeEncounteredStrategy] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[RecordCreatedUtc] [datetime2](7) NOT NULL,
+ CONSTRAINT [PK_SerializerRepresentation] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [UQ_SerializerRepresentation_All] UNIQUE NONCLUSTERED 
+(
+	[SerializationKind] ASC,
+	[SerializationFormat] ASC,
+	[SerializationConfigurationTypeWithoutVersionId] ASC,
+	[SerializationConfigurationTypeWithVersionId] ASC,
+	[CompressionKind] ASC,
+	[UnregisteredTypeEncounteredStrategy] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
