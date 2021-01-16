@@ -18,10 +18,15 @@ namespace Naos.SqlServer.Domain
     public partial class StringSqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
+        /// The maximum length constant.
+        /// </summary>
+        public const int MaxLengthConstant = -1;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="StringSqlDataTypeRepresentation"/> class.
         /// </summary>
         /// <param name="supportUnicode">if set to <c>true</c> [support unicode].</param>
-        /// <param name="supportedLength">Length of the string that is supported, -1 will be maximum.</param>
+        /// <param name="supportedLength">Length of the string that is supported, <see cref="MaxLengthConstant"/> will be maximum.</param>
         public StringSqlDataTypeRepresentation(
             bool supportUnicode,
             int supportedLength)
@@ -47,7 +52,7 @@ namespace Naos.SqlServer.Domain
         {
             get
             {
-                var supportedLength = this.SupportedLength == -1 ? "MAX" : this.SupportedLength.ToString(CultureInfo.InvariantCulture);
+                var supportedLength = this.SupportedLength == MaxLengthConstant ? "MAX" : this.SupportedLength.ToString(CultureInfo.InvariantCulture);
                 return this.SupportUnicode
                     ? FormattableString.Invariant($"[NVARCHAR]({supportedLength})")
                     : FormattableString.Invariant($"[VARCHAR]({supportedLength})");

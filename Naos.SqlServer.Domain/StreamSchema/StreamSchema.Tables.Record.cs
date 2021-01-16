@@ -25,6 +25,11 @@ namespace Naos.SqlServer.Domain
             public static class Record
             {
                 /// <summary>
+                /// The invalid record identifier that is returned to indicate inaction (the null object pattern of the identifier).
+                /// </summary>
+                public const long NullId = -1L;
+
+                /// <summary>
                 /// Gets the identifier column.
                 /// </summary>
                 /// <value>The identifier column.</value>
@@ -70,7 +75,7 @@ namespace Naos.SqlServer.Domain
                 /// Gets the string serialized object string.
                 /// </summary>
                 /// <value>The string serialized object string.</value>
-                public static ColumnRepresentation StringSerializedObject => new ColumnRepresentation(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, -1));
+                public static ColumnRepresentation StringSerializedObject => new ColumnRepresentation(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
                 /// Gets the record created UTC.

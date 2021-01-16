@@ -17,9 +17,14 @@ namespace Naos.SqlServer.Domain
     public partial class BinarySqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
+        /// The maximum length constant.
+        /// </summary>
+        public const int MaxLengthConstant = -1;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="BinarySqlDataTypeRepresentation"/> class.
         /// </summary>
-        /// <param name="supportedLength">Length of the byte array that is supported, -1 will be maximum.</param>
+        /// <param name="supportedLength">Length of the byte array that is supported, <see cref="MaxLengthConstant"/> will be maximum.</param>
         public BinarySqlDataTypeRepresentation(
             int supportedLength)
         {
@@ -34,7 +39,7 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override string DeclarationInSqlSyntax =>
-            FormattableString.Invariant($"[VARBINARY]({(this.SupportedLength == -1 ? "MAX" : this.SupportedLength.ToString(CultureInfo.InvariantCulture))})");
+            FormattableString.Invariant($"[VARBINARY]({(this.SupportedLength == MaxLengthConstant ? "MAX" : this.SupportedLength.ToString(CultureInfo.InvariantCulture))})");
 
         /// <inheritdoc />
         public override void ValidateObjectTypeIsCompatible(

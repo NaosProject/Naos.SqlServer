@@ -26,6 +26,11 @@ namespace Naos.SqlServer.Domain
             public static class TypeWithoutVersion
             {
                 /// <summary>
+                /// The invalid identifier that is returned to indicate inaction (the null object pattern of the identifier).
+                /// </summary>
+                public const int NullId = -1;
+
+                /// <summary>
                 /// Gets the identifier.
                 /// </summary>
                 /// <value>The identifier.</value>

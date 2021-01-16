@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StreamSchema.Sprocs.GetIdAddIfNecessarySerializerDescription.cs" company="Naos Project">
+// <copyright file="StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------

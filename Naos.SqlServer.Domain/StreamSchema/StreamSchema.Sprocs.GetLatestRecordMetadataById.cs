@@ -158,7 +158,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
                                          new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
                                          new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, -1)),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant)),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -202,7 +202,7 @@ CREATE PROCEDURE [{streamName}].[{GetLatestRecordMetadataById.Name}](
 , @{OutputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.TagIdsXml} AS {new StringSqlDataTypeRepresentation(true, -1).DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.TagIdsXml} AS {new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant).DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -240,10 +240,10 @@ BEGIN
 	ORDER BY [{Tables.Record.Id.Name}] DESC
     IF (@{OutputParamName.InternalRecordId} IS NULL)
     BEGIN
-        SET @{OutputParamName.SerializerRepresentationId} = -1
-	    SET @{OutputParamName.IdentifierTypeWithVersionId} = -1
-	    SET @{OutputParamName.ObjectTypeWithVersionId} = -1
-	    SET @{OutputParamName.InternalRecordId} = -1
+        SET @{OutputParamName.SerializerRepresentationId} = {Tables.SerializerRepresentation.NullId}
+	    SET @{OutputParamName.IdentifierTypeWithVersionId} = {Tables.TypeWithVersion.NullId}
+	    SET @{OutputParamName.ObjectTypeWithVersionId} = {Tables.TypeWithVersion.NullId}
+	    SET @{OutputParamName.InternalRecordId} = {Tables.Record.NullId}
 	    SET @{OutputParamName.ObjectDateTime} = NULL
 	    SET @{OutputParamName.TagIdsXml} = NULL
 	    SET @{OutputParamName.RecordDateTime} = GETUTCDATE()

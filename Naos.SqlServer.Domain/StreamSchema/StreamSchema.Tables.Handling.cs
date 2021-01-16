@@ -25,6 +25,11 @@ namespace Naos.SqlServer.Domain
             public static class Handling
             {
                 /// <summary>
+                /// The invalid identifier that is returned to indicate inaction (the null object pattern of the identifier).
+                /// </summary>
+                public const long NullId = -1L;
+
+                /// <summary>
                 /// Gets the identifier.
                 /// </summary>
                 /// <value>The identifier.</value>
@@ -52,7 +57,7 @@ namespace Naos.SqlServer.Domain
                 /// Gets the details.
                 /// </summary>
                 /// <value>The details.</value>
-                public static ColumnRepresentation Details => new ColumnRepresentation(nameof(Details), new StringSqlDataTypeRepresentation(true, -1));
+                public static ColumnRepresentation Details => new ColumnRepresentation(nameof(Details), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
                 /// Gets the entry created in UTC.

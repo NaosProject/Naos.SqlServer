@@ -36,7 +36,7 @@ namespace Naos.SqlServer.Protocol.Client
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
             long internalRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.InternalRecordId)].GetValue<long>();
-            if (internalRecordId == -1)
+            if (internalRecordId == StreamSchema.Tables.Record.NullId)
             {
                 switch (operation.ExistingRecordNotEncounteredStrategy)
                 {
@@ -118,7 +118,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             long internalRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordById.OutputParamName.InternalRecordId)].GetValue<long>();
 
-            if (internalRecordId == -1)
+            if (internalRecordId == StreamSchema.Tables.Record.NullId)
             {
                 switch (operation.ExistingRecordNotEncounteredStrategy)
                 {

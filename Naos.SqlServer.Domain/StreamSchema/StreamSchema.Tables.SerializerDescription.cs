@@ -25,6 +25,11 @@ namespace Naos.SqlServer.Domain
             public static class SerializerRepresentation
             {
                 /// <summary>
+                /// The invalid identifier that is returned to indicate inaction (the null object pattern of the identifier).
+                /// </summary>
+                public const int NullId = -1;
+
+                /// <summary>
                 /// Gets the identifier.
                 /// </summary>
                 public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new IntSqlDataTypeRepresentation());
