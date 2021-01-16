@@ -10,6 +10,7 @@ namespace Naos.SqlServer.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Naos.Database.Domain;
+    using Naos.Protocol.Domain;
     using static System.FormattableString;
 
     /// <summary>
@@ -87,6 +88,11 @@ namespace Naos.SqlServer.Domain
                     /// The existing record encountered strategy.
                     /// </summary>
                     ExistingRecordEncounteredStrategy,
+
+                    /// <summary>
+                    /// The type version match strategy.
+                    /// </summary>
+                    TypeVersionMatchStrategy,
                 }
 
                 /// <summary>
@@ -98,6 +104,11 @@ namespace Naos.SqlServer.Domain
                     /// The identifier.
                     /// </summary>
                     Id,
+
+                    /// <summary>
+                    /// The existing record identifier (if any dependent on strategy).
+                    /// </summary>
+                    ExistingRecordId,
                 }
 
                 /// <summary>
@@ -112,6 +123,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="objectDateTimeUtc">The date time of the object if exists.</param>
                 /// <param name="tagIdsXml">The tags in xml structure.</param>
                 /// <param name="existingRecordEncounteredStrategy">Existing record encountered strategy.</param>
+                /// <param name="typeVersionMatchStrategy">Type version match strategy.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
@@ -122,9 +134,10 @@ namespace Naos.SqlServer.Domain
                     string serializedObjectString,
                     DateTime? objectDateTimeUtc,
                     string tagIdsXml,
-                    ExistingRecordEncounteredStrategy existingRecordEncounteredStrategy)
+                    ExistingRecordEncounteredStrategy existingRecordEncounteredStrategy,
+                    TypeVersionMatchStrategy typeVersionMatchStrategy)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(PutRecord)}");
+                    var sprocName = Invariant($"[{streamName}].{nameof(PutRecord)}");
 
                     if (tagIdsXml == null)
                     {
@@ -142,9 +155,11 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, serializedObjectId),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType, serializedObjectString),
                                          new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.DataType, objectDateTimeUtc),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, -1), tagIdsXml),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ExistingRecordEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordEncounteredStrategy.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), tagIdsXml),
+                                         new SqlInputParameterRepresentation<ExistingRecordEncounteredStrategy>(nameof(InputParamName.ExistingRecordEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordEncounteredStrategy),
+                                         new SqlInputParameterRepresentation<TypeVersionMatchStrategy>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long?>(nameof(OutputParamName.ExistingRecordId), Tables.Record.Id.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -176,67 +191,124 @@ CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
 , @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TagIdsXml} AS xml
 , @{InputParamName.ExistingRecordEncounteredStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+, @{InputParamName.TypeVersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.ExistingRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
-
 BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
---TODO:Support {InputParamName.ExistingRecordEncounteredStrategy}// SEE if the strategy needs honoring...do we table lock here???
-	  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
-	  SET @RecordCreatedUtc = GETUTCDATE()
-	  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
-		  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
-		, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
-		, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
-		, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
-		, [{nameof(Tables.Record.SerializerRepresentationId)}]
-		, [{nameof(Tables.Record.StringSerializedId)}]
-		, [{nameof(Tables.Record.StringSerializedObject)}]
-		, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
-		, [{nameof(Tables.Record.RecordCreatedUtc)}]
-		) VALUES (
-		  @{InputParamName.IdentifierTypeWithoutVersionId}
-		, @{InputParamName.IdentifierTypeWithVersionId}
-		, @{InputParamName.ObjectTypeWithoutVersionId}
-		, @{InputParamName.ObjectTypeWithVersionId}
-		, @{InputParamName.SerializerRepresentationId}
-		, @{InputParamName.StringSerializedId}
-		, @{InputParamName.StringSerializedObject}
-		, @{InputParamName.ObjectDateTimeUtc}
-		, @{recordCreatedUtc}
-		)
+		IF (@{InputParamName.ExistingRecordEncounteredStrategy} <> '{ExistingRecordEncounteredStrategy.None}')
+		BEGIN
+		    SELECT @{OutputParamName.ExistingRecordId} = [{Tables.Record.Id.Name}] FROM [{streamName}].[{Tables.Record.Table.Name}]
+			WHERE
+				(
+					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundById}')
+					AND
+					([{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId})
+				)
+				OR
+				(
+					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType}')
+					AND
+					([{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId})
+					AND
+					(
+						(
+								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
+							AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
+							AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
+						)
+						OR
+						(
+								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
+							AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
+							AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
+						)
+					)
+				)
+				OR
+				(
+					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent}')
+					AND
+					([{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId})
+					AND
+					(
+						(
+							    @{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
+							AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
+							AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
+						)
+						OR
+						(
+								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
+							AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
+							AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
+						)
+					)
+					AND
+					([{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject})
+				)
+		END
+		IF (@{OutputParamName.ExistingRecordId} IS NOT NULL)
+		BEGIN
+			SET @{OutputParamName.Id} = {Tables.Record.NullId}
+		END
+		ELSE
+		BEGIN
+		  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
+		  SET @RecordCreatedUtc = GETUTCDATE()
+		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
+			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
+			, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
+			, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
+			, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
+			, [{nameof(Tables.Record.SerializerRepresentationId)}]
+			, [{nameof(Tables.Record.StringSerializedId)}]
+			, [{nameof(Tables.Record.StringSerializedObject)}]
+			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
+			, [{nameof(Tables.Record.RecordCreatedUtc)}]
+			) VALUES (
+			  @{InputParamName.IdentifierTypeWithoutVersionId}
+			, @{InputParamName.IdentifierTypeWithVersionId}
+			, @{InputParamName.ObjectTypeWithoutVersionId}
+			, @{InputParamName.ObjectTypeWithVersionId}
+			, @{InputParamName.SerializerRepresentationId}
+			, @{InputParamName.StringSerializedId}
+			, @{InputParamName.StringSerializedObject}
+			, @{InputParamName.ObjectDateTimeUtc}
+			, @{recordCreatedUtc}
+			)
 
-      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
-	  
-      INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
-	    [{Tables.RecordTag.RecordId.Name}]
-	  , [{Tables.RecordTag.TagId.Name}]
-	  , [{Tables.RecordTag.RecordCreatedUtc.Name}]
-	  )
-     SELECT 
-  	    @{OutputParamName.Id}
-	  , t.[{Tables.Tag.TagValue.Name}]
-	  , @{recordCreatedUtc}
-     FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagIdsXml}) t
+	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+		  
+	      INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
+		    [{Tables.RecordTag.RecordId.Name}]
+		  , [{Tables.RecordTag.TagId.Name}]
+		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
+	     SELECT 
+  		    @{OutputParamName.Id}
+		  , t.[{Tables.Tag.TagValue.Name}]
+		  , @{recordCreatedUtc}
+	     FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagIdsXml}) t
+		END
+	    COMMIT TRANSACTION [{transaction}]
 
-      COMMIT TRANSACTION [{transaction}]
+	  END TRY
+	  BEGIN CATCH
+	      DECLARE @ErrorMessage nvarchar(max), 
+	              @ErrorSeverity int, 
+	              @ErrorState int
 
-  END TRY
-  BEGIN CATCH
-      DECLARE @ErrorMessage nvarchar(max), 
-              @ErrorSeverity int, 
-              @ErrorState int
+	      SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
 
-      SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
-
-      IF (@@trancount > 0)
-      BEGIN
-         ROLLBACK TRANSACTION [{transaction}]
-      END
-    RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
-  END CATCH
+	      IF (@@trancount > 0)
+	      BEGIN
+	         ROLLBACK TRANSACTION [{transaction}]
+	      END
+	    RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+	  END CATCH
 END
 			");
 

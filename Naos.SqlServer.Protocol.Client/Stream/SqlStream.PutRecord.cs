@@ -6,6 +6,7 @@
 
 namespace Naos.SqlServer.Protocol.Client
 {
+    using System;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using static System.FormattableString;
@@ -33,15 +34,48 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.Payload.SerializedPayload,
                 operation.Metadata.ObjectTimestampUtc,
                 tagIdsXml,
-                operation.ExistingRecordEncounteredStrategy);
+                operation.ExistingRecordEncounteredStrategy,
+                operation.TypeVersionMatchStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult =
-                sqlProtocol.Execute(
-                    storedProcOp); // should this be returning with the ID??? Dangerous b/c it blurs the contract, opens avenues for coupling and misuse...
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-            var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.Id)].GetValue<long>();
-            return result;
+            var existingRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId)].GetValue<long?>();
+
+            if (existingRecordId != null)
+            {
+                switch (operation.ExistingRecordEncounteredStrategy)
+                {
+                    case ExistingRecordEncounteredStrategy.None:
+                        throw new InvalidOperationException(Invariant($"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; did not expect an {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} value but got '{existingRecordId}'."));
+                    case ExistingRecordEncounteredStrategy.ThrowIfFoundById:
+                        throw new InvalidOperationException(
+                            Invariant(
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' yet found  {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} '{existingRecordId}'."));
+                    case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType:
+                        throw new InvalidOperationException(
+                            Invariant(
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' yet found  {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} '{existingRecordId}'."));
+                    case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent:
+                        throw new InvalidOperationException(
+                            Invariant(
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and contents '{operation.Payload.SerializedPayload}' yet found  {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} '{existingRecordId}'."));
+                    case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById:
+                        return StreamSchema.Tables.Record.NullId;
+                    case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType:
+                        return StreamSchema.Tables.Record.NullId;
+                    case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent:
+                        return StreamSchema.Tables.Record.NullId;
+                    default:
+                        throw new NotSupportedException(
+                            Invariant($"{nameof(ExistingRecordEncounteredStrategy)} {operation.ExistingRecordEncounteredStrategy} is not supported."));
+                }
+            }
+            else
+            {
+                var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.Id)].GetValue<long>();
+                return result;
+            }
         }
     }
 }
