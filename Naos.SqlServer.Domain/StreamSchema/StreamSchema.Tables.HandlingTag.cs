@@ -90,10 +90,10 @@ CREATE TABLE [{streamName}].[{nameof(HandlingTag)}](
 ) ON [PRIMARY]
 
 
-ALTER TABLE [{streamName}].[{nameof(HandlingTag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Record)}] FOREIGN KEY([{nameof(HandlingId)}])
+ALTER TABLE [{streamName}].[{nameof(HandlingTag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Handling)}] FOREIGN KEY([{nameof(HandlingId)}])
 REFERENCES [{streamName}].[{nameof(Handling)}] ([{nameof(Handling.Id)}])
 
-ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] CHECK CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Record)}]
+ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] CHECK CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Handling)}]
 
 
 ALTER TABLE [{streamName}].[{nameof(HandlingTag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Tag)}] FOREIGN KEY([{nameof(TagId)}])
