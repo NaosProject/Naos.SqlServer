@@ -234,7 +234,7 @@
     <Compile Include="StreamSchema\StreamSchema.Sprocs.TryHandleRecord.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordMetadataById.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetNextUniqueLong.cs" />
-    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessarySerializerDescription.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordById.cs" />
