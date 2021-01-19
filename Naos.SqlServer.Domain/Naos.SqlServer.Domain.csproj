@@ -231,6 +231,7 @@
     <Compile Include="StreamSchema\StreamSchema.Sprocs.PutHandling.cs" />
     <Compile Include="StreamSchema\StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.CreateStreamUser.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.TryHandleRecord.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordMetadataById.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetNextUniqueLong.cs" />

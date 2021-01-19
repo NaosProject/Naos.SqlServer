@@ -197,7 +197,22 @@ namespace Naos.SqlServer.Protocol.Client
         public void Execute(
             CreateStreamUserOp operation)
         {
-            throw new NotImplementedException();
+            var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
+            foreach (var resourceLocator in allLocators)
+            {
+                var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
+
+                var roles = operation.ProtocolsToGrantAccessFor.Select(_ => StreamSchema.GetRoleNameFromProtocolType(_, this.Name)).ToList().ToOrdinalDictionary();
+                var rolesXml = TagConversionTool.GetTagsXmlString(roles);
+                var storedProcOp = StreamSchema.Sprocs.CreateStreamUser.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    operation.UserName,
+                    operation.ClearTextPassword,
+                    rolesXml);
+
+                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+                var sprocResult = sqlProtocol.Execute(storedProcOp);
+            }
         }
 
         /// <inheritdoc />

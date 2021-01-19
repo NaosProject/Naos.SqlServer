@@ -77,6 +77,8 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.CreateStreamUser.BuildCreationScript(this.Name),
+                                                      StreamSchema.BuildCreationScriptForRoles(this.Name), // must be at end to reference the items.
                                                   };
 
                             foreach (var script in creationScripts)
