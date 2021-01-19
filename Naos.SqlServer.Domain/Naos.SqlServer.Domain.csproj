@@ -239,11 +239,12 @@
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetLatestRecordById.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.PutRecord.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.HandlingStatus.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Record.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.NextUniqueLong.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.HandlingTag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.SerializerDescription.cs" />
-    <Compile Include="StreamSchema\StreamSchema.Tables.Handling.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.HandlingHistory.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.RecordTag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Tag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithoutVersion.cs" />

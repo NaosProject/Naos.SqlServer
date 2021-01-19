@@ -117,13 +117,13 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.Handling.Details.DataType, details),
-                                         new SqlInputParameterRepresentation<long>(nameof(InputParamName.RecordId), Tables.Handling.RecordId.DataType, recordId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.NewStatus), Tables.Handling.Status.DataType, newStatus.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.HandlingHistory.Concern.DataType, concern),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.HandlingHistory.Details.DataType, details),
+                                         new SqlInputParameterRepresentation<long>(nameof(InputParamName.RecordId), Tables.HandlingHistory.RecordId.DataType, recordId),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.NewStatus), Tables.HandlingHistory.Status.DataType, newStatus.ToString()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.AcceptableCurrentStatusesXml), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), acceptableCurrentStatusesXml),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), tagIdsXml),
-                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.HandlingHistory.Id.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -153,22 +153,22 @@ namespace Naos.SqlServer.Domain
                     return Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{PutHandling.Name}](
-  @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.RecordId} AS {Tables.Handling.RecordId.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.NewStatus} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.Concern} AS {Tables.HandlingHistory.Concern.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.Details} AS {Tables.HandlingHistory.Details.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.RecordId} AS {Tables.HandlingHistory.RecordId.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.NewStatus} AS {Tables.HandlingHistory.Status.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.AcceptableCurrentStatusesXml} AS [Xml]
 , @{InputParamName.TagIdsXml} AS [Xml]
-, @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.Id} AS {Tables.HandlingHistory.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
 
-DECLARE @{currentStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
-SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
-    FROM [{streamName}].[{Tables.Handling.Table.Name}]
-    WHERE [{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} AND [{Tables.Handling.RecordId.Name}] = @{InputParamName.RecordId}
-    ORDER BY [{Tables.Handling.Id.Name}] DESC
+DECLARE @{currentStatus} {Tables.HandlingHistory.Status.DataType.DeclarationInSqlSyntax}
+SELECT TOP 1 @{currentStatus} = {Tables.HandlingHistory.Status.Name}
+    FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}]
+    WHERE [{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern} AND [{Tables.HandlingHistory.RecordId.Name}] = @{InputParamName.RecordId}
+    ORDER BY [{Tables.HandlingHistory.Id.Name}] DESC
 
 IF @{currentStatus} IS NULL
 BEGIN
@@ -183,25 +183,21 @@ WHERE [{Tables.Tag.TagValue.Name}] = @{currentStatus}
 
 IF (@{currentStatusAccepted} = 0)
 BEGIN
-      DECLARE @NotValidStatusErrorMessage nvarchar(max), 
-              @NotValidStatusErrorSeverity int, 
-              @NotValidStatusErrorState int
-
-      SELECT @NotValidStatusErrorMessage = 'Invalid current status: ' + @{currentStatus} + ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @NotValidStatusErrorSeverity = ERROR_SEVERITY(), @NotValidStatusErrorState = ERROR_STATE()
-      RAISERROR (@NotValidStatusErrorMessage, @NotValidStatusErrorSeverity, @NotValidStatusErrorState)
+      SET @{OutputParamName.Id} = NULL
 END
  
 BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
 	      DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 	      SET @{recordCreatedUtc} = GETUTCDATE()
-	      INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] WITH (TABLOCKX) -- get an exclusive lock to prevent other from doing same
+
+	      INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}]
            (
-		    [{Tables.Handling.Concern.Name}]
-		  , [{Tables.Handling.RecordId.Name}]
-		  , [{Tables.Handling.Status.Name}]
-		  , [{Tables.Handling.Details.Name}]
-		  , [{Tables.Handling.RecordCreatedUtc.Name}]
+		    [{Tables.HandlingHistory.Concern.Name}]
+		  , [{Tables.HandlingHistory.RecordId.Name}]
+		  , [{Tables.HandlingHistory.Status.Name}]
+		  , [{Tables.HandlingHistory.Details.Name}]
+		  , [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
 		  ) VALUES (
 	        @{InputParamName.Concern}
 	      , @{InputParamName.RecordId}

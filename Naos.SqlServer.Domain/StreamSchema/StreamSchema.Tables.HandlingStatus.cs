@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StreamSchema.Tables.HandlingTag.cs" company="Naos Project">
+// <copyright file="StreamSchema.Tables.HandlingStatus.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -20,10 +20,15 @@ namespace Naos.SqlServer.Domain
         public static partial class Tables
         {
             /// <summary>
-            /// Class HandlingTag.
+            /// Class Handling.
             /// </summary>
-            public static class HandlingTag
+            public static class HandlingStatus
             {
+                /// <summary>
+                /// The invalid identifier that is returned to indicate inaction (the null object pattern of the identifier).
+                /// </summary>
+                public const long NullId = -1L;
+
                 /// <summary>
                 /// Gets the identifier.
                 /// </summary>
@@ -31,21 +36,27 @@ namespace Naos.SqlServer.Domain
                 public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
-                /// Gets the handling entry identifier.
+                /// Gets the record identifier.
                 /// </summary>
-                /// <value>The handling entry identifier.</value>
-                public static ColumnRepresentation HandlingId => new ColumnRepresentation(nameof(HandlingId), Tables.HandlingHistory.Id.DataType);
+                /// <value>The record identifier.</value>
+                public static ColumnRepresentation RecordId => new ColumnRepresentation(nameof(RecordId), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
-                /// Gets the tag identifier.
+                /// Gets the concern.
                 /// </summary>
-                /// <value>The tag identifier.</value>
-                public static ColumnRepresentation TagId => new ColumnRepresentation(nameof(TagId), Tables.Tag.Id.DataType);
+                /// <value>The concern.</value>
+                public static ColumnRepresentation Concern => new ColumnRepresentation(nameof(Concern), new StringSqlDataTypeRepresentation(true, 450));
 
                 /// <summary>
-                /// Gets the record created UTC.
+                /// Gets the status.
                 /// </summary>
-                /// <value>The record created UTC.</value>
+                /// <value>The status.</value>
+                public static ColumnRepresentation Status => new ColumnRepresentation(nameof(Status), new StringSqlDataTypeRepresentation(false, 50));
+
+                /// <summary>
+                /// Gets the entry created in UTC.
+                /// </summary>
+                /// <value>The entry created in UTC.</value>
                 public static ColumnRepresentation RecordCreatedUtc => new ColumnRepresentation(nameof(RecordCreatedUtc), new UtcDateTimeSqlDataTypeRepresentation());
 
                 /// <summary>
@@ -53,20 +64,21 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <value>The table.</value>
                 public static TableRepresentation Table => new TableRepresentation(
-                    nameof(HandlingTag),
+                    nameof(HandlingStatus),
                     new[]
                     {
                         Id,
-                        HandlingId,
-                        TagId,
+                        RecordId,
+                        Concern,
+                        Status,
                         RecordCreatedUtc,
                     }.ToDictionary(k => k.Name, v => v));
 
                 /// <summary>
-                /// Builds the creation script for HandlingTag table.
+                /// Builds the creation script for Handling table.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
-                /// <returns>Creation script for HandlingTag.</returns>
+                /// <returns>Creation script for Handling.</returns>
                 public static string BuildCreationScript(
                     string streamName)
                 {
@@ -78,47 +90,48 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 
 
-CREATE TABLE [{streamName}].[{nameof(HandlingTag)}](
+CREATE TABLE [{streamName}].[{Table.Name}](
 	[{nameof(Id)}] {Id.DataType.DeclarationInSqlSyntax} IDENTITY(1,1) NOT NULL,
-	[{nameof(HandlingId)}] {HandlingId.DataType.DeclarationInSqlSyntax} NOT NULL,
-	[{nameof(TagId)}] {TagId.DataType.DeclarationInSqlSyntax} NOT NULL,
+	[{nameof(RecordId)}] {RecordId.DataType.DeclarationInSqlSyntax} NOT NULL,
+	[{nameof(Concern)}] {Concern.DataType.DeclarationInSqlSyntax} NOT NULL,
+	[{nameof(Status)}] {Status.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
- CONSTRAINT [PK_{nameof(HandlingTag)}] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{nameof(HandlingStatus)}] PRIMARY KEY CLUSTERED 
 (
 	[{nameof(Id)}] DESC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 
-ALTER TABLE [{streamName}].[{nameof(HandlingTag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(HandlingHistory)}] FOREIGN KEY([{nameof(HandlingId)}])
-REFERENCES [{streamName}].[{nameof(HandlingHistory)}] ([{nameof(HandlingHistory.Id)}])
+ALTER TABLE [{streamName}].[{nameof(HandlingStatus)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(HandlingStatus)}_{nameof(Record)}] FOREIGN KEY([{nameof(RecordId)}])
+REFERENCES [{streamName}].[{nameof(Record)}] ([{nameof(Record.Id)}])
 
-ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] CHECK CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(HandlingHistory)}]
+ALTER TABLE [{streamName}].[{nameof(HandlingStatus)}] CHECK CONSTRAINT [FK_{nameof(HandlingStatus)}_{nameof(Record)}]
 
-
-ALTER TABLE [{streamName}].[{nameof(HandlingTag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Tag)}] FOREIGN KEY([{nameof(TagId)}])
-REFERENCES [{streamName}].[{nameof(Tag)}] ([{nameof(Tag.Id)}])
-
-ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] CHECK CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Tag)}]
 
 SET ANSI_PADDING ON
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingTag)}_{nameof(Id)}_Asc] ON [{streamName}].[{nameof(HandlingTag)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingStatus)}_{nameof(Id)}_Asc] ON [{streamName}].[{nameof(HandlingStatus)}]
 (
-	[{nameof(Id)}] ASC
+	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingTag)}_{nameof(HandlingId)}_Desc] ON [{streamName}].[{nameof(HandlingTag)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingStatus)}_{nameof(RecordId)}_Desc] ON [{streamName}].[{Table.Name}]
 (
-	[{nameof(HandlingId)}] DESC
+	[{nameof(RecordId)}] DESC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingTag)}_{nameof(TagId)}_Desc] ON [{streamName}].[{nameof(HandlingTag)}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingStatus)}_{nameof(Concern)}_Asc] ON [{streamName}].[{Table.Name}]
 (
-	[{nameof(TagId)}] DESC
+	[{nameof(Concern)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-		");
+CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingStatus)}_{nameof(Status)}_Asc] ON [{streamName}].[{Table.Name}]
+(
+	[{nameof(Status)}] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+			");
 
                     return result;
                 }
