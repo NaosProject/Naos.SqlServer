@@ -151,7 +151,7 @@ AS
 BEGIN
     SELECT
         @{nameof(OutputParamName.Id)} = [{nameof(Tables.SerializerRepresentation.Id)}]
-    FROM [{streamName}].[{nameof(Tables.SerializerRepresentation)}]
+    FROM [{streamName}].[{nameof(Tables.SerializerRepresentation)}] WITH (NOLOCK)
         WHERE [{nameof(Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId)}] = @{InputParamName.ConfigTypeWithVersionId}
           AND [{nameof(Tables.SerializerRepresentation.SerializationConfigurationTypeWithoutVersionId)}] = @{InputParamName.ConfigTypeWithoutVersionId}
           AND [{nameof(Tables.SerializerRepresentation.SerializationKind)}] = @{InputParamName.SerializationKind}

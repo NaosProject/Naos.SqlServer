@@ -111,7 +111,7 @@ BEGIN
 		  , n.[{Tables.Tag.TagKey.Name}]
 		  , n.[{Tables.Tag.TagValue.Name}]
 		FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagsXml}) n
-        LEFT JOIN [{streamName}].[{Tables.Tag.Table.Name}] e ON 
+        LEFT JOIN [{streamName}].[{Tables.Tag.Table.Name}] e WITH (NOLOCK) ON 
             (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND (n.[{Tables.Tag.TagValue.Name}] = e.[{Tables.Tag.TagValue.Name}] OR (n.[{Tables.Tag.TagValue.Name}] is null and e.[{Tables.Tag.TagValue.Name}] is null)))
     IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} t WHERE t.[{Tables.Tag.Id.Name}] IS NULL)
     BEGIN

@@ -102,7 +102,7 @@ BEGIN
 
     SELECT
         @{nameof(OutputParamName.Id)} = [{nameof(Tables.TypeWithVersion.Id)}]
-    FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}]
+    FROM [{streamName}].[{nameof(Tables.TypeWithVersion)}] WITH (NOLOCK)
         WHERE [{nameof(Tables.TypeWithVersion.AssemblyQualifiedName)}] = @{nameof(InputParamName.AssemblyQualifiedNameWithVersion)}
 
     IF (@{nameof(OutputParamName.Id)} IS NULL)
