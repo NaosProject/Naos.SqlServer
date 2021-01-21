@@ -103,11 +103,6 @@ ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] CHECK CONSTRAINT [FK_{nameof(
 
 SET ANSI_PADDING ON
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingTag)}_{nameof(Id)}_Asc] ON [{streamName}].[{nameof(HandlingTag)}]
-(
-	[{nameof(Id)}] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
 CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingTag)}_{nameof(HandlingId)}_Desc] ON [{streamName}].[{nameof(HandlingTag)}]
 (
 	[{nameof(HandlingId)}] DESC

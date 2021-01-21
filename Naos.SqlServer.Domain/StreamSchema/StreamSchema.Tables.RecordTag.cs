@@ -103,11 +103,6 @@ ALTER TABLE [{streamName}].[{nameof(RecordTag)}] CHECK CONSTRAINT [FK_{nameof(Re
 
 SET ANSI_PADDING ON
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(RecordTag)}_{nameof(Id)}_Asc] ON [{streamName}].[{nameof(RecordTag)}]
-(
-	[{nameof(Id)}] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
 CREATE NONCLUSTERED INDEX [IX_{nameof(RecordTag)}_{nameof(RecordId)}_Desc] ON [{streamName}].[{nameof(RecordTag)}]
 (
 	[{nameof(RecordId)}] DESC
