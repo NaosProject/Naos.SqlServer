@@ -180,7 +180,9 @@ CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(ObjectTypeWithoutVersionI
 CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(StringSerializedId)}_Asc] ON [{streamName}].[{nameof(Record)}]
 (
 	[{nameof(StringSerializedId)}] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
+INCLUDE([{Id.Name}],[{IdentifierTypeWithoutVersionId.Name}],[{IdentifierTypeWithVersionId.Name}],[{ObjectTypeWithoutVersionId.Name}],[{ObjectTypeWithVersionId.Name}],[{SerializerRepresentationId.Name}],[{ObjectDateTimeUtc.Name}],[{RecordCreatedUtc.Name}])
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(ObjectDateTimeUtc)}] ON [{streamName}].[{nameof(Record)}]
 (
