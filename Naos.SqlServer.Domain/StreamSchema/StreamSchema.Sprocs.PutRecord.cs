@@ -189,7 +189,7 @@ CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
 , @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsXml} AS xml
+, @{InputParamName.TagIdsXml} AS {Tables.Record.TagIdsXml.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ExistingRecordEncounteredStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -268,6 +268,7 @@ BEGIN
 			, [{nameof(Tables.Record.SerializerRepresentationId)}]
 			, [{nameof(Tables.Record.StringSerializedId)}]
 			, [{nameof(Tables.Record.StringSerializedObject)}]
+			, [{nameof(Tables.Record.TagIdsXml)}]
 			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
 			, [{nameof(Tables.Record.RecordCreatedUtc)}]
 			) VALUES (
@@ -278,6 +279,7 @@ BEGIN
 			, @{InputParamName.SerializerRepresentationId}
 			, @{InputParamName.StringSerializedId}
 			, @{InputParamName.StringSerializedObject}
+			, @{InputParamName.TagIdsXml}
 			, @{InputParamName.ObjectDateTimeUtc}
 			, @{recordCreatedUtc}
 			)

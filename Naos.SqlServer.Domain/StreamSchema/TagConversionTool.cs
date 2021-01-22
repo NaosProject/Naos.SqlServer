@@ -47,6 +47,11 @@ namespace Naos.SqlServer.Domain
         public const string NullCanaryValue = "---NULL---";
 
         /// <summary>
+        /// The empty tag set as XML.
+        /// </summary>
+        public static readonly string EmptyTagSetXml = Invariant($"<{TagSetElementName}></{TagSetElementName}>");
+
+        /// <summary>
         /// Gets the tag set as a <see cref="IReadOnlyDictionary{TKey,TValue}"/> from the provided XML as a string.
         /// </summary>
         /// <param name="tagsAsXml">The tags in XML as a string.</param>
@@ -89,9 +94,9 @@ namespace Naos.SqlServer.Domain
         public static string GetTagsXmlString(
             IReadOnlyDictionary<string, string> tags)
         {
-            if (!tags.Any())
+            if (tags == null || !tags.Any())
             {
-                return null;
+                return EmptyTagSetXml;
             }
 
             var tagsXmlBuilder = new StringBuilder();

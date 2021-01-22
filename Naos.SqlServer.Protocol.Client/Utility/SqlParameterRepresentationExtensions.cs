@@ -230,11 +230,26 @@ namespace Naos.SqlServer.Protocol.Client
             this SqlInputParameterRepresentation<string> stringInputParameter)
         {
             stringInputParameter.MustForArg(nameof(stringInputParameter)).NotBeNull();
-            var stringDataType = (StringSqlDataTypeRepresentation)stringInputParameter.DataType;
-            var name = stringInputParameter.Name;
-            name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
-            var result = stringInputParameter.Value.CreateInputSqlParameter(name, stringDataType.SupportUnicode ? SqlDbType.NVarChar : SqlDbType.VarChar, stringDataType.SupportedLength);
-            return result;
+
+            if (stringInputParameter.DataType.GetType() == typeof(StringSqlDataTypeRepresentation))
+            {
+                var stringDataType = (StringSqlDataTypeRepresentation)stringInputParameter.DataType;
+                var name = stringInputParameter.Name;
+                name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+                var result = stringInputParameter.Value.CreateInputSqlParameter(name, stringDataType.SupportUnicode ? SqlDbType.NVarChar : SqlDbType.VarChar, stringDataType.SupportedLength);
+                return result;
+            }
+            else if (stringInputParameter.DataType.GetType() == typeof(XmlSqlDataTypeRepresentation))
+            {
+                var name = stringInputParameter.Name;
+                name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+                var result = stringInputParameter.Value.CreateInputSqlParameter(name, SqlDbType.Xml);
+                return result;
+            }
+            else
+            {
+                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(SqlInputParameterRepresentation<string>)} with a datatype of {stringInputParameter.DataType}."));
+            }
         }
 
         /// <summary>
@@ -368,11 +383,26 @@ namespace Naos.SqlServer.Protocol.Client
             this SqlOutputParameterRepresentation<string> stringOutputParameter)
         {
             stringOutputParameter.MustForArg(nameof(stringOutputParameter)).NotBeNull();
-            var dataType = (StringSqlDataTypeRepresentation)stringOutputParameter.DataType;
-            var name = stringOutputParameter.Name;
-            name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
-            var result = SqlParameterExtensions.CreateOutputStringSqlParameter(name, dataType.SupportUnicode ? SqlDbType.NVarChar : SqlDbType.VarChar, dataType.SupportedLength);
-            return result;
+
+            if (stringOutputParameter.DataType.GetType() == typeof(StringSqlDataTypeRepresentation))
+            {
+                var dataType = (StringSqlDataTypeRepresentation)stringOutputParameter.DataType;
+                var name = stringOutputParameter.Name;
+                name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+                var result = SqlParameterExtensions.CreateOutputStringSqlParameter(name, dataType.SupportUnicode ? SqlDbType.NVarChar : SqlDbType.VarChar, dataType.SupportedLength);
+                return result;
+            }
+            else if (stringOutputParameter.DataType.GetType() == typeof(XmlSqlDataTypeRepresentation))
+            {
+                var name = stringOutputParameter.Name;
+                name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+                var result = SqlParameterExtensions.CreateOutputStringSqlParameter(name, SqlDbType.Xml);
+                return result;
+            }
+            else
+            {
+                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(SqlOutputParameterRepresentation<string>)} with a datatype of {stringOutputParameter.DataType}."));
+            }
         }
 
         /// <summary>

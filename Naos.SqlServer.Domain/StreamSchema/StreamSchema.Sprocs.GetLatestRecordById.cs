@@ -164,7 +164,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType),
                                          new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
                                          new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant)),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), Tables.Record.TagIdsXml.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -209,7 +209,7 @@ CREATE PROCEDURE [{streamName}].[{GetLatestRecordById.Name}](
 , @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.TagIdsXml} AS {new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant).DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.TagIdsXml} AS {Tables.Record.TagIdsXml.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -219,9 +219,10 @@ BEGIN
 	 , @{OutputParamName.ObjectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
 	 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
 	 , @{OutputParamName.InternalRecordId} = [{Tables.Record.Id.Name}]
+	 , @{OutputParamName.TagIdsXml} = [{Tables.Record.TagIdsXml.Name}]
 	 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]
 	 , @{OutputParamName.ObjectDateTime} = [{Tables.Record.ObjectDateTimeUtc.Name}]
-	FROM [{streamName}].[{Tables.Record.Table.Name}]
+	FROM [{streamName}].[{Tables.Record.Table.Name}] WITH (NOLOCK)
 	WHERE [{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId}
     AND (
             -- No Type filter at all
@@ -256,15 +257,6 @@ BEGIN
 	    SET @{OutputParamName.ObjectDateTime} = NULL
 	    SET @{OutputParamName.TagIdsXml} = NULL
 	    SET @{OutputParamName.RecordDateTime} = GETUTCDATE()
-    END
-    ELSE
-    BEGIN
-        SELECT @{OutputParamName.TagIdsXml} = (SELECT
-              ROW_NUMBER() OVER (ORDER BY [{Tables.RecordTag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-		    , [{Tables.RecordTag.TagId.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
-	    FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
-	    WHERE [{Tables.RecordTag.RecordId.Name}] = @{OutputParamName.InternalRecordId}
-	    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
     END
 END
 

@@ -70,11 +70,11 @@ namespace Naos.SqlServer.Domain
                                      {
                                          new SqlInputParameterRepresentation<string>(
                                              nameof(InputParamName.TagsXml),
-                                             new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant),
+                                             new XmlSqlDataTypeRepresentation(),
                                              tagsXml),
                                          new SqlOutputParameterRepresentation<string>(
                                              nameof(OutputParamName.TagIdsXml),
-                                             new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant)),
+                                             new XmlSqlDataTypeRepresentation()),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -98,8 +98,8 @@ namespace Naos.SqlServer.Domain
                     return FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetIdsAddIfNecessaryTagSet.Name}](
-  @{nameof(InputParamName.TagsXml)} [xml],
-  @{nameof(OutputParamName.TagIdsXml)} [NVARCHAR](MAX) OUTPUT
+    @{nameof(InputParamName.TagsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+  , @{nameof(OutputParamName.TagIdsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
   )
 AS
 BEGIN

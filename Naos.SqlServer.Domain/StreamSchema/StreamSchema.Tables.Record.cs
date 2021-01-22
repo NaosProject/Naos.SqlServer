@@ -78,6 +78,12 @@ namespace Naos.SqlServer.Domain
                 public static ColumnRepresentation StringSerializedObject => new ColumnRepresentation(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
+                /// Gets the tag identifiers as XML.
+                /// </summary>
+                /// <value>The tag identifiers as XML.</value>
+                public static ColumnRepresentation TagIdsXml => new ColumnRepresentation(nameof(TagIdsXml), new XmlSqlDataTypeRepresentation());
+
+                /// <summary>
                 /// Gets the record created UTC.
                 /// </summary>
                 /// <value>The record created UTC.</value>
@@ -132,6 +138,7 @@ CREATE TABLE [{streamName}].[{nameof(Record)}](
 	[{nameof(SerializerRepresentationId)}] {SerializerRepresentationId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(StringSerializedId)}] {StringSerializedId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(StringSerializedObject)}] {StringSerializedObject.DataType.DeclarationInSqlSyntax} NULL,
+	[{nameof(TagIdsXml)}] {TagIdsXml.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(ObjectDateTimeUtc)}] {ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
  CONSTRAINT [PK_{nameof(Record)}] PRIMARY KEY CLUSTERED 
