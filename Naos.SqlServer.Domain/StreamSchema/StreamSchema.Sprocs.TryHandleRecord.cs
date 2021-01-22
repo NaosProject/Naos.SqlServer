@@ -236,6 +236,7 @@ namespace Naos.SqlServer.Domain
                     const string recordToHandleId = "RecordToHandleId";
                     const string blockedStatus = "BlockedStatus";
                     const string unionedIfNecessaryTagIdsXml = "UnionedIfNecessaryTagIdsXml";
+                    const string transaction = "TryHandleTransaction";
                     string acceptableNoneStatusXml = TagConversionTool.GetTagsXmlString(
                         new Dictionary<string, string>
                         {
@@ -273,18 +274,24 @@ BEGIN
 	SELECT TOP 1 @{blockedStatus} = [{Tables.HandlingHistory.Status.Name}] FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}]
 	WHERE [{Tables.HandlingHistory.Concern.Name}] = '{Concerns.RecordHandlingConcern}'
 
+	-- Check if global handling block has been applied
 	IF ((@{blockedStatus} IS NULL) OR (@{blockedStatus} <> '{HandlingStatus.Blocked}'))
 	BEGIN
 		DECLARE @{recordToHandleId} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
-	  IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdAscending}')
-      BEGIN
-		  -- See if any reprocessing is needed
-		  IF (@{recordToHandleId} IS NULL)
-		  BEGIN
-		      SELECT TOP 1 @{recordToHandleId} = h.[{Tables.HandlingHistory.RecordId.Name}]
-			  FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
-              INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}]
-		      WHERE h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
+
+		SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+		BEGIN TRANSACTION [{transaction}]
+		BEGIN TRY
+
+		IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdAscending}')
+		BEGIN
+			-- See if any reprocessing is needed
+			IF (@{recordToHandleId} IS NULL)
+			BEGIN
+				SELECT TOP 1 @{recordToHandleId} = h.[{Tables.HandlingHistory.RecordId.Name}]
+				FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
+				INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}]
+				WHERE h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
 		        AND (h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
 				AND (SELECT TOP 1 [{Tables.HandlingHistory.Status.Name}] FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] i WHERE i.{Tables.HandlingHistory.RecordId.Name} = h.{Tables.HandlingHistory.RecordId.Name} ORDER BY i.{Tables.HandlingHistory.Id.Name} DESC) = h.{Tables.HandlingHistory.Status.Name}
 			    AND (
@@ -309,17 +316,17 @@ BEGIN
 			            -- Any Both
 			            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
 			        )
-			  ORDER BY h.[{Tables.Record.Id.Name}] ASC
-		  END
+				ORDER BY h.[{Tables.Record.Id.Name}] ASC
+			END -- Check for re-run scenario
 
-		  -- See if any new records
-		  IF (@{recordToHandleId} IS NULL)
-		  BEGIN
-		      SELECT TOP 1 @{recordToHandleId} = r.[{Tables.Record.Id.Name}]
-		      FROM [{streamName}].[{Tables.Record.Table.Name}] r
-			  LEFT JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
-		      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}] AND h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
-		      WHERE h.[{Tables.HandlingHistory.Id.Name}] IS NULL
+			-- See if any new records
+			IF (@{recordToHandleId} IS NULL)
+			BEGIN
+				SELECT TOP 1 @{recordToHandleId} = r.[{Tables.Record.Id.Name}]
+				FROM [{streamName}].[{Tables.Record.Table.Name}] r
+				LEFT JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
+				ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}] AND h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
+				WHERE h.[{Tables.HandlingHistory.Id.Name}] IS NULL
 			    AND (
 			            -- No Type filter at all
 			            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
@@ -342,18 +349,19 @@ BEGIN
 			            -- Any Both
 			            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
 			        )
-			  ORDER BY r.[{Tables.Record.Id.Name}] ASC
-		  END
-      END
-      ELSE IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdDescending}')
-		  -- See if any new records
-		  IF (@{recordToHandleId} IS NULL)
-		  BEGIN
-		      SELECT TOP 1 @{recordToHandleId} = r.[{Tables.Record.Id.Name}]
-		      FROM [{streamName}].[{Tables.Record.Table.Name}] r
-			  LEFT JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
-		      ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}] AND h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
-		      WHERE h.[{Tables.HandlingHistory.Id.Name}] IS NULL
+				ORDER BY r.[{Tables.Record.Id.Name}] ASC
+			END -- Check for new records
+		END -- If ascending
+		ELSE IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdDescending}')
+		BEGIN
+			-- See if any new records
+			IF (@{recordToHandleId} IS NULL)
+			BEGIN
+				SELECT TOP 1 @{recordToHandleId} = r.[{Tables.Record.Id.Name}]
+				FROM [{streamName}].[{Tables.Record.Table.Name}] r
+				LEFT JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
+				ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}] AND h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
+				WHERE h.[{Tables.HandlingHistory.Id.Name}] IS NULL
 			    AND (
 			            -- No Type filter at all
 			            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
@@ -376,16 +384,16 @@ BEGIN
 			            -- Any Both
 			            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
 			        )
-			  ORDER BY r.[{Tables.Record.Id.Name}] ASC
-		  END
+				ORDER BY r.[{Tables.Record.Id.Name}] ASC
+			END -- Check for new records
 
-		  -- See if any reprocessing is needed
-		  IF (@{recordToHandleId} IS NULL)
-		  BEGIN
-		      SELECT TOP 1 @{recordToHandleId} = h.[{Tables.HandlingHistory.RecordId.Name}]
-			  FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
-              INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}]
-		      WHERE h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
+			-- See if any reprocessing is needed
+			IF (@{recordToHandleId} IS NULL)
+			BEGIN
+				SELECT TOP 1 @{recordToHandleId} = h.[{Tables.HandlingHistory.RecordId.Name}]
+				FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
+				INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}]
+				WHERE h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
 		        AND (h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
 				AND (SELECT TOP 1 [{Tables.HandlingHistory.Status.Name}] FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] i WHERE i.{Tables.HandlingHistory.RecordId.Name} = h.{Tables.HandlingHistory.RecordId.Name} ORDER BY i.{Tables.HandlingHistory.Id.Name} DESC) = h.{Tables.HandlingHistory.Status.Name}
 			    AND (
@@ -410,63 +418,77 @@ BEGIN
 			            -- Any Both
 			            (@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
 			        )
-			  ORDER BY h.[{Tables.Record.Id.Name}] ASC
-		  END
-		  ELSE
-		  BEGIN
-		      DECLARE @NotValidOrderRecordsStrategyErrorMessage nvarchar(max), 
+				ORDER BY h.[{Tables.Record.Id.Name}] ASC
+			END -- Check for re-run
+			ELSE
+			BEGIN
+				DECLARE @NotValidOrderRecordsStrategyErrorMessage nvarchar(max), 
 		              @NotValidOrderRecordsStrategyErrorSeverity int, 
 		              @NotValidOrderRecordsStrategyErrorState int
 
-		      SELECT @NotValidOrderRecordsStrategyErrorMessage = 'Unsupported {nameof(OrderRecordsStrategy)}: ' + @{InputParamName.OrderRecordsStrategy} + ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @NotValidOrderRecordsStrategyErrorSeverity = ERROR_SEVERITY(), @NotValidOrderRecordsStrategyErrorState = ERROR_STATE()
-		      RAISERROR (@NotValidOrderRecordsStrategyErrorMessage, @NotValidOrderRecordsStrategyErrorSeverity, @NotValidOrderRecordsStrategyErrorState)
-		  END
-
-	IF (@{recordToHandleId} IS NOT NULL)
-	BEGIN
-		DECLARE @{unionedIfNecessaryTagIdsXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-		
-        SELECT @{unionedIfNecessaryTagIdsXml} = (
-        SELECT
-				  ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-				, [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
-        FROM
-			(
-                SELECT DISTINCT [{Tables.Tag.Id.Name}] FROM
+				SELECT @NotValidOrderRecordsStrategyErrorMessage = 'Unsupported {nameof(OrderRecordsStrategy)}: ' + @{InputParamName.OrderRecordsStrategy} + ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @NotValidOrderRecordsStrategyErrorSeverity = ERROR_SEVERITY(), @NotValidOrderRecordsStrategyErrorState = ERROR_STATE()
+				RAISERROR (@NotValidOrderRecordsStrategyErrorMessage, @NotValidOrderRecordsStrategyErrorSeverity, @NotValidOrderRecordsStrategyErrorState)
+			END
+		END -- Descending
+		IF (@{recordToHandleId} IS NOT NULL)
+		BEGIN
+			DECLARE @{unionedIfNecessaryTagIdsXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+			
+	        SELECT @{unionedIfNecessaryTagIdsXml} = (
+	        SELECT
+					  ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+					, [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
+	        FROM
 				(
-					SELECT [{Tables.Tag.TagValue.Name}] AS [{Tables.Tag.Id.Name}]
-				    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsForEntryXml})
-			        UNION ALL
-					SELECT [{Tables.RecordTag.TagId.Name}] AS [{Tables.Tag.Id.Name}]
-                    FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
-					WHERE @{InputParamName.InheritRecordTags} = 1 AND [{Tables.RecordTag.RecordId.Name}] = @{recordToHandleId}
-				) AS u
-			) AS d
-	    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+	                SELECT DISTINCT [{Tables.Tag.Id.Name}] FROM
+					(
+						SELECT [{Tables.Tag.TagValue.Name}] AS [{Tables.Tag.Id.Name}]
+					    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsForEntryXml})
+				        UNION ALL
+						SELECT [{Tables.RecordTag.TagId.Name}] AS [{Tables.Tag.Id.Name}]
+	                    FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
+						WHERE @{InputParamName.InheritRecordTags} = 1 AND [{Tables.RecordTag.RecordId.Name}] = @{recordToHandleId}
+					) AS u
+				) AS d
+		    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 
-		EXEC [{streamName}].[{PutHandling.Name}] 
-		@{PutHandling.InputParamName.Concern} = @{InputParamName.Concern}, 
-		@{PutHandling.InputParamName.Details} = @{InputParamName.Details}, 
-		@{PutHandling.InputParamName.RecordId} = @{recordToHandleId}, 
-		@{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}', 
-		@{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '{acceptableNoneStatusXml}', 
-		@{PutHandling.InputParamName.TagIdsXml} = @{unionedIfNecessaryTagIdsXml}, 
-		@{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
+			EXEC [{streamName}].[{PutHandling.Name}] 
+			@{PutHandling.InputParamName.Concern} = @{InputParamName.Concern}, 
+			@{PutHandling.InputParamName.Details} = @{InputParamName.Details}, 
+			@{PutHandling.InputParamName.RecordId} = @{recordToHandleId}, 
+			@{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}', 
+			@{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '{acceptableNoneStatusXml}', 
+			@{PutHandling.InputParamName.TagIdsXml} = @{unionedIfNecessaryTagIdsXml}, 
+			@{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
 
-		IF (@{OutputParamName.Id} IS NULL)
-		BEGIN
-		    SET @{OutputParamName.ShouldHandle} = 0
-		END
-		ELSE
-		BEGIN
-		    SET @{OutputParamName.ShouldHandle} = 1
-		END
+			IF (@{OutputParamName.Id} IS NULL)
+			BEGIN
+			    SET @{OutputParamName.ShouldHandle} = 0
+			END
+			ELSE
+			BEGIN
+			    SET @{OutputParamName.ShouldHandle} = 1
+			END
+		END -- Found record
+	    COMMIT TRANSACTION [{transaction}]
+		END TRY
+	    BEGIN CATCH
+		    DECLARE @ErrorMessage nvarchar(max), 
+		            @ErrorSeverity int, 
+		            @ErrorState int
 
-		END
-	END
+		    SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
 
+		    IF (@@trancount > 0)
+		    BEGIN
+		        ROLLBACK TRANSACTION [{transaction}]
+			END
+			RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+	    END CATCH
+	END -- Check blocking
     IF (@{OutputParamName.ShouldHandle} = 1)
 	BEGIN
+		-- Fetch record to handle to output params
 	    SELECT TOP 1
 		   @{OutputParamName.SerializerRepresentationId} = [{Tables.Record.SerializerRepresentationId.Name}]
 		 , @{OutputParamName.IdentifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
@@ -501,8 +523,7 @@ BEGIN
 		SET @{OutputParamName.TagIdsXml} = null
 	END
 END
-
-			");
+");
 
                     return result;
                 }
