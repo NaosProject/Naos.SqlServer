@@ -7,8 +7,10 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Representation.System;
@@ -60,6 +62,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="protocolType">Type of the protocol.</param>
         /// <param name="streamName">Name of the stream.</param>
         /// <returns>Grant script.</returns>
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         public static string BuildGrantScriptByType(
             TypeRepresentation protocolType,
             string streamName)

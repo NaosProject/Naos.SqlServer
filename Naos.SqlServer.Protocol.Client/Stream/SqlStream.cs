@@ -10,6 +10,7 @@ namespace Naos.SqlServer.Protocol.Client
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
@@ -194,6 +195,7 @@ namespace Naos.SqlServer.Protocol.Client
         public override IStreamRepresentation StreamRepresentation { get; }
 
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "sprocResult", Justification = "Part of contract, could be a output parameter in future.")]
         public void Execute(
             CreateStreamUserOp operation)
         {
