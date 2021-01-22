@@ -197,65 +197,67 @@ CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
 )
 AS
 BEGIN
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-BEGIN TRANSACTION [{transaction}]
-  BEGIN TRY
-		IF (@{InputParamName.ExistingRecordEncounteredStrategy} <> '{ExistingRecordEncounteredStrategy.None}')
-		BEGIN
-		    SELECT @{OutputParamName.ExistingRecordId} = [{Tables.Record.Id.Name}] FROM [{streamName}].[{Tables.Record.Table.Name}]
-			WHERE				
-				([{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId})
-				AND
+    -- If two actors try to both insert for the same ID with the '{nameof(ExistingRecordEncounteredStrategy)}'
+	--	   set to e.g. {ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}; they could both
+	--     write the same payload; this does work in a single actor re-entrant scenario and is the expected usage.
+	IF (@{InputParamName.ExistingRecordEncounteredStrategy} <> '{ExistingRecordEncounteredStrategy.None}')
+	BEGIN
+	    SELECT @{OutputParamName.ExistingRecordId} = [{Tables.Record.Id.Name}] FROM [{streamName}].[{Tables.Record.Table.Name}]
+		WHERE				
+			([{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId})
+			AND
+			(
 				(
+					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundById}')
+				)
+				OR
+				(
+					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType}')
+					AND
 					(
-						(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundById}')
-					)
-					OR
-					(
-						(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType}')
-						AND
 						(
-							(
-									@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
-								AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
-								AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
-							)
-							OR
-							(
-									@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
-								AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
-								AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
-							)
+								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
+							AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
+							AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
 						)
-					)
-					OR
-					(
-						(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent}')
-						AND
+						OR
 						(
-							(
-								    @{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
-								AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
-								AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
-								AND [{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject}
-							)
-							OR
-							(
-									@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
-								AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
-								AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
-								AND [{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject}
-							)
+								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
+							AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
+							AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
 						)
 					)
 				)
-		END
-		IF (@{OutputParamName.ExistingRecordId} IS NOT NULL)
-		BEGIN
-			SET @{OutputParamName.Id} = {Tables.Record.NullId}
-		END
-		ELSE
-		BEGIN
+				OR
+				(
+					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent}')
+					AND
+					(
+						(
+							    @{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
+							AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
+							AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
+							AND [{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject}
+						)
+						OR
+						(
+								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
+							AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
+							AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
+							AND [{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject}
+						)
+					)
+				)
+			)
+	END
+	IF (@{OutputParamName.ExistingRecordId} IS NOT NULL)
+	BEGIN
+		SET @{OutputParamName.Id} = {Tables.Record.NullId}
+	END
+	ELSE
+	BEGIN
+		BEGIN TRANSACTION [{transaction}]
+		  BEGIN TRY
 		  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 		  SET @RecordCreatedUtc = GETUTCDATE()
 		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
@@ -291,9 +293,7 @@ BEGIN TRANSACTION [{transaction}]
 		  , t.[{Tables.Tag.TagValue.Name}]
 		  , @{recordCreatedUtc}
 	     FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagIdsXml}) t
-		END
 	    COMMIT TRANSACTION [{transaction}]
-
 	  END TRY
 	  BEGIN CATCH
 	      DECLARE @ErrorMessage nvarchar(max), 
@@ -308,6 +308,7 @@ BEGIN TRANSACTION [{transaction}]
 	      END
 	    RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
 	  END CATCH
+	END
 END
 			");
 
