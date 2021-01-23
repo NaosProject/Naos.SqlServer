@@ -60,7 +60,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.HandlingStatus.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.HandlingHistory.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.HandlingTag.BuildCreationScript(this.Name),
-                                                      StreamSchema.Funcs.GetStatusSortOrderTableVariable.BuildCreationScript(this.Name),
+                                                      StreamSchema.Tables.CompositeHandlingStatusSortOrder.BuildCreationScript(this.Name),
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),

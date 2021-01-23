@@ -112,7 +112,6 @@ namespace Naos.SqlServer.Domain
             }
             else if (protocolType == typeof(IStreamRecordHandlingProtocols).ToRepresentation())
             {
-                result.AppendLine(BuildGrant(Funcs.GetStatusSortOrderTableVariable.Name, read));
                 result.AppendLine(BuildGrant(Sprocs.TryHandleRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.PutHandling.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.GetCompositeHandlingStatus.Name, execute));
@@ -121,6 +120,7 @@ namespace Naos.SqlServer.Domain
                 result.AppendLine(BuildGrant(Tables.HandlingStatus.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.HandlingHistory.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.HandlingTag.Table.Name, readWrite));
+                result.AppendLine(BuildGrant(Tables.CompositeHandlingStatusSortOrder.Table.Name, read));
             }
             else if (protocolType == typeof(IStreamManagementProtocols).ToRepresentation())
             {

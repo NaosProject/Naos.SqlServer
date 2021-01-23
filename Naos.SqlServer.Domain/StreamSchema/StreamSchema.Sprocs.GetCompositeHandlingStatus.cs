@@ -115,11 +115,11 @@ BEGIN
         ON h1.[{Tables.HandlingHistory.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
     LEFT OUTER JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h2
         ON h1.[{Tables.HandlingHistory.RecordId.Name}] = h2.[{Tables.HandlingHistory.RecordId.Name}] AND h1.[{Tables.HandlingHistory.Id.Name}] < h2.[{Tables.HandlingHistory.Id.Name}]
-    LEFT JOIN [{streamName}].[{Funcs.GetStatusSortOrderTableVariable.Name}]() s
-        ON s.[{Funcs.GetStatusSortOrderTableVariable.OutputColumnName.Status}] = h1.[{Tables.HandlingHistory.Status.Name}]
+    LEFT JOIN [{streamName}].[{Tables.CompositeHandlingStatusSortOrder.Table.Name}] s
+        ON s.[{Tables.CompositeHandlingStatusSortOrder.Status.Name}] = h1.[{Tables.HandlingHistory.Status.Name}]
     WHERE h2.[{Tables.HandlingHistory.Id.Name}] IS NULL AND h1.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
         AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT [{Tables.Tag.TagValue.Name}] FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml}))
-    ORDER BY s.[{Funcs.GetStatusSortOrderTableVariable.OutputColumnName.SortOrder}] DESC
+    ORDER BY s.[{Tables.CompositeHandlingStatusSortOrder.SortOrder.Name}] DESC
 
     IF (@{OutputParamName.Status} IS NULL)
     BEGIN

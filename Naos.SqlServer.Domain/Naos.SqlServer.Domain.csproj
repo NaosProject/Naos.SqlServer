@@ -221,7 +221,6 @@
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Legacy\SqlServerConnectionDefinition.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
-    <Compile Include="StreamSchema\StreamSchema.Funcs.GetStatusSortOrderTableVariable.cs" />
     <Compile Include="StreamSchema\StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.cs" />
     <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetCompositeHandlingStatus.cs" />
@@ -249,6 +248,7 @@
     <Compile Include="StreamSchema\StreamSchema.Tables.RecordTag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.Tag.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithoutVersion.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Tables.CompositeHandlingStatusSortOrder.cs" />
     <Compile Include="StreamSchema\StreamSchema.Tables.TypeWithVersion.cs" />
     <Compile Include="Model\Management\BackupSqlServerDatabaseDetails.cs" />
     <Compile Include="Model\Management\ChecksumOption.cs" />
