@@ -496,17 +496,11 @@ BEGIN
 		 , @{OutputParamName.StringSerializedId} = [{Tables.Record.StringSerializedId.Name}]
 		 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
 		 , @{OutputParamName.InternalRecordId} = [{Tables.Record.Id.Name}]
+		 , @{OutputParamName.TagIdsXml} = [{Tables.Record.TagIdsXml.Name}]
 		 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]
 		 , @{OutputParamName.ObjectDateTime} = [{Tables.Record.ObjectDateTimeUtc.Name}]
 		FROM [{streamName}].[{Tables.Record.Table.Name}]
 		WHERE [{Tables.Record.Id.Name}] = @{recordToHandleId}
-
-	    SELECT @{OutputParamName.TagIdsXml} = (SELECT
-			ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
-			{Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
-		FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
-		WHERE [{Tables.RecordTag.RecordId.Name}] = @{recordToHandleId}
-		FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 	END
     ELSE
 	BEGIN
