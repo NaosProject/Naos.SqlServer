@@ -73,11 +73,11 @@ namespace Naos.SqlServer.Domain
                                      {
                                          new SqlInputParameterRepresentation<string>(
                                              nameof(InputParamName.TagIdsXml),
-                                             new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant),
+                                             new XmlSqlDataTypeRepresentation(),
                                              tagsXml),
                                          new SqlOutputParameterRepresentation<string>(
                                              nameof(OutputParamName.TagsXml),
-                                             new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant)),
+                                             new XmlSqlDataTypeRepresentation()),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
