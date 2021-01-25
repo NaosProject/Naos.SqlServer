@@ -75,7 +75,7 @@ namespace Naos.SqlServer.Domain
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Username), new StringSqlDataTypeRepresentation(true, 128), username),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.ClearTextPassword), new StringSqlDataTypeRepresentation(true, 128), clearTextPassword),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.RoleXml), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), role),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.RoleXml), new XmlSqlDataTypeRepresentation(), role),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -97,7 +97,7 @@ namespace Naos.SqlServer.Domain
 CREATE PROCEDURE [{streamName}].[{CreateStreamUser.Name}](
   @{InputParamName.Username} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
 , @{InputParamName.ClearTextPassword} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-, @{InputParamName.RoleXml} AS {new StringSqlDataTypeRepresentation(false, 128).DeclarationInSqlSyntax}
+, @{InputParamName.RoleXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 )
 AS
 BEGIN

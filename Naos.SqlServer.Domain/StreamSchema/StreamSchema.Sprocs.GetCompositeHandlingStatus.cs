@@ -79,7 +79,7 @@ namespace Naos.SqlServer.Domain
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.HandlingHistory.Concern.DataType, concern),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), tagIdsXml),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
                                          new SqlOutputParameterRepresentation<HandlingStatus>(nameof(OutputParamName.Status), Tables.HandlingHistory.Status.DataType),
                                      };
 

@@ -98,8 +98,8 @@ namespace Naos.SqlServer.Domain
                     return FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetTagSetFromIds.Name}](
-  @{nameof(InputParamName.TagIdsXml)} [xml],
-  @{nameof(OutputParamName.TagsXml)} [NVARCHAR](MAX) OUTPUT
+  @{nameof(InputParamName.TagIdsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax},
+  @{nameof(OutputParamName.TagsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
   )
 AS
 BEGIN      
