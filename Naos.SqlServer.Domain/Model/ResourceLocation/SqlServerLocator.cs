@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
+    using System.Globalization;
     using Naos.Protocol.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
@@ -14,7 +15,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// SQL implementation of an <see cref="ResourceLocatorBase" />.
     /// </summary>
-    public partial class SqlServerLocator : ResourceLocatorBase, ISqlServerLocator, IModelViaCodeGen
+    public partial class SqlServerLocator : ResourceLocatorBase, ISqlServerLocator, IModelViaCodeGen, IDeclareToStringMethod
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerLocator"/> class.
@@ -78,6 +79,14 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <value>The port.</value>
         public int? Port { get; private set; }
+
+        /// <inheritdoc cref="IDeclareToStringMethod" />
+        public override string ToString()
+        {
+            var result = FormattableString.Invariant($"Naos.SqlServer.Domain.SqlServerLocator: ServerName = {this.ServerName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseName = {this.DatabaseName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {this.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Password = ***, InstanceName = {this.InstanceName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Port = {this.Port?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
+
+            return result;
+        }
 
         /// <summary>
         /// Builds the invalid stream locator type exception.
