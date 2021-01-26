@@ -177,6 +177,7 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(string streamName)
                 {
                     const string recordCreatedUtc = "RecordCreatedUtc";
+                    const string tagIdsTable = "TagIdsTable";
                     var transaction = Invariant($"{nameof(PutRecord)}Transaction");
                     var result = FormattableString.Invariant(
                         $@"
@@ -256,6 +257,12 @@ BEGIN
 	END
 	ELSE
 	BEGIN
+		{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
+		INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
+		    SELECT
+			  [{Tables.Tag.TagValue.Name}]
+			FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
+
 		BEGIN TRANSACTION [{transaction}]
 		  BEGIN TRY
 		  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
@@ -292,9 +299,9 @@ BEGIN
 		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
 	     SELECT 
   		    @{OutputParamName.Id}
-		  , t.[{Tables.Tag.TagValue.Name}]
+		  , t.[{Tables.Tag.Id.Name}]
 		  , @{recordCreatedUtc}
-	     FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.TagIdsXml}) t
+	     FROM @{tagIdsTable} t
 	    COMMIT TRANSACTION [{transaction}]
 	  END TRY
 	  BEGIN CATCH

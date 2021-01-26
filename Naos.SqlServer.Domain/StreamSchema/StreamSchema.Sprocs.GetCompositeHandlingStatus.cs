@@ -99,6 +99,8 @@ namespace Naos.SqlServer.Domain
                 public static string BuildCreationScript(
                     string streamName)
                 {
+                    const string tagIdsTable = "TagIdsTable";
+
                     return Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetCompositeHandlingStatus.Name}](
@@ -108,6 +110,12 @@ CREATE PROCEDURE [{streamName}].[{GetCompositeHandlingStatus.Name}](
 )
 AS
 BEGIN
+    {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
+    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
+    SELECT
+	  [{Tables.Tag.TagValue.Name}]
+	FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
+
     SELECT TOP 1
         @{OutputParamName.Status} = h1.[{Tables.HandlingHistory.Status.Name}]
     FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht
@@ -118,7 +126,7 @@ BEGIN
     LEFT JOIN [{streamName}].[{Tables.CompositeHandlingStatusSortOrder.Table.Name}] s
         ON s.[{Tables.CompositeHandlingStatusSortOrder.Status.Name}] = h1.[{Tables.HandlingHistory.Status.Name}]
     WHERE h2.[{Tables.HandlingHistory.Id.Name}] IS NULL AND h1.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
-        AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT [{Tables.Tag.TagValue.Name}] FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml}))
+        AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
     ORDER BY s.[{Tables.CompositeHandlingStatusSortOrder.SortOrder.Name}] DESC
 
     IF (@{OutputParamName.Status} IS NULL)

@@ -105,6 +105,23 @@ RETURN
 
                     return result;
                 }
+
+                /// <summary>
+                /// Builds the declaration and execution SQL syntax.
+                /// </summary>
+                /// <param name="tagsTableVariableName">Name of the tags table variable.</param>
+                /// <returns>System.String.</returns>
+                public static string BuildTagsTableWithOnlyIdDeclarationSyntax(
+                    string tagsTableVariableName)
+                {
+                    var result = FormattableString.Invariant(
+                        $@"
+            DECLARE @{tagsTableVariableName} TABLE(
+			[{Tables.Tag.Id.Name}] {Tables.Tag.Id.DataType.DeclarationInSqlSyntax} NOT NULL)
+");
+
+                    return result;
+                }
             }
         }
     }
