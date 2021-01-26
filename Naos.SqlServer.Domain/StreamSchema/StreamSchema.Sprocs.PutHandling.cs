@@ -70,6 +70,16 @@ namespace Naos.SqlServer.Domain
                     /// The tag identifiers XML.
                     /// </summary>
                     TagIdsXml,
+
+                    /// <summary>
+                    /// Whether or not the record is unhandled.
+                    /// </summary>
+                    IsUnHandledRecord,
+
+                    /// <summary>
+                    /// Whether or not this is a claiming entry.
+                    /// </summary>
+                    IsClaimingRecordId,
                 }
 
                 /// <summary>
@@ -123,6 +133,8 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.NewStatus), Tables.HandlingHistory.Status.DataType, newStatus.ToString()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.AcceptableCurrentStatusesXml), new XmlSqlDataTypeRepresentation(), acceptableCurrentStatusesXml),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
+                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.IsUnHandledRecord), new IntSqlDataTypeRepresentation(), 0),
+                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.IsClaimingRecordId), new IntSqlDataTypeRepresentation(), 0),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.HandlingHistory.Id.DataType),
                                      };
 
@@ -147,6 +159,7 @@ namespace Naos.SqlServer.Domain
                     string streamName)
                 {
                     var recordCreatedUtc = "RecordCreatedUtc";
+                    const string tagIdsTable = "TagIdsTable";
                     var transaction = Invariant($"{nameof(PutHandling)}Transaction");
                     var currentStatus = "CurrentStatus";
                     var currentStatusAccepted = "CurrentStatusAccepted";
@@ -157,8 +170,10 @@ CREATE PROCEDURE [{streamName}].[{PutHandling.Name}](
 , @{InputParamName.Details} AS {Tables.HandlingHistory.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.RecordId} AS {Tables.HandlingHistory.RecordId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.NewStatus} AS {Tables.HandlingHistory.Status.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.AcceptableCurrentStatusesXml} AS [Xml]
-, @{InputParamName.TagIdsXml} AS [Xml]
+, @{InputParamName.AcceptableCurrentStatusesXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{InputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{InputParamName.IsUnHandledRecord} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{InputParamName.IsClaimingRecordId} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.HandlingHistory.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
@@ -185,39 +200,116 @@ IF (@{currentStatusAccepted} = 0)
 BEGIN
       SET @{OutputParamName.Id} = NULL
 END
- 
+
+{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
+INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
+    SELECT
+	  [{Tables.Tag.TagValue.Name}]
+	FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
+
 BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
 	      DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 	      SET @{recordCreatedUtc} = GETUTCDATE()
+          IF (@{InputParamName.IsClaimingRecordId} = 0)
+          BEGIN
+	          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}]
+               (
+		        [{Tables.HandlingHistory.Concern.Name}]
+		      , [{Tables.HandlingHistory.RecordId.Name}]
+		      , [{Tables.HandlingHistory.Status.Name}]
+		      , [{Tables.HandlingHistory.Details.Name}]
+		      , [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+		      ) VALUES (
+	            @{InputParamName.Concern}
+	          , @{InputParamName.RecordId}
+	          , @{InputParamName.NewStatus}
+	          , @{InputParamName.Details}
+		      , @{recordCreatedUtc}
+		      )
+          END
+          ELSE
+          BEGIN
+			  -- For Claiming a Record we'll need to confirm another tenant has not already claimed...
+			  IF (@{InputParamName.IsUnHandledRecord} = 1)
+		      BEGIN
+		          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}]
+	               (
+			        [{Tables.HandlingHistory.Concern.Name}]
+			      , [{Tables.HandlingHistory.RecordId.Name}]
+			      , [{Tables.HandlingHistory.Status.Name}]
+			      , [{Tables.HandlingHistory.Details.Name}]
+			      , [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+			      )
+	              SELECT
+				        n.[{Tables.HandlingHistory.Concern.Name}]
+				      , n.[{Tables.HandlingHistory.RecordId.Name}]
+				      , n.[{Tables.HandlingHistory.Status.Name}]
+				      , n.[{Tables.HandlingHistory.Details.Name}]
+				      , n.[{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+				  FROM
+					(
+						SELECT 
+				            @{InputParamName.Concern} AS [{Tables.HandlingHistory.Concern.Name}]
+				          , @{InputParamName.RecordId} AS [{Tables.HandlingHistory.RecordId.Name}]
+				          , @{InputParamName.NewStatus} AS [{Tables.HandlingHistory.Status.Name}]
+				          , @{InputParamName.Details} AS [{Tables.HandlingHistory.Details.Name}]
+					      , @{recordCreatedUtc} AS [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+					) AS n
+				  LEFT JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] e
+					  ON n.[{Tables.HandlingHistory.RecordId.Name}] = e.[{Tables.HandlingHistory.RecordId.Name}]
+					  AND n.[{Tables.HandlingHistory.Concern.Name}] = e.[{Tables.HandlingHistory.Concern.Name}]
+			      WHERE e.[{Tables.HandlingHistory.RecordId.Name}] IS NULL
+			   END
+			   ELSE
+			   BEGIN
+		          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}]
+	               (
+			        [{Tables.HandlingHistory.Concern.Name}]
+			      , [{Tables.HandlingHistory.RecordId.Name}]
+			      , [{Tables.HandlingHistory.Status.Name}]
+			      , [{Tables.HandlingHistory.Details.Name}]
+			      , [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+			      )
+	              SELECT
+				        n.[{Tables.HandlingHistory.Concern.Name}]
+				      , n.[{Tables.HandlingHistory.RecordId.Name}]
+				      , n.[{Tables.HandlingHistory.Status.Name}]
+				      , n.[{Tables.HandlingHistory.Details.Name}]
+				      , n.[{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+				  FROM
+					(
+						SELECT 
+				            @{InputParamName.Concern} AS [{Tables.HandlingHistory.Concern.Name}]
+				          , @{InputParamName.RecordId} AS [{Tables.HandlingHistory.RecordId.Name}]
+				          , @{InputParamName.NewStatus} AS [{Tables.HandlingHistory.Status.Name}]
+				          , @{InputParamName.Details} AS [{Tables.HandlingHistory.Details.Name}]
+					      , @{recordCreatedUtc} AS [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+					) AS n
+				  INNER JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] e
+					  ON n.[{Tables.HandlingHistory.RecordId.Name}] = e.[{Tables.HandlingHistory.RecordId.Name}]
+					  AND n.[{Tables.HandlingHistory.Concern.Name}] = e.[{Tables.HandlingHistory.Concern.Name}]
+				  LEFT OUTER JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h2
+					ON e.[{Tables.HandlingHistory.RecordId.Name}] = h2.[{Tables.HandlingHistory.RecordId.Name}] AND e.[{Tables.HandlingHistory.Id.Name}] < h2.[{Tables.HandlingHistory.Id.Name}]
+			      WHERE h2.[{Tables.HandlingHistory.Id.Name}] IS NULL AND e.[{Tables.HandlingHistory.Status.Name}] <> '{HandlingStatus.Running}'
+			   END
+          END
 
-	      INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}]
-           (
-		    [{Tables.HandlingHistory.Concern.Name}]
-		  , [{Tables.HandlingHistory.RecordId.Name}]
-		  , [{Tables.HandlingHistory.Status.Name}]
-		  , [{Tables.HandlingHistory.Details.Name}]
-		  , [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
-		  ) VALUES (
-	        @{InputParamName.Concern}
-	      , @{InputParamName.RecordId}
-	      , @{InputParamName.NewStatus}
-	      , @{InputParamName.Details}
-		  , @{recordCreatedUtc}
-		  )
-
-	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
-          
-	      INSERT INTO [{streamName}].[{Tables.HandlingTag.Table.Name}] (
-		    [{Tables.HandlingTag.HandlingId.Name}]
-		  , [{Tables.HandlingTag.TagId.Name}]
-		  , [{Tables.HandlingTag.RecordCreatedUtc.Name}]
-		  )
-         SELECT 
-  		    @{OutputParamName.Id}
-		  , t.[{Tables.Tag.TagValue.Name}]
-		  , @{recordCreatedUtc}
-         FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml}) t
+		  IF (@@ROWCOUNT > 0)
+		  BEGIN
+		      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+	          
+		      INSERT INTO [{streamName}].[{Tables.HandlingTag.Table.Name}] (
+			    [{Tables.HandlingTag.HandlingId.Name}]
+			  , [{Tables.HandlingTag.TagId.Name}]
+			  , [{Tables.HandlingTag.RecordCreatedUtc.Name}]
+			  )
+	         SELECT 
+  			    @{OutputParamName.Id}
+			  , t.[{Tables.Tag.Id.Name}]
+			  , @{recordCreatedUtc}
+	         FROM @{tagIdsTable} t
+		  END
 
       COMMIT TRANSACTION [{transaction}]
 
