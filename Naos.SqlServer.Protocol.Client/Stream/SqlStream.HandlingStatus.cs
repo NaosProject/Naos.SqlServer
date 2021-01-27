@@ -144,7 +144,7 @@ namespace Naos.SqlServer.Protocol.Client
                     HandlingStatus.Requested,
                     new[]
                     {
-                        HandlingStatus.Blocked
+                        HandlingStatus.Blocked,
                     },
                     tagIdsXml);
 
