@@ -116,20 +116,6 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         /// <inheritdoc />
-        public override IReadOnlyList<StreamRecordHandlingEntry> Execute(
-            GetHandlingHistoryOfRecordOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override HandlingStatus Execute(
-            GetHandlingStatusOfRecordsByIdOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
         public override void Execute(
             DeleteStreamOp operation)
         {
