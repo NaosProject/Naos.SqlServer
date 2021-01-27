@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StreamSchema.Tables.HandlingHistory.cs" company="Naos Project">
+// <copyright file="StreamSchema.Tables.Handling.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ namespace Naos.SqlServer.Domain
             /// <summary>
             /// Class Handling.
             /// </summary>
-            public static class HandlingHistory
+            public static class Handling
             {
                 /// <summary>
                 /// The invalid identifier that is returned to indicate inaction (the null object pattern of the identifier).
@@ -70,7 +70,7 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <value>The table.</value>
                 public static TableRepresentation Table => new TableRepresentation(
-                    nameof(HandlingHistory),
+                    nameof(Handling),
                     new[]
                     {
                         Id,
@@ -104,37 +104,38 @@ CREATE TABLE [{streamName}].[{Table.Name}](
 	[{nameof(Status)}] {Status.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(Details)}] {Details.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
- CONSTRAINT [PK_{nameof(HandlingHistory)}] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{nameof(Handling)}] PRIMARY KEY CLUSTERED 
 (
 	[{nameof(Id)}] DESC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 
-ALTER TABLE [{streamName}].[{nameof(HandlingHistory)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(HandlingHistory)}_{nameof(Record)}] FOREIGN KEY([{nameof(RecordId)}])
+ALTER TABLE [{streamName}].[{nameof(Handling)}] WITH NOCHECK ADD CONSTRAINT [FK_{nameof(Handling)}_{nameof(Record)}] FOREIGN KEY([{nameof(RecordId)}])
 REFERENCES [{streamName}].[{nameof(Record)}] ([{nameof(Record.Id)}])
 
-ALTER TABLE [{streamName}].[{nameof(HandlingHistory)}] CHECK CONSTRAINT [FK_{nameof(HandlingHistory)}_{nameof(Record)}]
-
+-- Relax to NoCheck
+ALTER TABLE [{streamName}].[{nameof(Handling)}] NOCHECK CONSTRAINT [FK_{nameof(Handling)}_{nameof(Record)}] 
 
 SET ANSI_PADDING ON
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingHistory)}_{nameof(RecordId)}_Desc] ON [{streamName}].[{Table.Name}]
+
+CREATE NONCLUSTERED INDEX [IX_{nameof(Handling)}_{nameof(RecordId)}_Desc] ON [{streamName}].[{Table.Name}]
 (
 	[{nameof(RecordId)}] DESC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingHistory)}_{nameof(Concern)}_Asc] ON [{streamName}].[{Table.Name}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Handling)}_{nameof(Concern)}_Asc] ON [{streamName}].[{Table.Name}]
 (
 	[{nameof(Concern)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingHistory)}_{nameof(Status)}_Asc] ON [{streamName}].[{Table.Name}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Handling)}_{nameof(Status)}_Asc] ON [{streamName}].[{Table.Name}]
 (
 	[{nameof(Status)}] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(HandlingHistory)}_{nameof(RecordId)}_{nameof(Concern)}_Asc] ON [{streamName}].[{Table.Name}]
+CREATE NONCLUSTERED INDEX [IX_{nameof(Handling)}_{nameof(RecordId)}_{nameof(Concern)}_Asc] ON [{streamName}].[{Table.Name}]
 (
 	[{nameof(RecordId)}] DESC,
 	[{nameof(Concern)}] ASC

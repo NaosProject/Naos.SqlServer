@@ -117,8 +117,7 @@ namespace Naos.SqlServer.Domain
                 result.AppendLine(BuildGrant(Sprocs.GetCompositeHandlingStatus.Name, execute));
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
-                result.AppendLine(BuildGrant(Tables.HandlingStatus.Table.Name, readWrite));
-                result.AppendLine(BuildGrant(Tables.HandlingHistory.Table.Name, readWrite));
+                result.AppendLine(BuildGrant(Tables.Handling.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.HandlingTag.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.CompositeHandlingStatusSortOrder.Table.Name, read));
             }

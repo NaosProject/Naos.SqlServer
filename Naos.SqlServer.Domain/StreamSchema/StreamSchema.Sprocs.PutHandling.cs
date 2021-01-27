@@ -127,15 +127,15 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.HandlingHistory.Concern.DataType, concern),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.HandlingHistory.Details.DataType, details),
-                                         new SqlInputParameterRepresentation<long>(nameof(InputParamName.RecordId), Tables.HandlingHistory.RecordId.DataType, recordId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.NewStatus), Tables.HandlingHistory.Status.DataType, newStatus.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.Handling.Details.DataType, details),
+                                         new SqlInputParameterRepresentation<long>(nameof(InputParamName.RecordId), Tables.Handling.RecordId.DataType, recordId),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.NewStatus), Tables.Handling.Status.DataType, newStatus.ToString()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.AcceptableCurrentStatusesXml), new XmlSqlDataTypeRepresentation(), acceptableCurrentStatusesXml),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.IsUnHandledRecord), new IntSqlDataTypeRepresentation(), 0),
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.IsClaimingRecordId), new IntSqlDataTypeRepresentation(), 0),
-                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.HandlingHistory.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -166,24 +166,24 @@ namespace Naos.SqlServer.Domain
                     return Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{PutHandling.Name}](
-  @{InputParamName.Concern} AS {Tables.HandlingHistory.Concern.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.Details} AS {Tables.HandlingHistory.Details.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.RecordId} AS {Tables.HandlingHistory.RecordId.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.NewStatus} AS {Tables.HandlingHistory.Status.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.RecordId} AS {Tables.Handling.RecordId.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.NewStatus} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.AcceptableCurrentStatusesXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.IsUnHandledRecord} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.IsClaimingRecordId} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{OutputParamName.Id} AS {Tables.HandlingHistory.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
 
-DECLARE @{currentStatus} {Tables.HandlingHistory.Status.DataType.DeclarationInSqlSyntax}
-SELECT TOP 1 @{currentStatus} = {Tables.HandlingHistory.Status.Name}
-    FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}]
-    WHERE [{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern} AND [{Tables.HandlingHistory.RecordId.Name}] = @{InputParamName.RecordId}
-    ORDER BY [{Tables.HandlingHistory.Id.Name}] DESC
+DECLARE @{currentStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
+    FROM [{streamName}].[{Tables.Handling.Table.Name}]
+    WHERE [{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} AND [{Tables.Handling.RecordId.Name}] = @{InputParamName.RecordId}
+    ORDER BY [{Tables.Handling.Id.Name}] DESC
 
 IF @{currentStatus} IS NULL
 BEGIN
@@ -209,7 +209,7 @@ BEGIN
 	BEGIN
 		-- In the event we are NOT claiming a record then this is being considered an invalid state change...
 		DECLARE @NotValidStatusErrorMessage varchar(100)
-		SET @NotValidStatusErrorMessage =  CONCAT('Invalid current status: ', @CurrentStatus);
+		SET @NotValidStatusErrorMessage =  CONCAT('Invalid current status: ', @{currentStatus}, '.');
 		THROW 60000, @NotValidStatusErrorMessage, 1
 	END
 END
@@ -227,13 +227,13 @@ BEGIN TRANSACTION [{transaction}]
 	      SET @{recordCreatedUtc} = GETUTCDATE()
           IF (@{InputParamName.IsClaimingRecordId} = 0)
           BEGIN
-	          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}]
+	          INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}]
                (
-		        [{Tables.HandlingHistory.Concern.Name}]
-		      , [{Tables.HandlingHistory.RecordId.Name}]
-		      , [{Tables.HandlingHistory.Status.Name}]
-		      , [{Tables.HandlingHistory.Details.Name}]
-		      , [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+		        [{Tables.Handling.Concern.Name}]
+		      , [{Tables.Handling.RecordId.Name}]
+		      , [{Tables.Handling.Status.Name}]
+		      , [{Tables.Handling.Details.Name}]
+		      , [{Tables.Handling.RecordCreatedUtc.Name}]
 		      ) VALUES (
 	            @{InputParamName.Concern}
 	          , @{InputParamName.RecordId}
@@ -247,65 +247,65 @@ BEGIN TRANSACTION [{transaction}]
 			  -- For Claiming a Record we'll need to confirm another tenant has not already claimed...
 			  IF (@{InputParamName.IsUnHandledRecord} = 1)
 		      BEGIN
-		          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}] WITH (TABLOCKX)
+		          INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] WITH (TABLOCKX)
 	               (
-			        [{Tables.HandlingHistory.Concern.Name}]
-			      , [{Tables.HandlingHistory.RecordId.Name}]
-			      , [{Tables.HandlingHistory.Status.Name}]
-			      , [{Tables.HandlingHistory.Details.Name}]
-			      , [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+			        [{Tables.Handling.Concern.Name}]
+			      , [{Tables.Handling.RecordId.Name}]
+			      , [{Tables.Handling.Status.Name}]
+			      , [{Tables.Handling.Details.Name}]
+			      , [{Tables.Handling.RecordCreatedUtc.Name}]
 			      )
 	              SELECT
-				        n.[{Tables.HandlingHistory.Concern.Name}]
-				      , n.[{Tables.HandlingHistory.RecordId.Name}]
-				      , n.[{Tables.HandlingHistory.Status.Name}]
-				      , n.[{Tables.HandlingHistory.Details.Name}]
-				      , n.[{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+				        n.[{Tables.Handling.Concern.Name}]
+				      , n.[{Tables.Handling.RecordId.Name}]
+				      , n.[{Tables.Handling.Status.Name}]
+				      , n.[{Tables.Handling.Details.Name}]
+				      , n.[{Tables.Handling.RecordCreatedUtc.Name}]
 				  FROM
 					(
 						SELECT 
-				            @{InputParamName.Concern} AS [{Tables.HandlingHistory.Concern.Name}]
-				          , @{InputParamName.RecordId} AS [{Tables.HandlingHistory.RecordId.Name}]
-				          , @{InputParamName.NewStatus} AS [{Tables.HandlingHistory.Status.Name}]
-				          , @{InputParamName.Details} AS [{Tables.HandlingHistory.Details.Name}]
-					      , @{recordCreatedUtc} AS [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+				            @{InputParamName.Concern} AS [{Tables.Handling.Concern.Name}]
+				          , @{InputParamName.RecordId} AS [{Tables.Handling.RecordId.Name}]
+				          , @{InputParamName.NewStatus} AS [{Tables.Handling.Status.Name}]
+				          , @{InputParamName.Details} AS [{Tables.Handling.Details.Name}]
+					      , @{recordCreatedUtc} AS [{Tables.Handling.RecordCreatedUtc.Name}]
 					) AS n
-				  LEFT JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] e
-					  ON n.[{Tables.HandlingHistory.RecordId.Name}] = e.[{Tables.HandlingHistory.RecordId.Name}]
-					  AND n.[{Tables.HandlingHistory.Concern.Name}] = e.[{Tables.HandlingHistory.Concern.Name}]
-			      WHERE e.[{Tables.HandlingHistory.RecordId.Name}] IS NULL
+				  LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] e
+					  ON n.[{Tables.Handling.RecordId.Name}] = e.[{Tables.Handling.RecordId.Name}]
+					  AND n.[{Tables.Handling.Concern.Name}] = e.[{Tables.Handling.Concern.Name}]
+			      WHERE e.[{Tables.Handling.RecordId.Name}] IS NULL
 			   END
 			   ELSE
 			   BEGIN
-		          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}] WITH (TABLOCKX)
+		          INSERT INTO [{streamName}].[{Tables.Handling.Table.Name}] WITH (TABLOCKX)
 	               (
-			        [{Tables.HandlingHistory.Concern.Name}]
-			      , [{Tables.HandlingHistory.RecordId.Name}]
-			      , [{Tables.HandlingHistory.Status.Name}]
-			      , [{Tables.HandlingHistory.Details.Name}]
-			      , [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+			        [{Tables.Handling.Concern.Name}]
+			      , [{Tables.Handling.RecordId.Name}]
+			      , [{Tables.Handling.Status.Name}]
+			      , [{Tables.Handling.Details.Name}]
+			      , [{Tables.Handling.RecordCreatedUtc.Name}]
 			      )
 	              SELECT
-				        n.[{Tables.HandlingHistory.Concern.Name}]
-				      , n.[{Tables.HandlingHistory.RecordId.Name}]
-				      , n.[{Tables.HandlingHistory.Status.Name}]
-				      , n.[{Tables.HandlingHistory.Details.Name}]
-				      , n.[{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+				        n.[{Tables.Handling.Concern.Name}]
+				      , n.[{Tables.Handling.RecordId.Name}]
+				      , n.[{Tables.Handling.Status.Name}]
+				      , n.[{Tables.Handling.Details.Name}]
+				      , n.[{Tables.Handling.RecordCreatedUtc.Name}]
 				  FROM
 					(
 						SELECT 
-				            @{InputParamName.Concern} AS [{Tables.HandlingHistory.Concern.Name}]
-				          , @{InputParamName.RecordId} AS [{Tables.HandlingHistory.RecordId.Name}]
-				          , @{InputParamName.NewStatus} AS [{Tables.HandlingHistory.Status.Name}]
-				          , @{InputParamName.Details} AS [{Tables.HandlingHistory.Details.Name}]
-					      , @{recordCreatedUtc} AS [{Tables.HandlingHistory.RecordCreatedUtc.Name}]
+				            @{InputParamName.Concern} AS [{Tables.Handling.Concern.Name}]
+				          , @{InputParamName.RecordId} AS [{Tables.Handling.RecordId.Name}]
+				          , @{InputParamName.NewStatus} AS [{Tables.Handling.Status.Name}]
+				          , @{InputParamName.Details} AS [{Tables.Handling.Details.Name}]
+					      , @{recordCreatedUtc} AS [{Tables.Handling.RecordCreatedUtc.Name}]
 					) AS n
-				  INNER JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] e
-					  ON n.[{Tables.HandlingHistory.RecordId.Name}] = e.[{Tables.HandlingHistory.RecordId.Name}]
-					  AND n.[{Tables.HandlingHistory.Concern.Name}] = e.[{Tables.HandlingHistory.Concern.Name}]
-				  LEFT OUTER JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h2
-					ON e.[{Tables.HandlingHistory.RecordId.Name}] = h2.[{Tables.HandlingHistory.RecordId.Name}] AND e.[{Tables.HandlingHistory.Id.Name}] < h2.[{Tables.HandlingHistory.Id.Name}]
-			      WHERE h2.[{Tables.HandlingHistory.Id.Name}] IS NULL AND e.[{Tables.HandlingHistory.Status.Name}] <> '{HandlingStatus.Running}'
+				  INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] e
+					  ON n.[{Tables.Handling.RecordId.Name}] = e.[{Tables.Handling.RecordId.Name}]
+					  AND n.[{Tables.Handling.Concern.Name}] = e.[{Tables.Handling.Concern.Name}]
+				  LEFT OUTER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h2
+					ON e.[{Tables.Handling.RecordId.Name}] = h2.[{Tables.Handling.RecordId.Name}] AND e.[{Tables.Handling.Id.Name}] < h2.[{Tables.Handling.Id.Name}]
+			      WHERE h2.[{Tables.Handling.Id.Name}] IS NULL AND e.[{Tables.Handling.Status.Name}] <> '{HandlingStatus.Running}'
 			   END
           END
 

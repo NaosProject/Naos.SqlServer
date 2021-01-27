@@ -34,7 +34,7 @@ namespace Naos.SqlServer.Domain
                 /// Gets the handling entry identifier.
                 /// </summary>
                 /// <value>The handling entry identifier.</value>
-                public static ColumnRepresentation HandlingId => new ColumnRepresentation(nameof(HandlingId), Tables.HandlingHistory.Id.DataType);
+                public static ColumnRepresentation HandlingId => new ColumnRepresentation(nameof(HandlingId), Tables.Handling.Id.DataType);
 
                 /// <summary>
                 /// Gets the tag identifier.
@@ -90,11 +90,17 @@ CREATE TABLE [{streamName}].[{nameof(HandlingTag)}](
 ) ON [PRIMARY]
 
 
-ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] WITH NOCHECK ADD CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(HandlingHistory)}] FOREIGN KEY([{nameof(HandlingId)}])
-REFERENCES [{streamName}].[{nameof(HandlingHistory)}] ([{nameof(HandlingHistory.Id)}])
+ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] WITH NOCHECK ADD CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Handling)}] FOREIGN KEY([{nameof(HandlingId)}])
+REFERENCES [{streamName}].[{nameof(Handling)}] ([{nameof(Handling.Id)}])
+
+-- Relax to NoCheck
+ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] NOCHECK CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Handling)}] 
 
 ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] WITH NOCHECK ADD CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Tag)}] FOREIGN KEY([{nameof(TagId)}])
 REFERENCES [{streamName}].[{nameof(Tag)}] ([{nameof(Tag.Id)}])
+
+-- Relax to NoCheck
+ALTER TABLE [{streamName}].[{nameof(HandlingTag)}] NOCHECK CONSTRAINT [FK_{nameof(HandlingTag)}_{nameof(Tag)}] 
 
 SET ANSI_PADDING ON
 

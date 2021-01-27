@@ -35,7 +35,7 @@ namespace Naos.SqlServer.Domain
                 /// Gets the status.
                 /// </summary>
                 /// <value>The status.</value>
-                public static ColumnRepresentation Status => Tables.HandlingHistory.Status;
+                public static ColumnRepresentation Status => Tables.Handling.Status;
 
                 /// <summary>
                 /// Gets the table.

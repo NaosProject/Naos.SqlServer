@@ -185,8 +185,8 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.HandlingHistory.Concern.DataType, concern),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.HandlingHistory.Details.DataType, details),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.Handling.Details.DataType, details),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.OrderRecordsStrategy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsStrategy.ToString()),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, identifierType?.IdWithoutVersion),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, identifierType?.IdWithVersion),
@@ -196,7 +196,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsForEntryXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), 1),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
-                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.HandlingHistory.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
@@ -251,8 +251,8 @@ namespace Naos.SqlServer.Domain
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
-  @{InputParamName.Concern} AS {Tables.HandlingHistory.Concern.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.Details} AS {Tables.HandlingHistory.Details.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
@@ -261,7 +261,7 @@ CREATE PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
 , @{InputParamName.TypeVersionMatchStrategy} AS varchar(10)
 , @{InputParamName.TagIdsForEntryXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{OutputParamName.Id} AS {Tables.HandlingHistory.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -275,9 +275,9 @@ CREATE PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
 )
 AS
 BEGIN
-    DECLARE @{blockedStatus} {Tables.HandlingHistory.Status.DataType.DeclarationInSqlSyntax}
-	SELECT TOP 1 @{blockedStatus} = [{Tables.HandlingHistory.Status.Name}] FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}]
-	WHERE [{Tables.HandlingHistory.Concern.Name}] = '{Concerns.RecordHandlingConcern}'
+    DECLARE @{blockedStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+	SELECT TOP 1 @{blockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
+	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingConcern}'
 
 	-- Check if global handling block has been applied
 	IF ((@{blockedStatus} IS NULL) OR (@{blockedStatus} <> '{HandlingStatus.Blocked}'))
@@ -288,11 +288,11 @@ BEGIN
 		BEGIN
 			-- See if any reprocessing is needed
 			INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-			FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
-			INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}]
-			WHERE h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
-	        AND (h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
-			AND (SELECT TOP 1 [{Tables.HandlingHistory.Status.Name}] FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] i WHERE i.{Tables.HandlingHistory.RecordId.Name} = h.{Tables.HandlingHistory.RecordId.Name} ORDER BY i.{Tables.HandlingHistory.Id.Name} DESC) = h.{Tables.HandlingHistory.Status.Name}
+			FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+			INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
+			WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+	        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
+			AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
 		    AND (
 		            -- No Type filter at all
 		            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
@@ -328,9 +328,9 @@ BEGIN
 			BEGIN
 				INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
 				FROM [{streamName}].[{Tables.Record.Table.Name}] r
-				LEFT JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
-				ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}] AND h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
-				WHERE h.[{Tables.HandlingHistory.Id.Name}] IS NULL
+				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+				ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+				WHERE h.[{Tables.Handling.Id.Name}] IS NULL
 			    AND (
 			            -- No Type filter at all
 			            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
@@ -367,9 +367,9 @@ BEGIN
 			-- See if any new records
 			INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
 			FROM [{streamName}].[{Tables.Record.Table.Name}] r
-			LEFT JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
-			ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}] AND h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
-			WHERE h.[{Tables.HandlingHistory.Id.Name}] IS NULL
+			LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+			ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			WHERE h.[{Tables.Handling.Id.Name}] IS NULL
 		    AND (
 		            -- No Type filter at all
 		            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
@@ -402,11 +402,11 @@ BEGIN
 			ELSE
 			BEGIN
 				INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-				FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] h
-				INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.HandlingHistory.RecordId.Name}]
-				WHERE h.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
-		        AND (h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.HandlingHistory.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
-				AND (SELECT TOP 1 [{Tables.HandlingHistory.Status.Name}] FROM [{streamName}].[{Tables.HandlingHistory.Table.Name}] i WHERE i.{Tables.HandlingHistory.RecordId.Name} = h.{Tables.HandlingHistory.RecordId.Name} ORDER BY i.{Tables.HandlingHistory.Id.Name} DESC) = h.{Tables.HandlingHistory.Status.Name}
+				FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+				INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
+				WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+		        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
+				AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
 			    AND (
 			            -- No Type filter at all
 			            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
@@ -511,7 +511,7 @@ BEGIN
     ELSE
 	BEGIN
 		SET @{OutputParamName.ShouldHandle} = 0
-		SET @{OutputParamName.Id} = {Tables.HandlingHistory.NullId}
+		SET @{OutputParamName.Id} = {Tables.Handling.NullId}
 		SET @{OutputParamName.InternalRecordId} = {Tables.Record.NullId}
 		SET @{OutputParamName.SerializerRepresentationId} = {Tables.SerializerRepresentation.NullId}
 		SET @{OutputParamName.IdentifierTypeWithVersionId} = {Tables.TypeWithVersion.NullId}

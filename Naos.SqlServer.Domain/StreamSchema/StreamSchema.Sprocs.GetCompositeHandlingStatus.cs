@@ -78,9 +78,9 @@ namespace Naos.SqlServer.Domain
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.HandlingHistory.Concern.DataType, concern),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
-                                         new SqlOutputParameterRepresentation<HandlingStatus>(nameof(OutputParamName.Status), Tables.HandlingHistory.Status.DataType),
+                                         new SqlOutputParameterRepresentation<HandlingStatus>(nameof(OutputParamName.Status), Tables.Handling.Status.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -100,38 +100,50 @@ namespace Naos.SqlServer.Domain
                     string streamName)
                 {
                     const string tagIdsTable = "TagIdsTable";
+                    const string blockedStatus = "BlockedStatus";
 
                     return Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{GetCompositeHandlingStatus.Name}](
-  @{InputParamName.Concern} AS {Tables.HandlingHistory.Status.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.Concern} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{OutputParamName.Status} AS {Tables.HandlingHistory.Status.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.Status} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
-    {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
-    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-    SELECT
-	  [{Tables.Tag.TagValue.Name}]
-	FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
-
-    SELECT TOP 1
-        @{OutputParamName.Status} = h1.[{Tables.HandlingHistory.Status.Name}]
-    FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht
-    INNER JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h1
-        ON h1.[{Tables.HandlingHistory.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
-    LEFT OUTER JOIN [{streamName}].[{Tables.HandlingHistory.Table.Name}] h2
-        ON h1.[{Tables.HandlingHistory.RecordId.Name}] = h2.[{Tables.HandlingHistory.RecordId.Name}] AND h1.[{Tables.HandlingHistory.Id.Name}] < h2.[{Tables.HandlingHistory.Id.Name}]
-    LEFT JOIN [{streamName}].[{Tables.CompositeHandlingStatusSortOrder.Table.Name}] s
-        ON s.[{Tables.CompositeHandlingStatusSortOrder.Status.Name}] = h1.[{Tables.HandlingHistory.Status.Name}]
-    WHERE h2.[{Tables.HandlingHistory.Id.Name}] IS NULL AND h1.[{Tables.HandlingHistory.Concern.Name}] = @{InputParamName.Concern}
-        AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
-    ORDER BY s.[{Tables.CompositeHandlingStatusSortOrder.SortOrder.Name}] DESC
-
-    IF (@{OutputParamName.Status} IS NULL)
+    DECLARE @{blockedStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+	SELECT TOP 1 @{blockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
+	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingConcern}'
+    IF (@{blockedStatus} = '{HandlingStatus.Blocked}')
     BEGIN
-        SET @{OutputParamName.Status} = '{HandlingStatus.None}'
+        -- Blocked trumps everything...
+        SET @{OutputParamName.Status} = '{HandlingStatus.Blocked}'
+    END
+    ELSE
+        BEGIN
+        {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
+        INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
+        SELECT
+	      [{Tables.Tag.TagValue.Name}]
+	    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
+
+        SELECT TOP 1
+            @{OutputParamName.Status} = h1.[{Tables.Handling.Status.Name}]
+        FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht
+        INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+            ON h1.[{Tables.Handling.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
+        LEFT OUTER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h2
+            ON h1.[{Tables.Handling.RecordId.Name}] = h2.[{Tables.Handling.RecordId.Name}] AND h1.[{Tables.Handling.Id.Name}] < h2.[{Tables.Handling.Id.Name}]
+        LEFT JOIN [{streamName}].[{Tables.CompositeHandlingStatusSortOrder.Table.Name}] s
+            ON s.[{Tables.CompositeHandlingStatusSortOrder.Status.Name}] = h1.[{Tables.Handling.Status.Name}]
+        WHERE h2.[{Tables.Handling.Id.Name}] IS NULL AND h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+            AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
+        ORDER BY s.[{Tables.CompositeHandlingStatusSortOrder.SortOrder.Name}] DESC
+
+        IF (@{OutputParamName.Status} IS NULL)
+        BEGIN
+            SET @{OutputParamName.Status} = '{HandlingStatus.None}'
+        END
     END
 END");
                 }

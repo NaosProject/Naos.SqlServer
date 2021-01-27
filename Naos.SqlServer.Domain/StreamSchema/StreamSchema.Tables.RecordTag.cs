@@ -89,12 +89,17 @@ CREATE TABLE [{streamName}].[{nameof(RecordTag)}](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
-
 ALTER TABLE [{streamName}].[{nameof(RecordTag)}] WITH NOCHECK ADD CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Record)}] FOREIGN KEY([{nameof(RecordId)}])
 REFERENCES [{streamName}].[{nameof(Record)}] ([{nameof(Record.Id)}])
 
+-- Relax to NoCheck
+ALTER TABLE [{streamName}].[{nameof(RecordTag)}] NOCHECK CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Record)}] 
+
 ALTER TABLE [{streamName}].[{nameof(RecordTag)}] WITH NOCHECK ADD CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Tag)}] FOREIGN KEY([{nameof(TagId)}])
 REFERENCES [{streamName}].[{nameof(Tag)}] ([{nameof(Tag.Id)}])
+
+-- Relax to NoCheck
+ALTER TABLE [{streamName}].[{nameof(RecordTag)}] NOCHECK CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Tag)}] 
 
 SET ANSI_PADDING ON
 
