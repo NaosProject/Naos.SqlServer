@@ -74,57 +74,70 @@ namespace Naos.SqlServer.Protocol.Client
         public override void Execute(
             BlockRecordHandlingOp operation)
         {
-            var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
-            var sqlServerLocator = locator as SqlServerLocator
-                                ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(
-                operation.Tags == null
-                    ? new Dictionary<string, string>()
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
-            var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
-                this.Name,
-                Concerns.RecordHandlingConcern,
-                operation.Details,
-                Concerns.GlobalBlockingRecordId,
-                HandlingStatus.Blocked,
-                typeof(HandlingStatus).GetAllPossibleEnumValues()
-                                      .Cast<HandlingStatus>()
-                                      .Except(
-                                           new[]
-                                           {
-                                               HandlingStatus.Blocked,
-                                           })
-                                      .ToList(),
-                tagIdsXml);
+            var locators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
+            foreach (var locator in locators)
+            {
+                var sqlServerLocator = locator as SqlServerLocator
+                                    ?? throw new NotSupportedException(
+                                           Invariant(
+                                               $"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
+                var tagIdsXml = TagConversionTool.GetTagsXmlString(
+                    operation.Tags == null
+                        ? new Dictionary<string, string>()
+                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    Concerns.RecordHandlingConcern,
+                    operation.Details,
+                    Concerns.GlobalBlockingRecordId,
+                    HandlingStatus.Blocked,
+                    typeof(HandlingStatus).GetAllPossibleEnumValues()
+                                          .Cast<HandlingStatus>()
+                                          .Except(
+                                               new[]
+                                               {
+                                                   HandlingStatus.Blocked,
+                                               })
+                                          .ToList(),
+                    tagIdsXml);
 
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
+                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+                var sprocResult = sqlProtocol.Execute(storedProcOp);
+                sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
+            }
         }
 
         /// <inheritdoc />
         public override void Execute(
             CancelBlockedRecordHandlingOp operation)
         {
-            var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
-            var sqlServerLocator = locator as SqlServerLocator
-                                ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(
-                operation.Tags == null
-                    ? new Dictionary<string, string>()
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
-            var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
-                this.Name,
-                Concerns.RecordHandlingConcern,
-                operation.Details,
-                Concerns.GlobalBlockingRecordId,
-                HandlingStatus.Requested,
-                new[] { HandlingStatus.Blocked },
-                tagIdsXml);
+            var locators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
+            foreach (var locator in locators)
+            {
+                var sqlServerLocator = locator as SqlServerLocator
+                                    ?? throw new NotSupportedException(
+                                           Invariant(
+                                               $"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
+                var tagIdsXml = TagConversionTool.GetTagsXmlString(
+                    operation.Tags == null
+                        ? new Dictionary<string, string>()
+                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    Concerns.RecordHandlingConcern,
+                    operation.Details,
+                    Concerns.GlobalBlockingRecordId,
+                    HandlingStatus.Requested,
+                    new[]
+                    {
+                        HandlingStatus.Blocked
+                    },
+                    tagIdsXml);
 
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
+                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+                var sprocResult = sqlProtocol.Execute(storedProcOp);
+                sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
+            }
         }
 
         /// <inheritdoc />
