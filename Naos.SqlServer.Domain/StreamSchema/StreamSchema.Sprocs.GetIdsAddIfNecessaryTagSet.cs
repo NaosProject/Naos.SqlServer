@@ -115,6 +115,7 @@ BEGIN
             (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND (n.[{Tables.Tag.TagValue.Name}] = e.[{Tables.Tag.TagValue.Name}] OR (n.[{Tables.Tag.TagValue.Name}] is null and e.[{Tables.Tag.TagValue.Name}] is null)))
     IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} t WHERE t.[{Tables.Tag.Id.Name}] IS NULL)
     BEGIN
+        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
         BEGIN TRANSACTION [{transaction}]
           BEGIN TRY
 	        INSERT INTO [{streamName}].[{Tables.Tag.Table.Name}] WITH (TABLOCKX)

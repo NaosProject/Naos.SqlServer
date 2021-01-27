@@ -90,16 +90,11 @@ CREATE TABLE [{streamName}].[{nameof(RecordTag)}](
 ) ON [PRIMARY]
 
 
-ALTER TABLE [{streamName}].[{nameof(RecordTag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Record)}] FOREIGN KEY([{nameof(RecordId)}])
+ALTER TABLE [{streamName}].[{nameof(RecordTag)}] WITH NOCHECK ADD CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Record)}] FOREIGN KEY([{nameof(RecordId)}])
 REFERENCES [{streamName}].[{nameof(Record)}] ([{nameof(Record.Id)}])
 
-ALTER TABLE [{streamName}].[{nameof(RecordTag)}] CHECK CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Record)}]
-
-
-ALTER TABLE [{streamName}].[{nameof(RecordTag)}]  WITH CHECK ADD  CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Tag)}] FOREIGN KEY([{nameof(TagId)}])
+ALTER TABLE [{streamName}].[{nameof(RecordTag)}] WITH NOCHECK ADD CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Tag)}] FOREIGN KEY([{nameof(TagId)}])
 REFERENCES [{streamName}].[{nameof(Tag)}] ([{nameof(Tag.Id)}])
-
-ALTER TABLE [{streamName}].[{nameof(RecordTag)}] CHECK CONSTRAINT [FK_{nameof(RecordTag)}_{nameof(Tag)}]
 
 SET ANSI_PADDING ON
 

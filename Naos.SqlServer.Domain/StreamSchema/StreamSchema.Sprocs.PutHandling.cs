@@ -207,6 +207,7 @@ INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
 	  [{Tables.Tag.TagValue.Name}]
 	FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
 
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
 	      DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
@@ -233,7 +234,7 @@ BEGIN TRANSACTION [{transaction}]
 			  -- For Claiming a Record we'll need to confirm another tenant has not already claimed...
 			  IF (@{InputParamName.IsUnHandledRecord} = 1)
 		      BEGIN
-		          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}]
+		          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}] WITH (TABLOCKX)
 	               (
 			        [{Tables.HandlingHistory.Concern.Name}]
 			      , [{Tables.HandlingHistory.RecordId.Name}]
