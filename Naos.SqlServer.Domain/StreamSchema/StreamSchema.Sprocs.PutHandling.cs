@@ -187,7 +187,7 @@ SELECT TOP 1 @{currentStatus} = {Tables.HandlingHistory.Status.Name}
 
 IF @{currentStatus} IS NULL
 BEGIN
-    SET @{currentStatus} = '{HandlingStatus.Requested}'
+    SET @{currentStatus} = '{HandlingStatus.None}'
 END
 --TODO: should we guard against this changing while inserting? (exclusive table lock for a time to live, et al)
 DECLARE @{currentStatusAccepted} BIT
@@ -196,9 +196,22 @@ SELECT @{currentStatusAccepted} = 1 FROM
 [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.AcceptableCurrentStatusesXml}) t
 WHERE [{Tables.Tag.TagValue.Name}] = @{currentStatus}
 
-IF (@{currentStatusAccepted} = 0)
+IF (@{currentStatusAccepted} IS NULL)
 BEGIN
-      SET @{OutputParamName.Id} = NULL
+	IF (@IsClaimingRecordId = 1)
+	BEGIN
+		-- If this is an attempt to claim a record it might have an invalid status due to the record
+		--      already being claimed...this should only be invoked by {Sprocs.TryHandleRecord.Name} which
+		--      filters to valid statuses only.
+		SET @{OutputParamName.Id} = NULL
+	END
+	ELSE
+	BEGIN
+		-- In the event we are NOT claiming a record then this is being considered an invalid state change...
+		DECLARE @NotValidStatusErrorMessage varchar(100)
+		SET @NotValidStatusErrorMessage =  CONCAT('Invalid current status: ', @CurrentStatus);
+		THROW 60000, @NotValidStatusErrorMessage, 1
+	END
 END
 
 {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
@@ -264,7 +277,7 @@ BEGIN TRANSACTION [{transaction}]
 			   END
 			   ELSE
 			   BEGIN
-		          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}]
+		          INSERT INTO [{streamName}].[{Tables.HandlingHistory.Table.Name}] WITH (TABLOCKX)
 	               (
 			        [{Tables.HandlingHistory.Concern.Name}]
 			      , [{Tables.HandlingHistory.RecordId.Name}]

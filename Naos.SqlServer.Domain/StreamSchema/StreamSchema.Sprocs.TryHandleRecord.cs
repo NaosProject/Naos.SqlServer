@@ -238,11 +238,15 @@ namespace Naos.SqlServer.Domain
                     const string blockedStatus = "BlockedStatus";
                     const string isUnhandledRecord = "IsUnhandledRecord";
                     const string unionedIfNecessaryTagIdsXml = "UnionedIfNecessaryTagIdsXml";
-                    string acceptableNoneStatusXml = TagConversionTool.GetTagsXmlString(
-                        new Dictionary<string, string>
+                    string acceptableStatusesXml = TagConversionTool.GetTagsXmlString(
+                        new[]
                         {
-                            { 1.ToString(CultureInfo.InvariantCulture), HandlingStatus.None.ToString() },
-                        });
+                            HandlingStatus.None.ToString(),
+                            HandlingStatus.Requested.ToString(),
+                            HandlingStatus.SelfCanceledRunning.ToString(),
+                            HandlingStatus.CanceledRunning.ToString(),
+                            HandlingStatus.RetryFailed.ToString(),
+                        }.ToOrdinalDictionary());
 
                     var result = FormattableString.Invariant(
                         $@"
@@ -472,7 +476,7 @@ BEGIN
 			@{PutHandling.InputParamName.Details} = @{InputParamName.Details}, 
 			@{PutHandling.InputParamName.RecordId} = @{recordIdToAttemptToClaim}, 
 			@{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}', 
-			@{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '{acceptableNoneStatusXml}', 
+			@{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '{acceptableStatusesXml}', 
 			@{PutHandling.InputParamName.TagIdsXml} = @{unionedIfNecessaryTagIdsXml}, 
 			@{PutHandling.InputParamName.IsUnHandledRecord} = @{isUnhandledRecord},
 			@{PutHandling.InputParamName.IsClaimingRecordId} = 1, 

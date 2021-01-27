@@ -204,6 +204,7 @@ namespace Naos.SqlServer.Protocol.Client
             FailRunningHandleRecordExecutionOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
+
             var tagIdsXml = TagConversionTool.GetTagsXmlString(
                 operation.Tags == null
                     ? new Dictionary<string, string>()
