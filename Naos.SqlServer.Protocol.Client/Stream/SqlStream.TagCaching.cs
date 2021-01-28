@@ -124,20 +124,21 @@ namespace Naos.SqlServer.Protocol.Client
 
                 var storedProcWithVersionOp = StreamSchema.Sprocs.GetTagSetFromIds.BuildExecuteStoredProcedureOp(
                     this.Name,
-                    tagIds.Select(long.Parse).ToList());
+                    remaining.ToList());
                 var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
                 var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValue<string>();
-                var additionalTags = TagConversionTool.GetTagsFromXmlString(tagsXml);
-                var additional = additionalTags.OrderBy(_ => _.Key).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
+                var additional = TagConversionTool.GetTagsFromXmlString(tagsXml).ToList();
 
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 
+                // this is the sort order of sproc return.
+                var remainingSortedOnId = remaining.OrderBy(_ => _).ToList();
                 for (int idx = 0;
                     idx < remaining.Count;
                     idx++)
                 {
-                    this.tagKeyValueToIdMap.TryAdd(additional[idx], remaining[idx]);
-                    this.tagIdToKeyValueMap.TryAdd(remaining[idx], additional[idx]);
+                    this.tagKeyValueToIdMap.TryAdd(additional[idx], remainingSortedOnId[idx]);
+                    this.tagIdToKeyValueMap.TryAdd(remainingSortedOnId[idx], additional[idx]);
                     result.Add(additional[idx].Key, additional[idx].Value);
                 }
             }
