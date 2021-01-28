@@ -56,10 +56,10 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <param name="tagsAsXml">The tags in XML as a string.</param>
         /// <returns><see cref="IReadOnlyDictionary{TKey,TValue}"/> from the provided XML.</returns>
-        public static IReadOnlyDictionary<string, string> GetTagsFromXmlString(
+        public static IReadOnlyList<KeyValuePair<string, string>> GetTagsFromXmlString(
             string tagsAsXml)
         {
-            var result = new Dictionary<string, string>();
+            var result = new List<KeyValuePair<string, string>>();
 
             if (string.IsNullOrWhiteSpace(tagsAsXml))
             {
@@ -80,7 +80,7 @@ namespace Naos.SqlServer.Domain
                     value = null;
                 }
 
-                result.Add(key, value);
+                result.Add(new KeyValuePair<string, string>(key, value));
             }
 
             return result;

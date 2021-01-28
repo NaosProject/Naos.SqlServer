@@ -62,8 +62,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             if (remaining.Any())
             {
-                var orderedRemaining = remaining.OrderBy(_ => _.Key).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
-                var remainingTags = orderedRemaining.ToDictionary(k => k.Key, v => v.Value);
+                var remainingTags = remaining.ToDictionary(k => k.Key, v => v.Value);
                 var storedProcWithVersionOp = StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.BuildExecuteStoredProcedureOp(
                     this.Name,
                     remainingTags);
@@ -72,8 +71,11 @@ namespace Naos.SqlServer.Protocol.Client
                                .OutputParameters[nameof(StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.OutputParamName.TagIdsXml)]
                                .GetValue<string>();
                 var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-                var additional = tagIds.Values.Select(long.Parse).ToList();
+                var additional = tagIds.Select(_ => long.Parse(_.Value)).ToList();
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
+
+                // this is the sort order of the output of the sproc.
+                var orderedRemaining = remaining.OrderBy(_ => _.Key).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
                 for (int idx = 0;
                     idx < orderedRemaining.Count;
                     idx++)
@@ -94,18 +96,17 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="locator">The locator.</param>
         /// <param name="tagIds">The tag identifiers.</param>
         /// <returns>IReadOnlyDictionary&lt;System.String, System.String&gt;.</returns>
-        public IReadOnlyDictionary<string, string> GetTagsByIds(SqlServerLocator locator, IReadOnlyCollection<string> tagIds)
+        public IReadOnlyDictionary<string, string> GetTagsByIds(SqlServerLocator locator, IReadOnlyCollection<long> tagIds)
         {
             if (tagIds == null || !tagIds.Any())
             {
                 return new Dictionary<string, string>();
             }
 
-            var tagIdsLong = tagIds.Select(long.Parse).ToList();
             var result = new Dictionary<string, string>();
             var remaining = new List<long>();
 
-            foreach (var id in tagIdsLong)
+            foreach (var id in tagIds)
             {
                 var found = this.tagIdToKeyValueMap.TryGetValue(id, out var keyValuePair);
                 if (found)

@@ -115,8 +115,8 @@ BEGIN
 	    {Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
 	    ISNULL({Tables.Tag.TagValue.Name},'{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
     FROM [{streamName}].[{Tables.Tag.Table.Name}]
-    ORDER BY [{Tables.Tag.Id.Name}]
     WHERE [{Tables.Tag.Id.Name}] IN (SELECT {Tables.Tag.Id.Name} FROM @{tagIdsTable})
+    ORDER BY [{Tables.Tag.Id.Name}]
     FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 
 END");
