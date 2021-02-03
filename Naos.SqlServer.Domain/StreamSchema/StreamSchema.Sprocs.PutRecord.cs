@@ -75,6 +75,11 @@ namespace Naos.SqlServer.Domain
                     StringSerializedObject,
 
                     /// <summary>
+                    /// The serialized object bytes.
+                    /// </summary>
+                    BinarySerializedObject,
+
+                    /// <summary>
                     /// The object's date time UTC if available.
                     /// </summary>
                     ObjectDateTimeUtc,
@@ -120,6 +125,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="objectType">The object type.</param>
                 /// <param name="serializedObjectId">The serialized object identifier.</param>
                 /// <param name="serializedObjectString">The serialized object as a string (should have data IFF the serializer is set to SerializationFormat.String, otherwise null).</param>
+                /// <param name="serializedObjectBytes">The serialized object as a byte array (should have data IFF the serializer is set to SerializationFormat.Binary, otherwise null).</param>
                 /// <param name="objectDateTimeUtc">The date time of the object if exists.</param>
                 /// <param name="tagIdsXml">The tags in xml structure.</param>
                 /// <param name="existingRecordEncounteredStrategy">Existing record encountered strategy.</param>
@@ -132,6 +138,7 @@ namespace Naos.SqlServer.Domain
                     IdentifiedType objectType,
                     string serializedObjectId,
                     string serializedObjectString,
+                    byte[] serializedObjectBytes,
                     DateTime? objectDateTimeUtc,
                     string tagIdsXml,
                     ExistingRecordEncounteredStrategy existingRecordEncounteredStrategy,
@@ -154,6 +161,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, serializedObjectId),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType, serializedObjectString),
+                                         new SqlInputParameterRepresentation<byte[]>(nameof(InputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.DataType, serializedObjectBytes),
                                          new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.DataType, objectDateTimeUtc),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), Tables.Record.TagIdsXml.DataType, tagIdsXml),
                                          new SqlInputParameterRepresentation<ExistingRecordEncounteredStrategy>(nameof(InputParamName.ExistingRecordEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordEncounteredStrategy),
@@ -189,6 +197,7 @@ CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
 , @{InputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TagIdsXml} AS {Tables.Record.TagIdsXml.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ExistingRecordEncounteredStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
@@ -238,14 +247,14 @@ BEGIN
 							    @{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
 							AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
 							AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
-							AND [{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject}
+							AND ([{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject} OR [{Tables.Record.BinarySerializedObject.Name}] = @{InputParamName.BinarySerializedObject})
 						)
 						OR
 						(
 								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
 							AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
 							AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
-							AND [{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject}
+							AND ([{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject} OR [{Tables.Record.BinarySerializedObject.Name}] = @{InputParamName.BinarySerializedObject})
 						)
 					)
 				)
@@ -275,6 +284,7 @@ BEGIN
 			, [{nameof(Tables.Record.SerializerRepresentationId)}]
 			, [{nameof(Tables.Record.StringSerializedId)}]
 			, [{nameof(Tables.Record.StringSerializedObject)}]
+			, [{nameof(Tables.Record.BinarySerializedObject)}]
 			, [{nameof(Tables.Record.TagIdsXml)}]
 			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
 			, [{nameof(Tables.Record.RecordCreatedUtc)}]
@@ -286,6 +296,7 @@ BEGIN
 			, @{InputParamName.SerializerRepresentationId}
 			, @{InputParamName.StringSerializedId}
 			, @{InputParamName.StringSerializedObject}
+			, @{InputParamName.BinarySerializedObject}
 			, @{InputParamName.TagIdsXml}
 			, @{InputParamName.ObjectDateTimeUtc}
 			, @{recordCreatedUtc}

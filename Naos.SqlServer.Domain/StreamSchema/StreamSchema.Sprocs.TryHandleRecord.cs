@@ -114,29 +114,34 @@ namespace Naos.SqlServer.Domain
                     InternalRecordId,
 
                     /// <summary>
-                    /// The serialization configuration assembly qualified name without version
+                    /// The serialization configuration assembly qualified name without version.
                     /// </summary>
                     SerializerRepresentationId,
 
                     /// <summary>
-                    /// The identifier assembly qualified name with version
+                    /// The identifier assembly qualified name with version.
                     /// </summary>
                     IdentifierTypeWithVersionId,
 
                     /// <summary>
-                    /// The object assembly qualified name with version
+                    /// The object assembly qualified name with version.
                     /// </summary>
                     ObjectTypeWithVersionId,
 
                     /// <summary>
-                    /// The serialized object identifier
+                    /// The serialized object identifier.
                     /// </summary>
                     StringSerializedId,
 
                     /// <summary>
-                    /// The serialized object string
+                    /// The serialized object string.
                     /// </summary>
                     StringSerializedObject,
+
+                    /// <summary>
+                    /// The serialized object as bytes.
+                    /// </summary>
+                    BinarySerializedObject,
 
                     /// <summary>
                     /// The record's date and time.
@@ -203,6 +208,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType),
+                                         new SqlOutputParameterRepresentation<byte[]>(nameof(OutputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.DataType),
                                          new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
                                          new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), Tables.Record.TagIdsXml.DataType),
@@ -268,6 +274,7 @@ CREATE PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
 , @{OutputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
@@ -502,6 +509,7 @@ BEGIN
 		 , @{OutputParamName.ObjectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
 		 , @{OutputParamName.StringSerializedId} = [{Tables.Record.StringSerializedId.Name}]
 		 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
+		 , @{OutputParamName.BinarySerializedObject} = [{Tables.Record.BinarySerializedObject.Name}]
 		 , @{OutputParamName.TagIdsXml} = [{Tables.Record.TagIdsXml.Name}]
 		 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]
 		 , @{OutputParamName.ObjectDateTime} = [{Tables.Record.ObjectDateTimeUtc.Name}]
@@ -517,7 +525,6 @@ BEGIN
 		SET @{OutputParamName.IdentifierTypeWithVersionId} = {Tables.TypeWithVersion.NullId}
 		SET @{OutputParamName.ObjectTypeWithVersionId} = {Tables.TypeWithVersion.NullId}
 		SET @{OutputParamName.StringSerializedId} = 'Fake'
-		SET @{OutputParamName.StringSerializedObject} = 'Fake'
 		SET @{OutputParamName.ObjectDateTime} = GETUTCDATE()
 		SET @{OutputParamName.RecordDateTime} = GETUTCDATE()
 		SET @{OutputParamName.TagIdsXml} = null

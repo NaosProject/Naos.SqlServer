@@ -9,6 +9,7 @@ namespace Naos.SqlServer.Protocol.Client
     using System;
     using System.Linq;
     using Naos.Database.Domain;
+    using Naos.Database.Domain.DescribedSerialization;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Serialization;
     using static System.FormattableString;
@@ -55,6 +56,7 @@ namespace Naos.SqlServer.Protocol.Client
             int objectTypeWithVersionId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ObjectTypeWithVersionId)].GetValue<int>();
             string stringSerializedId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.StringSerializedId)].GetValue<string>();
             string stringSerializedObject = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.StringSerializedObject)].GetValue<string>();
+            byte[] binarySerializedObject = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.BinarySerializedObject)].GetValue<byte[]>();
             DateTime recordTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.RecordDateTime)].GetValue<DateTime>();
             DateTime? objectTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ObjectDateTime)].GetValue<DateTime?>();
             string tagIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.TagIdsXml)].GetValue<string>();
@@ -94,7 +96,18 @@ namespace Naos.SqlServer.Protocol.Client
                 recordTimestamp,
                 objectTimestamp);
 
-            var payload = new DescribedSerialization(objectType.WithVersion, stringSerializedObject, identifiedSerializerRepresentation.SerializerRepresentation, identifiedSerializerRepresentation.SerializationFormat);
+            DescribedSerializationBase payload;
+            switch (identifiedSerializerRepresentation.SerializationFormat)
+            {
+                case SerializationFormat.Binary:
+                    payload = new BinaryDescribedSerialization(objectType.WithVersion, identifiedSerializerRepresentation.SerializerRepresentation, binarySerializedObject);
+                    break;
+                case SerializationFormat.String:
+                    payload = new StringDescribedSerialization(objectType.WithVersion, identifiedSerializerRepresentation.SerializerRepresentation, stringSerializedObject);
+                    break;
+                default:
+                    throw new NotSupportedException(Invariant($"{nameof(SerializationFormat)} {identifiedSerializerRepresentation.SerializationFormat} is not supported."));
+            }
 
             var result = new StreamRecord(internalRecordId, metadata, payload);
             return result;

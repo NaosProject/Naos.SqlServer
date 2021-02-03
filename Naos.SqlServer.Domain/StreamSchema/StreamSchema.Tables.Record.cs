@@ -78,6 +78,12 @@ namespace Naos.SqlServer.Domain
                 public static ColumnRepresentation StringSerializedObject => new ColumnRepresentation(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
+                /// Gets the binary serialized object string.
+                /// </summary>
+                /// <value>The binary serialized object string.</value>
+                public static ColumnRepresentation BinarySerializedObject => new ColumnRepresentation(nameof(BinarySerializedObject), new BinarySqlDataTypeRepresentation(BinarySqlDataTypeRepresentation.MaxLengthConstant));
+
+                /// <summary>
                 /// Gets the tag identifiers as XML.
                 /// </summary>
                 /// <value>The tag identifiers as XML.</value>
@@ -138,6 +144,7 @@ CREATE TABLE [{streamName}].[{nameof(Record)}](
 	[{nameof(SerializerRepresentationId)}] {SerializerRepresentationId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(StringSerializedId)}] {StringSerializedId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(StringSerializedObject)}] {StringSerializedObject.DataType.DeclarationInSqlSyntax} NULL,
+	[{nameof(BinarySerializedObject)}] {BinarySerializedObject.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(TagIdsXml)}] {TagIdsXml.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(ObjectDateTimeUtc)}] {ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,

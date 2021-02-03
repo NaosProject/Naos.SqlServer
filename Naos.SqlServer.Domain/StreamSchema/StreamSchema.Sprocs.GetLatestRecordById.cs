@@ -93,24 +93,29 @@ namespace Naos.SqlServer.Domain
                     InternalRecordId,
 
                     /// <summary>
-                    /// The serialization kind
+                    /// The serialization kind.
                     /// </summary>
                     SerializerRepresentationId,
 
                     /// <summary>
-                    /// The identifier assembly qualified name with version
+                    /// The identifier assembly qualified name with version.
                     /// </summary>
                     IdentifierTypeWithVersionId,
 
                     /// <summary>
-                    /// The object assembly qualified name with version
+                    /// The object assembly qualified name with version.
                     /// </summary>
                     ObjectTypeWithVersionId,
 
                     /// <summary>
-                    /// The serialized object string
+                    /// The serialized object string.
                     /// </summary>
                     StringSerializedObject,
+
+                    /// <summary>
+                    /// The serialized object string.
+                    /// </summary>
+                    BinarySerializedObject,
 
                     /// <summary>
                     /// The record's date and time.
@@ -162,6 +167,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType),
+                                         new SqlOutputParameterRepresentation<byte[]>(nameof(OutputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.DataType),
                                          new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
                                          new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), Tables.Record.TagIdsXml.DataType),
@@ -207,6 +213,7 @@ CREATE PROCEDURE [{streamName}].[{GetLatestRecordById.Name}](
 , @{OutputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.TagIdsXml} AS {Tables.Record.TagIdsXml.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -218,6 +225,7 @@ BEGIN
 	 , @{OutputParamName.IdentifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
 	 , @{OutputParamName.ObjectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
 	 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
+	 , @{OutputParamName.BinarySerializedObject} = [{Tables.Record.BinarySerializedObject.Name}]
 	 , @{OutputParamName.InternalRecordId} = [{Tables.Record.Id.Name}]
 	 , @{OutputParamName.TagIdsXml} = [{Tables.Record.TagIdsXml.Name}]
 	 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]

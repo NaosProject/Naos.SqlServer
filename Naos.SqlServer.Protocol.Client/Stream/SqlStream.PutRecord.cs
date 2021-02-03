@@ -18,7 +18,8 @@ namespace Naos.SqlServer.Protocol.Client
             PutRecordOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
-            var serializerRepresentation = this.GetIdAddIfNecessarySerializerRepresentation(sqlServerLocator, operation.Payload.SerializerRepresentation, operation.Payload.SerializationFormat);
+            var payloadSerializationFormat = operation.Payload.GetSerializationFormat();
+            var serializerRepresentation = this.GetIdAddIfNecessarySerializerRepresentation(sqlServerLocator, operation.Payload.SerializerRepresentation, payloadSerializationFormat);
             var identifierTypeIds = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.Metadata.TypeRepresentationOfId);
             var objectTypeIds = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.Metadata.TypeRepresentationOfObject);
             var tagIds = this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Metadata.Tags);
@@ -31,7 +32,8 @@ namespace Naos.SqlServer.Protocol.Client
                 identifierTypeIds,
                 objectTypeIds,
                 operation.Metadata.StringSerializedId,
-                operation.Payload.SerializedPayload,
+                payloadSerializationFormat == SerializationFormat.String ? operation.Payload.GetSerializedPayloadAsEncodedString() : null,
+                payloadSerializationFormat == SerializationFormat.Binary ? operation.Payload.GetSerializedPayloadAsEncodedBytes() : null,
                 operation.Metadata.ObjectTimestampUtc,
                 tagIdsXml,
                 operation.ExistingRecordEncounteredStrategy,
@@ -59,7 +61,7 @@ namespace Naos.SqlServer.Protocol.Client
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and contents '{operation.Payload.SerializedPayload}' yet found  {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} '{existingRecordId}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and contents '{operation.Payload}' yet found  {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} '{existingRecordId}'."));
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById:
                         return StreamSchema.Tables.Record.NullId;
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType:
