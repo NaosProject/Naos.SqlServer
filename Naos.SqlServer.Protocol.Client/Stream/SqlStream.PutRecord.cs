@@ -7,14 +7,17 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Linq;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.Collection.Recipes;
+    using OBeautifulCode.Serialization;
     using static System.FormattableString;
 
     public partial class SqlStream
     {
         /// <inheritdoc />
-        public override long Execute(
+        public override PutRecordResult Execute(
             PutRecordOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
@@ -37,37 +40,54 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.Metadata.ObjectTimestampUtc,
                 tagIdsXml,
                 operation.ExistingRecordEncounteredStrategy,
+                operation.RecordRetentionCount,
                 operation.TypeVersionMatchStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-            var existingRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId)].GetValue<long?>();
+            var newRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.Id)].GetValue<long?>();
+            var existingRecordIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordIdsXml)].GetValue<string>();
+            var prunedRecordIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.PrunedRecordIdsXml)].GetValue<string>();
 
-            if (existingRecordId != null)
+            var existingRecordIds = TagConversionTool.GetTagsFromXmlString(existingRecordIdsXml).Select(_ => long.Parse(_.Value)).ToList();
+            var prunedRecordIds = TagConversionTool.GetTagsFromXmlString(prunedRecordIdsXml).Select(_ => long.Parse(_.Value)).ToList();
+
+            if (prunedRecordIds.Any() && !existingRecordIds.Any())
+            {
+                throw new InvalidOperationException(Invariant($"There were '{nameof(prunedRecordIds)}' but no '{nameof(existingRecordIds)}', this scenario should not occur, it is expected that the records pruned were in the existing set; pruned: '{prunedRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
+            }
+
+            if (existingRecordIds.Any())
             {
                 switch (operation.ExistingRecordEncounteredStrategy)
                 {
                     case ExistingRecordEncounteredStrategy.None:
-                        throw new InvalidOperationException(Invariant($"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; did not expect an {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} value but got '{existingRecordId}'."));
+                        throw new InvalidOperationException(Invariant($"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; did not expect any '{nameof(existingRecordIds)}' value but got '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundById:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' yet found  {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} '{existingRecordId}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' yet found  '{nameof(existingRecordIds)}' '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' yet found  {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} '{existingRecordId}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and contents '{operation.Payload}' yet found  {StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordId} '{existingRecordId}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and contents '{operation.Payload}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById:
-                        return StreamSchema.Tables.Record.NullId;
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType:
-                        return StreamSchema.Tables.Record.NullId;
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent:
-                        return StreamSchema.Tables.Record.NullId;
+                        if (newRecordId != null)
+                        {
+                            throw new InvalidOperationException(Invariant($"Expect {nameof(ExistingRecordEncounteredStrategy)} of {operation.ExistingRecordEncounteredStrategy} to not write when there are existing ids found: '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'; new record id: '{newRecordId}'."));
+                        }
+
+                        return new PutRecordResult(null, existingRecordIds, prunedRecordIds);
+                    case ExistingRecordEncounteredStrategy.PruneIfFoundById:
+                    case ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType:
+                        return new PutRecordResult(newRecordId, existingRecordIds, prunedRecordIds);
                     default:
                         throw new NotSupportedException(
                             Invariant($"{nameof(ExistingRecordEncounteredStrategy)} {operation.ExistingRecordEncounteredStrategy} is not supported."));
@@ -75,8 +95,7 @@ namespace Naos.SqlServer.Protocol.Client
             }
             else
             {
-                var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.Id)].GetValue<long>();
-                return result;
+                return new PutRecordResult(newRecordId);
             }
         }
     }

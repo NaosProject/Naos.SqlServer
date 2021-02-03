@@ -95,6 +95,11 @@ namespace Naos.SqlServer.Domain
                     ExistingRecordEncounteredStrategy,
 
                     /// <summary>
+                    /// The number of records to keep if using a pruning <see cref="ExistingRecordEncounteredStrategy"/>.
+                    /// </summary>
+                    RecordRetentionCount,
+
+                    /// <summary>
                     /// The type version match strategy.
                     /// </summary>
                     TypeVersionMatchStrategy,
@@ -111,9 +116,14 @@ namespace Naos.SqlServer.Domain
                     Id,
 
                     /// <summary>
-                    /// The existing record identifier (if any dependent on strategy).
+                    /// The existing record identifiers (if any dependent on strategy).
                     /// </summary>
-                    ExistingRecordId,
+                    ExistingRecordIdsXml,
+
+                    /// <summary>
+                    /// The pruned record identifiers (if any dependent on strategy).
+                    /// </summary>
+                    PrunedRecordIdsXml,
                 }
 
                 /// <summary>
@@ -129,6 +139,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="objectDateTimeUtc">The date time of the object if exists.</param>
                 /// <param name="tagIdsXml">The tags in xml structure.</param>
                 /// <param name="existingRecordEncounteredStrategy">Existing record encountered strategy.</param>
+                /// <param name="recordRetentionCount">Number of records to keep if using a pruning <paramref name="existingRecordEncounteredStrategy"/>.</param>
                 /// <param name="typeVersionMatchStrategy">Type version match strategy.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
@@ -142,6 +153,7 @@ namespace Naos.SqlServer.Domain
                     DateTime? objectDateTimeUtc,
                     string tagIdsXml,
                     ExistingRecordEncounteredStrategy existingRecordEncounteredStrategy,
+                    int? recordRetentionCount,
                     TypeVersionMatchStrategy typeVersionMatchStrategy)
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(PutRecord)}");
@@ -165,9 +177,11 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.DataType, objectDateTimeUtc),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), Tables.Record.TagIdsXml.DataType, tagIdsXml),
                                          new SqlInputParameterRepresentation<ExistingRecordEncounteredStrategy>(nameof(InputParamName.ExistingRecordEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordEncounteredStrategy),
+                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.RecordRetentionCount), new IntSqlDataTypeRepresentation(), recordRetentionCount),
                                          new SqlInputParameterRepresentation<TypeVersionMatchStrategy>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy),
-                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
-                                         new SqlOutputParameterRepresentation<long?>(nameof(OutputParamName.ExistingRecordId), Tables.Record.Id.DataType),
+                                         new SqlOutputParameterRepresentation<long?>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ExistingRecordIdsXml), new XmlSqlDataTypeRepresentation()),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.PrunedRecordIdsXml), new XmlSqlDataTypeRepresentation()),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -186,7 +200,11 @@ namespace Naos.SqlServer.Domain
                 {
                     const string recordCreatedUtc = "RecordCreatedUtc";
                     const string tagIdsTable = "TagIdsTable";
+                    const string existingIdsTable = "ExistingIdsTable";
+                    const string existingIdsCount = "ExistingIdsCount";
+                    const string prunedIdsTable = "PrunedIdsTable";
                     var transaction = Invariant($"{nameof(PutRecord)}Transaction");
+                    var pruneTransaction = Invariant($"PruneTransaction");
                     var result = FormattableString.Invariant(
                         $@"
 CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
@@ -201,28 +219,33 @@ CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
 , @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TagIdsXml} AS {Tables.Record.TagIdsXml.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ExistingRecordEncounteredStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+, @{InputParamName.RecordRetentionCount} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ExistingRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.ExistingRecordIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.PrunedRecordIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
     -- If two actors try to both insert for the same ID with the '{nameof(ExistingRecordEncounteredStrategy)}'
 	--	   set to e.g. {ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}; they could both
 	--     write the same payload; this does work in a single actor re-entrant scenario and is the expected usage.
+	{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(existingIdsTable)}
+	{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(prunedIdsTable)}
 	IF (@{InputParamName.ExistingRecordEncounteredStrategy} <> '{ExistingRecordEncounteredStrategy.None}')
 	BEGIN
-	    SELECT @{OutputParamName.ExistingRecordId} = [{Tables.Record.Id.Name}] FROM [{streamName}].[{Tables.Record.Table.Name}]
+		INSERT INTO @{existingIdsTable}
+	    SELECT [{Tables.Record.Id.Name}] FROM [{streamName}].[{Tables.Record.Table.Name}]
 		WHERE				
 			([{Tables.Record.StringSerializedId.Name}] = @{InputParamName.StringSerializedId})
 			AND
 			(
 				(
-					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundById}')
+					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundById}')
 				)
 				OR
 				(
-					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType}')
+					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType}')
 					AND
 					(
 						(
@@ -260,11 +283,17 @@ BEGIN
 				)
 			)
 	END
-	IF (@{OutputParamName.ExistingRecordId} IS NOT NULL)
+
+	IF EXISTS (SELECT TOP 1 * FROM @{existingIdsTable})
 	BEGIN
-		SET @{OutputParamName.Id} = {Tables.Record.NullId}
+        SELECT @{OutputParamName.ExistingRecordIdsXml} = (SELECT
+              ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+		    , [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
+	    FROM @{existingIdsTable}
+	    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 	END
-	ELSE
+
+	IF (@{OutputParamName.ExistingRecordIdsXml} IS NULL OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType}')
 	BEGIN
 		{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
 		INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
@@ -316,19 +345,69 @@ BEGIN
 	    COMMIT TRANSACTION [{transaction}]
 	  END TRY
 	  BEGIN CATCH
-	      DECLARE @ErrorMessage nvarchar(max), 
-	              @ErrorSeverity int, 
-	              @ErrorState int
+	      DECLARE @PruneErrorMessage nvarchar(max), 
+	              @PruneErrorSeverity int, 
+	              @PruneErrorState int
 
-	      SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+	      SELECT @PruneErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @PruneErrorSeverity = ERROR_SEVERITY(), @PruneErrorState = ERROR_STATE()
 
 	      IF (@@trancount > 0)
 	      BEGIN
 	         ROLLBACK TRANSACTION [{transaction}]
 	      END
-	    RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+	    RAISERROR (@PruneErrorMessage, @PruneErrorSeverity, @PruneErrorState)
 	  END CATCH
-	END
+	  IF (@{OutputParamName.ExistingRecordIdsXml} IS NOT NULL)
+	  BEGIN
+		-- must be a prune scenario to get here as this is checked above...
+        DECLARE @{existingIdsCount} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
+		SELECT @{existingIdsCount} = COUNT(*) FROM @{existingIdsTable}
+		IF (@{existingIdsCount} >= (@{InputParamName.RecordRetentionCount} - 1))
+		BEGIN
+			-- have records to prune
+			INSERT INTO @{prunedIdsTable}
+			SELECT TOP (@{existingIdsCount} - @{InputParamName.RecordRetentionCount} + 1)
+				[{Tables.Record.Id.Name}] FROM @{existingIdsTable}
+				ORDER BY [{Tables.Record.Id.Name}] ASC
+
+			BEGIN TRANSACTION [{pruneTransaction}]
+			BEGIN TRY
+				DELETE FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] WHERE [{Tables.HandlingTag.HandlingId.Name}]
+					IN (
+						SELECT [{Tables.Handling.Id.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
+						WHERE [{Tables.Handling.RecordId.Name}] IN (SELECT [{Tables.Tag.Id.Name}] FROM @{prunedIdsTable})
+					)
+				DELETE FROM [{streamName}].[{Tables.Handling.Table.Name}]
+						WHERE [{Tables.Handling.RecordId.Name}] IN (SELECT [{Tables.Tag.Id.Name}] FROM @{prunedIdsTable})
+				DELETE FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
+						WHERE [{Tables.RecordTag.RecordId.Name}] IN (SELECT [{Tables.Tag.Id.Name}] FROM @{prunedIdsTable})
+				DELETE FROM [{streamName}].[{Tables.Record.Table.Name}]
+						WHERE [{Tables.Record.Id.Name}] IN (SELECT [{Tables.Tag.Id.Name}] FROM @{prunedIdsTable})
+
+				COMMIT TRANSACTION [{pruneTransaction}]
+		    END TRY
+		    BEGIN CATCH
+		        DECLARE @ErrorMessage nvarchar(max), 
+		                @ErrorSeverity int, 
+		                @ErrorState int
+
+		        SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+
+		        IF (@@trancount > 0)
+		        BEGIN
+		           ROLLBACK TRANSACTION [{pruneTransaction}]
+		        END
+		      RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+		    END CATCH
+
+			SELECT @{OutputParamName.PrunedRecordIdsXml} = (SELECT
+	              ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+			    , [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
+		    FROM @{prunedIdsTable}
+		    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+		END -- have enough records to delete
+	  END -- have existing records
+	END -- need to insert a record
 END
 			");
 
