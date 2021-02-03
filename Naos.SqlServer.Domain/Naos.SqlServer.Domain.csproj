@@ -224,6 +224,7 @@
     <Compile Include="StreamSchema\StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.cs" />
     <Compile Include="StreamSchema\StreamSchema.Schema.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetCompositeHandlingStatus.cs" />
+    <Compile Include="StreamSchema\StreamSchema.Sprocs.GetStreamDetails.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetTypeFromId.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetSerializerRepresentationFromId.cs" />
     <Compile Include="StreamSchema\StreamSchema.Sprocs.GetTagSetFromIds.cs" />

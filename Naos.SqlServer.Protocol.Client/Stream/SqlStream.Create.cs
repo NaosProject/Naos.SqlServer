@@ -80,6 +80,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.CreateStreamUser.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(this.Name),
                                                       StreamSchema.BuildCreationScriptForRoles(this.Name), // must be at end to reference the items.
                                                   };
 
