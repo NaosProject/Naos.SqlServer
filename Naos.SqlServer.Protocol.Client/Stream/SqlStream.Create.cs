@@ -18,20 +18,22 @@ namespace Naos.SqlServer.Protocol.Client
     {
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the streams.")]
-        public override void Execute(
+        public override CreateStreamResult Execute(
             CreateStreamOp operation)
         {
             var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
+            var alreadyExisted = false;
+            var wasCreated = true;
             foreach (var locator in allLocators)
             {
                 if (locator is SqlServerLocator sqlLocator)
                 {
                     using (var connection = sqlLocator.OpenSqlConnection(this.DefaultConnectionTimeout))
                     {
-                        // TODO: should we use a transaction here?
                         var streamAlreadyExists = connection.HasAtLeastOneRowWhenReading(
                             Invariant($"select * from sys.schemas where name = '{this.Name}'"));
 
+                        alreadyExisted = alreadyExisted || streamAlreadyExists;
                         if (streamAlreadyExists)
                         {
                             switch (operation.ExistingStreamEncounteredStrategy)
@@ -42,6 +44,7 @@ namespace Naos.SqlServer.Protocol.Client
                                 case ExistingStreamEncounteredStrategy.Throw:
                                     throw new InvalidDataException(FormattableString.Invariant($"Stream '{this.Name}' already exists, {nameof(operation)}.{nameof(operation.ExistingStreamEncounteredStrategy)} was set to {ExistingStreamEncounteredStrategy.Throw}."));
                                 case ExistingStreamEncounteredStrategy.Skip:
+                                    wasCreated = false;
                                     break;
                             }
                         }
@@ -92,6 +95,9 @@ namespace Naos.SqlServer.Protocol.Client
                     throw SqlServerLocator.BuildInvalidLocatorException(locator.GetType());
                 }
             }
+
+            var createResult = new CreateStreamResult(alreadyExisted, wasCreated);
+            return createResult;
         }
     }
 }
