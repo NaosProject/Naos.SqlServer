@@ -7,7 +7,10 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Linq;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.Database.Domain.DescribedSerialization;
     using Naos.SqlServer.Domain;
@@ -64,7 +67,7 @@ namespace Naos.SqlServer.Protocol.Client
             var identifierType = this.GetTypeById(sqlServerLocator, identifierTypeWithVersionId, true);
             var objectType = this.GetTypeById(sqlServerLocator, objectTypeWithVersionId, true);
             var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-            var tags = this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value)).ToList());
+            var tags = this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
 
             var recordTimestamp = new DateTime(
                 recordTimestampRaw.Year,
@@ -99,6 +102,7 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         public override StreamRecord Execute(
             GetLatestRecordByIdOp operation)
         {
@@ -148,7 +152,7 @@ namespace Naos.SqlServer.Protocol.Client
             var identifierType = this.GetTypeById(sqlServerLocator, identifierTypeWithVersionId, true);
             var objectType = this.GetTypeById(sqlServerLocator, objectTypeWithVersionId, true);
             var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-            var tags = this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value)).ToList());
+            var tags = this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
 
             var recordTimestamp = new DateTime(
                 recordTimestampRaw.Year,

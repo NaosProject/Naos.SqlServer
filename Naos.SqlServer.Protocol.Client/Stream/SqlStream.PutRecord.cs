@@ -7,7 +7,10 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Linq;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Collection.Recipes;
@@ -17,6 +20,8 @@ namespace Naos.SqlServer.Protocol.Client
     public partial class SqlStream
     {
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = NaosSuppressBecause.CA1502_AvoidExcessiveComplexity_DisagreeWithAssessment)]
         public override PutRecordResult Execute(
             PutRecordOp operation)
         {
@@ -50,12 +55,12 @@ namespace Naos.SqlServer.Protocol.Client
             var existingRecordIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordIdsXml)].GetValue<string>();
             var prunedRecordIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.PrunedRecordIdsXml)].GetValue<string>();
 
-            var existingRecordIds = TagConversionTool.GetTagsFromXmlString(existingRecordIdsXml).Select(_ => long.Parse(_.Value)).ToList();
-            var prunedRecordIds = TagConversionTool.GetTagsFromXmlString(prunedRecordIdsXml).Select(_ => long.Parse(_.Value)).ToList();
+            var existingRecordIds = TagConversionTool.GetTagsFromXmlString(existingRecordIdsXml).Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
+            var prunedRecordIds = TagConversionTool.GetTagsFromXmlString(prunedRecordIdsXml).Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
 
             if (prunedRecordIds.Any() && !existingRecordIds.Any())
             {
-                throw new InvalidOperationException(Invariant($"There were '{nameof(prunedRecordIds)}' but no '{nameof(existingRecordIds)}', this scenario should not occur, it is expected that the records pruned were in the existing set; pruned: '{prunedRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
+                throw new InvalidOperationException(Invariant($"There were '{nameof(prunedRecordIds)}' but no '{nameof(existingRecordIds)}', this scenario should not occur, it is expected that the records pruned were in the existing set; pruned: '{prunedRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
             }
 
             if (existingRecordIds.Any())
@@ -63,25 +68,25 @@ namespace Naos.SqlServer.Protocol.Client
                 switch (operation.ExistingRecordEncounteredStrategy)
                 {
                     case ExistingRecordEncounteredStrategy.None:
-                        throw new InvalidOperationException(Invariant($"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; did not expect any '{nameof(existingRecordIds)}' value but got '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
+                        throw new InvalidOperationException(Invariant($"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; did not expect any '{nameof(existingRecordIds)}' value but got '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundById:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' yet found  '{nameof(existingRecordIds)}' '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' yet found  '{nameof(existingRecordIds)}' '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and contents '{operation.Payload}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and contents '{operation.Payload}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById:
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType:
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent:
                         if (newRecordId != null)
                         {
-                            throw new InvalidOperationException(Invariant($"Expect {nameof(ExistingRecordEncounteredStrategy)} of {operation.ExistingRecordEncounteredStrategy} to not write when there are existing ids found: '{existingRecordIds.Select(_ => _.ToString()).ToCsv()}'; new record id: '{newRecordId}'."));
+                            throw new InvalidOperationException(Invariant($"Expect {nameof(ExistingRecordEncounteredStrategy)} of {operation.ExistingRecordEncounteredStrategy} to not write when there are existing ids found: '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'; new record id: '{newRecordId}'."));
                         }
 
                         return new PutRecordResult(null, existingRecordIds, prunedRecordIds);

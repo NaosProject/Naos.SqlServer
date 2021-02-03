@@ -11,6 +11,7 @@ namespace Naos.SqlServer.Protocol.Client
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -71,7 +72,7 @@ namespace Naos.SqlServer.Protocol.Client
                                .OutputParameters[nameof(StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.OutputParamName.TagIdsXml)]
                                .GetValue<string>();
                 var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-                var additional = tagIds.Select(_ => long.Parse(_.Value)).ToList();
+                var additional = tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 
                 // this is the sort order of the output of the sproc.
