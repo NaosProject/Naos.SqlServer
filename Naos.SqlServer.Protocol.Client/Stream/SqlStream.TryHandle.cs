@@ -43,7 +43,8 @@ namespace Naos.SqlServer.Protocol.Client
                 objectTypeQuery,
                 operation.OrderRecordsStrategy,
                 operation.TypeVersionMatchStrategy,
-                tagIdsForEntryXml);
+                tagIdsForEntryXml,
+                operation.MinimumInternalRecordId);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
