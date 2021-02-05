@@ -39,11 +39,11 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Naos.Database.Domain, Version=1.1.296.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Naos.Database.Domain.1.1.296\lib\net462\Naos.Database.Domain.dll</HintPath>
+    <Reference Include="Naos.Database.Domain, Version=1.1.297.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Naos.Database.Domain.1.1.297\lib\net462\Naos.Database.Domain.dll</HintPath>
     </Reference>
-    <Reference Include="Naos.Database.Serialization.Json, Version=1.1.296.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Naos.Database.Serialization.Json.1.1.296\lib\net462\Naos.Database.Serialization.Json.dll</HintPath>
+    <Reference Include="Naos.Database.Serialization.Json, Version=1.1.297.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Naos.Database.Serialization.Json.1.1.297\lib\net462\Naos.Database.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="Naos.Protocol.Domain, Version=1.0.91.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Naos.Protocol.Domain.1.0.91\lib\net462\Naos.Protocol.Domain.dll</HintPath>
