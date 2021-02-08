@@ -15,8 +15,6 @@ namespace Naos.SqlServer.Domain
     using global::System.Globalization;
     using global::System.Linq;
 
-    using global::Naos.Protocol.Domain;
-
     using global::OBeautifulCode.Equality.Recipes;
     using global::OBeautifulCode.Type;
     using global::OBeautifulCode.Type.Recipes;
@@ -24,15 +22,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class CreateDatabaseOp : IModel<CreateDatabaseOp>
+    public partial class UpdateStreamStoredProceduresResult : IModel<UpdateStreamStoredProceduresResult>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="CreateDatabaseOp"/> are equal.
+        /// Determines whether two objects of type <see cref="UpdateStreamStoredProceduresResult"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(CreateDatabaseOp left, CreateDatabaseOp right)
+        public static bool operator ==(UpdateStreamStoredProceduresResult left, UpdateStreamStoredProceduresResult right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -50,15 +48,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="CreateDatabaseOp"/> are not equal.
+        /// Determines whether two objects of type <see cref="UpdateStreamStoredProceduresResult"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(CreateDatabaseOp left, CreateDatabaseOp right) => !(left == right);
+        public static bool operator !=(UpdateStreamStoredProceduresResult left, UpdateStreamStoredProceduresResult right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(CreateDatabaseOp other)
+        public bool Equals(UpdateStreamStoredProceduresResult other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -70,27 +68,36 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.DatabaseConfiguration.IsEqualTo(other.DatabaseConfiguration);
+            var result = this.PriorVersion.IsEqualTo(other.PriorVersion, StringComparer.Ordinal);
 
             return result;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as CreateDatabaseOp);
+        public override bool Equals(object obj) => this == (obj as UpdateStreamStoredProceduresResult);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.DatabaseConfiguration)
+            .Hash(this.PriorVersion)
             .Value;
 
         /// <inheritdoc />
-        public new CreateDatabaseOp DeepClone() => (CreateDatabaseOp)this.DeepCloneInternal();
+        public object Clone() => this.DeepClone();
+
+        /// <inheritdoc />
+        public UpdateStreamStoredProceduresResult DeepClone()
+        {
+            var result = new UpdateStreamStoredProceduresResult(
+                                 this.PriorVersion?.DeepClone());
+
+            return result;
+        }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="DatabaseConfiguration" />.
+        /// Deep clones this object with a new <see cref="PriorVersion" />.
         /// </summary>
-        /// <param name="databaseConfiguration">The new <see cref="DatabaseConfiguration" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="CreateDatabaseOp" /> using the specified <paramref name="databaseConfiguration" /> for <see cref="DatabaseConfiguration" /> and a deep clone of every other property.</returns>
+        /// <param name="priorVersion">The new <see cref="PriorVersion" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="UpdateStreamStoredProceduresResult" /> using the specified <paramref name="priorVersion" /> for <see cref="PriorVersion" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -106,19 +113,10 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public CreateDatabaseOp DeepCloneWithDatabaseConfiguration(DatabaseConfiguration databaseConfiguration)
+        public UpdateStreamStoredProceduresResult DeepCloneWithPriorVersion(string priorVersion)
         {
-            var result = new CreateDatabaseOp(
-                                 databaseConfiguration);
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        protected override OperationBase DeepCloneInternal()
-        {
-            var result = new CreateDatabaseOp(
-                                 this.DatabaseConfiguration?.DeepClone());
+            var result = new UpdateStreamStoredProceduresResult(
+                                 priorVersion);
 
             return result;
         }
@@ -127,7 +125,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.CreateDatabaseOp: DatabaseConfiguration = {this.DatabaseConfiguration?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.UpdateStreamStoredProceduresResult: PriorVersion = {this.PriorVersion?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
 
             return result;
         }

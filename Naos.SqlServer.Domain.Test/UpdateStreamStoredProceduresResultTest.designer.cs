@@ -33,186 +33,117 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class SqlOutputParameterRepresentationTValueTest
+    public static partial class UpdateStreamStoredProceduresResultTest
     {
-        private static readonly StringRepresentationTestScenarios<SqlOutputParameterRepresentation<Version>> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SqlOutputParameterRepresentation<Version>>()
+        private static readonly StringRepresentationTestScenarios<UpdateStreamStoredProceduresResult> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<UpdateStreamStoredProceduresResult>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<SqlOutputParameterRepresentation<Version>>
+                new StringRepresentationTestScenario<UpdateStreamStoredProceduresResult>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                        var systemUnderTest = A.Dummy<UpdateStreamStoredProceduresResult>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<SqlOutputParameterRepresentation<Version>>
+                        var result = new SystemUnderTestExpectedStringRepresentation<UpdateStreamStoredProceduresResult>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlOutputParameterRepresentation<Version>: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DataType = {systemUnderTest.DataType?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.UpdateStreamStoredProceduresResult: PriorVersion = {systemUnderTest.PriorVersion?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<SqlOutputParameterRepresentation<Version>> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<SqlOutputParameterRepresentation<Version>>()
+        private static readonly ConstructorArgumentValidationTestScenarios<UpdateStreamStoredProceduresResult> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<UpdateStreamStoredProceduresResult>()
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<SqlOutputParameterRepresentation<Version>>
+                new ConstructorArgumentValidationTestScenario<UpdateStreamStoredProceduresResult>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'name' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'priorVersion' is null scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<SqlOutputParameterRepresentation<Version>>();
-
-                        var result = new SqlOutputParameterRepresentation<Version>(
-                                             null,
-                                             referenceObject.DataType);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "name", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<SqlOutputParameterRepresentation<Version>>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'name' is white space scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<SqlOutputParameterRepresentation<Version>>();
-
-                        var result = new SqlOutputParameterRepresentation<Version>(
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.DataType);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "name", "white space", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<SqlOutputParameterRepresentation<Version>>
-                {
-                    Name = "constructor should throw ArgumentNullException when parameter 'dataType' is null scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<SqlOutputParameterRepresentation<Version>>();
-
-                        var result = new SqlOutputParameterRepresentation<Version>(
-                                             referenceObject.Name,
+                        var result = new UpdateStreamStoredProceduresResult(
                                              null);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "dataType", },
-                });
-
-        private static readonly ConstructorPropertyAssignmentTestScenarios<SqlOutputParameterRepresentation<Version>> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<SqlOutputParameterRepresentation<Version>>()
-            .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<SqlOutputParameterRepresentation<Version>>
-                {
-                    Name = "Name should return same 'name' parameter passed to constructor when getting",
-                    SystemUnderTestExpectedPropertyValueFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<SqlOutputParameterRepresentation<Version>>();
-
-                        var result = new SystemUnderTestExpectedPropertyValue<SqlOutputParameterRepresentation<Version>>
-                        {
-                            SystemUnderTest = new SqlOutputParameterRepresentation<Version>(
-                                                      referenceObject.Name,
-                                                      referenceObject.DataType),
-                            ExpectedPropertyValue = referenceObject.Name,
-                        };
-
-                        return result;
-                    },
-                    PropertyName = "Name",
+                    ExpectedExceptionMessageContains = new[] { "priorVersion", },
                 })
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<SqlOutputParameterRepresentation<Version>>
+                new ConstructorArgumentValidationTestScenario<UpdateStreamStoredProceduresResult>
                 {
-                    Name = "DataType should return same 'dataType' parameter passed to constructor when getting",
+                    Name = "constructor should throw ArgumentException when parameter 'priorVersion' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var result = new UpdateStreamStoredProceduresResult(
+                                             Invariant($"  {Environment.NewLine}  "));
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "priorVersion", "white space", },
+                });
+
+        private static readonly ConstructorPropertyAssignmentTestScenarios<UpdateStreamStoredProceduresResult> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<UpdateStreamStoredProceduresResult>()
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<UpdateStreamStoredProceduresResult>
+                {
+                    Name = "PriorVersion should return same 'priorVersion' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                        var referenceObject = A.Dummy<UpdateStreamStoredProceduresResult>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<SqlOutputParameterRepresentation<Version>>
+                        var result = new SystemUnderTestExpectedPropertyValue<UpdateStreamStoredProceduresResult>
                         {
-                            SystemUnderTest = new SqlOutputParameterRepresentation<Version>(
-                                                      referenceObject.Name,
-                                                      referenceObject.DataType),
-                            ExpectedPropertyValue = referenceObject.DataType,
+                            SystemUnderTest = new UpdateStreamStoredProceduresResult(
+                                                      referenceObject.PriorVersion),
+                            ExpectedPropertyValue = referenceObject.PriorVersion,
                         };
 
                         return result;
                     },
-                    PropertyName = "DataType",
+                    PropertyName = "PriorVersion",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<SqlOutputParameterRepresentation<Version>> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SqlOutputParameterRepresentation<Version>>()
+        private static readonly DeepCloneWithTestScenarios<UpdateStreamStoredProceduresResult> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<UpdateStreamStoredProceduresResult>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlOutputParameterRepresentation<Version>>
+                new DeepCloneWithTestScenario<UpdateStreamStoredProceduresResult>
                 {
-                    Name = "DeepCloneWithName should deep clone object and replace Name with the provided name",
-                    WithPropertyName = "Name",
+                    Name = "DeepCloneWithPriorVersion should deep clone object and replace PriorVersion with the provided priorVersion",
+                    WithPropertyName = "PriorVersion",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                        var systemUnderTest = A.Dummy<UpdateStreamStoredProceduresResult>();
 
-                        var referenceObject = A.Dummy<SqlOutputParameterRepresentation<Version>>().ThatIs(_ => !systemUnderTest.Name.IsEqualTo(_.Name));
+                        var referenceObject = A.Dummy<UpdateStreamStoredProceduresResult>().ThatIs(_ => !systemUnderTest.PriorVersion.IsEqualTo(_.PriorVersion));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlOutputParameterRepresentation<Version>>
+                        var result = new SystemUnderTestDeepCloneWithValue<UpdateStreamStoredProceduresResult>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Name,
-                        };
-
-                        return result;
-                    },
-                })
-            .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlOutputParameterRepresentation<Version>>
-                {
-                    Name = "DeepCloneWithDataType should deep clone object and replace DataType with the provided dataType",
-                    WithPropertyName = "DataType",
-                    SystemUnderTestDeepCloneWithValueFunc = () =>
-                    {
-                        var systemUnderTest = A.Dummy<SqlOutputParameterRepresentation<Version>>();
-
-                        var referenceObject = A.Dummy<SqlOutputParameterRepresentation<Version>>().ThatIs(_ => !systemUnderTest.DataType.IsEqualTo(_.DataType));
-
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlOutputParameterRepresentation<Version>>
-                        {
-                            SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.DataType,
+                            DeepCloneWithValue = referenceObject.PriorVersion,
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly SqlOutputParameterRepresentation<Version> ReferenceObjectForEquatableTestScenarios = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+        private static readonly UpdateStreamStoredProceduresResult ReferenceObjectForEquatableTestScenarios = A.Dummy<UpdateStreamStoredProceduresResult>();
 
-        private static readonly EquatableTestScenarios<SqlOutputParameterRepresentation<Version>> EquatableTestScenarios = new EquatableTestScenarios<SqlOutputParameterRepresentation<Version>>()
+        private static readonly EquatableTestScenarios<UpdateStreamStoredProceduresResult> EquatableTestScenarios = new EquatableTestScenarios<UpdateStreamStoredProceduresResult>()
             .AddScenario(() =>
-                new EquatableTestScenario<SqlOutputParameterRepresentation<Version>>
+                new EquatableTestScenario<UpdateStreamStoredProceduresResult>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SqlOutputParameterRepresentation<Version>[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new UpdateStreamStoredProceduresResult[]
                     {
-                        new SqlOutputParameterRepresentation<Version>(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.DataType),
+                        new UpdateStreamStoredProceduresResult(
+                                ReferenceObjectForEquatableTestScenarios.PriorVersion),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new SqlOutputParameterRepresentation<Version>[]
+                    ObjectsThatAreNotEqualToReferenceObject = new UpdateStreamStoredProceduresResult[]
                     {
-                        new SqlOutputParameterRepresentation<Version>(
-                                A.Dummy<SqlOutputParameterRepresentation<Version>>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
-                                ReferenceObjectForEquatableTestScenarios.DataType),
-                        new SqlOutputParameterRepresentation<Version>(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                A.Dummy<SqlOutputParameterRepresentation<Version>>().Whose(_ => !_.DataType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DataType)).DataType),
+                        new UpdateStreamStoredProceduresResult(
+                                A.Dummy<UpdateStreamStoredProceduresResult>().Whose(_ => !_.PriorVersion.IsEqualTo(ReferenceObjectForEquatableTestScenarios.PriorVersion)).PriorVersion),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -221,8 +152,6 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
-                        A.Dummy<SqlInputParameterRepresentation<Version>>(),
-                        A.Dummy<SqlOutputParameterRepresentationWithResult<Version>>(),
                     },
                 });
 
@@ -244,12 +173,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SqlOutputParameterRepresentation___Should_implement_IModel_of_SqlOutputParameterRepresentation___When_reflecting()
+            public static void UpdateStreamStoredProceduresResult___Should_implement_IModel_of_UpdateStreamStoredProceduresResult___When_reflecting()
             {
                 // Arrange
-                var type = typeof(SqlOutputParameterRepresentation<Version>);
+                var type = typeof(UpdateStreamStoredProceduresResult);
 
-                var expectedModelMethods = typeof(IModel<SqlOutputParameterRepresentation<Version>>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<UpdateStreamStoredProceduresResult>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -259,7 +188,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SqlOutputParameterRepresentation<Version>>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<UpdateStreamStoredProceduresResult>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -277,10 +206,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SqlOutputParameterRepresentation___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void UpdateStreamStoredProceduresResult___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(SqlOutputParameterRepresentation<Version>);
+                var type = typeof(UpdateStreamStoredProceduresResult);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -453,10 +382,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                var systemUnderTest = A.Dummy<UpdateStreamStoredProceduresResult>();
 
                 // Act
-                var actual = (SqlOutputParameterRepresentation<Version>)systemUnderTest.Clone();
+                var actual = (UpdateStreamStoredProceduresResult)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -480,7 +409,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                var systemUnderTest = A.Dummy<UpdateStreamStoredProceduresResult>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -488,15 +417,6 @@ namespace Naos.SqlServer.Domain.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
-
-                if (systemUnderTest.DataType == null)
-                {
-                    actual.DataType.AsTest().Must().BeNull();
-                }
-                else
-                {
-                    actual.DataType.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.DataType);
-                }
             }
 
             [Fact]
@@ -515,7 +435,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Name", "DataType" };
+                var propertyNames = new string[] { "PriorVersion" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -532,12 +452,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (SqlOutputParameterRepresentation<Version>)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (UpdateStreamStoredProceduresResult)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach(var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(SqlOutputParameterRepresentation<Version>).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(UpdateStreamStoredProceduresResult).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var propertyType = propertyInfo.PropertyType;
 
@@ -605,7 +525,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                var expected = A.Dummy<UpdateStreamStoredProceduresResult>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -634,7 +554,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                var expected = A.Dummy<UpdateStreamStoredProceduresResult>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -663,7 +583,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                var expected = A.Dummy<UpdateStreamStoredProceduresResult>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -692,7 +612,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlOutputParameterRepresentation<Version>>();
+                var expected = A.Dummy<UpdateStreamStoredProceduresResult>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -726,8 +646,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SqlOutputParameterRepresentation<Version> systemUnderTest1 = null;
-                SqlOutputParameterRepresentation<Version> systemUnderTest2 = null;
+                UpdateStreamStoredProceduresResult systemUnderTest1 = null;
+                UpdateStreamStoredProceduresResult systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -757,7 +677,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlOutputParameterRepresentation<Version> systemUnderTest = null;
+                    UpdateStreamStoredProceduresResult systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -906,8 +826,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SqlOutputParameterRepresentation<Version> systemUnderTest1 = null;
-                SqlOutputParameterRepresentation<Version> systemUnderTest2 = null;
+                UpdateStreamStoredProceduresResult systemUnderTest1 = null;
+                UpdateStreamStoredProceduresResult systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -937,7 +857,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlOutputParameterRepresentation<Version> systemUnderTest = null;
+                    UpdateStreamStoredProceduresResult systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1083,300 +1003,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterRepresentationBase___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_UpdateStreamStoredProceduresResult___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlParameterRepresentationBase systemUnderTest = null;
-
-                    // Act
-                    var actual = scenario.ReferenceObject.Equals((SqlParameterRepresentationBase)systemUnderTest);
-
-                    // Assert
-                    actual.AsTest().Must().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterRepresentationBase___Should_return_true___When_parameter_other_is_same_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actual = scenario.ReferenceObject.Equals((SqlParameterRepresentationBase)scenario.ReferenceObject);
-
-                    // Assert
-                    actual.AsTest().Must().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterRepresentationBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlParameterRepresentationBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterRepresentationBase___Should_return_false___When_objects_being_compared_have_different_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlParameterRepresentationBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterRepresentationBase___Should_return_true___When_objects_being_compared_have_same_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlParameterRepresentationBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentationBase___Should_return_false___When_parameter_other_is_null()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange
-                    SqlOutputParameterRepresentationBase systemUnderTest = null;
-
-                    // Act
-                    var actual = scenario.ReferenceObject.Equals((SqlOutputParameterRepresentationBase)systemUnderTest);
-
-                    // Assert
-                    actual.AsTest().Must().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentationBase___Should_return_true___When_parameter_other_is_same_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actual = scenario.ReferenceObject.Equals((SqlOutputParameterRepresentationBase)scenario.ReferenceObject);
-
-                    // Assert
-                    actual.AsTest().Must().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentationBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlOutputParameterRepresentationBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentationBase___Should_return_false___When_objects_being_compared_have_different_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlOutputParameterRepresentationBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentationBase___Should_return_true___When_objects_being_compared_have_same_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlOutputParameterRepresentationBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentation___Should_return_false___When_parameter_other_is_null()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange
-                    SqlOutputParameterRepresentation<Version> systemUnderTest = null;
+                    UpdateStreamStoredProceduresResult systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1400,7 +1034,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentation___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_UpdateStreamStoredProceduresResult___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1428,7 +1062,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentation___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_UpdateStreamStoredProceduresResult___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1456,7 +1090,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentation___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_UpdateStreamStoredProceduresResult___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1484,7 +1118,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterRepresentation___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_UpdateStreamStoredProceduresResult___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

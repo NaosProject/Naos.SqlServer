@@ -16,21 +16,22 @@ namespace Naos.SqlServer.Domain
     using global::System.Linq;
 
     using global::OBeautifulCode.Equality.Recipes;
+    using global::OBeautifulCode.Serialization;
     using global::OBeautifulCode.Type;
     using global::OBeautifulCode.Type.Recipes;
 
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class TableDescription : IModel<TableDescription>
+    public partial class IdentifiedSerializerRepresentation : IModel<IdentifiedSerializerRepresentation>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="TableDescription"/> are equal.
+        /// Determines whether two objects of type <see cref="IdentifiedSerializerRepresentation"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(TableDescription left, TableDescription right)
+        public static bool operator ==(IdentifiedSerializerRepresentation left, IdentifiedSerializerRepresentation right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -48,15 +49,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="TableDescription"/> are not equal.
+        /// Determines whether two objects of type <see cref="IdentifiedSerializerRepresentation"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(TableDescription left, TableDescription right) => !(left == right);
+        public static bool operator !=(IdentifiedSerializerRepresentation left, IdentifiedSerializerRepresentation right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(TableDescription other)
+        public bool Equals(IdentifiedSerializerRepresentation other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -68,45 +69,42 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.DatabaseName.IsEqualTo(other.DatabaseName, StringComparer.Ordinal)
-                      && this.TableSchema.IsEqualTo(other.TableSchema, StringComparer.Ordinal)
-                      && this.TableName.IsEqualTo(other.TableName, StringComparer.Ordinal)
-                      && this.Columns.IsEqualTo(other.Columns);
+            var result = this.Id.IsEqualTo(other.Id)
+                      && this.SerializerRepresentation.IsEqualTo(other.SerializerRepresentation)
+                      && this.SerializationFormat.IsEqualTo(other.SerializationFormat);
 
             return result;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as TableDescription);
+        public override bool Equals(object obj) => this == (obj as IdentifiedSerializerRepresentation);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.DatabaseName)
-            .Hash(this.TableSchema)
-            .Hash(this.TableName)
-            .Hash(this.Columns)
+            .Hash(this.Id)
+            .Hash(this.SerializerRepresentation)
+            .Hash(this.SerializationFormat)
             .Value;
 
         /// <inheritdoc />
         public object Clone() => this.DeepClone();
 
         /// <inheritdoc />
-        public TableDescription DeepClone()
+        public IdentifiedSerializerRepresentation DeepClone()
         {
-            var result = new TableDescription(
-                                 this.DatabaseName?.DeepClone(),
-                                 this.TableSchema?.DeepClone(),
-                                 this.TableName?.DeepClone(),
-                                 this.Columns?.Select(i => i?.DeepClone()).ToList());
+            var result = new IdentifiedSerializerRepresentation(
+                                 this.Id,
+                                 this.SerializerRepresentation?.DeepClone(),
+                                 this.SerializationFormat);
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="DatabaseName" />.
+        /// Deep clones this object with a new <see cref="Id" />.
         /// </summary>
-        /// <param name="databaseName">The new <see cref="DatabaseName" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="TableDescription" /> using the specified <paramref name="databaseName" /> for <see cref="DatabaseName" /> and a deep clone of every other property.</returns>
+        /// <param name="id">The new <see cref="Id" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="IdentifiedSerializerRepresentation" /> using the specified <paramref name="id" /> for <see cref="Id" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -122,22 +120,21 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public TableDescription DeepCloneWithDatabaseName(string databaseName)
+        public IdentifiedSerializerRepresentation DeepCloneWithId(int id)
         {
-            var result = new TableDescription(
-                                 databaseName,
-                                 this.TableSchema?.DeepClone(),
-                                 this.TableName?.DeepClone(),
-                                 this.Columns?.Select(i => i?.DeepClone()).ToList());
+            var result = new IdentifiedSerializerRepresentation(
+                                 id,
+                                 this.SerializerRepresentation?.DeepClone(),
+                                 this.SerializationFormat);
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="TableSchema" />.
+        /// Deep clones this object with a new <see cref="SerializerRepresentation" />.
         /// </summary>
-        /// <param name="tableSchema">The new <see cref="TableSchema" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="TableDescription" /> using the specified <paramref name="tableSchema" /> for <see cref="TableSchema" /> and a deep clone of every other property.</returns>
+        /// <param name="serializerRepresentation">The new <see cref="SerializerRepresentation" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="IdentifiedSerializerRepresentation" /> using the specified <paramref name="serializerRepresentation" /> for <see cref="SerializerRepresentation" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -153,22 +150,21 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public TableDescription DeepCloneWithTableSchema(string tableSchema)
+        public IdentifiedSerializerRepresentation DeepCloneWithSerializerRepresentation(SerializerRepresentation serializerRepresentation)
         {
-            var result = new TableDescription(
-                                 this.DatabaseName?.DeepClone(),
-                                 tableSchema,
-                                 this.TableName?.DeepClone(),
-                                 this.Columns?.Select(i => i?.DeepClone()).ToList());
+            var result = new IdentifiedSerializerRepresentation(
+                                 this.Id,
+                                 serializerRepresentation,
+                                 this.SerializationFormat);
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="TableName" />.
+        /// Deep clones this object with a new <see cref="SerializationFormat" />.
         /// </summary>
-        /// <param name="tableName">The new <see cref="TableName" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="TableDescription" /> using the specified <paramref name="tableName" /> for <see cref="TableName" /> and a deep clone of every other property.</returns>
+        /// <param name="serializationFormat">The new <see cref="SerializationFormat" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="IdentifiedSerializerRepresentation" /> using the specified <paramref name="serializationFormat" /> for <see cref="SerializationFormat" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -184,44 +180,12 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public TableDescription DeepCloneWithTableName(string tableName)
+        public IdentifiedSerializerRepresentation DeepCloneWithSerializationFormat(SerializationFormat serializationFormat)
         {
-            var result = new TableDescription(
-                                 this.DatabaseName?.DeepClone(),
-                                 this.TableSchema?.DeepClone(),
-                                 tableName,
-                                 this.Columns?.Select(i => i?.DeepClone()).ToList());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="Columns" />.
-        /// </summary>
-        /// <param name="columns">The new <see cref="Columns" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="TableDescription" /> using the specified <paramref name="columns" /> for <see cref="Columns" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public TableDescription DeepCloneWithColumns(IReadOnlyCollection<ColumnDescription> columns)
-        {
-            var result = new TableDescription(
-                                 this.DatabaseName?.DeepClone(),
-                                 this.TableSchema?.DeepClone(),
-                                 this.TableName?.DeepClone(),
-                                 columns);
+            var result = new IdentifiedSerializerRepresentation(
+                                 this.Id,
+                                 this.SerializerRepresentation?.DeepClone(),
+                                 serializationFormat);
 
             return result;
         }
@@ -230,7 +194,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.TableDescription: DatabaseName = {this.DatabaseName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, TableSchema = {this.TableSchema?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, TableName = {this.TableName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Columns = {this.Columns?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.IdentifiedSerializerRepresentation: Id = {this.Id.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, SerializerRepresentation = {this.SerializerRepresentation?.ToString() ?? "<null>"}, SerializationFormat = {this.SerializationFormat.ToString() ?? "<null>"}.");
 
             return result;
         }

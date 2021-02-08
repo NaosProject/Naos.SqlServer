@@ -310,6 +310,14 @@
     <Compile Include="GetIdAddIfNecessarySerializerRepresentationOpTest.designer.cs">
       <DependentUpon>GetIdAddIfNecessarySerializerRepresentationOpTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="IdentifiedSerializerRepresentationTest.cs" />
+    <Compile Include="IdentifiedSerializerRepresentationTest.designer.cs">
+      <DependentUpon>IdentifiedSerializerRepresentationTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IdentifiedTypeTest.cs" />
+    <Compile Include="IdentifiedTypeTest.designer.cs">
+      <DependentUpon>IdentifiedTypeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="IntSqlDataTypeRepresentationTest.cs" />
     <Compile Include="IntSqlDataTypeRepresentationTest.designer.cs">
       <DependentUpon>IntSqlDataTypeRepresentationTest.cs</DependentUpon>
@@ -388,11 +396,23 @@
     <Compile Include="TableRepresentationTest.designer.cs">
       <DependentUpon>TableRepresentationTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="UpdateStreamStoredProceduresOpTest.cs" />
+    <Compile Include="UpdateStreamStoredProceduresOpTest.designer.cs">
+      <DependentUpon>UpdateStreamStoredProceduresOpTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateStreamStoredProceduresResultTest.cs" />
+    <Compile Include="UpdateStreamStoredProceduresResultTest.designer.cs">
+      <DependentUpon>UpdateStreamStoredProceduresResultTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="UtcDateTimeSqlDataTypeRepresentationTest.cs" />
     <Compile Include="UtcDateTimeSqlDataTypeRepresentationTest.designer.cs">
       <DependentUpon>UtcDateTimeSqlDataTypeRepresentationTest.cs</DependentUpon>
     </Compile>
     <AdditionalFiles Include=".analyzers\stylecop.json" />
+    <Compile Include="XmlSqlDataTypeRepresentationTest.cs" />
+    <Compile Include="XmlSqlDataTypeRepresentationTest.designer.cs">
+      <DependentUpon>XmlSqlDataTypeRepresentationTest.cs</DependentUpon>
+    </Compile>
     <None Include=".analyzers\test.ruleset" />
     <None Include="DummyFactory.recipe-nuspec" />
     <None Include="packages.config" />

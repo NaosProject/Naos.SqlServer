@@ -15,8 +15,6 @@ namespace Naos.SqlServer.Domain
     using global::System.Globalization;
     using global::System.Linq;
 
-    using global::Naos.Protocol.Domain;
-
     using global::OBeautifulCode.Equality.Recipes;
     using global::OBeautifulCode.Type;
     using global::OBeautifulCode.Type.Recipes;
@@ -24,15 +22,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class ExecuteStoredProcedureOp : IModel<ExecuteStoredProcedureOp>
+    public partial class IdentifiedType : IModel<IdentifiedType>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="ExecuteStoredProcedureOp"/> are equal.
+        /// Determines whether two objects of type <see cref="IdentifiedType"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(ExecuteStoredProcedureOp left, ExecuteStoredProcedureOp right)
+        public static bool operator ==(IdentifiedType left, IdentifiedType right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -50,15 +48,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="ExecuteStoredProcedureOp"/> are not equal.
+        /// Determines whether two objects of type <see cref="IdentifiedType"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(ExecuteStoredProcedureOp left, ExecuteStoredProcedureOp right) => !(left == right);
+        public static bool operator !=(IdentifiedType left, IdentifiedType right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(ExecuteStoredProcedureOp other)
+        public bool Equals(IdentifiedType other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -70,88 +68,88 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.Name.IsEqualTo(other.Name, StringComparer.Ordinal)
-                      && this.ParameterNameToDetailsMap.IsEqualTo(other.ParameterNameToDetailsMap);
+            var result = this.IdWithoutVersion.IsEqualTo(other.IdWithoutVersion)
+                      && this.IdWithVersion.IsEqualTo(other.IdWithVersion);
 
             return result;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as ExecuteStoredProcedureOp);
+        public override bool Equals(object obj) => this == (obj as IdentifiedType);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.Name)
-            .Hash(this.ParameterNameToDetailsMap)
+            .Hash(this.IdWithoutVersion)
+            .Hash(this.IdWithVersion)
             .Value;
 
         /// <inheritdoc />
-        public new ExecuteStoredProcedureOp DeepClone() => (ExecuteStoredProcedureOp)this.DeepCloneInternal();
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="Name" />.
-        /// </summary>
-        /// <param name="name">The new <see cref="Name" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="ExecuteStoredProcedureOp" /> using the specified <paramref name="name" /> for <see cref="Name" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public ExecuteStoredProcedureOp DeepCloneWithName(string name)
-        {
-            var result = new ExecuteStoredProcedureOp(
-                                 name,
-                                 this.ParameterNameToDetailsMap?.ToDictionary(k => k.Key?.DeepClone(), v => v.Value?.DeepClone()));
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="ParameterNameToDetailsMap" />.
-        /// </summary>
-        /// <param name="parameterNameToDetailsMap">The new <see cref="ParameterNameToDetailsMap" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="ExecuteStoredProcedureOp" /> using the specified <paramref name="parameterNameToDetailsMap" /> for <see cref="ParameterNameToDetailsMap" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public ExecuteStoredProcedureOp DeepCloneWithParameterNameToDetailsMap(IReadOnlyDictionary<string, SqlParameterRepresentationBase> parameterNameToDetailsMap)
-        {
-            var result = new ExecuteStoredProcedureOp(
-                                 this.Name?.DeepClone(),
-                                 parameterNameToDetailsMap);
-
-            return result;
-        }
+        public object Clone() => this.DeepClone();
 
         /// <inheritdoc />
-        protected override OperationBase DeepCloneInternal()
+        public IdentifiedType DeepClone()
         {
-            var result = new ExecuteStoredProcedureOp(
-                                 this.Name?.DeepClone(),
-                                 this.ParameterNameToDetailsMap?.ToDictionary(k => k.Key?.DeepClone(), v => v.Value?.DeepClone()));
+            var result = new IdentifiedType(
+                                 this.IdWithoutVersion,
+                                 this.IdWithVersion);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <see cref="IdWithoutVersion" />.
+        /// </summary>
+        /// <param name="idWithoutVersion">The new <see cref="IdWithoutVersion" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="IdentifiedType" /> using the specified <paramref name="idWithoutVersion" /> for <see cref="IdWithoutVersion" /> and a deep clone of every other property.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public IdentifiedType DeepCloneWithIdWithoutVersion(int idWithoutVersion)
+        {
+            var result = new IdentifiedType(
+                                 idWithoutVersion,
+                                 this.IdWithVersion);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <see cref="IdWithVersion" />.
+        /// </summary>
+        /// <param name="idWithVersion">The new <see cref="IdWithVersion" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="IdentifiedType" /> using the specified <paramref name="idWithVersion" /> for <see cref="IdWithVersion" /> and a deep clone of every other property.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public IdentifiedType DeepCloneWithIdWithVersion(int idWithVersion)
+        {
+            var result = new IdentifiedType(
+                                 this.IdWithoutVersion,
+                                 idWithVersion);
 
             return result;
         }
@@ -160,7 +158,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.ExecuteStoredProcedureOp: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ParameterNameToDetailsMap = {this.ParameterNameToDetailsMap?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.IdentifiedType: IdWithoutVersion = {this.IdWithoutVersion.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, IdWithVersion = {this.IdWithVersion.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
 
             return result;
         }

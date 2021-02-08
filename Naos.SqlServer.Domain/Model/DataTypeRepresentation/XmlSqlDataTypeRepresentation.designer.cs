@@ -22,15 +22,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class UtcDateTimeSqlDataTypeRepresentation : IModel<UtcDateTimeSqlDataTypeRepresentation>
+    public partial class XmlSqlDataTypeRepresentation : IModel<XmlSqlDataTypeRepresentation>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="UtcDateTimeSqlDataTypeRepresentation"/> are equal.
+        /// Determines whether two objects of type <see cref="XmlSqlDataTypeRepresentation"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(UtcDateTimeSqlDataTypeRepresentation left, UtcDateTimeSqlDataTypeRepresentation right)
+        public static bool operator ==(XmlSqlDataTypeRepresentation left, XmlSqlDataTypeRepresentation right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -48,15 +48,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="UtcDateTimeSqlDataTypeRepresentation"/> are not equal.
+        /// Determines whether two objects of type <see cref="XmlSqlDataTypeRepresentation"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(UtcDateTimeSqlDataTypeRepresentation left, UtcDateTimeSqlDataTypeRepresentation right) => !(left == right);
+        public static bool operator !=(XmlSqlDataTypeRepresentation left, XmlSqlDataTypeRepresentation right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(UtcDateTimeSqlDataTypeRepresentation other)
+        public bool Equals(XmlSqlDataTypeRepresentation other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -74,19 +74,19 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as UtcDateTimeSqlDataTypeRepresentation);
+        public override bool Equals(object obj) => this == (obj as XmlSqlDataTypeRepresentation);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
             .Value;
 
         /// <inheritdoc />
-        public new UtcDateTimeSqlDataTypeRepresentation DeepClone() => (UtcDateTimeSqlDataTypeRepresentation)this.DeepCloneInternal();
+        public new XmlSqlDataTypeRepresentation DeepClone() => (XmlSqlDataTypeRepresentation)this.DeepCloneInternal();
 
         /// <inheritdoc />
         protected override SqlDataTypeRepresentationBase DeepCloneInternal()
         {
-            var result = new UtcDateTimeSqlDataTypeRepresentation();
+            var result = new XmlSqlDataTypeRepresentation();
 
             return result;
         }
@@ -95,7 +95,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.UtcDateTimeSqlDataTypeRepresentation: <no properties>.");
+            var result = Invariant($"Naos.SqlServer.Domain.XmlSqlDataTypeRepresentation: <no properties>.");
 
             return result;
         }
