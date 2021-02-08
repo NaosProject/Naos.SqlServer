@@ -200,6 +200,8 @@
     <Compile Include="Operations\CreateDatabaseOp.designer.cs">
       <DependentUpon>CreateDatabaseOp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Operations\UpdateStreamStoredProceduresResult.cs" />
+    <Compile Include="Operations\UpdateStreamStoredProceduresOp.cs" />
     <Compile Include="Operations\CreateStreamUserOp.designer.cs">
       <DependentUpon>CreateStreamUserOp.cs</DependentUpon>
     </Compile>

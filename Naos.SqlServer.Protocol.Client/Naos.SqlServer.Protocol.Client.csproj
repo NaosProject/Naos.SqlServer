@@ -154,7 +154,7 @@
     <Compile Include="Stream\SqlStream.GetLatestById.cs" />
     <Compile Include="Stream\SqlStream.PutRecord.cs" />
     <Compile Include="Stream\SqlStream.SerializerRepresentationCaching.cs" />
-    <Compile Include="Stream\SqlStream.Create.cs" />
+    <Compile Include="Stream\SqlStream.CreateOrUpdate.cs" />
     <Compile Include="Stream\SqlStream.TryHandle.cs" />
     <Compile Include="Stream\SqlStream.TagCaching.cs" />
     <Compile Include="Stream\SqlStream.TypeCaching.cs" />
