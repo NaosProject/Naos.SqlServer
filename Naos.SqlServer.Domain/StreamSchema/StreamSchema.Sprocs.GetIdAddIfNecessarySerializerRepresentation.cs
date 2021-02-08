@@ -126,6 +126,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the name of the put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
                 [System.Diagnostics.CodeAnalysis.SuppressMessage(
                     "Microsoft.Naming",
@@ -133,12 +134,14 @@ namespace Naos.SqlServer.Domain
                     MessageId = "Sproc",
                     Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
                     const string transaction = "GetIdAddIfSerializerRepTran";
-                    return Invariant(
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].[{GetIdAddIfNecessarySerializerRepresentation.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{GetIdAddIfNecessarySerializerRepresentation.Name}](
   @{InputParamName.ConfigTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ConfigTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax}
@@ -216,6 +219,7 @@ BEGIN
     END
 END
 ");
+                    return result;
                 }
             }
         }

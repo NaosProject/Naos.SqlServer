@@ -71,6 +71,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the name of the put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
                 [System.Diagnostics.CodeAnalysis.SuppressMessage(
                     "Microsoft.Naming",
@@ -78,13 +79,15 @@ namespace Naos.SqlServer.Domain
                     MessageId = "Sproc",
                     Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
                     var transaction = Invariant($"{nameof(GetNextUniqueLong)}Tran");
 
-                    return Invariant(
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].[{GetNextUniqueLong.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{GetNextUniqueLong.Name}](
   @{OutputParamName.Value} {Tables.NextUniqueLong.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
@@ -121,6 +124,8 @@ BEGIN TRANSACTION [{transaction}]
     RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
   END CATCH
 END");
+
+                    return result;
                 }
             }
         }

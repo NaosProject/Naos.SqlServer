@@ -195,8 +195,11 @@ namespace Naos.SqlServer.Domain
                 /// Builds the creation script for put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>System.String.</returns>
-                public static string BuildCreationScript(string streamName)
+                public static string BuildCreationScript(
+                    string streamName,
+                    bool asAlter = false)
                 {
                     const string recordCreatedUtc = "RecordCreatedUtc";
                     const string tagIdsTable = "TagIdsTable";
@@ -205,9 +208,9 @@ namespace Naos.SqlServer.Domain
                     const string prunedIdsTable = "PrunedIdsTable";
                     var transaction = Invariant($"{nameof(PutRecord)}Transaction");
                     var pruneTransaction = Invariant($"PruneTransaction");
-                    var result = FormattableString.Invariant(
-                        $@"
-CREATE PROCEDURE [{streamName}].[{PutRecord.Name}](
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant($@"
+{createOrModify} PROCEDURE [{streamName}].[{PutRecord.Name}](
   @{InputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}

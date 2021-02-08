@@ -6,9 +6,7 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -46,13 +44,15 @@ namespace Naos.SqlServer.Domain
                 /// Builds the creation script.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>The creation script.</returns>
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
-                    return FormattableString.Invariant(
-                        $@"
-CREATE FUNCTION [{streamName}].[{GetTagsTableVariableFromTagIdsXml.Name}] (
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant($@"
+{createOrModify} FUNCTION [{streamName}].[{GetTagsTableVariableFromTagIdsXml.Name}] (
       @{InputParamName.TagsXml} [xml]
 )
 RETURNS TABLE
@@ -67,6 +67,8 @@ RETURN
 		      FROM
 			    @{nameof(InputParamName.TagsXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
 ");
+
+                    return result;
                 }
             }
         }

@@ -35,6 +35,13 @@ namespace Naos.SqlServer.Domain
                 public static string Name => nameof(GetStreamDetails);
 
                 /// <summary>
+                /// Gets the version key used in the output dictionary.
+                /// </summary>
+                /// <value>The version key.</value>
+                public static string VersionKey => Invariant(
+                    $"{nameof(Naos)}.{nameof(Naos.SqlServer)}.{nameof(Naos.SqlServer.Domain)}.{nameof(Type.Assembly)}.{nameof(Version)}");
+
+                /// <summary>
                 /// Output parameter names.
                 /// </summary>
                 public enum OutputParamName
@@ -71,6 +78,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the name of the put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
                 [System.Diagnostics.CodeAnalysis.SuppressMessage(
                     "Microsoft.Naming",
@@ -78,17 +86,21 @@ namespace Naos.SqlServer.Domain
                     MessageId = "Sproc",
                     Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
-                    return Invariant(
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].[{GetStreamDetails.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{GetStreamDetails.Name}](
   @{OutputParamName.DetailsXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
-    SELECT @{OutputParamName.DetailsXml} = '<Details><Detail Key=""{nameof(Naos)}.{nameof(Naos.SqlServer)}.{nameof(Naos.SqlServer.Domain)}.{nameof(Type.Assembly)}.{nameof(Version)}"" Value=""{typeof(GetStreamDetails).Assembly.GetName().Version}"" /></Details>'
+    SELECT @{OutputParamName.DetailsXml} = '<Tags><Tag Key=""{VersionKey}"" Value=""{typeof(GetStreamDetails).Assembly.GetName().Version}"" /></Tags>'
 END");
+
+                    return result;
                 }
             }
         }

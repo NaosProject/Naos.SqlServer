@@ -149,6 +149,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the name of the put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
                 [System.Diagnostics.CodeAnalysis.SuppressMessage(
                     "Microsoft.Naming",
@@ -156,16 +157,17 @@ namespace Naos.SqlServer.Domain
                     MessageId = "Sproc",
                     Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
                     var recordCreatedUtc = "RecordCreatedUtc";
                     const string tagIdsTable = "TagIdsTable";
                     var transaction = Invariant($"{nameof(PutHandling)}Transaction");
                     var currentStatus = "CurrentStatus";
                     var currentStatusAccepted = "CurrentStatusAccepted";
-                    return Invariant(
-                        $@"
-CREATE PROCEDURE [{streamName}].[{PutHandling.Name}](
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant($@"
+{createOrModify} PROCEDURE [{streamName}].[{PutHandling.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.RecordId} AS {Tables.Handling.RecordId.DataType.DeclarationInSqlSyntax}
@@ -344,6 +346,8 @@ BEGIN TRANSACTION [{transaction}]
     RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
   END CATCH
 END");
+
+                    return result;
                 }
             }
         }

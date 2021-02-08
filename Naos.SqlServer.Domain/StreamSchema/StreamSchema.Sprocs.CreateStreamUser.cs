@@ -89,12 +89,16 @@ namespace Naos.SqlServer.Domain
                 /// Builds the creation script for put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>System.String.</returns>
-                public static string BuildCreationScript(string streamName)
+                public static string BuildCreationScript(
+                    string streamName,
+                    bool asAlter = false)
                 {
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].[{CreateStreamUser.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{CreateStreamUser.Name}](
   @{InputParamName.Username} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
 , @{InputParamName.ClearTextPassword} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
 , @{InputParamName.RoleXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}

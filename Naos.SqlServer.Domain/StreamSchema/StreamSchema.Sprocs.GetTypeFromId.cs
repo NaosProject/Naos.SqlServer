@@ -9,6 +9,7 @@ namespace Naos.SqlServer.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -89,13 +90,16 @@ namespace Naos.SqlServer.Domain
                 /// Builds the name of the put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
-                    return FormattableString.Invariant(
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].[{GetTypeFromId.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{GetTypeFromId.Name}](
     @{InputParamName.Id} {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
   , @{InputParamName.Versioned} [BIT]
   , @{OutputParamName.AssemblyQualifiedName} {Tables.TypeWithVersion.AssemblyQualifiedName.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -115,6 +119,8 @@ BEGIN
 	        FROM [{streamName}].[{Tables.TypeWithoutVersion.Table.Name}] WHERE [{Tables.TypeWithoutVersion.Id.Name}] = @{InputParamName.Id}
     END
 END");
+
+                    return result;
                 }
             }
         }

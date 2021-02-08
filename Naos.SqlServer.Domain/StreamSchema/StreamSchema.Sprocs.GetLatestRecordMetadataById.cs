@@ -16,6 +16,7 @@ namespace Naos.SqlServer.Domain
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.Type;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -172,6 +173,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the creation script for put sproc.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>System.String.</returns>
                 [System.Diagnostics.CodeAnalysis.SuppressMessage(
                     "Microsoft.Naming",
@@ -184,11 +186,13 @@ namespace Naos.SqlServer.Domain
                     MessageId = "Sproc",
                     Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
-                    var result = FormattableString.Invariant(
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].[{GetLatestRecordMetadataById.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{GetLatestRecordMetadataById.Name}](
   @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}

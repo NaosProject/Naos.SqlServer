@@ -8,15 +8,12 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.Protocol.Domain;
-    using OBeautifulCode.Compression;
-    using OBeautifulCode.Representation.System;
-    using OBeautifulCode.Serialization;
     using OBeautifulCode.Type;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -237,6 +234,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the creation script for put sproc.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>System.String.</returns>
                 [System.Diagnostics.CodeAnalysis.SuppressMessage(
                     "Microsoft.Naming",
@@ -249,7 +247,8 @@ namespace Naos.SqlServer.Domain
                     MessageId = "Sproc",
                     Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
                     const string recordIdToAttemptToClaim = "RecordIdToAttemptToClaim";
                     const string candidateRecordIds = "CandidateRecordIds";
@@ -266,9 +265,9 @@ namespace Naos.SqlServer.Domain
                             HandlingStatus.RetryFailed.ToString(),
                         }.ToOrdinalDictionary());
 
-                    var result = FormattableString.Invariant(
-                        $@"
-CREATE PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant($@"
+{createOrModify} PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}

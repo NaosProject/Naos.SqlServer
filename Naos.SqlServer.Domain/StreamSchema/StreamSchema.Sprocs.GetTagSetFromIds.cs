@@ -10,6 +10,7 @@ namespace Naos.SqlServer.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -91,15 +92,17 @@ namespace Naos.SqlServer.Domain
                 /// Builds the name of the put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
                     const string tagIdsTable = "TagIdsTable";
-
-                    return FormattableString.Invariant(
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].[{GetTagSetFromIds.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{GetTagSetFromIds.Name}](
   @{nameof(InputParamName.TagIdsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax},
   @{nameof(OutputParamName.TagsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
   )
@@ -120,6 +123,8 @@ BEGIN
     FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 
 END");
+
+                    return result;
                 }
             }
         }

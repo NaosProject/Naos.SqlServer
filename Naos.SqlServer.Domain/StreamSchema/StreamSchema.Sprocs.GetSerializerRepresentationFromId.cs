@@ -11,6 +11,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
     using OBeautifulCode.Compression;
     using OBeautifulCode.Serialization;
+    using static System.FormattableString;
 
     /// <summary>
     /// Container for schema.
@@ -112,13 +113,16 @@ namespace Naos.SqlServer.Domain
                 /// Builds the name of the put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
                 public static string BuildCreationScript(
-                    string streamName)
+                    string streamName,
+                    bool asAlter = false)
                 {
-                    return FormattableString.Invariant(
+                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var result = Invariant(
                         $@"
-CREATE PROCEDURE [{streamName}].[{GetSerializerRepresentationFromId.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{GetSerializerRepresentationFromId.Name}](
     @{InputParamName.Id} {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax}
   , @{OutputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.DataType.DeclarationInSqlSyntax} OUTPUT
   , @{OutputParamName.ConfigTypeWithVersionId} {Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -135,6 +139,8 @@ SELECT
 	FROM [{streamName}].[{Tables.SerializerRepresentation.Table.Name}] WHERE [{Tables.SerializerRepresentation.Id.Name}] = @{InputParamName.Id}
 
 END");
+
+                    return result;
                 }
             }
         }
