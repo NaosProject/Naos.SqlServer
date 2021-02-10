@@ -8,8 +8,10 @@ namespace Naos.SqlServer.Protocol.Client
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.Protocol.Domain;
     using Naos.SqlServer.Domain;
@@ -105,6 +107,7 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         public UpdateStreamStoredProceduresResult Execute(
             UpdateStreamStoredProceduresOp operation)
         {

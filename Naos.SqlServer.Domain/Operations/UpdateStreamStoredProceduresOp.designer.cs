@@ -15,6 +15,8 @@ namespace Naos.SqlServer.Domain
     using global::System.Globalization;
     using global::System.Linq;
 
+    using global::Naos.Protocol.Domain;
+
     using global::OBeautifulCode.Equality.Recipes;
     using global::OBeautifulCode.Type;
     using global::OBeautifulCode.Type.Recipes;
@@ -22,15 +24,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlParameterRepresentationBase : IModel<SqlParameterRepresentationBase>
+    public partial class UpdateStreamStoredProceduresOp : IModel<UpdateStreamStoredProceduresOp>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlParameterRepresentationBase"/> are equal.
+        /// Determines whether two objects of type <see cref="UpdateStreamStoredProceduresOp"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlParameterRepresentationBase left, SqlParameterRepresentationBase right)
+        public static bool operator ==(UpdateStreamStoredProceduresOp left, UpdateStreamStoredProceduresOp right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -42,47 +44,55 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = left.Equals((object)right);
+            var result = left.Equals(right);
 
             return result;
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlParameterRepresentationBase"/> are not equal.
+        /// Determines whether two objects of type <see cref="UpdateStreamStoredProceduresOp"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlParameterRepresentationBase left, SqlParameterRepresentationBase right) => !(left == right);
+        public static bool operator !=(UpdateStreamStoredProceduresOp left, UpdateStreamStoredProceduresOp right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlParameterRepresentationBase other) => this == other;
-
-        /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
-        public override bool Equals(object obj)
+        public bool Equals(UpdateStreamStoredProceduresOp other)
         {
-            throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(other, null))
+            {
+                return false;
+            }
+
+            var result = this.RecordTagAssociationManagementStrategy.IsEqualTo(other.RecordTagAssociationManagementStrategy)
+                      && this.MaxConcurrentHandlingCount.IsEqualTo(other.MaxConcurrentHandlingCount);
+
+            return result;
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
-        public override int GetHashCode()
-        {
-            throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
-        }
+        public override bool Equals(object obj) => this == (obj as UpdateStreamStoredProceduresOp);
 
         /// <inheritdoc />
-        public object Clone() => this.DeepClone();
+        public override int GetHashCode() => HashCodeHelper.Initialize()
+            .Hash(this.RecordTagAssociationManagementStrategy)
+            .Hash(this.MaxConcurrentHandlingCount)
+            .Value;
 
         /// <inheritdoc />
-        public SqlParameterRepresentationBase DeepClone() => this.DeepCloneInternal();
+        public new UpdateStreamStoredProceduresOp DeepClone() => (UpdateStreamStoredProceduresOp)this.DeepCloneInternal();
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="Name" />.
+        /// Deep clones this object with a new <see cref="RecordTagAssociationManagementStrategy" />.
         /// </summary>
-        /// <param name="name">The new <see cref="Name" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlParameterRepresentationBase" /> using the specified <paramref name="name" /> for <see cref="Name" /> and a deep clone of every other property.</returns>
+        /// <param name="recordTagAssociationManagementStrategy">The new <see cref="RecordTagAssociationManagementStrategy" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="UpdateStreamStoredProceduresOp" /> using the specified <paramref name="recordTagAssociationManagementStrategy" /> for <see cref="RecordTagAssociationManagementStrategy" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -98,16 +108,20 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public virtual SqlParameterRepresentationBase DeepCloneWithName(string name)
+        public UpdateStreamStoredProceduresOp DeepCloneWithRecordTagAssociationManagementStrategy(RecordTagAssociationManagementStrategy? recordTagAssociationManagementStrategy)
         {
-            throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
+            var result = new UpdateStreamStoredProceduresOp(
+                                 recordTagAssociationManagementStrategy,
+                                 this.MaxConcurrentHandlingCount);
+
+            return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="DataType" />.
+        /// Deep clones this object with a new <see cref="MaxConcurrentHandlingCount" />.
         /// </summary>
-        /// <param name="dataType">The new <see cref="DataType" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlParameterRepresentationBase" /> using the specified <paramref name="dataType" /> for <see cref="DataType" /> and a deep clone of every other property.</returns>
+        /// <param name="maxConcurrentHandlingCount">The new <see cref="MaxConcurrentHandlingCount" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="UpdateStreamStoredProceduresOp" /> using the specified <paramref name="maxConcurrentHandlingCount" /> for <see cref="MaxConcurrentHandlingCount" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -123,27 +137,32 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public virtual SqlParameterRepresentationBase DeepCloneWithDataType(SqlDataTypeRepresentationBase dataType)
+        public UpdateStreamStoredProceduresOp DeepCloneWithMaxConcurrentHandlingCount(int? maxConcurrentHandlingCount)
         {
-            throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
-        }
+            var result = new UpdateStreamStoredProceduresOp(
+                                 this.RecordTagAssociationManagementStrategy,
+                                 maxConcurrentHandlingCount);
 
-        /// <summary>
-        /// Creates a new object that is a deep clone of this instance.
-        /// </summary>
-        /// <returns>
-        /// A new object that is a deep clone of this instance.
-        /// </returns>
-        protected virtual SqlParameterRepresentationBase DeepCloneInternal()
-        {
-            throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
+            return result;
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
+        protected override OperationBase DeepCloneInternal()
+        {
+            var result = new UpdateStreamStoredProceduresOp(
+                                 this.RecordTagAssociationManagementStrategy,
+                                 this.MaxConcurrentHandlingCount);
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
+            var result = Invariant($"Naos.SqlServer.Domain.UpdateStreamStoredProceduresOp: RecordTagAssociationManagementStrategy = {this.RecordTagAssociationManagementStrategy?.ToString() ?? "<null>"}, MaxConcurrentHandlingCount = {this.MaxConcurrentHandlingCount?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
+
+            return result;
         }
     }
 }
