@@ -209,9 +209,6 @@
     <Compile Include="Operations\CreateDatabaseOp.designer.cs">
       <DependentUpon>CreateDatabaseOp.cs</DependentUpon>
     </Compile>
-    <Compile Include="Operations\UpdateStreamStoredProceduresOp.designer.cs">
-      <DependentUpon>UpdateStreamStoredProceduresOp.cs</DependentUpon>
-    </Compile>
     <Compile Include="Operations\UpdateStreamStoredProceduresResult.cs" />
     <Compile Include="Operations\UpdateStreamStoredProceduresOp.cs" />
     <Compile Include="Operations\CreateStreamUserOp.designer.cs">
@@ -288,6 +285,7 @@
     <Compile Include="Model\SchemaRepresentation\TableDescription.cs" />
     <Compile Include="SqlInjectorChecker.cs" />
     <AdditionalFiles Include=".analyzers\stylecop.json" />
+    <Compile Include="StreamSchema\RecordTagAssociationManagementStrategy.cs" />
     <Compile Include="StreamSchema\TagConversionTool.cs" />
     <None Include=".analyzers\release.ruleset" />
     <None Include="Naos.SqlServer.Domain.override-nuspec" />

@@ -66,7 +66,7 @@ namespace Naos.SqlServer.Domain.Test
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
                     ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new UpdateStreamStoredProceduresOp[]
                     {
-                        new UpdateStreamStoredProceduresOp(),
+                        new UpdateStreamStoredProceduresOp(null, null),
                     },
                     ObjectsThatAreNotEqualToReferenceObject = new UpdateStreamStoredProceduresOp[]
                     {

@@ -234,6 +234,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the creation script for put sproc.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="maxConcurrentHandlingCount">The optional maximum concurrent handling count; DEFAULT is no limit.</param>
                 /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>System.String.</returns>
                 [System.Diagnostics.CodeAnalysis.SuppressMessage(
@@ -248,11 +249,13 @@ namespace Naos.SqlServer.Domain
                     Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
                     string streamName,
+                    int? maxConcurrentHandlingCount,
                     bool asAlter = false)
                 {
                     const string recordIdToAttemptToClaim = "RecordIdToAttemptToClaim";
                     const string candidateRecordIds = "CandidateRecordIds";
                     const string blockedStatus = "BlockedStatus";
+                    const string currentRunningCount = "CurrentRunningCount";
                     const string isUnhandledRecord = "IsUnhandledRecord";
                     const string unionedIfNecessaryTagIdsXml = "UnionedIfNecessaryTagIdsXml";
                     string acceptableStatusesXml = TagConversionTool.GetTagsXmlString(
@@ -264,6 +267,25 @@ namespace Naos.SqlServer.Domain
                             HandlingStatus.CanceledRunning.ToString(),
                             HandlingStatus.RetryFailed.ToString(),
                         }.ToOrdinalDictionary());
+
+                    var shouldAttemptHandling = "ShouldAttemptHandling";
+                    var concurrentCheckBlock = maxConcurrentHandlingCount == null
+                        ? string.Empty
+                        : Invariant($@"
+    DECLARE @{currentRunningCount} INT
+    SELECT @{currentRunningCount} = COUNT(*)
+	FROM [{streamName}].[{Tables.Handling.Table.Name}] h 
+	LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+	ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+	WHERE
+        h1.[{Tables.Handling.Status.Name}] IS NULL
+	AND h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.Running}'
+    
+	IF (@{currentRunningCount} >= {maxConcurrentHandlingCount})
+	BEGIN
+		SET @{shouldAttemptHandling} = 0
+    END
+");
 
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
                     var result = Invariant($@"
@@ -299,7 +321,15 @@ BEGIN
 	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingConcern}'
 
 	-- Check if global handling block has been applied
-	IF ((@{blockedStatus} IS NULL) OR (@{blockedStatus} <> '{HandlingStatus.Blocked}'))
+	DECLARE @{shouldAttemptHandling} BIT
+	IF((@{blockedStatus} IS NULL) OR (@{blockedStatus} <> '{HandlingStatus.Blocked}'))
+	BEGIN
+		SET @{shouldAttemptHandling} = 1
+    END
+
+	{concurrentCheckBlock}
+
+	IF (@{shouldAttemptHandling} = 1)
 	BEGIN
         DECLARE @{candidateRecordIds} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.DataType.DeclarationInSqlSyntax} NOT NULL)
 		DECLARE @{isUnhandledRecord} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
@@ -679,7 +709,7 @@ BEGIN
                 SET @{OutputParamName.InternalRecordId} = @{recordIdToAttemptToClaim}
 			END
 		END -- Found record
-	END -- Check blocking
+	END -- Should attempt handling
     IF (@{OutputParamName.ShouldHandle} = 1)
 	BEGIN
 		-- Fetch record to handle to output params

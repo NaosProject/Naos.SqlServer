@@ -78,12 +78,12 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name),
-                                                      StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name, RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction),
                                                       StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildCreationScript(this.Name),
-                                                      StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name, null),
                                                       StreamSchema.Sprocs.CreateStreamUser.BuildCreationScript(this.Name),
-                                                      StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(this.Name, RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction, null),
                                                       StreamSchema.BuildCreationScriptForRoles(this.Name), // must be at end to reference the items.
                                                   };
 
@@ -140,12 +140,12 @@ namespace Naos.SqlServer.Protocol.Client
                                                StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name, true),
-                                               StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name, true),
+                                               StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name, operation.RecordTagAssociationManagementStrategy ?? RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction, true),
                                                StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildCreationScript(this.Name, true),
-                                               StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name, true),
+                                               StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name, operation.MaxConcurrentHandlingCount, true),
                                                StreamSchema.Sprocs.CreateStreamUser.BuildCreationScript(this.Name, true),
-                                               StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(this.Name, true),
+                                               StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(this.Name, operation.RecordTagAssociationManagementStrategy ?? RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction, operation.MaxConcurrentHandlingCount, true),
                                            };
 
                         var detailsOperation = StreamSchema.Sprocs.GetStreamDetails.BuildExecuteStoredProcedureOp(this.Name);

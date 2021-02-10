@@ -195,10 +195,12 @@ namespace Naos.SqlServer.Domain
                 /// Builds the creation script for put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="recordTagAssociationManagementStrategy">The record tag association management strategy.</param>
                 /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>System.String.</returns>
                 public static string BuildCreationScript(
                     string streamName,
+                    RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy,
                     bool asAlter = false)
                 {
                     const string recordCreatedUtc = "RecordCreatedUtc";
@@ -209,6 +211,153 @@ namespace Naos.SqlServer.Domain
                     var transaction = Invariant($"{nameof(PutRecord)}Transaction");
                     var pruneTransaction = Invariant($"PruneTransaction");
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    string insertRowsBlock;
+                    switch (recordTagAssociationManagementStrategy)
+                    {
+                        case RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction:
+                            insertRowsBlock = Invariant($@"
+		{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
+		INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
+		    SELECT
+			  [{Tables.Tag.TagValue.Name}]
+			FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
+
+		BEGIN TRANSACTION [{transaction}]
+		  BEGIN TRY
+		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
+			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
+			, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
+			, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
+			, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
+			, [{nameof(Tables.Record.SerializerRepresentationId)}]
+			, [{nameof(Tables.Record.StringSerializedId)}]
+			, [{nameof(Tables.Record.StringSerializedObject)}]
+			, [{nameof(Tables.Record.BinarySerializedObject)}]
+			, [{nameof(Tables.Record.TagIdsXml)}]
+			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
+			, [{nameof(Tables.Record.RecordCreatedUtc)}]
+			) VALUES (
+			  @{InputParamName.IdentifierTypeWithoutVersionId}
+			, @{InputParamName.IdentifierTypeWithVersionId}
+			, @{InputParamName.ObjectTypeWithoutVersionId}
+			, @{InputParamName.ObjectTypeWithVersionId}
+			, @{InputParamName.SerializerRepresentationId}
+			, @{InputParamName.StringSerializedId}
+			, @{InputParamName.StringSerializedObject}
+			, @{InputParamName.BinarySerializedObject}
+			, @{InputParamName.TagIdsXml}
+			, @{InputParamName.ObjectDateTimeUtc}
+			, @{recordCreatedUtc}
+			)
+
+	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+		  
+	      INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
+		    [{Tables.RecordTag.RecordId.Name}]
+		  , [{Tables.RecordTag.TagId.Name}]
+		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
+	     SELECT 
+  		    @{OutputParamName.Id}
+		  , t.[{Tables.Tag.Id.Name}]
+		  , @{recordCreatedUtc}
+	     FROM @{tagIdsTable} t
+	    COMMIT TRANSACTION [{transaction}]
+	  END TRY
+	  BEGIN CATCH
+	      DECLARE @PruneErrorMessage nvarchar(max), 
+	              @PruneErrorSeverity int, 
+	              @PruneErrorState int
+
+	      SELECT @PruneErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @PruneErrorSeverity = ERROR_SEVERITY(), @PruneErrorState = ERROR_STATE()
+
+	      IF (@@trancount > 0)
+	      BEGIN
+	         ROLLBACK TRANSACTION [{transaction}]
+	      END
+	    RAISERROR (@PruneErrorMessage, @PruneErrorSeverity, @PruneErrorState)
+	  END CATCH");
+                            break;
+                        case RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocOutOfTransaction:
+                            insertRowsBlock = Invariant($@"
+		  {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
+		  INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
+		    SELECT
+			  [{Tables.Tag.TagValue.Name}]
+			FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
+
+		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
+			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
+			, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
+			, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
+			, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
+			, [{nameof(Tables.Record.SerializerRepresentationId)}]
+			, [{nameof(Tables.Record.StringSerializedId)}]
+			, [{nameof(Tables.Record.StringSerializedObject)}]
+			, [{nameof(Tables.Record.BinarySerializedObject)}]
+			, [{nameof(Tables.Record.TagIdsXml)}]
+			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
+			, [{nameof(Tables.Record.RecordCreatedUtc)}]
+			) VALUES (
+			  @{InputParamName.IdentifierTypeWithoutVersionId}
+			, @{InputParamName.IdentifierTypeWithVersionId}
+			, @{InputParamName.ObjectTypeWithoutVersionId}
+			, @{InputParamName.ObjectTypeWithVersionId}
+			, @{InputParamName.SerializerRepresentationId}
+			, @{InputParamName.StringSerializedId}
+			, @{InputParamName.StringSerializedObject}
+			, @{InputParamName.BinarySerializedObject}
+			, @{InputParamName.TagIdsXml}
+			, @{InputParamName.ObjectDateTimeUtc}
+			, @{recordCreatedUtc}
+			)
+
+	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+		  
+	      INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
+		    [{Tables.RecordTag.RecordId.Name}]
+		  , [{Tables.RecordTag.TagId.Name}]
+		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
+	     SELECT 
+  		    @{OutputParamName.Id}
+		  , t.[{Tables.Tag.Id.Name}]
+		  , @{recordCreatedUtc}
+	     FROM @{tagIdsTable} t");
+                            break;
+                        case RecordTagAssociationManagementStrategy.ExternallyManaged:
+                            insertRowsBlock = Invariant($@"
+		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
+			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
+			, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
+			, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
+			, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
+			, [{nameof(Tables.Record.SerializerRepresentationId)}]
+			, [{nameof(Tables.Record.StringSerializedId)}]
+			, [{nameof(Tables.Record.StringSerializedObject)}]
+			, [{nameof(Tables.Record.BinarySerializedObject)}]
+			, [{nameof(Tables.Record.TagIdsXml)}]
+			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
+			, [{nameof(Tables.Record.RecordCreatedUtc)}]
+			) VALUES (
+			  @{InputParamName.IdentifierTypeWithoutVersionId}
+			, @{InputParamName.IdentifierTypeWithVersionId}
+			, @{InputParamName.ObjectTypeWithoutVersionId}
+			, @{InputParamName.ObjectTypeWithVersionId}
+			, @{InputParamName.SerializerRepresentationId}
+			, @{InputParamName.StringSerializedId}
+			, @{InputParamName.StringSerializedObject}
+			, @{InputParamName.BinarySerializedObject}
+			, @{InputParamName.TagIdsXml}
+			, @{InputParamName.ObjectDateTimeUtc}
+			, @{recordCreatedUtc}
+			)
+
+	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+		  ");
+                            break;
+                        default:
+                            throw new NotSupportedException(Invariant($"{nameof(RecordTagAssociationManagementStrategy)} '{recordTagAssociationManagementStrategy}' is not supported."));
+                    }
+
                     var result = Invariant($@"
 {createOrModify} PROCEDURE [{streamName}].[{PutRecord.Name}](
   @{InputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax}
@@ -298,68 +447,11 @@ BEGIN
 
 	IF (@{OutputParamName.ExistingRecordIdsXml} IS NULL OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType}')
 	BEGIN
-		{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
-		INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-		    SELECT
-			  [{Tables.Tag.TagValue.Name}]
-			FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
+		DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
+		SET @RecordCreatedUtc = GETUTCDATE()
 
-		BEGIN TRANSACTION [{transaction}]
-		  BEGIN TRY
-		  DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
-		  SET @RecordCreatedUtc = GETUTCDATE()
-		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
-			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
-			, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
-			, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
-			, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
-			, [{nameof(Tables.Record.SerializerRepresentationId)}]
-			, [{nameof(Tables.Record.StringSerializedId)}]
-			, [{nameof(Tables.Record.StringSerializedObject)}]
-			, [{nameof(Tables.Record.BinarySerializedObject)}]
-			, [{nameof(Tables.Record.TagIdsXml)}]
-			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
-			, [{nameof(Tables.Record.RecordCreatedUtc)}]
-			) VALUES (
-			  @{InputParamName.IdentifierTypeWithoutVersionId}
-			, @{InputParamName.IdentifierTypeWithVersionId}
-			, @{InputParamName.ObjectTypeWithoutVersionId}
-			, @{InputParamName.ObjectTypeWithVersionId}
-			, @{InputParamName.SerializerRepresentationId}
-			, @{InputParamName.StringSerializedId}
-			, @{InputParamName.StringSerializedObject}
-			, @{InputParamName.BinarySerializedObject}
-			, @{InputParamName.TagIdsXml}
-			, @{InputParamName.ObjectDateTimeUtc}
-			, @{recordCreatedUtc}
-			)
+		{insertRowsBlock}
 
-	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
-		  
-	      INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
-		    [{Tables.RecordTag.RecordId.Name}]
-		  , [{Tables.RecordTag.TagId.Name}]
-		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
-	     SELECT 
-  		    @{OutputParamName.Id}
-		  , t.[{Tables.Tag.Id.Name}]
-		  , @{recordCreatedUtc}
-	     FROM @{tagIdsTable} t
-	    COMMIT TRANSACTION [{transaction}]
-	  END TRY
-	  BEGIN CATCH
-	      DECLARE @PruneErrorMessage nvarchar(max), 
-	              @PruneErrorSeverity int, 
-	              @PruneErrorState int
-
-	      SELECT @PruneErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @PruneErrorSeverity = ERROR_SEVERITY(), @PruneErrorState = ERROR_STATE()
-
-	      IF (@@trancount > 0)
-	      BEGIN
-	         ROLLBACK TRANSACTION [{transaction}]
-	      END
-	    RAISERROR (@PruneErrorMessage, @PruneErrorSeverity, @PruneErrorState)
-	  END CATCH
 	  IF (@{OutputParamName.ExistingRecordIdsXml} IS NOT NULL)
 	  BEGIN
 		-- must be a prune scenario to get here as this is checked above...
@@ -408,8 +500,8 @@ BEGIN
 			    , [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
 		    FROM @{prunedIdsTable}
 		    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
-		END -- have enough records to delete
-	  END -- have existing records
+		END -- have enough records to delete - the actual prune
+	  END -- have existing records - check for pruning
 	END -- need to insert a record
 END
 			");

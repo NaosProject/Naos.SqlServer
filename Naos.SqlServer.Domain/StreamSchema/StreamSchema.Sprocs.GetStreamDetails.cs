@@ -78,6 +78,8 @@ namespace Naos.SqlServer.Domain
                 /// Builds the name of the put stored procedure.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="recordTagAssociationManagementStrategy">The optional record tag association management strategy; DEFAULT is AssociatedDuringPutInSprocInTransaction."/>.</param>
+                /// <param name="maxConcurrentHandlingCount">The optional maximum concurrent handling count; DEFAULT is no limit.</param>
                 /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
                 [System.Diagnostics.CodeAnalysis.SuppressMessage(
@@ -87,6 +89,8 @@ namespace Naos.SqlServer.Domain
                     Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
                     string streamName,
+                    RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy,
+                    int? maxConcurrentHandlingCount,
                     bool asAlter = false)
                 {
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
@@ -97,7 +101,7 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
-    SELECT @{OutputParamName.DetailsXml} = '<Tags><Tag Key=""{VersionKey}"" Value=""{typeof(GetStreamDetails).Assembly.GetName().Version}"" /></Tags>'
+    SELECT @{OutputParamName.DetailsXml} = '<Tags><Tag Key=""{VersionKey}"" Value=""{typeof(GetStreamDetails).Assembly.GetName().Version}"" /><Tag Key=""{nameof(UpdateStreamStoredProceduresOp.RecordTagAssociationManagementStrategy)}"" Value=""{recordTagAssociationManagementStrategy}"" /><Tag Key=""{nameof(UpdateStreamStoredProceduresOp.MaxConcurrentHandlingCount)}"" Value=""{maxConcurrentHandlingCount}"" /></Tags>'
 END");
 
                     return result;

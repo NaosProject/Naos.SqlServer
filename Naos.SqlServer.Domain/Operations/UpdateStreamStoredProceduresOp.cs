@@ -6,19 +6,7 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Naos.CodeAnalysis.Recipes;
-    using Naos.Database.Domain;
     using Naos.Protocol.Domain;
-    using Naos.SqlServer.Domain;
-    using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.Representation.System;
-    using OBeautifulCode.Serialization;
-    using OBeautifulCode.Type;
-    using static System.FormattableString;
 
     /// <summary>
     /// Alters the stored procedures of the stream to the schema version being executed.
@@ -28,8 +16,26 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateStreamStoredProceduresOp"/> class.
         /// </summary>
-        public UpdateStreamStoredProceduresOp()
+        /// <param name="recordTagAssociationManagementStrategy">The optional record tag association management strategy; DEFAULT is AssociatedDuringPutInSprocInTransaction."/>.</param>
+        /// <param name="maxConcurrentHandlingCount">The optional maximum concurrent handling count; DEFAULT is no limit.</param>
+        public UpdateStreamStoredProceduresOp(
+            RecordTagAssociationManagementStrategy? recordTagAssociationManagementStrategy,
+            int? maxConcurrentHandlingCount)
         {
+            this.RecordTagAssociationManagementStrategy = recordTagAssociationManagementStrategy;
+            this.MaxConcurrentHandlingCount = maxConcurrentHandlingCount;
         }
+
+        /// <summary>
+        /// Gets the record tag association management strategy.
+        /// </summary>
+        /// <value>The record tag association management strategy.</value>
+        public RecordTagAssociationManagementStrategy? RecordTagAssociationManagementStrategy { get; private set; }
+
+        /// <summary>
+        /// Gets the maximum concurrent handling count.
+        /// </summary>
+        /// <value>The maximum concurrent handling count.</value>
+        public int? MaxConcurrentHandlingCount { get; private set; }
     }
 }

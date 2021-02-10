@@ -277,9 +277,6 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new UpdateStreamStoredProceduresOp());
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateStreamUserOp(
                                  A.Dummy<string>(),
                                  A.Dummy<string>(),
