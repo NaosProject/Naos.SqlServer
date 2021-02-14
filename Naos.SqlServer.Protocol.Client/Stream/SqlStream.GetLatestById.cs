@@ -67,7 +67,7 @@ namespace Naos.SqlServer.Protocol.Client
             var identifierType = this.GetTypeById(sqlServerLocator, identifierTypeWithVersionId, true);
             var objectType = this.GetTypeById(sqlServerLocator, objectTypeWithVersionId, true);
             var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-            var tags = this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
+            var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
 
             var recordTimestamp = new DateTime(
                 recordTimestampRaw.Year,
@@ -152,7 +152,7 @@ namespace Naos.SqlServer.Protocol.Client
             var identifierType = this.GetTypeById(sqlServerLocator, identifierTypeWithVersionId, true);
             var objectType = this.GetTypeById(sqlServerLocator, objectTypeWithVersionId, true);
             var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-            var tags = this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
+            var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
 
             var recordTimestamp = new DateTime(
                 recordTimestampRaw.Year,

@@ -44,6 +44,11 @@ namespace Naos.SqlServer.Protocol.Client
         /// <returns>IReadOnlyList&lt;System.Int64&gt;.</returns>
         public IReadOnlyList<long> GetIdsAddIfNecessaryTag(SqlServerLocator locator, IReadOnlyDictionary<string, string> tags)
         {
+            if (tags == null)
+            {
+                return null;
+            }
+
             var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
             var result = new List<long>();
             var remaining = new List<KeyValuePair<string, string>>();
@@ -71,7 +76,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var tagIdsXml = sprocResultWithVersion
                                .OutputParameters[nameof(StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.OutputParamName.TagIdsXml)]
                                .GetValue<string>();
-                var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
+                var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml) ?? new List<KeyValuePair<string, string>>();
                 var additional = tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 
@@ -99,7 +104,12 @@ namespace Naos.SqlServer.Protocol.Client
         /// <returns>IReadOnlyDictionary&lt;System.String, System.String&gt;.</returns>
         public IReadOnlyDictionary<string, string> GetTagsByIds(SqlServerLocator locator, IReadOnlyCollection<long> tagIds)
         {
-            if (tagIds == null || !tagIds.Any())
+            if (tagIds == null)
+            {
+                return null;
+            }
+
+            if (!tagIds.Any())
             {
                 return new Dictionary<string, string>();
             }
@@ -129,7 +139,7 @@ namespace Naos.SqlServer.Protocol.Client
                     remaining.ToList());
                 var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
                 var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValue<string>();
-                var additional = TagConversionTool.GetTagsFromXmlString(tagsXml).ToList();
+                var additional = TagConversionTool.GetTagsFromXmlString(tagsXml).ToList() ?? new List<KeyValuePair<string, string>>();
 
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 

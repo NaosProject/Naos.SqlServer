@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
@@ -55,8 +56,8 @@ namespace Naos.SqlServer.Protocol.Client
             var existingRecordIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordIdsXml)].GetValue<string>();
             var prunedRecordIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.PrunedRecordIdsXml)].GetValue<string>();
 
-            var existingRecordIds = TagConversionTool.GetTagsFromXmlString(existingRecordIdsXml).Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
-            var prunedRecordIds = TagConversionTool.GetTagsFromXmlString(prunedRecordIdsXml).Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
+            var existingRecordIds = TagConversionTool.GetTagsFromXmlString(existingRecordIdsXml)?.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList() ?? new List<long>();
+            var prunedRecordIds = TagConversionTool.GetTagsFromXmlString(prunedRecordIdsXml)?.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList() ?? new List<long>();
 
             if (prunedRecordIds.Any() && !existingRecordIds.Any())
             {

@@ -59,6 +59,11 @@ namespace Naos.SqlServer.Domain
         public static IReadOnlyList<KeyValuePair<string, string>> GetTagsFromXmlString(
             string tagsAsXml)
         {
+            if (tagsAsXml == null)
+            {
+                return null;
+            }
+
             var result = new List<KeyValuePair<string, string>>();
 
             if (string.IsNullOrWhiteSpace(tagsAsXml))
@@ -94,7 +99,12 @@ namespace Naos.SqlServer.Domain
         public static string GetTagsXmlString(
             IReadOnlyDictionary<string, string> tags)
         {
-            if (tags == null || !tags.Any())
+            if (tags == null)
+            {
+                return null;
+            }
+
+            if (!tags.Any())
             {
                 return EmptyTagSetXml;
             }
@@ -126,15 +136,17 @@ namespace Naos.SqlServer.Domain
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "AtOne", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
         public static IReadOnlyDictionary<string, string> ToOrdinalDictionary<TElement>(this IReadOnlyList<TElement> elements, bool startAtOneInsteadOfZero = false)
         {
-            var result = new Dictionary<string, string>();
-            if (elements != null)
+            if (elements == null)
             {
-                for (var idx =  startAtOneInsteadOfZero ? 1 : 0;
-                    idx < elements.Count + (startAtOneInsteadOfZero ? 1 : 0);
-                    idx++)
-                {
-                    result.Add(idx.ToString(CultureInfo.InvariantCulture), elements[idx - (startAtOneInsteadOfZero ? 1 : 0)]?.ToString());
-                }
+                return null;
+            }
+
+            var result = new Dictionary<string, string>();
+            for (var idx =  startAtOneInsteadOfZero ? 1 : 0;
+                idx < elements.Count + (startAtOneInsteadOfZero ? 1 : 0);
+                idx++)
+            {
+                result.Add(idx.ToString(CultureInfo.InvariantCulture), elements[idx - (startAtOneInsteadOfZero ? 1 : 0)]?.ToString());
             }
 
             return result;

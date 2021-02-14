@@ -145,7 +145,7 @@ CREATE TABLE [{streamName}].[{nameof(Record)}](
 	[{nameof(StringSerializedId)}] {StringSerializedId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(StringSerializedObject)}] {StringSerializedObject.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(BinarySerializedObject)}] {BinarySerializedObject.DataType.DeclarationInSqlSyntax} NULL,
-	[{nameof(TagIdsXml)}] {TagIdsXml.DataType.DeclarationInSqlSyntax} NOT NULL,
+	[{nameof(TagIdsXml)}] {TagIdsXml.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(ObjectDateTimeUtc)}] {ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
  CONSTRAINT [PK_{nameof(Record)}] PRIMARY KEY CLUSTERED 

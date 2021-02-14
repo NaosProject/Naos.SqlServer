@@ -158,12 +158,6 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(PutRecord)}");
 
-                    if (tagIdsXml == null)
-                    {
-                        var tagIds = new Dictionary<string, string>();
-                        tagIdsXml = TagConversionTool.GetTagsXmlString(tagIds);
-                    }
-
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType, serializerRepresentation.Id),
