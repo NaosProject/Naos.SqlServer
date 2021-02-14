@@ -181,7 +181,8 @@ namespace Naos.SqlServer.Domain
                 /// <param name="orderRecordsStrategy">The order records strategy.</param>
                 /// <param name="typeVersionMatchStrategy">The type version match strategy.</param>
                 /// <param name="tagIdsXml">The tag identifiers as XML.</param>
-                /// <param name="minimumInternalRecordId">The optional minimum internal record identifier.</param>
+                /// <param name="minimumInternalRecordId">The optional minimum internal record identifier, null for default.</param>
+                /// <param name="inheritRecordTags">The tags on the record should also be on the handling entry.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
@@ -192,7 +193,8 @@ namespace Naos.SqlServer.Domain
                     OrderRecordsStrategy orderRecordsStrategy,
                     TypeVersionMatchStrategy typeVersionMatchStrategy,
                     string tagIdsXml,
-                    long? minimumInternalRecordId)
+                    long? minimumInternalRecordId,
+                    bool inheritRecordTags)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(TryHandleRecord)}");
 
@@ -207,7 +209,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsForEntryXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
-                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), 1),
+                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), inheritRecordTags ? 1 : 0),
                                          new SqlInputParameterRepresentation<long?>(nameof(InputParamName.MinimumInternalRecordId), Tables.Record.Id.DataType, minimumInternalRecordId),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
