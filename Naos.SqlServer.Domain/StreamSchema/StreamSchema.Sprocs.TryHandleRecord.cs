@@ -168,6 +168,11 @@ namespace Naos.SqlServer.Domain
                     /// An indicator of whether or not to handle.
                     /// </summary>
                     ShouldHandle,
+
+                    /// <summary>
+                    /// Whether or not handling is blocked.
+                    /// </summary>
+                    IsBlocked,
                 }
 
                 /// <summary>
@@ -212,6 +217,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), inheritRecordTags ? 1 : 0),
                                          new SqlInputParameterRepresentation<long?>(nameof(InputParamName.MinimumInternalRecordId), Tables.Record.Id.DataType, minimumInternalRecordId),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
+                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.IsBlocked), new IntSqlDataTypeRepresentation()),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType),
@@ -315,6 +321,7 @@ namespace Naos.SqlServer.Domain
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ShouldHandle} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.IsBlocked} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -324,10 +331,15 @@ BEGIN
 
 	-- Check if global handling block has been applied
 	DECLARE @{shouldAttemptHandling} BIT
-	IF((@{blockedStatus} IS NULL) OR (@{blockedStatus} <> '{HandlingStatus.Blocked}'))
+	IF(@{blockedStatus} = '{HandlingStatus.Blocked}')
+	BEGIN
+		SET @{OutputParamName.IsBlocked} = 1
+    END
+	ELSE
 	BEGIN
 		SET @{shouldAttemptHandling} = 1
-    END
+		SET @{OutputParamName.IsBlocked} = 0
+	END
 
 	{concurrentCheckBlock}
 

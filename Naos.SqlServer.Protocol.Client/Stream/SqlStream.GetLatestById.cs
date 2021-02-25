@@ -12,7 +12,6 @@ namespace Naos.SqlServer.Protocol.Client
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using Naos.Database.Domain.DescribedSerialization;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Serialization;
     using static System.FormattableString;

@@ -12,7 +12,6 @@ namespace Naos.SqlServer.Protocol.Client
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using Naos.Database.Domain.DescribedSerialization;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Serialization;
     using static System.FormattableString;
@@ -21,7 +20,7 @@ namespace Naos.SqlServer.Protocol.Client
     {
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
-        public override StreamRecord Execute(
+        public override TryHandleRecordResult Execute(
             TryHandleRecordOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
@@ -51,9 +50,10 @@ namespace Naos.SqlServer.Protocol.Client
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
             int shouldHandle = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ShouldHandle)].GetValue<int>();
+            int isBlocked = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.IsBlocked)].GetValue<int>();
             if (shouldHandle != 1)
             {
-                return null;
+                return new TryHandleRecordResult(null, isBlocked == 1);
             }
 
             long internalRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.InternalRecordId)].GetValue<long>();
@@ -115,7 +115,8 @@ namespace Naos.SqlServer.Protocol.Client
                     throw new NotSupportedException(Invariant($"{nameof(SerializationFormat)} {identifiedSerializerRepresentation.SerializationFormat} is not supported."));
             }
 
-            var result = new StreamRecord(internalRecordId, metadata, payload);
+            var record = new StreamRecord(internalRecordId, metadata, payload);
+            var result = new TryHandleRecordResult(record);
             return result;
         }
     }
