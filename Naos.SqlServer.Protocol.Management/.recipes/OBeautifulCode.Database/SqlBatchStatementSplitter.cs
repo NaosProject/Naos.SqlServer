@@ -21,8 +21,8 @@ namespace OBeautifulCode.Database.Recipes
     /// Go statement must be on its own line.  Does not work for semicolon separator.
     /// </remarks>
 #if !OBeautifulCodeDatabaseSolution
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    [System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Database.Recipes", "See package version number")]
+    [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    [global::System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Database.Recipes", "See package version number")]
     internal
 #else
     public

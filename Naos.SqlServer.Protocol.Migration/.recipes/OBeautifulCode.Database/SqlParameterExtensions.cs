@@ -34,8 +34,8 @@ namespace OBeautifulCode.Database.Recipes
     /// SqlCommand Parameters size confusion: <a href="https://stackoverflow.com/questions/9483319/sqlcommand-parameters-size-confusion" />.
     /// </remarks>
 #if !OBeautifulCodeDatabaseSolution
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    [System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Database.Recipes", "See package version number")]
+    [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    [global::System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Database.Recipes", "See package version number")]
     internal
 #else
     public

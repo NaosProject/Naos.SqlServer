@@ -19,8 +19,8 @@ namespace OBeautifulCode.Database.Recipes
     /// Provides various methods for manipulating connection strings.
     /// </summary>
 #if !OBeautifulCodeDatabaseSolution
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    [System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Database.Recipes", "See package version number")]
+    [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    [global::System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Database.Recipes", "See package version number")]
     internal
 #else
     public
