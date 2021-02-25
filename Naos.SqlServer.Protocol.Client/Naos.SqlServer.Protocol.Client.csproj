@@ -104,6 +104,7 @@
     <Compile Include=".recipes\OBeautifulCode.Database\DatabaseHelper.WriteToCsv.cs" />
     <Compile Include=".recipes\OBeautifulCode.Database\SqlBatchStatementSplitter.cs" />
     <Compile Include=".recipes\OBeautifulCode.Database\SqlParameterExtensions.cs" />
+    <Compile Include=".recipes\OBeautifulCode.DateTime\DateTimeExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Enum\EnumExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Equality\DateTimeEqualityComparer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Equality\DictionaryEqualityComparer.cs" />

@@ -13,6 +13,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.DateTime.Recipes;
     using OBeautifulCode.Serialization;
     using static System.FormattableString;
 
@@ -73,25 +74,9 @@ namespace Naos.SqlServer.Protocol.Client
             var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
             var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
 
-            var recordTimestamp = new DateTime(
-                recordTimestampRaw.Year,
-                recordTimestampRaw.Month,
-                recordTimestampRaw.Day,
-                recordTimestampRaw.Hour,
-                recordTimestampRaw.Minute,
-                recordTimestampRaw.Second,
-                recordTimestampRaw.Millisecond,
-                DateTimeKind.Utc);
+            var recordTimestamp = recordTimestampRaw.ToUtc();
 
-            var objectTimestamp = objectTimestampRaw == null ? (DateTime?)null : new DateTime(
-                objectTimestampRaw.Value.Year,
-                objectTimestampRaw.Value.Month,
-                objectTimestampRaw.Value.Day,
-                objectTimestampRaw.Value.Hour,
-                objectTimestampRaw.Value.Minute,
-                objectTimestampRaw.Value.Second,
-                objectTimestampRaw.Value.Millisecond,
-                DateTimeKind.Utc);
+            var objectTimestamp = objectTimestampRaw == null ? (DateTime?)null : objectTimestampRaw.ToUtc();
 
             var metadata = new StreamRecordMetadata(
                 stringSerializedId,
