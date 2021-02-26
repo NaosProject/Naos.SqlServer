@@ -13,8 +13,10 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.DateTime.Recipes;
     using OBeautifulCode.Serialization;
+    using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
 
     public partial class SqlStream
@@ -31,21 +33,22 @@ namespace Naos.SqlServer.Protocol.Client
             var objectTypeQuery = operation.ObjectType == null
                 ? null
                 : this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.ObjectType.ToWithAndWithoutVersion());
-            var tagIdsForEntryXml = operation.Tags == null
+
+            var entryTagIdsCsv = operation.Tags == null
                 ? null
-                : TagConversionTool.GetTagsXmlString(this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.TryHandleRecord.BuildExecuteStoredProcedureOp(
-                this.Name,
-                operation.Concern,
-                operation.Details ?? Invariant($"Created by {nameof(TryHandleRecordOp)}."),
-                identifierTypeQuery,
-                objectTypeQuery,
-                operation.OrderRecordsStrategy,
-                operation.TypeVersionMatchStrategy,
-                tagIdsForEntryXml,
-                operation.MinimumInternalRecordId,
-                operation.InheritRecordTags);
+                                                this.Name,
+                                                operation.Concern,
+                                                operation.Details ?? Invariant($"Created by {nameof(TryHandleRecordOp)}."),
+                                                identifierTypeQuery,
+                                                objectTypeQuery,
+                                                operation.OrderRecordsStrategy,
+                                                operation.TypeVersionMatchStrategy,
+                                                entryTagIdsCsv,
+                                                operation.MinimumInternalRecordId,
+                                                operation.InheritRecordTags);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -66,13 +69,13 @@ namespace Naos.SqlServer.Protocol.Client
             byte[] binarySerializedObject = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.BinarySerializedObject)].GetValue<byte[]>();
             DateTime recordTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.RecordDateTime)].GetValue<DateTime>();
             DateTime? objectTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.ObjectDateTime)].GetValue<DateTime?>();
-            string tagIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.TagIdsXml)].GetValue<string>();
+            string recordTagIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.TryHandleRecord.OutputParamName.TagIdsCsv)].GetValue<string>();
 
             var identifiedSerializerRepresentation = this.GetSerializerRepresentationFromId(sqlServerLocator, serializerRepresentationId);
             var identifierType = this.GetTypeById(sqlServerLocator, identifierTypeWithVersionId, true);
             var objectType = this.GetTypeById(sqlServerLocator, objectTypeWithVersionId, true);
-            var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-            var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
+            var tagIds = recordTagIdsCsv?.FromCsv().Select(_ => long.Parse(_, CultureInfo.InvariantCulture)).ToList();
+            var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds);
 
             var recordTimestamp = recordTimestampRaw.ToUtc();
 

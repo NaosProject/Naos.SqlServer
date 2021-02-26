@@ -85,9 +85,9 @@ namespace Naos.SqlServer.Domain
                     ObjectDateTimeUtc,
 
                     /// <summary>
-                    /// The tags xml as a string.
+                    /// The tags as CSV.
                     /// </summary>
-                    TagIdsXml,
+                    TagIdsCsv,
 
                     /// <summary>
                     /// The existing record encountered strategy.
@@ -116,14 +116,14 @@ namespace Naos.SqlServer.Domain
                     Id,
 
                     /// <summary>
-                    /// The existing record identifiers (if any dependent on strategy).
+                    /// The existing record identifiers as CSV (if any dependent on strategy).
                     /// </summary>
-                    ExistingRecordIdsXml,
+                    ExistingRecordIdsCsv,
 
                     /// <summary>
-                    /// The pruned record identifiers (if any dependent on strategy).
+                    /// The pruned record identifiers as CSV (if any dependent on strategy).
                     /// </summary>
-                    PrunedRecordIdsXml,
+                    PrunedRecordIdsCsv,
                 }
 
                 /// <summary>
@@ -137,7 +137,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="serializedObjectString">The serialized object as a string (should have data IFF the serializer is set to SerializationFormat.String, otherwise null).</param>
                 /// <param name="serializedObjectBytes">The serialized object as a byte array (should have data IFF the serializer is set to SerializationFormat.Binary, otherwise null).</param>
                 /// <param name="objectDateTimeUtc">The date time of the object if exists.</param>
-                /// <param name="tagIdsXml">The tags in xml structure.</param>
+                /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
                 /// <param name="existingRecordEncounteredStrategy">Existing record encountered strategy.</param>
                 /// <param name="recordRetentionCount">Number of records to keep if using a pruning <paramref name="existingRecordEncounteredStrategy"/>.</param>
                 /// <param name="typeVersionMatchStrategy">Type version match strategy.</param>
@@ -151,7 +151,7 @@ namespace Naos.SqlServer.Domain
                     string serializedObjectString,
                     byte[] serializedObjectBytes,
                     DateTime? objectDateTimeUtc,
-                    string tagIdsXml,
+                    string tagIdsCsv,
                     ExistingRecordEncounteredStrategy existingRecordEncounteredStrategy,
                     int? recordRetentionCount,
                     TypeVersionMatchStrategy typeVersionMatchStrategy)
@@ -169,13 +169,13 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType, serializedObjectString),
                                          new SqlInputParameterRepresentation<byte[]>(nameof(InputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.DataType, serializedObjectBytes),
                                          new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.DataType, objectDateTimeUtc),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), Tables.Record.TagIdsXml.DataType, tagIdsXml),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType, tagIdsCsv),
                                          new SqlInputParameterRepresentation<ExistingRecordEncounteredStrategy>(nameof(InputParamName.ExistingRecordEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordEncounteredStrategy),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.RecordRetentionCount), new IntSqlDataTypeRepresentation(), recordRetentionCount),
                                          new SqlInputParameterRepresentation<TypeVersionMatchStrategy>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy),
                                          new SqlOutputParameterRepresentation<long?>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ExistingRecordIdsXml), new XmlSqlDataTypeRepresentation()),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.PrunedRecordIdsXml), new XmlSqlDataTypeRepresentation()),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ExistingRecordIdsCsv), Tables.Record.TagIdsCsv.DataType),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.PrunedRecordIdsCsv), Tables.Record.TagIdsCsv.DataType),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -198,7 +198,6 @@ namespace Naos.SqlServer.Domain
                     bool asAlter = false)
                 {
                     const string recordCreatedUtc = "RecordCreatedUtc";
-                    const string tagIdsTable = "TagIdsTable";
                     const string existingIdsTable = "ExistingIdsTable";
                     const string existingIdsCount = "ExistingIdsCount";
                     const string prunedIdsTable = "PrunedIdsTable";
@@ -210,12 +209,6 @@ namespace Naos.SqlServer.Domain
                     {
                         case RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction:
                             insertRowsBlock = Invariant($@"
-		{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
-		INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-		    SELECT
-			  [{Tables.Tag.TagValue.Name}]
-			FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
-
 		BEGIN TRANSACTION [{transaction}]
 		  BEGIN TRY
 		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
@@ -227,7 +220,7 @@ namespace Naos.SqlServer.Domain
 			, [{nameof(Tables.Record.StringSerializedId)}]
 			, [{nameof(Tables.Record.StringSerializedObject)}]
 			, [{nameof(Tables.Record.BinarySerializedObject)}]
-			, [{nameof(Tables.Record.TagIdsXml)}]
+			, [{nameof(Tables.Record.TagIdsCsv)}]
 			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
 			, [{nameof(Tables.Record.RecordCreatedUtc)}]
 			) VALUES (
@@ -239,7 +232,7 @@ namespace Naos.SqlServer.Domain
 			, @{InputParamName.StringSerializedId}
 			, @{InputParamName.StringSerializedObject}
 			, @{InputParamName.BinarySerializedObject}
-			, @{InputParamName.TagIdsXml}
+			, @{InputParamName.TagIdsCsv}
 			, @{InputParamName.ObjectDateTimeUtc}
 			, @{recordCreatedUtc}
 			)
@@ -250,11 +243,11 @@ namespace Naos.SqlServer.Domain
 		    [{Tables.RecordTag.RecordId.Name}]
 		  , [{Tables.RecordTag.TagId.Name}]
 		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
-	     SELECT 
+          SELECT 
   		    @{OutputParamName.Id}
-		  , t.[{Tables.Tag.Id.Name}]
+		  , value AS [{Tables.Tag.Id.Name}]
 		  , @{recordCreatedUtc}
-	     FROM @{tagIdsTable} t
+          FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ',')
 	    COMMIT TRANSACTION [{transaction}]
 	  END TRY
 	  BEGIN CATCH
@@ -273,11 +266,6 @@ namespace Naos.SqlServer.Domain
                             break;
                         case RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocOutOfTransaction:
                             insertRowsBlock = Invariant($@"
-		  {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
-		  INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-		    SELECT
-			  [{Tables.Tag.TagValue.Name}]
-			FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
 
 		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
 			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
@@ -288,7 +276,7 @@ namespace Naos.SqlServer.Domain
 			, [{nameof(Tables.Record.StringSerializedId)}]
 			, [{nameof(Tables.Record.StringSerializedObject)}]
 			, [{nameof(Tables.Record.BinarySerializedObject)}]
-			, [{nameof(Tables.Record.TagIdsXml)}]
+			, [{nameof(Tables.Record.TagIdsCsv)}]
 			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
 			, [{nameof(Tables.Record.RecordCreatedUtc)}]
 			) VALUES (
@@ -300,7 +288,7 @@ namespace Naos.SqlServer.Domain
 			, @{InputParamName.StringSerializedId}
 			, @{InputParamName.StringSerializedObject}
 			, @{InputParamName.BinarySerializedObject}
-			, @{InputParamName.TagIdsXml}
+			, @{InputParamName.TagIdsCsv}
 			, @{InputParamName.ObjectDateTimeUtc}
 			, @{recordCreatedUtc}
 			)
@@ -311,11 +299,12 @@ namespace Naos.SqlServer.Domain
 		    [{Tables.RecordTag.RecordId.Name}]
 		  , [{Tables.RecordTag.TagId.Name}]
 		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
-	     SELECT 
+	      SELECT
   		    @{OutputParamName.Id}
-		  , t.[{Tables.Tag.Id.Name}]
+		  , value AS [{Tables.Tag.Id.Name}]
 		  , @{recordCreatedUtc}
-	     FROM @{tagIdsTable} t");
+         FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ',')
+");
                             break;
                         case RecordTagAssociationManagementStrategy.ExternallyManaged:
                             insertRowsBlock = Invariant($@"
@@ -328,7 +317,7 @@ namespace Naos.SqlServer.Domain
 			, [{nameof(Tables.Record.StringSerializedId)}]
 			, [{nameof(Tables.Record.StringSerializedObject)}]
 			, [{nameof(Tables.Record.BinarySerializedObject)}]
-			, [{nameof(Tables.Record.TagIdsXml)}]
+			, [{nameof(Tables.Record.TagIdsCsv)}]
 			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
 			, [{nameof(Tables.Record.RecordCreatedUtc)}]
 			) VALUES (
@@ -340,7 +329,7 @@ namespace Naos.SqlServer.Domain
 			, @{InputParamName.StringSerializedId}
 			, @{InputParamName.StringSerializedObject}
 			, @{InputParamName.BinarySerializedObject}
-			, @{InputParamName.TagIdsXml}
+			, @{InputParamName.TagIdsCsv}
 			, @{InputParamName.ObjectDateTimeUtc}
 			, @{recordCreatedUtc}
 			)
@@ -363,21 +352,21 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsXml} AS {Tables.Record.TagIdsXml.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ExistingRecordEncounteredStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.RecordRetentionCount} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ExistingRecordIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.PrunedRecordIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.ExistingRecordIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.PrunedRecordIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
     -- If two actors try to both insert for the same ID with the '{nameof(ExistingRecordEncounteredStrategy)}'
 	--	   set to e.g. {ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}; they could both
 	--     write the same payload; this does work in a single actor re-entrant scenario and is the expected usage.
-	{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(existingIdsTable)}
-	{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(prunedIdsTable)}
+    DECLARE @{existingIdsTable} TABLE({Tables.Record.Id.Name} {Tables.Record.Id.DataType.DeclarationInSqlSyntax} NOT NULL)
+    DECLARE @{prunedIdsTable} TABLE({Tables.Record.Id.Name} {Tables.Record.Id.DataType.DeclarationInSqlSyntax} NOT NULL)
 	IF (@{InputParamName.ExistingRecordEncounteredStrategy} <> '{ExistingRecordEncounteredStrategy.None}')
 	BEGIN
 		INSERT INTO @{existingIdsTable}
@@ -432,21 +421,17 @@ BEGIN
 
 	IF EXISTS (SELECT TOP 1 * FROM @{existingIdsTable})
 	BEGIN
-        SELECT @{OutputParamName.ExistingRecordIdsXml} = (SELECT
-              ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-		    , [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
-	    FROM @{existingIdsTable}
-	    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+        SELECT @{OutputParamName.ExistingRecordIdsCsv} = STRING_AGG([{Tables.Tag.Id.Name}], ',') FROM @{existingIdsTable}
 	END
 
-	IF (@{OutputParamName.ExistingRecordIdsXml} IS NULL OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType}')
+	IF (@{OutputParamName.ExistingRecordIdsCsv} IS NULL OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType}')
 	BEGIN
 		DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 		SET @RecordCreatedUtc = GETUTCDATE()
 
 		{insertRowsBlock}
 
-	  IF (@{OutputParamName.ExistingRecordIdsXml} IS NOT NULL)
+	  IF (@{OutputParamName.ExistingRecordIdsCsv} IS NOT NULL)
 	  BEGIN
 		-- must be a prune scenario to get here as this is checked above...
         DECLARE @{existingIdsCount} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
@@ -489,11 +474,8 @@ BEGIN
 		      RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
 		    END CATCH
 
-			SELECT @{OutputParamName.PrunedRecordIdsXml} = (SELECT
-	              ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-			    , [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
-		    FROM @{prunedIdsTable}
-		    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+        SELECT @{OutputParamName.PrunedRecordIdsCsv} = STRING_AGG([{Tables.Tag.Id.Name}], ',') FROM @{prunedIdsTable}
+
 		END -- have enough records to delete - the actual prune
 	  END -- have existing records - check for pruning
 	END -- need to insert a record

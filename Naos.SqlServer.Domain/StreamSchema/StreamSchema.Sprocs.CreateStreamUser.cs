@@ -50,9 +50,9 @@ namespace Naos.SqlServer.Domain
                     ClearTextPassword,
 
                     /// <summary>
-                    /// The role.
+                    /// The roles as CSV.
                     /// </summary>
-                    RoleXml,
+                    RoleCsv,
                 }
 
                 /// <summary>
@@ -61,13 +61,13 @@ namespace Naos.SqlServer.Domain
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="username">The username.</param>
                 /// <param name="clearTextPassword">The password.</param>
-                /// <param name="role">The role.</param>
+                /// <param name="roles">The roles as CSV.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string username,
                     string clearTextPassword,
-                    string role)
+                    string roles)
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(CreateStreamUser)}");
 
@@ -75,7 +75,7 @@ namespace Naos.SqlServer.Domain
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Username), new StringSqlDataTypeRepresentation(true, 128), username),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.ClearTextPassword), new StringSqlDataTypeRepresentation(true, 128), clearTextPassword),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.RoleXml), new XmlSqlDataTypeRepresentation(), role),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), roles),
                                      };
 
                     var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -101,7 +101,7 @@ namespace Naos.SqlServer.Domain
 {createOrModify} PROCEDURE [{streamName}].[{CreateStreamUser.Name}](
   @{InputParamName.Username} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
 , @{InputParamName.ClearTextPassword} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-, @{InputParamName.RoleXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{InputParamName.RoleCsv} AS {new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant).DeclarationInSqlSyntax}
 )
 AS
 BEGIN
@@ -120,8 +120,8 @@ BEGIN
     -- Iterate over all roles
     DECLARE @role {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant).DeclarationInSqlSyntax}
     DECLARE cur CURSOR LOCAL FOR
-    SELECT [{Tables.Tag.TagValue.Name}]
-    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.RoleXml})
+    SELECT value
+    FROM STRING_SPLIT(@{InputParamName.RoleCsv}, ',')
     OPEN cur
     FETCH NEXT FROM cur INTO @role
 

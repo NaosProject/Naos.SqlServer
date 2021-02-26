@@ -82,7 +82,6 @@ namespace Naos.SqlServer.Domain
 
             // Base permissions for all roles.
             result.AppendLine(BuildGrant(Funcs.GetTagsTableVariableFromTagsXml.Name, read));
-            result.AppendLine(BuildGrant(Funcs.GetTagsTableVariableFromTagIdsXml.Name, read));
             result.AppendLine(BuildGrant(Sprocs.GetIdAddIfNecessarySerializerRepresentation.Name, execute));
             result.AppendLine(BuildGrant(Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.Name, execute));
             result.AppendLine(BuildGrant(Sprocs.GetIdAddIfNecessaryTypeWithVersion.Name, execute));

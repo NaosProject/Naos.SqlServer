@@ -10,6 +10,8 @@ namespace Naos.SqlServer.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
+    using OBeautifulCode.Collection.Recipes;
+    using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
 
     /// <summary>
@@ -40,9 +42,9 @@ namespace Naos.SqlServer.Domain
                 public enum InputParamName
                 {
                     /// <summary>
-                    /// The tag identifiers as XML.
+                    /// The tag identifiers as CSV.
                     /// </summary>
-                    TagIdsXml,
+                    TagIdsCsv,
                 }
 
                 /// <summary>
@@ -67,15 +69,14 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     IReadOnlyList<long> tagIds)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{Name}");
-                    var tagIdsDictionary = tagIds.ToOrdinalDictionary(true);
-                    var tagsXml = TagConversionTool.GetTagsXmlString(tagIdsDictionary);
+                    var sprocName = Invariant($"[{streamName}].{Name}");
+                    var tagIdsCsv = tagIds?.Select(_ => _.ToStringInvariantPreferred()).ToCsv();
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(
-                                             nameof(InputParamName.TagIdsXml),
-                                             new XmlSqlDataTypeRepresentation(),
-                                             tagsXml),
+                                             nameof(InputParamName.TagIdsCsv),
+                                             Tables.Record.TagIdsCsv.DataType,
+                                             tagIdsCsv),
                                          new SqlOutputParameterRepresentation<string>(
                                              nameof(OutputParamName.TagsXml),
                                              new XmlSqlDataTypeRepresentation()),
@@ -98,30 +99,22 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     bool asAlter = false)
                 {
-                    const string tagIdsTable = "TagIdsTable";
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetTagSetFromIds.Name}](
-  @{nameof(InputParamName.TagIdsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax},
+  @{nameof(InputParamName.TagIdsCsv)} {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax},
   @{nameof(OutputParamName.TagsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
   )
 AS
-BEGIN      
-	{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
-	INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-		SELECT
-		  [{Tables.Tag.TagValue.Name}]
-		FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
-
+BEGIN
     SELECT @{OutputParamName.TagsXml} = (SELECT
 	    {Tables.Tag.TagKey.Name} AS [@{TagConversionTool.TagEntryKeyAttributeName}],
 	    ISNULL({Tables.Tag.TagValue.Name},'{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
     FROM [{streamName}].[{Tables.Tag.Table.Name}]
-    WHERE [{Tables.Tag.Id.Name}] IN (SELECT {Tables.Tag.Id.Name} FROM @{tagIdsTable})
+    WHERE [{Tables.Tag.Id.Name}] IN (SELECT value AS [{Tables.Tag.Id.Name}] FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ','))
     ORDER BY [{Tables.Tag.Id.Name}]
     FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
-
 END");
 
                     return result;

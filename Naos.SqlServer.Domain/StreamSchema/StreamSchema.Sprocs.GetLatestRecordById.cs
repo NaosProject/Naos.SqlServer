@@ -126,9 +126,9 @@ namespace Naos.SqlServer.Domain
                     ObjectDateTime,
 
                     /// <summary>
-                    /// Any tags returned as an XML tag set that can be converted using <see cref="TagConversionTool"/>.
+                    /// Any tag ids as CSV.
                     /// </summary>
-                    TagIdsXml,
+                    TagIdsCsv,
                 }
 
                 /// <summary>
@@ -168,7 +168,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<byte[]>(nameof(OutputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.DataType),
                                          new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
                                          new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), Tables.Record.TagIdsXml.DataType),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -217,7 +217,7 @@ namespace Naos.SqlServer.Domain
 , @{OutputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.TagIdsXml} AS {Tables.Record.TagIdsXml.DataType.DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -228,7 +228,7 @@ BEGIN
 	 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
 	 , @{OutputParamName.BinarySerializedObject} = [{Tables.Record.BinarySerializedObject.Name}]
 	 , @{OutputParamName.InternalRecordId} = [{Tables.Record.Id.Name}]
-	 , @{OutputParamName.TagIdsXml} = [{Tables.Record.TagIdsXml.Name}]
+	 , @{OutputParamName.TagIdsCsv} = [{Tables.Record.TagIdsCsv.Name}]
 	 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]
 	 , @{OutputParamName.ObjectDateTime} = [{Tables.Record.ObjectDateTimeUtc.Name}]
 	FROM [{streamName}].[{Tables.Record.Table.Name}] WITH (NOLOCK)
@@ -264,7 +264,7 @@ BEGIN
 	    SET @{OutputParamName.ObjectTypeWithVersionId} = {Tables.TypeWithVersion.NullId}
 	    SET @{OutputParamName.InternalRecordId} = {Tables.Record.NullId}
 	    SET @{OutputParamName.ObjectDateTime} = NULL
-	    SET @{OutputParamName.TagIdsXml} = NULL
+	    SET @{OutputParamName.TagIdsCsv} = NULL
 	    SET @{OutputParamName.RecordDateTime} = GETUTCDATE()
     END
 END

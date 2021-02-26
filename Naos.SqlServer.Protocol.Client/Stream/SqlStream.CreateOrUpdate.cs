@@ -69,7 +69,6 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.HandlingTag.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.CompositeHandlingStatusSortOrder.BuildCreationScript(this.Name),
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name),
-                                                      StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetTypeFromId.BuildCreationScript(this.Name),
@@ -132,7 +131,6 @@ namespace Naos.SqlServer.Protocol.Client
                         var alterScripts = new[]
                                            {
                                                StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name, true),
-                                               StreamSchema.Funcs.GetTagsTableVariableFromTagIdsXml.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetTypeFromId.BuildCreationScript(this.Name, true),

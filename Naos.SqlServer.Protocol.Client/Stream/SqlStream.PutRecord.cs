@@ -16,6 +16,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Serialization;
+    using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
 
     public partial class SqlStream
@@ -31,9 +32,9 @@ namespace Naos.SqlServer.Protocol.Client
             var serializerRepresentation = this.GetIdAddIfNecessarySerializerRepresentation(sqlServerLocator, operation.Payload.SerializerRepresentation, payloadSerializationFormat);
             var identifierTypeIds = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.Metadata.TypeRepresentationOfId);
             var objectTypeIds = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.Metadata.TypeRepresentationOfObject);
-            var tagIds = this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Metadata.Tags);
-            var tagIdsDictionary = tagIds.ToOrdinalDictionary();
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(tagIdsDictionary);
+            var tagIdsCsv = operation.Metadata.Tags == null
+                ? null
+                : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Metadata.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.PutRecord.BuildExecuteStoredProcedureOp(
                 this.Name,
@@ -44,7 +45,7 @@ namespace Naos.SqlServer.Protocol.Client
                 payloadSerializationFormat == SerializationFormat.String ? operation.Payload.GetSerializedPayloadAsEncodedString() : null,
                 payloadSerializationFormat == SerializationFormat.Binary ? operation.Payload.GetSerializedPayloadAsEncodedBytes() : null,
                 operation.Metadata.ObjectTimestampUtc,
-                tagIdsXml,
+                tagIdsCsv,
                 operation.ExistingRecordEncounteredStrategy,
                 operation.RecordRetentionCount,
                 operation.TypeVersionMatchStrategy);
@@ -53,11 +54,11 @@ namespace Naos.SqlServer.Protocol.Client
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
             var newRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.Id)].GetValue<long?>();
-            var existingRecordIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordIdsXml)].GetValue<string>();
-            var prunedRecordIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.PrunedRecordIdsXml)].GetValue<string>();
+            var existingRecordIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordIdsCsv)].GetValue<string>();
+            var prunedRecordIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.PrunedRecordIdsCsv)].GetValue<string>();
 
-            var existingRecordIds = TagConversionTool.GetTagsFromXmlString(existingRecordIdsXml)?.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList() ?? new List<long>();
-            var prunedRecordIds = TagConversionTool.GetTagsFromXmlString(prunedRecordIdsXml)?.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList() ?? new List<long>();
+            var existingRecordIds = existingRecordIdsCsv.FromCsv()?.Select(_ => long.Parse(_, CultureInfo.InvariantCulture)).ToList() ?? new List<long>();
+            var prunedRecordIds = prunedRecordIdsCsv.FromCsv()?.Select(_ => long.Parse(_, CultureInfo.InvariantCulture)).ToList() ?? new List<long>();
 
             if (prunedRecordIds.Any() && !existingRecordIds.Any())
             {

@@ -12,6 +12,7 @@ namespace Naos.SqlServer.Domain
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.Protocol.Domain;
+    using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Type;
     using static System.FormattableString;
 
@@ -88,9 +89,9 @@ namespace Naos.SqlServer.Domain
                     TypeVersionMatchStrategy,
 
                     /// <summary>
-                    /// The tag identifiers as XML.
+                    /// The tag identifiers as CSV.
                     /// </summary>
-                    TagIdsForEntryXml,
+                    TagIdsForEntryCsv,
 
                     /// <summary>
                     /// Inherit the record's tags in handling.
@@ -160,9 +161,9 @@ namespace Naos.SqlServer.Domain
                     ObjectDateTime,
 
                     /// <summary>
-                    /// Any tags returned as an XML tag set that can be converted using <see cref="TagConversionTool"/>.
+                    /// Any tags returned as CSV.
                     /// </summary>
-                    TagIdsXml,
+                    TagIdsCsv,
 
                     /// <summary>
                     /// An indicator of whether or not to handle.
@@ -185,7 +186,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="objectType">Type of the object.</param>
                 /// <param name="orderRecordsStrategy">The order records strategy.</param>
                 /// <param name="typeVersionMatchStrategy">The type version match strategy.</param>
-                /// <param name="tagIdsXml">The tag identifiers as XML.</param>
+                /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
                 /// <param name="minimumInternalRecordId">The optional minimum internal record identifier, null for default.</param>
                 /// <param name="inheritRecordTags">The tags on the record should also be on the handling entry.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
@@ -197,11 +198,11 @@ namespace Naos.SqlServer.Domain
                     IdentifiedType objectType,
                     OrderRecordsStrategy orderRecordsStrategy,
                     TypeVersionMatchStrategy typeVersionMatchStrategy,
-                    string tagIdsXml,
+                    string tagIdsCsv,
                     long? minimumInternalRecordId,
                     bool inheritRecordTags)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(TryHandleRecord)}");
+                    var sprocName = Invariant($"[{streamName}].{nameof(TryHandleRecord)}");
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
@@ -213,7 +214,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, objectType?.IdWithoutVersion),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsForEntryXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsForEntryCsv), Tables.Record.TagIdsCsv.DataType, tagIdsCsv),
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), inheritRecordTags ? 1 : 0),
                                          new SqlInputParameterRepresentation<long?>(nameof(InputParamName.MinimumInternalRecordId), Tables.Record.Id.DataType, minimumInternalRecordId),
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
@@ -228,7 +229,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<byte[]>(nameof(OutputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.DataType),
                                          new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
                                          new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsXml), Tables.Record.TagIdsXml.DataType),
+                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType),
                                      };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
@@ -265,8 +266,8 @@ namespace Naos.SqlServer.Domain
                     const string blockedStatus = "BlockedStatus";
                     const string currentRunningCount = "CurrentRunningCount";
                     const string isUnhandledRecord = "IsUnhandledRecord";
-                    const string unionedIfNecessaryTagIdsXml = "UnionedIfNecessaryTagIdsXml";
-                    string acceptableStatusesXml = TagConversionTool.GetTagsXmlString(
+                    const string unionedIfNecessaryTagIdsCsv = "UnionedIfNecessaryTagIdsCsv";
+                    var acceptableStatusesCsv =
                         new[]
                         {
                             HandlingStatus.None.ToString(),
@@ -274,7 +275,7 @@ namespace Naos.SqlServer.Domain
                             HandlingStatus.SelfCanceledRunning.ToString(),
                             HandlingStatus.CanceledRunning.ToString(),
                             HandlingStatus.RetryFailed.ToString(),
-                        }.ToOrdinalDictionary());
+                        }.ToCsv();
 
                     var shouldAttemptHandling = "ShouldAttemptHandling";
                     var concurrentCheckBlock = maxConcurrentHandlingCount == null
@@ -306,7 +307,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.ObjectTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TypeVersionMatchStrategy} AS varchar(10)
-, @{InputParamName.TagIdsForEntryXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{InputParamName.TagIdsForEntryCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.MinimumInternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -319,7 +320,7 @@ namespace Naos.SqlServer.Domain
 , @{OutputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+, @{OutputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ShouldHandle} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.IsBlocked} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
@@ -682,33 +683,29 @@ BEGIN
 				THROW 60000, @NotValidStrategyClaimErrorMessage, 1
 			END
 
-			DECLARE @{unionedIfNecessaryTagIdsXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+			DECLARE @{unionedIfNecessaryTagIdsCsv} {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
 			
-	        SELECT @{unionedIfNecessaryTagIdsXml} = (
-	        SELECT
-					  ROW_NUMBER() OVER (ORDER BY [{Tables.Tag.Id.Name}]) AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-					, [{Tables.Tag.Id.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
+	        SELECT @{unionedIfNecessaryTagIdsCsv} = STRING_AGG([{Tables.Tag.Id.Name}], ',')
 	        FROM
 				(
 	                SELECT DISTINCT [{Tables.Tag.Id.Name}] FROM
 					(
-						SELECT [{Tables.Tag.TagValue.Name}] AS [{Tables.Tag.Id.Name}]
-					    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsForEntryXml})
+						SELECT value AS [{Tables.Tag.Id.Name}]
+					    FROM STRING_SPLIT(@{InputParamName.TagIdsForEntryCsv}, ',')
 				        UNION ALL
 						SELECT [{Tables.RecordTag.TagId.Name}] AS [{Tables.Tag.Id.Name}]
 	                    FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
 						WHERE @{InputParamName.InheritRecordTags} = 1 AND [{Tables.RecordTag.RecordId.Name}] = @{recordIdToAttemptToClaim}
 					) AS u
 				) AS d
-		    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 
 			EXEC [{streamName}].[{PutHandling.Name}] 
 			@{PutHandling.InputParamName.Concern} = @{InputParamName.Concern}, 
 			@{PutHandling.InputParamName.Details} = @{InputParamName.Details}, 
 			@{PutHandling.InputParamName.RecordId} = @{recordIdToAttemptToClaim}, 
 			@{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}', 
-			@{PutHandling.InputParamName.AcceptableCurrentStatusesXml} = '{acceptableStatusesXml}', 
-			@{PutHandling.InputParamName.TagIdsXml} = @{unionedIfNecessaryTagIdsXml}, 
+			@{PutHandling.InputParamName.AcceptableCurrentStatusesCsv} = '{acceptableStatusesCsv}', 
+			@{PutHandling.InputParamName.TagIdsCsv} = @{unionedIfNecessaryTagIdsCsv}, 
 			@{PutHandling.InputParamName.IsUnHandledRecord} = @{isUnhandledRecord},
 			@{PutHandling.InputParamName.IsClaimingRecordId} = 1, 
 			@{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
@@ -734,7 +731,7 @@ BEGIN
 		 , @{OutputParamName.StringSerializedId} = [{Tables.Record.StringSerializedId.Name}]
 		 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
 		 , @{OutputParamName.BinarySerializedObject} = [{Tables.Record.BinarySerializedObject.Name}]
-		 , @{OutputParamName.TagIdsXml} = [{Tables.Record.TagIdsXml.Name}]
+		 , @{OutputParamName.TagIdsCsv} = [{Tables.Record.TagIdsCsv.Name}]
 		 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]
 		 , @{OutputParamName.ObjectDateTime} = [{Tables.Record.ObjectDateTimeUtc.Name}]
 		FROM [{streamName}].[{Tables.Record.Table.Name}]
@@ -751,7 +748,7 @@ BEGIN
 		SET @{OutputParamName.StringSerializedId} = 'Fake'
 		SET @{OutputParamName.ObjectDateTime} = GETUTCDATE()
 		SET @{OutputParamName.RecordDateTime} = GETUTCDATE()
-		SET @{OutputParamName.TagIdsXml} = null
+		SET @{OutputParamName.TagIdsCsv} = null
 	END
 END
 ");

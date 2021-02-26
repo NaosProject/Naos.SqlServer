@@ -84,10 +84,12 @@ namespace Naos.SqlServer.Domain
                 public static ColumnRepresentation BinarySerializedObject => new ColumnRepresentation(nameof(BinarySerializedObject), new BinarySqlDataTypeRepresentation(BinarySqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
-                /// Gets the tag identifiers as XML.
+                /// Gets the tag identifiers as CSV.
                 /// </summary>
-                /// <value>The tag identifiers as XML.</value>
-                public static ColumnRepresentation TagIdsXml => new ColumnRepresentation(nameof(TagIdsXml), new XmlSqlDataTypeRepresentation());
+                /// <value>The tag identifiers as CSV.</value>
+                public static ColumnRepresentation TagIdsCsv => new ColumnRepresentation(
+                    nameof(TagIdsCsv),
+                    new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
                 /// Gets the record created UTC.
@@ -145,7 +147,7 @@ CREATE TABLE [{streamName}].[{nameof(Record)}](
 	[{nameof(StringSerializedId)}] {StringSerializedId.DataType.DeclarationInSqlSyntax} NOT NULL,
 	[{nameof(StringSerializedObject)}] {StringSerializedObject.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(BinarySerializedObject)}] {BinarySerializedObject.DataType.DeclarationInSqlSyntax} NULL,
-	[{nameof(TagIdsXml)}] {TagIdsXml.DataType.DeclarationInSqlSyntax} NULL,
+	[{nameof(TagIdsCsv)}] {TagIdsCsv.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(ObjectDateTimeUtc)}] {ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.DataType.DeclarationInSqlSyntax} NOT NULL,
  CONSTRAINT [PK_{nameof(Record)}] PRIMARY KEY CLUSTERED 

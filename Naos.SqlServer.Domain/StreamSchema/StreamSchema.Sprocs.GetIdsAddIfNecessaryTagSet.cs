@@ -106,7 +106,10 @@ namespace Naos.SqlServer.Domain
   )
 AS
 BEGIN
-    {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithIdDeclarationSyntax(tagIdsTable)}
+    DECLARE @{tagIdsTable} TABLE(
+	[{Tables.Tag.Id.Name}] {Tables.Tag.Id.DataType.DeclarationInSqlSyntax} NULL,
+	[{Tables.Tag.TagKey.Name}] {Tables.Tag.TagKey.DataType.DeclarationInSqlSyntax} NULL,
+	[{Tables.Tag.TagValue.Name}] {Tables.Tag.TagValue.DataType.DeclarationInSqlSyntax} NULL)
 
     INSERT INTO @{tagIdsTable}
         SELECT

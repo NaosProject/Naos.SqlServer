@@ -15,6 +15,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.SqlServer.Domain;
     using OBeautifulCode.DateTime.Recipes;
     using OBeautifulCode.Serialization;
+    using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
 
     public partial class SqlStream
@@ -61,13 +62,13 @@ namespace Naos.SqlServer.Protocol.Client
             int objectTypeWithVersionId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.ObjectTypeWithVersionId)].GetValue<int>();
             DateTime recordTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.RecordDateTime)].GetValue<DateTime>();
             DateTime? objectTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.ObjectDateTime)].GetValue<DateTime?>();
-            string tagIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.TagIdsXml)].GetValue<string>();
+            string tagIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.TagIdsCsv)].GetValue<string>();
 
             var identifiedSerializerRepresentation = this.GetSerializerRepresentationFromId(sqlServerLocator, serializerRepresentationId);
             var identifierType = this.GetTypeById(sqlServerLocator, identifierTypeWithVersionId, true);
             var objectType = this.GetTypeById(sqlServerLocator, objectTypeWithVersionId, true);
-            var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-            var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
+            var tagIds = tagIdsCsv?.FromCsv().Select(_ => long.Parse(_, CultureInfo.InvariantCulture)).ToList();
+            var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds);
 
             var recordTimestamp = recordTimestampRaw.ToUtc();
 
@@ -130,13 +131,13 @@ namespace Naos.SqlServer.Protocol.Client
             byte[] binarySerializedObject = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordById.OutputParamName.BinarySerializedObject)].GetValue<byte[]>();
             DateTime recordTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordById.OutputParamName.RecordDateTime)].GetValue<DateTime>();
             DateTime? objectTimestampRaw = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordById.OutputParamName.ObjectDateTime)].GetValue<DateTime?>();
-            string tagIdsXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordById.OutputParamName.TagIdsXml)].GetValue<string>();
+            string tagIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordById.OutputParamName.TagIdsCsv)].GetValue<string>();
 
             var identifiedSerializerRepresentation = this.GetSerializerRepresentationFromId(sqlServerLocator, serializerRepresentationId);
             var identifierType = this.GetTypeById(sqlServerLocator, identifierTypeWithVersionId, true);
             var objectType = this.GetTypeById(sqlServerLocator, objectTypeWithVersionId, true);
-            var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml);
-            var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList());
+            var tagIds = tagIdsCsv?.FromCsv().Select(_ => long.Parse(_, CultureInfo.InvariantCulture)).ToList();
+            var tags = tagIds == null ? null : this.GetTagsByIds(sqlServerLocator, tagIds);
 
             var recordTimestamp = recordTimestampRaw.ToUtc();
 

@@ -14,7 +14,9 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.Protocol.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Enum.Recipes;
+    using OBeautifulCode.String.Recipes;
     using OBeautifulCode.Type.Recipes;
     using static System.FormattableString;
 
@@ -51,12 +53,16 @@ namespace Naos.SqlServer.Protocol.Client
             {
                 var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
                 var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-                var tagIds = this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.TagsToMatch);
-                var tagIdsXml = TagConversionTool.GetTagsXmlString(tagIds.ToOrdinalDictionary());
+
+                var tagIdsCsv =
+                    operation.TagsToMatch == null
+                        ? null
+                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.TagsToMatch).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
+
                 var op = StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildExecuteStoredProcedureOp(
                     this.Name,
                     operation.Concern,
-                    tagIdsXml: tagIdsXml);
+                    tagIdsCsv);
 
                 var sprocResult = sqlProtocol.Execute(op);
 
@@ -95,10 +101,12 @@ namespace Naos.SqlServer.Protocol.Client
                                     ?? throw new NotSupportedException(
                                            Invariant(
                                                $"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-                var tagIdsXml = TagConversionTool.GetTagsXmlString(
+
+                var tagIdsCsv =
                     operation.Tags == null
-                        ? new Dictionary<string, string>()
-                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                        ? null
+                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
+
                 var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                     this.Name,
                     Concerns.RecordHandlingConcern,
@@ -113,7 +121,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                    HandlingStatus.Blocked,
                                                })
                                           .ToList(),
-                    tagIdsXml);
+                    tagIdsCsv);
 
                 var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
                 var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -132,10 +140,12 @@ namespace Naos.SqlServer.Protocol.Client
                                     ?? throw new NotSupportedException(
                                            Invariant(
                                                $"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-                var tagIdsXml = TagConversionTool.GetTagsXmlString(
+
+                var tagIdsCsv =
                     operation.Tags == null
-                        ? new Dictionary<string, string>()
-                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                        ? null
+                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
+
                 var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                     this.Name,
                     Concerns.RecordHandlingConcern,
@@ -146,7 +156,7 @@ namespace Naos.SqlServer.Protocol.Client
                     {
                         HandlingStatus.Blocked,
                     },
-                    tagIdsXml);
+                    tagIdsCsv);
 
                 var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
                 var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -159,10 +169,11 @@ namespace Naos.SqlServer.Protocol.Client
             CancelHandleRecordExecutionRequestOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(
+
+            var tagIdsCsv =
                 operation.Tags == null
-                    ? new Dictionary<string, string>()
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                    ? null
+                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
@@ -171,7 +182,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.Id,
                 HandlingStatus.Canceled,
                 new[] { HandlingStatus.Requested, HandlingStatus.Running, HandlingStatus.Failed },
-                tagIdsXml);
+                tagIdsCsv);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -183,10 +194,10 @@ namespace Naos.SqlServer.Protocol.Client
             CancelRunningHandleRecordExecutionOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(
+            var tagIdsCsv =
                 operation.Tags == null
-                    ? new Dictionary<string, string>()
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                    ? null
+                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
@@ -195,7 +206,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.Id,
                 HandlingStatus.CanceledRunning,
                 new[] { HandlingStatus.Running },
-                tagIdsXml);
+                tagIdsCsv);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -207,10 +218,10 @@ namespace Naos.SqlServer.Protocol.Client
             CompleteRunningHandleRecordExecutionOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(
+            var tagIdsCsv =
                 operation.Tags == null
-                    ? new Dictionary<string, string>()
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                    ? null
+                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
@@ -219,7 +230,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.Id,
                 HandlingStatus.Completed,
                 new[] { HandlingStatus.Running },
-                tagIdsXml);
+                tagIdsCsv);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -231,11 +242,10 @@ namespace Naos.SqlServer.Protocol.Client
             FailRunningHandleRecordExecutionOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
-
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(
+            var tagIdsCsv =
                 operation.Tags == null
-                    ? new Dictionary<string, string>()
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                    ? null
+                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
@@ -244,7 +254,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.Id,
                 HandlingStatus.Failed,
                 new[] { HandlingStatus.Running },
-                tagIdsXml);
+                tagIdsCsv);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -256,10 +266,10 @@ namespace Naos.SqlServer.Protocol.Client
             SelfCancelRunningHandleRecordExecutionOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(
+            var tagIdsCsv =
                 operation.Tags == null
-                    ? new Dictionary<string, string>()
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                    ? null
+                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
@@ -268,7 +278,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.Id,
                 HandlingStatus.SelfCanceledRunning,
                 new[] { HandlingStatus.Running },
-                tagIdsXml);
+                tagIdsCsv);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -280,10 +290,10 @@ namespace Naos.SqlServer.Protocol.Client
             RetryFailedHandleRecordExecutionOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsXml = TagConversionTool.GetTagsXmlString(
+            var tagIdsCsv =
                 operation.Tags == null
-                    ? new Dictionary<string, string>()
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).ToOrdinalDictionary());
+                    ? null
+                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
@@ -292,7 +302,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.Id,
                 HandlingStatus.RetryFailed,
                 new[] { HandlingStatus.Failed },
-                tagIdsXml);
+                tagIdsCsv);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);

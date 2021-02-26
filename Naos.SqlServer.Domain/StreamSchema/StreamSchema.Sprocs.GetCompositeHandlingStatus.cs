@@ -46,9 +46,9 @@ namespace Naos.SqlServer.Domain
                     Concern,
 
                     /// <summary>
-                    /// The tag identifiers as XML.
+                    /// The tag identifiers as CSV.
                     /// </summary>
-                    TagIdsXml,
+                    TagIdsCsv,
                 }
 
                 /// <summary>
@@ -67,19 +67,19 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">The handling concern.</param>
-                /// <param name="tagIdsXml">The optional tag identifiers in xml.</param>
+                /// <param name="tagIdsCsv">The optional tag identifiers in CSV.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,
-                    string tagIdsXml = null)
+                    string tagIdsCsv = null)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetCompositeHandlingStatus)}]");
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType, tagIdsCsv),
                                          new SqlOutputParameterRepresentation<HandlingStatus>(nameof(OutputParamName.Status), Tables.Handling.Status.DataType),
                                      };
 
@@ -101,14 +101,13 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     bool asAlter = false)
                 {
-                    const string tagIdsTable = "TagIdsTable";
                     const string blockedStatus = "BlockedStatus";
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetCompositeHandlingStatus.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
 , @{OutputParamName.Status} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
@@ -123,12 +122,6 @@ BEGIN
     END
     ELSE
         BEGIN
-        {Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
-        INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-        SELECT
-	      [{Tables.Tag.TagValue.Name}]
-	    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
-
         SELECT TOP 1
             @{OutputParamName.Status} = h1.[{Tables.Handling.Status.Name}]
         FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht
@@ -139,7 +132,7 @@ BEGIN
         LEFT JOIN [{streamName}].[{Tables.CompositeHandlingStatusSortOrder.Table.Name}] s
             ON s.[{Tables.CompositeHandlingStatusSortOrder.Status.Name}] = h1.[{Tables.Handling.Status.Name}]
         WHERE h2.[{Tables.Handling.Id.Name}] IS NULL AND h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-            AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
+            AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT value AS [{Tables.Tag.Id.Name}] FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ','))
         ORDER BY s.[{Tables.CompositeHandlingStatusSortOrder.SortOrder.Name}] DESC
 
         IF (@{OutputParamName.Status} IS NULL)

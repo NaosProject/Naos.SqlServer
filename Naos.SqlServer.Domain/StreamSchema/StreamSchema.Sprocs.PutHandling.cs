@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-
+    using OBeautifulCode.Collection.Recipes;
     using static System.FormattableString;
 
     /// <summary>
@@ -62,14 +62,14 @@ namespace Naos.SqlServer.Domain
                     NewStatus,
 
                     /// <summary>
-                    /// The acceptable current statuses XML.
+                    /// The acceptable current statuses as CSV.
                     /// </summary>
-                    AcceptableCurrentStatusesXml,
+                    AcceptableCurrentStatusesCsv,
 
                     /// <summary>
-                    /// The tag identifiers XML.
+                    /// The tag identifiers as CSV.
                     /// </summary>
-                    TagIdsXml,
+                    TagIdsCsv,
 
                     /// <summary>
                     /// Whether or not the record is unhandled.
@@ -102,7 +102,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="recordId">The record identifier.</param>
                 /// <param name="newStatus">The new status.</param>
                 /// <param name="acceptableCurrentStatuses">The acceptable current statuses.</param>
-                /// <param name="tagIdsXml">The tag identifiers as XML.</param>
+                /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
@@ -111,19 +111,11 @@ namespace Naos.SqlServer.Domain
                     long recordId,
                     HandlingStatus newStatus,
                     IReadOnlyCollection<HandlingStatus> acceptableCurrentStatuses,
-                    string tagIdsXml)
+                    string tagIdsCsv)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(PutHandling)}");
 
-                    if (tagIdsXml == null)
-                    {
-                        var tagIds = new Dictionary<string, string>();
-                        tagIdsXml = TagConversionTool.GetTagsXmlString(tagIds);
-                    }
-
-                    var acceptableCurrentStatusesDictionary = acceptableCurrentStatuses.ToList().ToOrdinalDictionary();
-
-                    var acceptableCurrentStatusesXml = TagConversionTool.GetTagsXmlString(acceptableCurrentStatusesDictionary);
+                    var acceptableCurrentStatusesCsv = acceptableCurrentStatuses.Select(_ => _.ToString()).ToCsv();
 
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
@@ -131,8 +123,8 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.Handling.Details.DataType, details),
                                          new SqlInputParameterRepresentation<long>(nameof(InputParamName.RecordId), Tables.Handling.RecordId.DataType, recordId),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.NewStatus), Tables.Handling.Status.DataType, newStatus.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.AcceptableCurrentStatusesXml), new XmlSqlDataTypeRepresentation(), acceptableCurrentStatusesXml),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsXml), new XmlSqlDataTypeRepresentation(), tagIdsXml),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.AcceptableCurrentStatusesCsv), new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant), acceptableCurrentStatusesCsv),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType, tagIdsCsv),
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.IsUnHandledRecord), new IntSqlDataTypeRepresentation(), 0),
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.IsClaimingRecordId), new IntSqlDataTypeRepresentation(), 0),
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.DataType),
@@ -161,7 +153,6 @@ namespace Naos.SqlServer.Domain
                     bool asAlter = false)
                 {
                     var recordCreatedUtc = "RecordCreatedUtc";
-                    const string tagIdsTable = "TagIdsTable";
                     var transaction = Invariant($"{nameof(PutHandling)}Transaction");
                     var currentStatus = "CurrentStatus";
                     var currentStatusAccepted = "CurrentStatusAccepted";
@@ -172,8 +163,8 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.RecordId} AS {Tables.Handling.RecordId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.NewStatus} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.AcceptableCurrentStatusesXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{InputParamName.AcceptableCurrentStatusesCsv} AS {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IsUnHandledRecord} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.IsClaimingRecordId} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Handling.Id.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -194,9 +185,8 @@ END
 --TODO: should we guard against this changing while inserting? (exclusive table lock for a time to live, et al)
 DECLARE @{currentStatusAccepted} BIT
 
-SELECT @{currentStatusAccepted} = 1 FROM
-[{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.AcceptableCurrentStatusesXml}) t
-WHERE [{Tables.Tag.TagValue.Name}] = @{currentStatus}
+SELECT @{currentStatusAccepted} = 1 FROM STRING_SPLIT(@{InputParamName.AcceptableCurrentStatusesCsv}, ',')
+WHERE value = @{currentStatus}
 
 IF (@{currentStatusAccepted} IS NULL)
 BEGIN
@@ -215,12 +205,6 @@ BEGIN
 		THROW 60000, @NotValidStatusErrorMessage, 1
 	END
 END
-
-{Funcs.GetTagsTableVariableFromTagsXml.BuildTagsTableWithOnlyIdDeclarationSyntax(tagIdsTable)}
-INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-    SELECT
-	  [{Tables.Tag.TagValue.Name}]
-	FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagIdsXml.Name}](@{InputParamName.TagIdsXml})
 
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 BEGIN TRANSACTION [{transaction}]
@@ -322,9 +306,9 @@ BEGIN TRANSACTION [{transaction}]
 			  )
 	         SELECT 
   			    @{OutputParamName.Id}
-			  , t.[{Tables.Tag.Id.Name}]
+			  , value AS [{Tables.Tag.Id.Name}]
 			  , @{recordCreatedUtc}
-	         FROM @{tagIdsTable} t
+	         FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ',')
 		  END
 
       COMMIT TRANSACTION [{transaction}]
