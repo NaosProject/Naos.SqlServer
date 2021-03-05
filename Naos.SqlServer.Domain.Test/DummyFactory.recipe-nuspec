@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>Naos.SqlServer.Domain.Recipes.DummyFactory</id>
+    <id>Naos.SqlServer.Recipes.DummyFactory</id>
     <description>A Dummy Factory for types in Naos.SqlServer.Domain</description>
     <tags>dummyfactory dummy factory fakeiteasy autofixture snippet codeinclude utility shared recipe SqlServer</tags>
     <dependencies>
