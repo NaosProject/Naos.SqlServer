@@ -381,6 +381,10 @@
     <Compile Include="SqlServerLocatorTest.designer.cs">
       <DependentUpon>SqlServerLocatorTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="SqlStreamConfigObjectTest.cs" />
+    <Compile Include="SqlStreamConfigObjectTest.designer.cs">
+      <DependentUpon>SqlStreamConfigObjectTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="StoredProcedureExecutionResultTest.cs" />
     <Compile Include="StoredProcedureExecutionResultTest.designer.cs">
       <DependentUpon>StoredProcedureExecutionResultTest.cs</DependentUpon>
