@@ -41,6 +41,7 @@ namespace Naos.SqlServer.Protocol.Client
                 serializerRepresentation,
                 identifierTypeIds,
                 objectTypeIds,
+                operation.InternalRecordId,
                 operation.Metadata.StringSerializedId,
                 payloadSerializationFormat == SerializationFormat.String ? operation.Payload.GetSerializedPayloadAsEncodedString() : null,
                 payloadSerializationFormat == SerializationFormat.Binary ? operation.Payload.GetSerializedPayloadAsEncodedBytes() : null,

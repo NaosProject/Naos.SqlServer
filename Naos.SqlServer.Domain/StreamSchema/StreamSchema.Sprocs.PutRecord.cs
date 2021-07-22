@@ -65,6 +65,11 @@ namespace Naos.SqlServer.Domain
                     SerializerRepresentationId,
 
                     /// <summary>
+                    /// The internal record identifier.
+                    /// </summary>
+                    InternalRecordId,
+
+                    /// <summary>
                     /// The serialized object identifier.
                     /// </summary>
                     StringSerializedId,
@@ -133,6 +138,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="serializerRepresentation">The serializer representation.</param>
                 /// <param name="identifierType">The identifier type.</param>
                 /// <param name="objectType">The object type.</param>
+                /// <param name="internalRecordId">The optional internal record identifier (for stream re-play).</param>
                 /// <param name="serializedObjectId">The serialized object identifier.</param>
                 /// <param name="serializedObjectString">The serialized object as a string (should have data IFF the serializer is set to SerializationFormat.String, otherwise null).</param>
                 /// <param name="serializedObjectBytes">The serialized object as a byte array (should have data IFF the serializer is set to SerializationFormat.Binary, otherwise null).</param>
@@ -147,6 +153,7 @@ namespace Naos.SqlServer.Domain
                     IdentifiedSerializerRepresentation serializerRepresentation,
                     IdentifiedType identifierType,
                     IdentifiedType objectType,
+                    long? internalRecordId,
                     string serializedObjectId,
                     string serializedObjectString,
                     byte[] serializedObjectBytes,
@@ -165,6 +172,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.DataType, identifierType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.DataType, objectType?.IdWithoutVersion),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
+                                         new SqlInputParameterRepresentation<long?>(nameof(InputParamName.InternalRecordId), Tables.Record.Id.DataType, internalRecordId),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, serializedObjectId),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.DataType, serializedObjectString),
                                          new SqlInputParameterRepresentation<byte[]>(nameof(InputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.DataType, serializedObjectBytes),
@@ -348,6 +356,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
+  @{InputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax}
