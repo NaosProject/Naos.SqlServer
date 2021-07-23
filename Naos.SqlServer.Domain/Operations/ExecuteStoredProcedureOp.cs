@@ -7,8 +7,8 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
-    using Naos.Protocol.Domain;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Stored procedure to execute.

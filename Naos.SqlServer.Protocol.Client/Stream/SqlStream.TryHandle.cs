@@ -45,7 +45,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                 identifierTypeQuery,
                                                 objectTypeQuery,
                                                 operation.OrderRecordsStrategy,
-                                                operation.TypeVersionMatchStrategy,
+                                                operation.VersionMatchStrategy,
                                                 entryTagIdsCsv,
                                                 operation.MinimumInternalRecordId,
                                                 operation.InheritRecordTags);

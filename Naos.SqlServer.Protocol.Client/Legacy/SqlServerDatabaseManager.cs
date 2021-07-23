@@ -21,6 +21,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Database.Recipes;
     using OBeautifulCode.Enum.Recipes;
+    using OBeautifulCode.Execution.Recipes;
     using OBeautifulCode.Serialization.PropertyBag;
     using static System.FormattableString;
 
@@ -72,7 +73,7 @@ namespace Naos.SqlServer.Protocol.Client
                 return Task.Run(() => { });
             }
 
-            Run.TaskUntilCompletion(RunOperationOnSqlConnectionAsync(AsyncOperation, connectionString, infoMessageCallback));
+            RunOperationOnSqlConnectionAsync(AsyncOperation, connectionString, infoMessageCallback).RunUntilCompletion();
         }
 
         /// <summary>

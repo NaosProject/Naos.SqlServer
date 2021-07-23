@@ -10,7 +10,6 @@ namespace Naos.SqlServer.Serialization.Bson
     using System.Collections.Generic;
     using System.Linq;
     using Naos.Database.Serialization.Bson;
-    using Naos.Protocol.Serialization.Bson;
     using OBeautifulCode.Serialization.Bson;
     using OBeautifulCode.Type;
     using OBeautifulCode.Type.Recipes;
@@ -29,7 +28,6 @@ namespace Naos.SqlServer.Serialization.Bson
         protected override IReadOnlyCollection<BsonSerializationConfigurationType> DependentBsonSerializationConfigurationTypes =>
             new[]
             {
-                typeof(ProtocolBsonSerializationConfiguration).ToBsonSerializationConfigurationType(),
                 typeof(DatabaseBsonSerializationConfiguration).ToBsonSerializationConfigurationType(),
             };
 

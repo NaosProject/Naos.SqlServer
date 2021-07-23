@@ -11,7 +11,6 @@ namespace Naos.SqlServer.Protocol.Client
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using Naos.Protocol.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;

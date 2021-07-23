@@ -15,6 +15,7 @@ namespace Naos.SqlServer.Protocol.Management
     using Naos.CodeAnalysis.Recipes;
     using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Protocol.Client;
+    using OBeautifulCode.Execution.Recipes;
     using static System.FormattableString;
 
     /// <summary>
@@ -38,7 +39,7 @@ namespace Naos.SqlServer.Protocol.Management
                 return Task.Run(() => { });
             }
 
-            Run.TaskUntilCompletion(RunOperationOnSmoDatabaseAsync(AsyncOperation, connectionString, infoMessageCallback));
+            RunOperationOnSmoDatabaseAsync(AsyncOperation, connectionString, infoMessageCallback).RunUntilCompletion();
         }
 
         /// <summary>

@@ -34,7 +34,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.StringSerializedId,
                 identifierTypeQuery,
                 objectTypeQuery,
-                operation.TypeVersionMatchStrategy,
+                operation.VersionMatchStrategy,
                 operation.ExistingRecordNotEncounteredStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
@@ -100,7 +100,7 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.StringSerializedId,
                 identifierTypeQuery,
                 objectTypeQuery,
-                operation.TypeVersionMatchStrategy,
+                operation.VersionMatchStrategy,
                 operation.ExistingRecordNotEncounteredStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);

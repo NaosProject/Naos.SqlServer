@@ -8,9 +8,9 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using Naos.Database.Domain;
-    using Naos.Protocol.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Serialization;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Find the identity of a <see cref="SerializerRepresentation"/>.

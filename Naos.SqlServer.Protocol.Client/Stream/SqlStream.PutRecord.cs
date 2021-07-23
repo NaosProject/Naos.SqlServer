@@ -49,7 +49,7 @@ namespace Naos.SqlServer.Protocol.Client
                 tagIdsCsv,
                 operation.ExistingRecordEncounteredStrategy,
                 operation.RecordRetentionCount,
-                operation.TypeVersionMatchStrategy);
+                operation.VersionMatchStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -79,11 +79,11 @@ namespace Naos.SqlServer.Protocol.Client
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.TypeVersionMatchStrategy)}' and contents '{operation.Payload}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
+                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and contents '{operation.Payload}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById:
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType:
                     case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent:

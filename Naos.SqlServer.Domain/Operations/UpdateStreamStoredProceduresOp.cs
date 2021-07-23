@@ -6,7 +6,7 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using Naos.Protocol.Domain;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Alters the stored procedures of the stream to the schema version being executed.

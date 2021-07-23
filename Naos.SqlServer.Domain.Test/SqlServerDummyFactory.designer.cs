@@ -16,7 +16,6 @@ namespace Naos.SqlServer.Domain.Test
     using global::FakeItEasy;
 
     using global::Naos.Database.Domain;
-    using global::Naos.Protocol.Domain;
     using global::Naos.SqlServer.Domain;
 
     using global::OBeautifulCode.AutoFakeItEasy;

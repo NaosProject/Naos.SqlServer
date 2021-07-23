@@ -14,7 +14,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Existing serializer with database ID.
     /// </summary>
-    public partial class IdentifiedSerializerRepresentation : IIdentifiableBy<int>, IModelViaCodeGen
+    public partial class IdentifiedSerializerRepresentation : IHaveId<int>, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="IdentifiedSerializerRepresentation"/> class.

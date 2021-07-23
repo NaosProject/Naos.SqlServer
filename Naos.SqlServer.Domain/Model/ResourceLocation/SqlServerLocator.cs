@@ -8,7 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Globalization;
-    using Naos.Protocol.Domain;
+    using Naos.Database.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 

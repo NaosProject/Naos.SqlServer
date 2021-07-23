@@ -10,7 +10,6 @@ namespace Naos.SqlServer.Serialization.Json
     using System.Collections.Generic;
     using System.Linq;
     using Naos.Database.Serialization.Json;
-    using Naos.Protocol.Serialization.Json;
     using OBeautifulCode.Serialization.Json;
     using OBeautifulCode.Type;
     using OBeautifulCode.Type.Recipes;
@@ -29,7 +28,6 @@ namespace Naos.SqlServer.Serialization.Json
         protected override IReadOnlyCollection<JsonSerializationConfigurationType> DependentJsonSerializationConfigurationTypes =>
             new[]
             {
-                typeof(ProtocolJsonSerializationConfiguration).ToJsonSerializationConfigurationType(),
                 typeof(DatabaseJsonSerializationConfiguration).ToJsonSerializationConfigurationType(),
             };
 
