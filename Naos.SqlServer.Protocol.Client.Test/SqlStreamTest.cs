@@ -14,6 +14,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using System.Linq;
     using System.Threading.Tasks;
     using FakeItEasy;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
@@ -39,6 +40,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             this.testOutputHelper = testOutputHelper;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestBinary()
         {
@@ -46,6 +48,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             throw new NotImplementedException();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestRandom()
         {
@@ -53,6 +56,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             throw new NotImplementedException();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void CreateStreamsTestingDatabase()
         {
@@ -133,7 +137,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                         typeof(IStreamReadProtocols).ToRepresentation(),
                     }));
 
-            var key = Guid.NewGuid().ToString().ToUpper();
+            var key = Guid.NewGuid().ToString().ToUpperInvariant();
             var firstValue = "Testing again.";
             var firstTags = new List<NamedValue<string>>
                             {
@@ -177,6 +181,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             result.TypeRepresentationOfObject.WithVersion.MustForTest().BeEqualTo(typeof(string).ToRepresentation());
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sprocs", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
         [Fact(Skip = "Local testing only.")]
         public void UpdateSprocs()
         {
@@ -195,7 +200,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var streamOne = this.GetCreatedSqlStream();
             var sqlServerLocator = GetSqlServerLocator();
 
-            var id = Guid.NewGuid().ToString();
             var tagsOne = new List<NamedValue<string>>
                        {
                            new NamedValue<string>("Key", "1" + Guid.NewGuid()),
@@ -430,6 +434,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             }
 
             var stop = DateTime.UtcNow;
+            this.testOutputHelper.WriteLine(Invariant($"TotalSeconds: {(stop - start).TotalSeconds}."));
 
             /*
             var allLocators = stream.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp()).ToList();
@@ -516,6 +521,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
         public string Field { get; private set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
         public MyObject DeepCloneWithNewField(string field)
         {
             var result = new MyObject(this.Id, field);

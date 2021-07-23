@@ -64,7 +64,8 @@ namespace Naos.SqlServer.Protocol.Management.Test
                 resourceLocatorProtocol);
 
             stream.Execute(new CreateStreamOp(stream.StreamRepresentation, ExistingStreamEncounteredStrategy.Skip));
-            
+
+            this.testOutputHelper.WriteLine("Created database.");
             /*
             var path = "D:/Temp/Example";
             var connectionString = sqlServerLocator.BuildConnectionString(TimeSpan.FromSeconds(20));

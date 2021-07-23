@@ -104,6 +104,7 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IProtocolSqlOperations.cs" />
     <Compile Include="Legacy\SqlServerConnectionDefinition.designer.cs">
       <DependentUpon>SqlServerConnectionDefinition.cs</DependentUpon>

@@ -21,6 +21,7 @@ namespace Naos.SqlServer.Protocol.Client
     public partial class SqlStream
     {
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordId", Justification = "Leaving for debugging and future use.")]
         public override StreamRecordMetadata Execute(
             GetLatestRecordMetadataByIdOp operation)
