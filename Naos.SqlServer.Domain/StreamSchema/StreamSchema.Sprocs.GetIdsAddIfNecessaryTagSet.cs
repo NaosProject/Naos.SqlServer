@@ -9,6 +9,7 @@ namespace Naos.SqlServer.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     /// <summary>
@@ -62,7 +63,7 @@ namespace Naos.SqlServer.Domain
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
-                    IReadOnlyDictionary<string, string> tags)
+                    IReadOnlyCollection<NamedValue<string>> tags)
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetIdsAddIfNecessaryTagSet)}]");
                     var tagsXml = TagConversionTool.GetTagsXmlString(tags);

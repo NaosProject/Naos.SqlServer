@@ -14,6 +14,7 @@ namespace Naos.SqlServer.Domain
     using System.Xml.Linq;
     using Naos.CodeAnalysis.Recipes;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     /// <summary>
@@ -56,7 +57,7 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <param name="tagsAsXml">The tags in XML as a string.</param>
         /// <returns><see cref="IReadOnlyDictionary{TKey,TValue}"/> from the provided XML.</returns>
-        public static IReadOnlyList<KeyValuePair<string, string>> GetTagsFromXmlString(
+        public static IReadOnlyList<NamedValue<string>> GetTagsFromXmlString(
             string tagsAsXml)
         {
             if (tagsAsXml == null)
@@ -64,7 +65,7 @@ namespace Naos.SqlServer.Domain
                 return null;
             }
 
-            var result = new List<KeyValuePair<string, string>>();
+            var result = new List<NamedValue<string>>();
 
             if (string.IsNullOrWhiteSpace(tagsAsXml))
             {
@@ -85,7 +86,7 @@ namespace Naos.SqlServer.Domain
                     value = null;
                 }
 
-                result.Add(new KeyValuePair<string, string>(key, value));
+                result.Add(new NamedValue<string>(key, value));
             }
 
             return result;
@@ -97,7 +98,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="tags">The tags.</param>
         /// <returns>The converted XML.</returns>
         public static string GetTagsXmlString(
-            IReadOnlyDictionary<string, string> tags)
+            IReadOnlyCollection<NamedValue<string>> tags)
         {
             if (tags == null)
             {
@@ -111,9 +112,9 @@ namespace Naos.SqlServer.Domain
 
             var tagsXmlBuilder = new StringBuilder();
             tagsXmlBuilder.Append(Invariant($"<{TagSetElementName}>"));
-            foreach (var tag in tags ?? new Dictionary<string, string>())
+            foreach (var tag in tags ?? new List<NamedValue<string>>())
             {
-                var escapedKey = new XElement("ForEscapingOnly", tag.Key).LastNode.ToString();
+                var escapedKey = new XElement("ForEscapingOnly", tag.Name).LastNode.ToString();
                 var escapedValue = tag.Value == null ? NullCanaryValue : new XElement("ForEscapingOnly", tag.Value).LastNode.ToString();
                 tagsXmlBuilder.Append(Invariant($"<{TagEntryElementName} "));
                 tagsXmlBuilder.Append(FormattableString.Invariant($"{TagEntryKeyAttributeName}=\"{escapedKey}\" {TagEntryValueAttributeName}=\"{escapedValue}\""));

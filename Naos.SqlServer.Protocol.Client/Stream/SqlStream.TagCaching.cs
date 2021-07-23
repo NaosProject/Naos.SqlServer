@@ -19,7 +19,6 @@ namespace Naos.SqlServer.Protocol.Client
     using System.Xml.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using Naos.Protocol.Domain;
     using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
@@ -28,13 +27,14 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Enum.Recipes;
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
+    using OBeautifulCode.Type;
     using static System.FormattableString;
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
     public partial class SqlStream
     {
-        private readonly ConcurrentDictionary<long, KeyValuePair<string, string>> tagIdToKeyValueMap = new ConcurrentDictionary<long, KeyValuePair<string, string>>();
-        private readonly ConcurrentDictionary<KeyValuePair<string, string>, long> tagKeyValueToIdMap = new ConcurrentDictionary<KeyValuePair<string, string>, long>();
+        private readonly ConcurrentDictionary<long, NamedValue<string>> tagIdToKeyValueMap = new ConcurrentDictionary<long, NamedValue<string>>();
+        private readonly ConcurrentDictionary<NamedValue<string>, long> tagKeyValueToIdMap = new ConcurrentDictionary<NamedValue<string>, long>();
 
         /// <summary>
         /// Gets the ids add if necessary tag.
@@ -42,7 +42,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="locator">The locator.</param>
         /// <param name="tags">The tags.</param>
         /// <returns>IReadOnlyList&lt;System.Int64&gt;.</returns>
-        public IReadOnlyList<long> GetIdsAddIfNecessaryTag(SqlServerLocator locator, IReadOnlyDictionary<string, string> tags)
+        public IReadOnlyList<long> GetIdsAddIfNecessaryTag(SqlServerLocator locator, IReadOnlyCollection<NamedValue<string>> tags)
         {
             if (tags == null)
             {
@@ -51,7 +51,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
             var result = new List<long>();
-            var remaining = new List<KeyValuePair<string, string>>();
+            var remaining = new List<NamedValue<string>>();
 
             foreach (var keyValuePair in tags)
             {
@@ -68,20 +68,19 @@ namespace Naos.SqlServer.Protocol.Client
 
             if (remaining.Any())
             {
-                var remainingTags = remaining.ToDictionary(k => k.Key, v => v.Value);
                 var storedProcWithVersionOp = StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.BuildExecuteStoredProcedureOp(
                     this.Name,
-                    remainingTags);
+                    remaining);
                 var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
                 var tagIdsXml = sprocResultWithVersion
                                .OutputParameters[nameof(StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.OutputParamName.TagIdsXml)]
                                .GetValue<string>();
-                var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml) ?? new List<KeyValuePair<string, string>>();
+                var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml) ?? new List<NamedValue<string>>();
                 var additional = tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 
                 // this is the sort order of the output of the sproc.
-                var orderedRemaining = remaining.OrderBy(_ => _.Key).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
+                var orderedRemaining = remaining.OrderBy(_ => _.Name).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
                 for (int idx = 0;
                     idx < orderedRemaining.Count;
                     idx++)
@@ -102,7 +101,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="locator">The locator.</param>
         /// <param name="tagIds">The tag identifiers.</param>
         /// <returns>IReadOnlyDictionary&lt;System.String, System.String&gt;.</returns>
-        public IReadOnlyDictionary<string, string> GetTagsByIds(SqlServerLocator locator, IReadOnlyCollection<long> tagIds)
+        public IReadOnlyCollection<NamedValue<string>> GetTagsByIds(SqlServerLocator locator, IReadOnlyCollection<long> tagIds)
         {
             if (tagIds == null)
             {
@@ -111,10 +110,10 @@ namespace Naos.SqlServer.Protocol.Client
 
             if (!tagIds.Any())
             {
-                return new Dictionary<string, string>();
+                return new List<NamedValue<string>>();
             }
 
-            var result = new Dictionary<string, string>();
+            var result = new List<NamedValue<string>>();
             var remaining = new List<long>();
 
             foreach (var id in tagIds)
@@ -122,7 +121,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var found = this.tagIdToKeyValueMap.TryGetValue(id, out var keyValuePair);
                 if (found)
                 {
-                    result.Add(keyValuePair.Key, keyValuePair.Value);
+                    result.Add(new NamedValue<string>(keyValuePair.Name, keyValuePair.Value));
                 }
                 else
                 {
@@ -139,7 +138,7 @@ namespace Naos.SqlServer.Protocol.Client
                     remaining.ToList());
                 var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
                 var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValue<string>();
-                var additional = TagConversionTool.GetTagsFromXmlString(tagsXml).ToList() ?? new List<KeyValuePair<string, string>>();
+                var additional = TagConversionTool.GetTagsFromXmlString(tagsXml).ToList() ?? new List<NamedValue<string>>();
 
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 
@@ -151,7 +150,7 @@ namespace Naos.SqlServer.Protocol.Client
                 {
                     this.tagKeyValueToIdMap.TryAdd(additional[idx], remainingSortedOnId[idx]);
                     this.tagIdToKeyValueMap.TryAdd(remainingSortedOnId[idx], additional[idx]);
-                    result.Add(additional[idx].Key, additional[idx].Value);
+                    result.Add(new NamedValue<string>(additional[idx].Name, additional[idx].Value));
                 }
             }
 

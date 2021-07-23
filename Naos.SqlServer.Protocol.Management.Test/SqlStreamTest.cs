@@ -36,7 +36,7 @@ namespace Naos.SqlServer.Protocol.Management.Test
             this.testOutputHelper = testOutputHelper;
         }
 
-        [Fact (Skip = "Local testing only")]
+        [Fact(Skip = "Local testing only")]
         public void CreateStreamExampleDatabaseAndScripts()
         {
             var sqlServerLocator = new SqlServerLocator("localhost", "StreamExample3", "sa", "<password>", "SQLDEV2017");
@@ -65,9 +65,11 @@ namespace Naos.SqlServer.Protocol.Management.Test
 
             stream.Execute(new CreateStreamOp(stream.StreamRepresentation, ExistingStreamEncounteredStrategy.Skip));
             
+            /*
             var path = "D:/Temp/Example";
             var connectionString = sqlServerLocator.BuildConnectionString(TimeSpan.FromSeconds(20));
-//            Scripter.ScriptDatabaseToFilePath(connectionString, path, this.testOutputHelper.WriteLine, false);
+            Scripter.ScriptDatabaseToFilePath(connectionString, path, this.testOutputHelper.WriteLine, false);
+            */
         }
     }
 }

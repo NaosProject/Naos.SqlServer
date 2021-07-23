@@ -13,13 +13,13 @@ namespace Naos.SqlServer.Protocol.Client
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using Naos.Protocol.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Database.Recipes;
+    using OBeautifulCode.Type;
     using static System.FormattableString;
 
-    public partial class SqlStream : IReturningProtocol<UpdateStreamStoredProceduresOp, UpdateStreamStoredProceduresResult>
+    public partial class SqlStream : ISyncReturningProtocol<UpdateStreamStoredProceduresOp, UpdateStreamStoredProceduresResult>
     {
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the streams.")]
@@ -154,7 +154,7 @@ namespace Naos.SqlServer.Protocol.Client
                         var sprocResult = protocol.Execute(detailsOperation);
                         var detailsXml = sprocResult.OutputParameters[StreamSchema.Sprocs.GetStreamDetails.OutputParamName.DetailsXml.ToString()].GetValue<string>();
                         var detailsMap = TagConversionTool.GetTagsFromXmlString(detailsXml);
-                        var version = detailsMap?.FirstOrDefault(_ => _.Key == StreamSchema.Sprocs.GetStreamDetails.VersionKey).Value;
+                        var version = detailsMap?.FirstOrDefault(_ => _.Name == StreamSchema.Sprocs.GetStreamDetails.VersionKey)?.Value;
                         priorVersions.Add(version);
 
                         foreach (var script in alterScripts)

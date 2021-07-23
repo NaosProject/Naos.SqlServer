@@ -10,7 +10,7 @@ namespace Naos.SqlServer.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Naos.Database.Domain;
-    using Naos.Protocol.Domain;
+    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     /// <summary>
@@ -107,7 +107,7 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The type version match strategy.
                     /// </summary>
-                    TypeVersionMatchStrategy,
+                    VersionMatchStrategy,
                 }
 
                 /// <summary>
@@ -146,7 +146,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
                 /// <param name="existingRecordEncounteredStrategy">Existing record encountered strategy.</param>
                 /// <param name="recordRetentionCount">Number of records to keep if using a pruning <paramref name="existingRecordEncounteredStrategy"/>.</param>
-                /// <param name="typeVersionMatchStrategy">Type version match strategy.</param>
+                /// <param name="versionMatchStrategy">Type version match strategy.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
@@ -161,7 +161,7 @@ namespace Naos.SqlServer.Domain
                     string tagIdsCsv,
                     ExistingRecordEncounteredStrategy existingRecordEncounteredStrategy,
                     int? recordRetentionCount,
-                    TypeVersionMatchStrategy typeVersionMatchStrategy)
+                    VersionMatchStrategy versionMatchStrategy)
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(PutRecord)}");
 
@@ -180,7 +180,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType, tagIdsCsv),
                                          new SqlInputParameterRepresentation<ExistingRecordEncounteredStrategy>(nameof(InputParamName.ExistingRecordEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordEncounteredStrategy),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.RecordRetentionCount), new IntSqlDataTypeRepresentation(), recordRetentionCount),
-                                         new SqlInputParameterRepresentation<TypeVersionMatchStrategy>(nameof(InputParamName.TypeVersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), typeVersionMatchStrategy),
+                                         new SqlInputParameterRepresentation<VersionMatchStrategy>(nameof(InputParamName.VersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), versionMatchStrategy),
                                          new SqlOutputParameterRepresentation<long?>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ExistingRecordIdsCsv), Tables.Record.TagIdsCsv.DataType),
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.PrunedRecordIdsCsv), Tables.Record.TagIdsCsv.DataType),
@@ -356,7 +356,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
-  @{InputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
+, @{InputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax}
@@ -364,7 +364,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ExistingRecordEncounteredStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.RecordRetentionCount} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{InputParamName.TypeVersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+, @{InputParamName.VersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.ExistingRecordIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.PrunedRecordIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -393,13 +393,13 @@ BEGIN
 					AND
 					(
 						(
-								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
+								@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
 							AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
 							AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
 						)
 						OR
 						(
-								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
+								@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
 							AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
 							AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
 						)
@@ -411,14 +411,14 @@ BEGIN
 					AND
 					(
 						(
-							    @{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Any}'
+							    @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
 							AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionId}
 							AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionId}
 							AND ([{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject} OR [{Tables.Record.BinarySerializedObject.Name}] = @{InputParamName.BinarySerializedObject})
 						)
 						OR
 						(
-								@{InputParamName.TypeVersionMatchStrategy} = '{TypeVersionMatchStrategy.Specific}'
+								@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
 							AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionId}
 							AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionId}
 							AND ([{Tables.Record.StringSerializedObject.Name}] = @{InputParamName.StringSerializedObject} OR [{Tables.Record.BinarySerializedObject.Name}] = @{InputParamName.BinarySerializedObject})
