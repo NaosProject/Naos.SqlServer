@@ -39,9 +39,6 @@ namespace Naos.SqlServer.Domain.Test
         public DefaultSqlServerDummyFactory()
         {
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlStreamConfigObject());
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new XmlSqlDataTypeRepresentation());
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(

@@ -169,6 +169,7 @@
     <Compile Include="Stream\SqlStream.cs" />
     <Compile Include="Utility\SqlParameterRepresentationExtensions.cs" />
     <Compile Include="Legacy\SqlServerDatabaseManager.cs" />
+    <Compile Include="Utility\SqlStreamBuilder.cs" />
     <Compile Include="Utility\SqlServerLocatorExtensions.cs" />
     <AdditionalFiles Include=".analyzers\stylecop.json" />
     <None Include=".analyzers\release.ruleset" />

@@ -6,10 +6,12 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using Naos.Database.Domain;
+
     /// <summary>
     /// Interface for the properties needed to construct a SQL connection string, implemented by <see cref="SqlServerLocator"/>.
     /// </summary>
-    public interface ISqlServerLocator
+    public interface ISqlServerLocator : IResourceLocator
     {
         /// <summary>
         /// Gets the name of the server.

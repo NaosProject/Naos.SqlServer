@@ -110,9 +110,6 @@
       <DependentUpon>SqlServerConnectionDefinition.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Config\SqlStreamConfigObject.cs" />
-    <Compile Include="Model\Config\SqlStreamConfigObject.designer.cs">
-      <DependentUpon>SqlStreamConfigObject.cs</DependentUpon>
-    </Compile>
     <Compile Include="Model\DataTypeRepresentation\XmlSqlDataTypeRepresentation.cs" />
     <Compile Include="Model\DataTypeRepresentation\XmlSqlDataTypeRepresentation.designer.cs">
       <DependentUpon>XmlSqlDataTypeRepresentation.cs</DependentUpon>
