@@ -63,7 +63,7 @@ namespace Naos.SqlServer.Protocol.Client
             SerializationFormat defaultSerializationFormat,
             ISerializerFactory serializerFactory,
             IResourceLocatorProtocols resourceLocatorProtocol)
-        : base(name, resourceLocatorProtocol, serializerFactory, defaultSerializerRepresentation, defaultSerializationFormat)
+        : base(name, serializerFactory, defaultSerializerRepresentation, defaultSerializationFormat, resourceLocatorProtocol)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
             defaultSerializerRepresentation.MustForArg(nameof(defaultSerializerRepresentation)).NotBeNull();
