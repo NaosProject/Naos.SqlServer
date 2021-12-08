@@ -29,7 +29,6 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the database configuration.
         /// </summary>
-        /// <value>The database configuration.</value>
         public DatabaseConfiguration DatabaseConfiguration { get; private set; }
     }
 }

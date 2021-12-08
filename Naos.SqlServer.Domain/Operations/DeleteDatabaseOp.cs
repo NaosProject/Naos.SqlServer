@@ -17,7 +17,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteDatabaseOp"/> class.
         /// </summary>
-        /// <param name="databaseName">The database configuration.</param>
+        /// <param name="databaseName">The database name.</param>
         public DeleteDatabaseOp(
             string databaseName)
         {
@@ -28,9 +28,8 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Gets the database configuration.
+        /// Gets the database name.
         /// </summary>
-        /// <value>The database configuration.</value>
         public string DatabaseName { get; private set; }
     }
 }

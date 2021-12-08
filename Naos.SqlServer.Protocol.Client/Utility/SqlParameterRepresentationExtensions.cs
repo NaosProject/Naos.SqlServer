@@ -112,12 +112,12 @@ namespace Naos.SqlServer.Protocol.Client
                     var enumValue = parameterRepresentation.GetType()
                                                            .GetProperty(nameof(SqlInputParameterRepresentation<string>.Value))
                                                           ?.GetValue(parameterRepresentation);
-                    var stringParameter = new SqlInputParameterRepresentation<string>(parameterRepresentation.Name, parameterRepresentation.DataType, enumValue?.ToString());
+                    var stringParameter = new SqlInputParameterRepresentation<string>(parameterRepresentation.Name, parameterRepresentation.SqlDataType, enumValue?.ToString());
                     return stringParameter.ToSqlParameter();
                 }
                 else if (genericDefinition == typeof(SqlOutputParameterRepresentation<>))
                 {
-                    var stringParameter = new SqlOutputParameterRepresentation<string>(parameterRepresentation.Name, parameterRepresentation.DataType);
+                    var stringParameter = new SqlOutputParameterRepresentation<string>(parameterRepresentation.Name, parameterRepresentation.SqlDataType);
                     return stringParameter.ToSqlParameter();
                 }
                 else
@@ -231,15 +231,15 @@ namespace Naos.SqlServer.Protocol.Client
         {
             stringInputParameter.MustForArg(nameof(stringInputParameter)).NotBeNull();
 
-            if (stringInputParameter.DataType.GetType() == typeof(StringSqlDataTypeRepresentation))
+            if (stringInputParameter.SqlDataType.GetType() == typeof(StringSqlDataTypeRepresentation))
             {
-                var stringDataType = (StringSqlDataTypeRepresentation)stringInputParameter.DataType;
+                var stringDataType = (StringSqlDataTypeRepresentation)stringInputParameter.SqlDataType;
                 var name = stringInputParameter.Name;
                 name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
                 var result = stringInputParameter.Value.CreateInputSqlParameter(name, stringDataType.SupportUnicode ? SqlDbType.NVarChar : SqlDbType.VarChar, stringDataType.SupportedLength);
                 return result;
             }
-            else if (stringInputParameter.DataType.GetType() == typeof(XmlSqlDataTypeRepresentation))
+            else if (stringInputParameter.SqlDataType.GetType() == typeof(XmlSqlDataTypeRepresentation))
             {
                 var name = stringInputParameter.Name;
                 name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
@@ -248,7 +248,7 @@ namespace Naos.SqlServer.Protocol.Client
             }
             else
             {
-                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(SqlInputParameterRepresentation<string>)} with a datatype of {stringInputParameter.DataType}."));
+                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(SqlInputParameterRepresentation<string>)} with a datatype of {stringInputParameter.SqlDataType}."));
             }
         }
 
@@ -291,7 +291,7 @@ namespace Naos.SqlServer.Protocol.Client
             this SqlOutputParameterRepresentation<byte[]> binaryOutputParameter)
         {
             binaryOutputParameter.MustForArg(nameof(binaryOutputParameter)).NotBeNull();
-            var dataType = (BinarySqlDataTypeRepresentation)binaryOutputParameter.DataType;
+            var dataType = (BinarySqlDataTypeRepresentation)binaryOutputParameter.SqlDataType;
             var name = binaryOutputParameter.Name;
             name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
             var result = SqlParameterExtensions.CreateOutputByteArraySqlParameter(name, size: dataType.SupportedLength);
@@ -307,7 +307,7 @@ namespace Naos.SqlServer.Protocol.Client
             this SqlOutputParameterRepresentation<decimal> decimalOutputParameter)
         {
             decimalOutputParameter.MustForArg(nameof(decimalOutputParameter)).NotBeNull();
-            var dataType = (DecimalSqlDataTypeRepresentation)decimalOutputParameter.DataType;
+            var dataType = (DecimalSqlDataTypeRepresentation)decimalOutputParameter.SqlDataType;
             var name = decimalOutputParameter.Name;
             name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
             var result = SqlParameterExtensions.CreateOutputDecimalSqlParameter(name, dataType.Precision, dataType.Scale);
@@ -384,15 +384,15 @@ namespace Naos.SqlServer.Protocol.Client
         {
             stringOutputParameter.MustForArg(nameof(stringOutputParameter)).NotBeNull();
 
-            if (stringOutputParameter.DataType.GetType() == typeof(StringSqlDataTypeRepresentation))
+            if (stringOutputParameter.SqlDataType.GetType() == typeof(StringSqlDataTypeRepresentation))
             {
-                var dataType = (StringSqlDataTypeRepresentation)stringOutputParameter.DataType;
+                var dataType = (StringSqlDataTypeRepresentation)stringOutputParameter.SqlDataType;
                 var name = stringOutputParameter.Name;
                 name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
                 var result = SqlParameterExtensions.CreateOutputStringSqlParameter(name, dataType.SupportUnicode ? SqlDbType.NVarChar : SqlDbType.VarChar, dataType.SupportedLength);
                 return result;
             }
-            else if (stringOutputParameter.DataType.GetType() == typeof(XmlSqlDataTypeRepresentation))
+            else if (stringOutputParameter.SqlDataType.GetType() == typeof(XmlSqlDataTypeRepresentation))
             {
                 var name = stringOutputParameter.Name;
                 name = name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
@@ -401,7 +401,7 @@ namespace Naos.SqlServer.Protocol.Client
             }
             else
             {
-                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(SqlOutputParameterRepresentation<string>)} with a datatype of {stringOutputParameter.DataType}."));
+                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(SqlOutputParameterRepresentation<string>)} with a datatype of {stringOutputParameter.SqlDataType}."));
             }
         }
 
@@ -453,51 +453,51 @@ namespace Naos.SqlServer.Protocol.Client
             if (outputParameterRepresentation is SqlOutputParameterRepresentation<byte[]>)
             {
                 var byteArrayValue = (byte[])rawValue;
-                result = new SqlOutputParameterRepresentationWithResult<byte[]>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, byteArrayValue);
+                result = new SqlOutputParameterRepresentationWithResult<byte[]>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, byteArrayValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<decimal>)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var decimalValue = Convert.ToDecimal(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<decimal>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, decimalValue);
+                result = new SqlOutputParameterRepresentationWithResult<decimal>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, decimalValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<int>)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var intValue = Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<int>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, intValue);
+                result = new SqlOutputParameterRepresentationWithResult<int>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, intValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<int?>)
             {
                 var intValue = rawValue == null ? (int?)null : Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<int?>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, intValue);
+                result = new SqlOutputParameterRepresentationWithResult<int?>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, intValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long>)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var longValue = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<long>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, longValue);
+                result = new SqlOutputParameterRepresentationWithResult<long>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, longValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long?>)
             {
                 var longValue = rawValue == null ? (long?)null : Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<long?>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, longValue);
+                result = new SqlOutputParameterRepresentationWithResult<long?>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, longValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<string>)
             {
                 var stringValue = rawValue?.ToString();
-                result = new SqlOutputParameterRepresentationWithResult<string>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, stringValue);
+                result = new SqlOutputParameterRepresentationWithResult<string>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, stringValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<DateTime>)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var dateTimeValue = (DateTime)rawValue;
-                result = new SqlOutputParameterRepresentationWithResult<DateTime>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, dateTimeValue);
+                result = new SqlOutputParameterRepresentationWithResult<DateTime>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, dateTimeValue);
             }
             else if (outputParameterRepresentation is SqlOutputParameterRepresentation<DateTime?>)
             {
                 var dateTimeNullableValue = (DateTime?)rawValue;
-                result = new SqlOutputParameterRepresentationWithResult<DateTime?>(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, dateTimeNullableValue);
+                result = new SqlOutputParameterRepresentationWithResult<DateTime?>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, dateTimeNullableValue);
             }
             else if (outputParameterRepresentation.GetType().GetGenericArguments().SingleOrDefault()?.IsEnum ?? false)
             {
@@ -510,7 +510,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var enumType = genericArguments.Single();
                 var enumValue = Enum.Parse(enumType, rawValue.ToString());
                 var resultType = typeof(SqlOutputParameterRepresentationWithResult<>).MakeGenericType(enumType);
-                var rawResult = resultType.Construct(outputParameterRepresentation.Name, outputParameterRepresentation.DataType, enumValue);
+                var rawResult = resultType.Construct(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, enumValue);
                 result = (ISqlOutputParameterRepresentationWithResult)rawResult;
             }
             else

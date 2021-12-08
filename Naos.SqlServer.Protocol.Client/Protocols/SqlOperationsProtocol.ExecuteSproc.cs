@@ -35,7 +35,7 @@ namespace Naos.SqlServer.Protocol.Client
                     command.CommandType = CommandType.StoredProcedure;
 
                     var outputParameters = new List<Tuple<SqlParameter, SqlOutputParameterRepresentationBase>>();
-                    foreach (var paramNameAndDetails in operation.ParameterNameToDetailsMap)
+                    foreach (var paramNameAndDetails in operation.ParameterNameToRepresentationMap)
                     {
                         var parameter = paramNameAndDetails.Value.ToSqlParameter();
 

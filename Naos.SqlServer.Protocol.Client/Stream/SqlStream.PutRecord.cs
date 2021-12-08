@@ -54,9 +54,9 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-            var newRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.Id)].GetValue<long?>();
-            var existingRecordIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordIdsCsv)].GetValue<string>();
-            var prunedRecordIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.PrunedRecordIdsCsv)].GetValue<string>();
+            var newRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.Id)].GetValueOfType<long?>();
+            var existingRecordIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.ExistingRecordIdsCsv)].GetValueOfType<string>();
+            var prunedRecordIdsCsv = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutRecord.OutputParamName.PrunedRecordIdsCsv)].GetValueOfType<string>();
 
             var existingRecordIds = existingRecordIdsCsv.FromCsv()?.Select(_ => long.Parse(_, CultureInfo.InvariantCulture)).ToList() ?? new List<long>();
             var prunedRecordIds = prunedRecordIdsCsv.FromCsv()?.Select(_ => long.Parse(_, CultureInfo.InvariantCulture)).ToList() ?? new List<long>();

@@ -74,7 +74,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
                 var tagIdsXml = sprocResultWithVersion
                                .OutputParameters[nameof(StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.OutputParamName.TagIdsXml)]
-                               .GetValue<string>();
+                               .GetValueOfType<string>();
                 var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml) ?? new List<NamedValue<string>>();
                 var additional = tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
@@ -137,7 +137,7 @@ namespace Naos.SqlServer.Protocol.Client
                     this.Name,
                     remaining.ToList());
                 var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
-                var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValue<string>();
+                var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValueOfType<string>();
                 var additional = TagConversionTool.GetTagsFromXmlString(tagsXml).ToList() ?? new List<NamedValue<string>>();
 
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);

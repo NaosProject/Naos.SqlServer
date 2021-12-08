@@ -29,6 +29,8 @@ namespace Naos.SqlServer.Domain.Test
     {
         public SqlServerDummyFactory()
         {
+            AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(ScriptableObjectType.Invalid);
+
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () =>
                 {

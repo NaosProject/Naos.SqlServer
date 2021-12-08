@@ -16,8 +16,8 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateStreamStoredProceduresOp"/> class.
         /// </summary>
-        /// <param name="recordTagAssociationManagementStrategy">The optional record tag association management strategy; DEFAULT is AssociatedDuringPutInSprocInTransaction."/>.</param>
-        /// <param name="maxConcurrentHandlingCount">The optional maximum concurrent handling count; DEFAULT is no limit.</param>
+        /// <param name="recordTagAssociationManagementStrategy">OPTIONAL record tag association management strategy.  DEFAULT is AssociatedDuringPutInSprocInTransaction."/>.</param>
+        /// <param name="maxConcurrentHandlingCount">OPTIONAL maximum concurrent handling count.  DEFAULT is no limit.</param>
         public UpdateStreamStoredProceduresOp(
             RecordTagAssociationManagementStrategy? recordTagAssociationManagementStrategy,
             int? maxConcurrentHandlingCount)
@@ -29,13 +29,11 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the record tag association management strategy.
         /// </summary>
-        /// <value>The record tag association management strategy.</value>
         public RecordTagAssociationManagementStrategy? RecordTagAssociationManagementStrategy { get; private set; }
 
         /// <summary>
         /// Gets the maximum concurrent handling count.
         /// </summary>
-        /// <value>The maximum concurrent handling count.</value>
         public int? MaxConcurrentHandlingCount { get; private set; }
     }
 }

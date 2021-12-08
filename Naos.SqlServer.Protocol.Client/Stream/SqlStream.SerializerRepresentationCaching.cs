@@ -62,22 +62,22 @@ namespace Naos.SqlServer.Protocol.Client
                                                      .OutputParameters[nameof(StreamSchema
                                                                              .Sprocs.GetSerializerRepresentationFromId.OutputParamName
                                                                              .SerializationKind)]
-                                                     .GetValue<SerializationKind>();
+                                                     .GetValueOfType<SerializationKind>();
                 int configTypeWithVersionId = sprocResult
                                              .OutputParameters[nameof(StreamSchema
                                                                      .Sprocs.GetSerializerRepresentationFromId.OutputParamName
                                                                      .ConfigTypeWithVersionId)]
-                                             .GetValue<int>();
+                                             .GetValueOfType<int>();
                 CompressionKind compressionKind = sprocResult
                                                  .OutputParameters[nameof(StreamSchema
                                                                          .Sprocs.GetSerializerRepresentationFromId.OutputParamName
                                                                          .CompressionKind)]
-                                                 .GetValue<CompressionKind>();
+                                                 .GetValueOfType<CompressionKind>();
                 SerializationFormat serializationFormat = sprocResult
                                                          .OutputParameters[nameof(StreamSchema
                                                                                  .Sprocs.GetSerializerRepresentationFromId.OutputParamName
                                                                                  .SerializationFormat)]
-                                                         .GetValue<SerializationFormat>();
+                                                         .GetValueOfType<SerializationFormat>();
 
                 var configType = this.GetTypeById(sqlServerLocator, configTypeWithVersionId, true);
 
@@ -148,7 +148,7 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
             var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.OutputParamName.Id)]
-                                    .GetValue<int>();
+                                    .GetValueOfType<int>();
             return result;
         }
     }

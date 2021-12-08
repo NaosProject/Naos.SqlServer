@@ -6,9 +6,8 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using System;
     using Naos.Database.Domain;
-    using Naos.SqlServer.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.Type;
 
@@ -20,39 +19,34 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="GetIdAddIfNecessarySerializerRepresentationOp"/> class.
         /// </summary>
-        /// <param name="specifiedResourceLocator">Stream locator to inspect.</param>
-        /// <param name="serializerRepresentation">The serialization description.</param>
+        /// <param name="specifiedResourceLocator">The stream locator to inspect.</param>
+        /// <param name="serializerRepresentation">The serializer representation.</param>
         /// <param name="serializationFormat">The serialization format.</param>
-        /// <exception cref="System.ArgumentNullException">serializerRepresentation.</exception>
         public GetIdAddIfNecessarySerializerRepresentationOp(
             IResourceLocator specifiedResourceLocator,
             SerializerRepresentation serializerRepresentation,
             SerializationFormat serializationFormat)
         {
-            this.SpecifiedResourceLocator = specifiedResourceLocator ?? throw new ArgumentNullException(nameof(specifiedResourceLocator));
-            this.SerializerRepresentation = serializerRepresentation ?? throw new ArgumentNullException(nameof(serializerRepresentation));
+            specifiedResourceLocator.MustForArg(nameof(specifiedResourceLocator)).NotBeNull();
+            serializerRepresentation.MustForArg(nameof(serializerRepresentation)).NotBeNull();
+            serializationFormat.MustForArg(nameof(serializationFormat)).NotBeEqualTo(SerializationFormat.Invalid);
 
-            if (serializationFormat == SerializationFormat.Invalid)
-            {
-                throw new ArgumentException("Format cannot be 'Invalid'.", nameof(serializationFormat));
-            }
-
+            this.SpecifiedResourceLocator = specifiedResourceLocator;
+            this.SerializerRepresentation = serializerRepresentation;
             this.SerializationFormat = serializationFormat;
         }
 
+        /// <inheritdoc />
+        public IResourceLocator SpecifiedResourceLocator { get; private set; }
+
         /// <summary>
-        /// Gets the serialization description.
+        /// Gets the serializer representation.
         /// </summary>
-        /// <value>The serialization description.</value>
         public SerializerRepresentation SerializerRepresentation { get; private set; }
 
         /// <summary>
         /// Gets the serialization format.
         /// </summary>
-        /// <value>The serialization format.</value>
         public SerializationFormat SerializationFormat { get; private set; }
-
-        /// <inheritdoc />
-        public IResourceLocator SpecifiedResourceLocator { get; private set; }
     }
 }

@@ -70,14 +70,14 @@ namespace Naos.SqlServer.Protocol.Client
                 var sprocResultWithoutVersion = sqlProtocol.Execute(storedProcWithoutVersionOp);
                 var withoutVersionId = sprocResultWithoutVersion
                                       .OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.OutputParamName.Id)]
-                                      .GetValue<int>();
+                                      .GetValueOfType<int>();
                 var storedProcWithVersionOp = StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildExecuteStoredProcedureOp(
                     this.Name,
                     assemblyQualifiedNameWithVersion);
                 var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
                 var withVersionId = sprocResultWithVersion
                                    .OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.OutputParamName.Id)]
-                                   .GetValue<int>();
+                                   .GetValueOfType<int>();
 
                 var item = new IdentifiedType(withoutVersionId, withVersionId);
                 this.assemblyQualifiedNameWithVersionToIdentifiedTypeMap.TryAdd(assemblyQualifiedNameWithVersion, item);
@@ -116,7 +116,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var sprocResult = sqlProtocol.Execute(storedProcOp);
                 var assemblyQualifiedName = sprocResult
                                            .OutputParameters[nameof(StreamSchema.Sprocs.GetTypeFromId.OutputParamName.AssemblyQualifiedName)]
-                                           .GetValue<string>();
+                                           .GetValueOfType<string>();
                 var typeRep = assemblyQualifiedName.ToTypeRepresentationFromAssemblyQualifiedName();
                 var item = typeRep.ToWithAndWithoutVersion();
                 this.assemblyQualifiedNameWithVersionIdToIdentifiedTypeMap.TryAdd(typeWithVersionId, item);

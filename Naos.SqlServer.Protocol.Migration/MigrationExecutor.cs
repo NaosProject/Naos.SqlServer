@@ -64,7 +64,7 @@ namespace Naos.SqlServer.Protocol.Migration
             string databaseName,
             long? targetVersion = null,
             Action<string> announcer = null,
-            TimeSpan timeout = default(TimeSpan),
+            TimeSpan timeout = default,
             object applicationContext = null,
             bool useAutomaticTransactionManagement = true)
         {

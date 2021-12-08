@@ -152,7 +152,7 @@ namespace Naos.SqlServer.Protocol.Client
                         var detailsOperation = StreamSchema.Sprocs.GetStreamDetails.BuildExecuteStoredProcedureOp(this.Name);
                         var protocol = this.BuildSqlOperationsProtocol(sqlLocator);
                         var sprocResult = protocol.Execute(detailsOperation);
-                        var detailsXml = sprocResult.OutputParameters[StreamSchema.Sprocs.GetStreamDetails.OutputParamName.DetailsXml.ToString()].GetValue<string>();
+                        var detailsXml = sprocResult.OutputParameters[StreamSchema.Sprocs.GetStreamDetails.OutputParamName.DetailsXml.ToString()].GetValueOfType<string>();
                         var detailsMap = TagConversionTool.GetTagsFromXmlString(detailsXml);
                         var version = detailsMap?.FirstOrDefault(_ => _.Name == StreamSchema.Sprocs.GetStreamDetails.VersionKey)?.Value;
                         priorVersions.Add(version);

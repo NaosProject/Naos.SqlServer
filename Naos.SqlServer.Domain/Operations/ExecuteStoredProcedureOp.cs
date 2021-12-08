@@ -18,29 +18,27 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecuteStoredProcedureOp"/> class.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="parameterNameToDetailsMap">The parameter name to details map.</param>
+        /// <param name="name">The name of the stored procedure.</param>
+        /// <param name="parameterNameToRepresentationMap">A map of parameter name to the parameter's representation.</param>
         public ExecuteStoredProcedureOp(
             string name,
-            IReadOnlyDictionary<string, SqlParameterRepresentationBase> parameterNameToDetailsMap)
+            IReadOnlyDictionary<string, SqlParameterRepresentationBase> parameterNameToRepresentationMap)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
-            parameterNameToDetailsMap.MustForArg(nameof(parameterNameToDetailsMap)).NotBeNull();
+            parameterNameToRepresentationMap.MustForArg(nameof(parameterNameToRepresentationMap)).NotBeNull();
 
             this.Name = name;
-            this.ParameterNameToDetailsMap = parameterNameToDetailsMap;
+            this.ParameterNameToRepresentationMap = parameterNameToRepresentationMap;
         }
 
         /// <summary>
-        /// Gets the name.
+        /// Gets the name of the stored procedure.
         /// </summary>
-        /// <value>The name.</value>
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets the parameter name to details map.
+        /// Gets a map of parameter name to the parameter's representation.
         /// </summary>
-        /// <value>The parameter name to details map.</value>
-        public IReadOnlyDictionary<string, SqlParameterRepresentationBase> ParameterNameToDetailsMap { get; private set; }
+        public IReadOnlyDictionary<string, SqlParameterRepresentationBase> ParameterNameToRepresentationMap { get; private set; }
     }
 }
