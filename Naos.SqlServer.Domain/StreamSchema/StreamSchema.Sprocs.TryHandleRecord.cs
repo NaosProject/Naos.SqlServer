@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
@@ -40,11 +41,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Input parameter names.
                 /// </summary>
-                [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                    "Microsoft.Naming",
-                    "CA1704:IdentifiersShouldBeSpelledCorrectly",
-                    MessageId = "Param",
-                    Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public enum InputParamName
                 {
                     /// <summary>
@@ -80,7 +77,7 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The order record strategy
                     /// </summary>
-                    OrderRecordsStrategy,
+                    OrderRecordsBy,
 
                     /// <summary>
                     /// The type version match strategy
@@ -183,7 +180,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="details">The details.</param>
                 /// <param name="identifierType">Type of the identifier.</param>
                 /// <param name="objectType">Type of the object.</param>
-                /// <param name="orderRecordsStrategy">The order records strategy.</param>
+                /// <param name="orderRecordsBy">The order records strategy.</param>
                 /// <param name="versionMatchStrategy">The type version match strategy.</param>
                 /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
                 /// <param name="minimumInternalRecordId">The optional minimum internal record identifier, null for default.</param>
@@ -195,7 +192,7 @@ namespace Naos.SqlServer.Domain
                     string details,
                     IdentifiedType identifierType,
                     IdentifiedType objectType,
-                    OrderRecordsStrategy orderRecordsStrategy,
+                    OrderRecordsBy orderRecordsBy,
                     VersionMatchStrategy versionMatchStrategy,
                     string tagIdsCsv,
                     long? minimumInternalRecordId,
@@ -207,7 +204,7 @@ namespace Naos.SqlServer.Domain
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.DataType, concern),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Details), Tables.Handling.Details.DataType, details),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.OrderRecordsStrategy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsStrategy.ToString()),
+                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.OrderRecordsBy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsBy.ToString()),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, identifierType?.IdWithoutVersion),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, identifierType?.IdWithVersion),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, objectType?.IdWithoutVersion),
@@ -245,16 +242,8 @@ namespace Naos.SqlServer.Domain
                 /// <param name="maxConcurrentHandlingCount">The optional maximum concurrent handling count; DEFAULT is no limit.</param>
                 /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>System.String.</returns>
-                [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                    "Microsoft.Naming",
-                    "CA1702:CompoundWordsShouldBeCasedCorrectly",
-                    MessageId = "ForGet",
-                    Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
-                [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                    "Microsoft.Naming",
-                    "CA1704:IdentifiersShouldBeSpelledCorrectly",
-                    MessageId = "Sproc",
-                    Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "ForGet", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sproc", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
                     string streamName,
                     int? maxConcurrentHandlingCount,
@@ -262,18 +251,18 @@ namespace Naos.SqlServer.Domain
                 {
                     const string recordIdToAttemptToClaim = "RecordIdToAttemptToClaim";
                     const string candidateRecordIds = "CandidateRecordIds";
-                    const string blockedStatus = "BlockedStatus";
+                    const string streamBlockedStatus = "StreamBlockedStatus";
                     const string currentRunningCount = "CurrentRunningCount";
                     const string isUnhandledRecord = "IsUnhandledRecord";
                     const string unionedIfNecessaryTagIdsCsv = "UnionedIfNecessaryTagIdsCsv";
                     var acceptableStatusesCsv =
                         new[]
                         {
-                            HandlingStatus.None.ToString(),
-                            HandlingStatus.Requested.ToString(),
-                            HandlingStatus.SelfCanceledRunning.ToString(),
-                            HandlingStatus.CanceledRunning.ToString(),
-                            HandlingStatus.RetryFailed.ToString(),
+                            HandlingStatus.Unknown.ToString(),
+                            HandlingStatus.AvailableByDefault.ToString(),
+                            HandlingStatus.AvailableAfterSelfCancellation.ToString(),
+                            HandlingStatus.AvailableAfterExternalCancellation.ToString(),
+                            HandlingStatus.AvailableAfterFailure.ToString(),
                         }.ToCsv();
 
                     var shouldAttemptHandling = "ShouldAttemptHandling";
@@ -282,13 +271,13 @@ namespace Naos.SqlServer.Domain
                         : Invariant($@"
     DECLARE @{currentRunningCount} INT
     SELECT @{currentRunningCount} = COUNT(*)
-	FROM [{streamName}].[{Tables.Handling.Table.Name}] h 
+	FROM [{streamName}].[{Tables.Handling.Table.Name}] h
 	LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
 	ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 	WHERE
         h1.[{Tables.Handling.Status.Name}] IS NULL
 	AND h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.Running}'
-    
+
 	IF (@{currentRunningCount} >= {maxConcurrentHandlingCount})
 	BEGIN
 		SET @{shouldAttemptHandling} = 0
@@ -300,7 +289,7 @@ namespace Naos.SqlServer.Domain
 {createOrModify} PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Concern.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.Details} AS {Tables.Handling.Details.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.OrderRecordsStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+, @{InputParamName.OrderRecordsBy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
@@ -325,13 +314,13 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
-    DECLARE @{blockedStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
-	SELECT TOP 1 @{blockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
-	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingConcern}'
+    DECLARE @{streamBlockedStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+	SELECT TOP 1 @{streamBlockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
+	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.StreamHandlingDisabledConcern}'
 
 	-- Check if global handling block has been applied
 	DECLARE @{shouldAttemptHandling} BIT
-	IF(@{blockedStatus} = '{HandlingStatus.Blocked}')
+	IF(@{streamBlockedStatus} = '{HandlingStatus.DisabledForStream}')
 	BEGIN
 		SET @{OutputParamName.IsBlocked} = 1
     END
@@ -347,14 +336,14 @@ BEGIN
 	BEGIN
         DECLARE @{candidateRecordIds} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.DataType.DeclarationInSqlSyntax} NOT NULL)
 		DECLARE @{isUnhandledRecord} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-		IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdAscending}')
+		IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
 		BEGIN
 			-- See if any reprocessing is needed
 			INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
 			FROM [{streamName}].[{Tables.Handling.Table.Name}] h
 			INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
 			WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-	        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
+	        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
 			AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
 		    AND (
 		            -- No Type filter at all
@@ -424,7 +413,7 @@ BEGIN
 				END
 			END -- Check for new records
 		END -- If ascending
-		ELSE IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdDescending}')
+		ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdDescending}')
 		BEGIN
 			-- See if any new records
 			INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
@@ -467,7 +456,7 @@ BEGIN
 				FROM [{streamName}].[{Tables.Handling.Table.Name}] h
 				INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
 				WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-		        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
+		        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
 				AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
 			    AND (
 			            -- No Type filter at all
@@ -498,7 +487,7 @@ BEGIN
 				END
 			END -- Check for re-run
 		END -- Descending
-		ELSE IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.Random}')
+		ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.Random}')
 		BEGIN
 			-- Choose to handle old or new first
 			IF (RAND() > .5)
@@ -544,7 +533,7 @@ BEGIN
 					FROM [{streamName}].[{Tables.Handling.Table.Name}] h
 					INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
 					WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-			        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
+			        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
 					AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
 				    AND (
 				            -- No Type filter at all
@@ -582,7 +571,7 @@ BEGIN
 				FROM [{streamName}].[{Tables.Handling.Table.Name}] h
 				INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
 				WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-		        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.RetryFailed}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.CanceledRunning}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.SelfCanceledRunning}')
+		        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
 				AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
 			    AND (
 			            -- No Type filter at all
@@ -656,29 +645,29 @@ BEGIN
 		ELSE
 		BEGIN
 				DECLARE @NotValidStrategyErrorMessage varchar(100)
-				SET @NotValidStrategyErrorMessage =  CONCAT('Invalid {InputParamName.OrderRecordsStrategy}: ', @{InputParamName.OrderRecordsStrategy}, '.');
+				SET @NotValidStrategyErrorMessage =  CONCAT('Invalid {InputParamName.OrderRecordsBy}: ', @{InputParamName.OrderRecordsBy}, '.');
 				THROW 60000, @NotValidStrategyErrorMessage, 1
 		END
 		IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 		BEGIN
 			DECLARE @{recordIdToAttemptToClaim} {Tables.Record.Id.DataType.DeclarationInSqlSyntax}
 			-- TODO: loop through candidates until we have one or out of options...
-			IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdAscending}')
+			IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
 			BEGIN
 				SELECT TOP 1 @{recordIdToAttemptToClaim} = [{Tables.Record.Id.Name}] FROM @{candidateRecordIds} ORDER BY [{Tables.Record.Id.Name}] ASC
 			END
-			ELSE IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.ByInternalRecordIdDescending}')
+			ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdDescending}')
 			BEGIN
 				SELECT TOP 1 @{recordIdToAttemptToClaim} = [{Tables.Record.Id.Name}] FROM @{candidateRecordIds} ORDER BY [{Tables.Record.Id.Name}] DESC
 			END
-			ELSE IF (@{InputParamName.OrderRecordsStrategy} = '{OrderRecordsStrategy.Random}')
+			ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.Random}')
 			BEGIN
 				SELECT TOP 1 @{recordIdToAttemptToClaim} = [{Tables.Record.Id.Name}] FROM @{candidateRecordIds} ORDER BY NEWID()
 			END
 			ELSE
 			BEGIN
 				DECLARE @NotValidStrategyClaimErrorMessage varchar(100)
-				SET @NotValidStrategyClaimErrorMessage =  CONCAT('Invalid {InputParamName.OrderRecordsStrategy}: ', @{InputParamName.OrderRecordsStrategy}, '.');
+				SET @NotValidStrategyClaimErrorMessage =  CONCAT('Invalid {InputParamName.OrderRecordsBy}: ', @{InputParamName.OrderRecordsBy}, '.');
 				THROW 60000, @NotValidStrategyClaimErrorMessage, 1
 			END
 

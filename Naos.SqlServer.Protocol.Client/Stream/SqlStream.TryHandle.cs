@@ -24,7 +24,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         public override TryHandleRecordResult Execute(
-            TryHandleRecordOp operation)
+            StandardTryHandleRecordOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
             var identifierTypeQuery = operation.IdentifierType == null
@@ -41,10 +41,10 @@ namespace Naos.SqlServer.Protocol.Client
             var storedProcOp = StreamSchema.Sprocs.TryHandleRecord.BuildExecuteStoredProcedureOp(
                                                 this.Name,
                                                 operation.Concern,
-                                                operation.Details ?? Invariant($"Created by {nameof(TryHandleRecordOp)}."),
+                                                operation.Details ?? Invariant($"Created by {nameof(StandardTryHandleRecordOp)}."),
                                                 identifierTypeQuery,
                                                 objectTypeQuery,
-                                                operation.OrderRecordsStrategy,
+                                                operation.OrderRecordsBy,
                                                 operation.VersionMatchStrategy,
                                                 entryTagIdsCsv,
                                                 operation.MinimumInternalRecordId,

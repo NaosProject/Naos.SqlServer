@@ -45,7 +45,7 @@ namespace Naos.SqlServer.Protocol.Management.Test
             var protocol = new SqlOperationsProtocol(sqlServerLocator);
             protocol.Execute(createDatabaseOp);
 
-            var resourceLocatorProtocol = new SingleResourceLocatorProtocol(sqlServerLocator);
+            var resourceLocatorProtocol = new SingleResourceLocatorProtocols(sqlServerLocator);
 
             var configurationTypeRepresentation = typeof(NullJsonSerializationConfiguration).ToRepresentation();
 
@@ -63,7 +63,7 @@ namespace Naos.SqlServer.Protocol.Management.Test
                 new JsonSerializerFactory(),
                 resourceLocatorProtocol);
 
-            stream.Execute(new CreateStreamOp(stream.StreamRepresentation, ExistingStreamEncounteredStrategy.Skip));
+            stream.Execute(new StandardCreateStreamOp(stream.StreamRepresentation, ExistingStreamStrategy.Skip));
 
             this.testOutputHelper.WriteLine("Created database.");
             /*

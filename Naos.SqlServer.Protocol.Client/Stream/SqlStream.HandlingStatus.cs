@@ -21,79 +21,86 @@ namespace Naos.SqlServer.Protocol.Client
 
     public partial class SqlStream
     {
+        private static readonly IReadOnlyCollection<HandlingStatus> AllHandlingStatusesExceptDisabledForStream = typeof(HandlingStatus)
+            .GetAllPossibleEnumValues()
+            .Cast<HandlingStatus>()
+            .Except(
+                new[]
+                {
+                    HandlingStatus.DisabledForStream,
+                })
+            .ToList();
+
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
-        public override HandlingStatus Execute(
-            GetHandlingStatusOfRecordSetByTagOp operation)
+        public override IReadOnlyCollection<HandlingStatus> Execute(
+            StandardGetHandlingStatusOp operation)
         {
-            if (operation.HandlingStatusCompositionStrategy != null)
-            {
-                operation
-                   .HandlingStatusCompositionStrategy
-                   .IgnoreCancel
-                   .MustForArg(Invariant($"{nameof(GetHandlingStatusOfRecordSetByTagOp)}.{nameof(HandlingStatusCompositionStrategy)}.{nameof(HandlingStatusCompositionStrategy.IgnoreCancel)}"))
-                   .BeFalse(Invariant($"{nameof(HandlingStatusCompositionStrategy)}.{nameof(HandlingStatusCompositionStrategy.IgnoreCancel)} is not supported."));
-            }
+            throw new NotImplementedException("Not yet implemented");
 
-            if (operation.TagMatchStrategy != null)
-            {
-                operation.TagMatchStrategy.ScopeOfFindSet
-                         .MustForArg(Invariant($"{nameof(GetHandlingStatusOfRecordSetByTagOp)}.{nameof(TagMatchStrategy)}.{nameof(TagMatchStrategy.ScopeOfFindSet)}"))
-                         .BeEqualTo(Database.Domain.TagMatchScope.All);
+            ////if (operation.HandlingStatusCompositionStrategy != null)
+            ////{
+            ////    operation
+            ////       .HandlingStatusCompositionStrategy
+            ////       .IgnoreCancel
+            ////       .MustForArg(Invariant($"{nameof(StandardGetHandlingStatusOp)}.{nameof(HandlingStatusCompositionStrategy)}.{nameof(HandlingStatusCompositionStrategy.IgnoreCancel)}"))
+            ////       .BeFalse(Invariant($"{nameof(HandlingStatusCompositionStrategy)}.{nameof(HandlingStatusCompositionStrategy.IgnoreCancel)} is not supported."));
+            ////}
 
-                operation.TagMatchStrategy.ScopeOfTarget
-                         .MustForArg(Invariant($"{nameof(GetHandlingStatusOfRecordSetByTagOp)}.{nameof(TagMatchStrategy)}.{nameof(TagMatchStrategy.ScopeOfTarget)}"))
-                         .BeEqualTo(Database.Domain.TagMatchScope.Any);
-            }
+            ////if (operation.TagMatchStrategy != null)
+            ////{
+            ////    operation.TagMatchStrategy.ScopeOfFindSet
+            ////             .MustForArg(Invariant($"{nameof(StandardGetHandlingStatusOp)}.{nameof(TagMatchStrategy)}.{nameof(TagMatchStrategy.ScopeOfFindSet)}"))
+            ////             .BeEqualTo(Database.Domain.TagMatchScope.All);
 
-            var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
-            var statusPerLocator = new List<HandlingStatus>();
-            foreach (var resourceLocator in allLocators)
-            {
-                var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
-                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            ////    operation.TagMatchStrategy.ScopeOfTarget
+            ////             .MustForArg(Invariant($"{nameof(StandardGetHandlingStatusOp)}.{nameof(TagMatchStrategy)}.{nameof(TagMatchStrategy.ScopeOfTarget)}"))
+            ////             .BeEqualTo(Database.Domain.TagMatchScope.Any);
+            ////}
 
-                var tagIdsCsv =
-                    operation.TagsToMatch == null
-                        ? null
-                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.TagsToMatch).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
+            ////var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
+            ////var statusPerLocator = new List<HandlingStatus>();
+            ////foreach (var resourceLocator in allLocators)
+            ////{
+            ////    var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
+            ////    var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
 
-                var op = StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildExecuteStoredProcedureOp(
-                    this.Name,
-                    operation.Concern,
-                    tagIdsCsv);
+            ////    var tagIdsCsv =
+            ////        operation.TagsToMatch == null
+            ////            ? null
+            ////            : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.TagsToMatch).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
-                var sprocResult = sqlProtocol.Execute(op);
+            ////    var op = StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildExecuteStoredProcedureOp(
+            ////        this.Name,
+            ////        operation.Concern,
+            ////        tagIdsCsv);
 
-                HandlingStatus status = sprocResult
-                                                 .OutputParameters[StreamSchema.Sprocs.GetCompositeHandlingStatus.OutputParamName.Status.ToString()]
-                                                 .GetValue<HandlingStatus>();
-                statusPerLocator.Add(status);
-            }
+            ////    var sprocResult = sqlProtocol.Execute(op);
 
-            var result = statusPerLocator.ReduceToCompositeHandlingStatus(operation.HandlingStatusCompositionStrategy);
-            return result;
+            ////    HandlingStatus status = sprocResult
+            ////                                     .OutputParameters[StreamSchema.Sprocs.GetCompositeHandlingStatus.OutputParamName.Status.ToString()]
+            ////                                     .GetValue<HandlingStatus>();
+            ////    statusPerLocator.Add(status);
+            ////}
+
+            ////var result = statusPerLocator.ReduceToCompositeHandlingStatus(operation.HandlingStatusCompositionStrategy);
+
+            ////return result;
         }
 
         /// <inheritdoc />
         public override IReadOnlyList<StreamRecordHandlingEntry> Execute(
-            GetHandlingHistoryOfRecordOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override HandlingStatus Execute(
-            GetHandlingStatusOfRecordsByIdOp operation)
+            StandardGetHandlingHistoryOp operation)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override void Execute(
-            BlockRecordHandlingOp operation)
+            StandardUpdateHandlingStatusForStreamOp operation)
         {
             var locators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
+
             foreach (var locator in locators)
             {
                 var sqlServerLocator = locator as SqlServerLocator
@@ -108,18 +115,13 @@ namespace Naos.SqlServer.Protocol.Client
 
                 var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                     this.Name,
-                    Concerns.RecordHandlingConcern,
+                    Concerns.StreamHandlingDisabledConcern,
                     operation.Details,
                     Concerns.GlobalBlockingRecordId,
-                    HandlingStatus.Blocked,
-                    typeof(HandlingStatus).GetAllPossibleEnumValues()
-                                          .Cast<HandlingStatus>()
-                                          .Except(
-                                               new[]
-                                               {
-                                                   HandlingStatus.Blocked,
-                                               })
-                                          .ToList(),
+                    operation.NewStatus,
+                    operation.NewStatus == HandlingStatus.DisabledForStream
+                        ? AllHandlingStatusesExceptDisabledForStream
+                        : new[] { HandlingStatus.DisabledForStream },
                     tagIdsCsv);
 
                 var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
@@ -130,181 +132,27 @@ namespace Naos.SqlServer.Protocol.Client
 
         /// <inheritdoc />
         public override void Execute(
-            CancelBlockedRecordHandlingOp operation)
-        {
-            var locators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
-            foreach (var locator in locators)
-            {
-                var sqlServerLocator = locator as SqlServerLocator
-                                    ?? throw new NotSupportedException(
-                                           Invariant(
-                                               $"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-
-                var tagIdsCsv =
-                    operation.Tags == null
-                        ? null
-                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-
-                var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
-                    this.Name,
-                    Concerns.RecordHandlingConcern,
-                    operation.Details,
-                    Concerns.GlobalBlockingRecordId,
-                    HandlingStatus.Requested,
-                    new[]
-                    {
-                        HandlingStatus.Blocked,
-                    },
-                    tagIdsCsv);
-
-                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-                var sprocResult = sqlProtocol.Execute(storedProcOp);
-                sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
-            }
-        }
-
-        /// <inheritdoc />
-        public override void Execute(
-            CancelHandleRecordExecutionRequestOp operation)
+            StandardUpdateHandlingStatusForRecordOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
 
-            var tagIdsCsv =
-                operation.Tags == null
-                    ? null
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
+            var tagIdsCsv = operation.Tags == null
+                ? null
+                : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
             var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.Concern,
                 operation.Details,
-                operation.Id,
-                HandlingStatus.Canceled,
-                new[] { HandlingStatus.Requested, HandlingStatus.Running, HandlingStatus.Failed },
+                operation.InternalRecordId,
+                operation.NewStatus,
+                operation.AcceptableCurrentStatuses,
                 tagIdsCsv);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+
             var sprocResult = sqlProtocol.Execute(storedProcOp);
-            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
-        }
 
-        /// <inheritdoc />
-        public override void Execute(
-            CancelRunningHandleRecordExecutionOp operation)
-        {
-            var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsCsv =
-                operation.Tags == null
-                    ? null
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-
-            var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
-                this.Name,
-                operation.Concern,
-                operation.Details,
-                operation.Id,
-                HandlingStatus.CanceledRunning,
-                new[] { HandlingStatus.Running },
-                tagIdsCsv);
-
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
-        }
-
-        /// <inheritdoc />
-        public override void Execute(
-            CompleteRunningHandleRecordExecutionOp operation)
-        {
-            var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsCsv =
-                operation.Tags == null
-                    ? null
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-
-            var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
-                this.Name,
-                operation.Concern,
-                operation.Details,
-                operation.Id,
-                HandlingStatus.Completed,
-                new[] { HandlingStatus.Running },
-                tagIdsCsv);
-
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
-        }
-
-        /// <inheritdoc />
-        public override void Execute(
-            FailRunningHandleRecordExecutionOp operation)
-        {
-            var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsCsv =
-                operation.Tags == null
-                    ? null
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-
-            var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
-                this.Name,
-                operation.Concern,
-                operation.Details,
-                operation.Id,
-                HandlingStatus.Failed,
-                new[] { HandlingStatus.Running },
-                tagIdsCsv);
-
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
-        }
-
-        /// <inheritdoc />
-        public override void Execute(
-            SelfCancelRunningHandleRecordExecutionOp operation)
-        {
-            var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsCsv =
-                operation.Tags == null
-                    ? null
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-
-            var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
-                this.Name,
-                operation.Concern,
-                operation.Details,
-                operation.Id,
-                HandlingStatus.SelfCanceledRunning,
-                new[] { HandlingStatus.Running },
-                tagIdsCsv);
-
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-            sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
-        }
-
-        /// <inheritdoc />
-        public override void Execute(
-            RetryFailedHandleRecordExecutionOp operation)
-        {
-            var sqlServerLocator = this.TryGetLocator(operation);
-            var tagIdsCsv =
-                operation.Tags == null
-                    ? null
-                    : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-
-            var storedProcOp = StreamSchema.Sprocs.PutHandling.BuildExecuteStoredProcedureOp(
-                this.Name,
-                operation.Concern,
-                operation.Details,
-                operation.Id,
-                HandlingStatus.RetryFailed,
-                new[] { HandlingStatus.Failed },
-                tagIdsCsv);
-
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
             sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
         }
     }

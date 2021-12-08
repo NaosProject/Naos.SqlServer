@@ -24,7 +24,7 @@ namespace Naos.SqlServer.Protocol.Client
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordId", Justification = "Leaving for debugging and future use.")]
         public override StreamRecordMetadata Execute(
-            GetLatestRecordMetadataByIdOp operation)
+            StandardGetLatestRecordMetadataByIdOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
             var identifierTypeQuery = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.IdentifierType?.ToWithAndWithoutVersion());
@@ -36,7 +36,7 @@ namespace Naos.SqlServer.Protocol.Client
                 identifierTypeQuery,
                 objectTypeQuery,
                 operation.VersionMatchStrategy,
-                operation.ExistingRecordNotEncounteredStrategy);
+                operation.RecordNotFoundStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -44,17 +44,17 @@ namespace Naos.SqlServer.Protocol.Client
             long internalRecordId = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetLatestRecordMetadataById.OutputParamName.InternalRecordId)].GetValue<long>();
             if (internalRecordId == StreamSchema.Tables.Record.NullId)
             {
-                switch (operation.ExistingRecordNotEncounteredStrategy)
+                switch (operation.RecordNotFoundStrategy)
                 {
-                    case ExistingRecordNotEncounteredStrategy.ReturnDefault:
+                    case RecordNotFoundStrategy.ReturnDefault:
                         return null;
-                    case ExistingRecordNotEncounteredStrategy.Throw:
+                    case RecordNotFoundStrategy.Throw:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Expected stream {this.StreamRepresentation} to contain a matching record for {operation}, none was found and {nameof(operation.ExistingRecordNotEncounteredStrategy)} is '{operation.ExistingRecordNotEncounteredStrategy}'."));
+                                $"Expected stream {this.StreamRepresentation} to contain a matching record for {operation}, none was found and {nameof(operation.RecordNotFoundStrategy)} is '{operation.RecordNotFoundStrategy}'."));
                     default:
                         throw new NotSupportedException(
-                            Invariant($"{nameof(ExistingRecordNotEncounteredStrategy)} {operation.ExistingRecordNotEncounteredStrategy} is not supported."));
+                            Invariant($"{nameof(RecordNotFoundStrategy)} {operation.RecordNotFoundStrategy} is not supported."));
                 }
             }
 
@@ -90,7 +90,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         public override StreamRecord Execute(
-            GetLatestRecordByIdOp operation)
+            StandardGetLatestRecordByIdOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
             var identifierTypeQuery = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.IdentifierType?.ToWithAndWithoutVersion());
@@ -102,7 +102,7 @@ namespace Naos.SqlServer.Protocol.Client
                 identifierTypeQuery,
                 objectTypeQuery,
                 operation.VersionMatchStrategy,
-                operation.ExistingRecordNotEncounteredStrategy);
+                operation.RecordNotFoundStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -111,17 +111,17 @@ namespace Naos.SqlServer.Protocol.Client
 
             if (internalRecordId == StreamSchema.Tables.Record.NullId)
             {
-                switch (operation.ExistingRecordNotEncounteredStrategy)
+                switch (operation.RecordNotFoundStrategy)
                 {
-                    case ExistingRecordNotEncounteredStrategy.ReturnDefault:
+                    case RecordNotFoundStrategy.ReturnDefault:
                         return null;
-                    case ExistingRecordNotEncounteredStrategy.Throw:
+                    case RecordNotFoundStrategy.Throw:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Expected stream {this.StreamRepresentation} to contain a matching record for {operation}, none was found and {nameof(operation.ExistingRecordNotEncounteredStrategy)} is '{operation.ExistingRecordNotEncounteredStrategy}'."));
+                                $"Expected stream {this.StreamRepresentation} to contain a matching record for {operation}, none was found and {nameof(operation.RecordNotFoundStrategy)} is '{operation.RecordNotFoundStrategy}'."));
                     default:
                         throw new NotSupportedException(
-                            Invariant($"{nameof(ExistingRecordNotEncounteredStrategy)} {operation.ExistingRecordNotEncounteredStrategy} is not supported."));
+                            Invariant($"{nameof(RecordNotFoundStrategy)} {operation.RecordNotFoundStrategy} is not supported."));
                 }
             }
 

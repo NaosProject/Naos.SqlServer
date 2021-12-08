@@ -143,11 +143,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Name of the put stored procedure.</returns>
-                [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                    "Microsoft.Naming",
-                    "CA1704:IdentifiersShouldBeSpelledCorrectly",
-                    MessageId = "Sproc",
-                    Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sproc", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
                     string streamName,
                     bool asAlter = false)
@@ -180,7 +176,7 @@ SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
 
 IF @{currentStatus} IS NULL
 BEGIN
-    SET @{currentStatus} = '{HandlingStatus.None}'
+    SET @{currentStatus} = '{HandlingStatus.Unknown}'
 END
 --TODO: should we guard against this changing while inserting? (exclusive table lock for a time to live, et al)
 DECLARE @{currentStatusAccepted} BIT

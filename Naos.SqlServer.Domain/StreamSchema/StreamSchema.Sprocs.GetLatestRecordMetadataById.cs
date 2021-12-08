@@ -75,7 +75,7 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The existing record not encountered strategy.
                     /// </summary>
-                    ExistingRecordNotEncounteredStrategy,
+                    RecordNotFoundStrategy,
                 }
 
                 /// <summary>
@@ -128,7 +128,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="identifierType">The identifier assembly qualified name with and without version.</param>
                 /// <param name="objectType">The object assembly qualified name with and without version.</param>
                 /// <param name="versionMatchStrategy">The type version match strategy.</param>
-                /// <param name="existingRecordNotEncounteredStrategy">The existing record not encountered strategy.</param>
+                /// <param name="recordNotFoundStrategy">The existing record not encountered strategy.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
@@ -136,27 +136,27 @@ namespace Naos.SqlServer.Domain
                     IdentifiedType identifierType,
                     IdentifiedType objectType,
                     VersionMatchStrategy versionMatchStrategy,
-                    ExistingRecordNotEncounteredStrategy existingRecordNotEncounteredStrategy)
+                    RecordNotFoundStrategy recordNotFoundStrategy)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetLatestRecordMetadataById)}]");
 
                     var parameters = new List<SqlParameterRepresentationBase>()
-                                     {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, stringSerializedId),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, identifierType?.IdWithoutVersion),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, identifierType?.IdWithVersion),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, objectType?.IdWithoutVersion),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.VersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), versionMatchStrategy.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.ExistingRecordNotEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordNotEncounteredStrategy.ToString()),
-                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
-                                         new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
-                                         new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType),
-                                     };
+                    {
+                        new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.DataType, stringSerializedId),
+                        new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, identifierType?.IdWithoutVersion),
+                        new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, identifierType?.IdWithVersion),
+                        new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.DataType, objectType?.IdWithoutVersion),
+                        new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.DataType, objectType?.IdWithVersion),
+                        new SqlInputParameterRepresentation<string>(nameof(InputParamName.VersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), versionMatchStrategy.ToString()),
+                        new SqlInputParameterRepresentation<string>(nameof(InputParamName.RecordNotFoundStrategy), new StringSqlDataTypeRepresentation(false, 50), recordNotFoundStrategy.ToString()),
+                        new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.DataType),
+                        new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.DataType),
+                        new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
+                        new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.DataType),
+                        new SqlOutputParameterRepresentation<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.DataType),
+                        new SqlOutputParameterRepresentation<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.DataType),
+                        new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType),
+                    };
 
                     var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
 
@@ -195,7 +195,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.ObjectTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.VersionMatchStrategy} AS varchar(10)
-, @{InputParamName.ExistingRecordNotEncounteredStrategy} AS varchar(50)
+, @{InputParamName.RecordNotFoundStrategy} AS varchar(50)
 , @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.DataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.DataType.DeclarationInSqlSyntax} OUTPUT

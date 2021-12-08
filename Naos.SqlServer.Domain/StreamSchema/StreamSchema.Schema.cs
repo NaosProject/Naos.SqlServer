@@ -118,7 +118,7 @@ namespace Naos.SqlServer.Domain
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.Handling.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.HandlingTag.Table.Name, readWrite));
-                result.AppendLine(BuildGrant(Tables.CompositeHandlingStatusSortOrder.Table.Name, read));
+                // result.AppendLine(BuildGrant(Tables.CompositeHandlingStatusSortOrder.Table.Name, read));
             }
             else if (protocolType == typeof(IStreamManagementProtocols).ToRepresentation())
             {

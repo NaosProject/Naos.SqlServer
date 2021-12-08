@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.GetLatestRecordByTagOp.cs" company="Naos Project">
+// <copyright file="SqlStream.GetLatestRecordByTagsOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordId", Justification = "Leaving for debugging and future use.")]
         public override StreamRecord Execute(
-            GetLatestRecordByTagOp operation)
+            StandardGetLatestRecordByTagsOp operation)
         {
             throw new NotImplementedException();
         }

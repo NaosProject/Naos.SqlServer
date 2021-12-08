@@ -97,10 +97,10 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The existing record encountered strategy.
                     /// </summary>
-                    ExistingRecordEncounteredStrategy,
+                    ExistingRecordStrategy,
 
                     /// <summary>
-                    /// The number of records to keep if using a pruning <see cref="ExistingRecordEncounteredStrategy"/>.
+                    /// The number of records to keep if using a pruning <see cref="ExistingRecordStrategy"/>.
                     /// </summary>
                     RecordRetentionCount,
 
@@ -144,8 +144,8 @@ namespace Naos.SqlServer.Domain
                 /// <param name="serializedObjectBytes">The serialized object as a byte array (should have data IFF the serializer is set to SerializationFormat.Binary, otherwise null).</param>
                 /// <param name="objectDateTimeUtc">The date time of the object if exists.</param>
                 /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
-                /// <param name="existingRecordEncounteredStrategy">Existing record encountered strategy.</param>
-                /// <param name="recordRetentionCount">Number of records to keep if using a pruning <paramref name="existingRecordEncounteredStrategy"/>.</param>
+                /// <param name="existingRecordStrategy">Existing record encountered strategy.</param>
+                /// <param name="recordRetentionCount">Number of records to keep if using a pruning <paramref name="existingRecordStrategy"/>.</param>
                 /// <param name="versionMatchStrategy">Type version match strategy.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
@@ -159,7 +159,7 @@ namespace Naos.SqlServer.Domain
                     byte[] serializedObjectBytes,
                     DateTime? objectDateTimeUtc,
                     string tagIdsCsv,
-                    ExistingRecordEncounteredStrategy existingRecordEncounteredStrategy,
+                    ExistingRecordStrategy existingRecordStrategy,
                     int? recordRetentionCount,
                     VersionMatchStrategy versionMatchStrategy)
                 {
@@ -178,7 +178,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<byte[]>(nameof(InputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.DataType, serializedObjectBytes),
                                          new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.DataType, objectDateTimeUtc),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.DataType, tagIdsCsv),
-                                         new SqlInputParameterRepresentation<ExistingRecordEncounteredStrategy>(nameof(InputParamName.ExistingRecordEncounteredStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordEncounteredStrategy),
+                                         new SqlInputParameterRepresentation<ExistingRecordStrategy>(nameof(InputParamName.ExistingRecordStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordStrategy),
                                          new SqlInputParameterRepresentation<int?>(nameof(InputParamName.RecordRetentionCount), new IntSqlDataTypeRepresentation(), recordRetentionCount),
                                          new SqlInputParameterRepresentation<VersionMatchStrategy>(nameof(InputParamName.VersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), versionMatchStrategy),
                                          new SqlOutputParameterRepresentation<long?>(nameof(OutputParamName.Id), Tables.Record.Id.DataType),
@@ -362,7 +362,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.DataType.DeclarationInSqlSyntax}
 , @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.ExistingRecordEncounteredStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+, @{InputParamName.ExistingRecordStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.RecordRetentionCount} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.VersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Record.Id.DataType.DeclarationInSqlSyntax} OUTPUT
@@ -371,12 +371,12 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
-    -- If two actors try to both insert for the same ID with the '{nameof(ExistingRecordEncounteredStrategy)}'
-	--	   set to e.g. {ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}; they could both
+    -- If two actors try to both insert for the same ID with the '{nameof(ExistingRecordStrategy)}'
+	--	   set to e.g. {ExistingRecordStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}; they could both
 	--     write the same payload; this does work in a single actor re-entrant scenario and is the expected usage.
     DECLARE @{existingIdsTable} TABLE({Tables.Record.Id.Name} {Tables.Record.Id.DataType.DeclarationInSqlSyntax} NOT NULL)
     DECLARE @{prunedIdsTable} TABLE({Tables.Record.Id.Name} {Tables.Record.Id.DataType.DeclarationInSqlSyntax} NOT NULL)
-	IF (@{InputParamName.ExistingRecordEncounteredStrategy} <> '{ExistingRecordEncounteredStrategy.None}')
+	IF (@{InputParamName.ExistingRecordStrategy} <> '{ExistingRecordStrategy.None}')
 	BEGIN
 		INSERT INTO @{existingIdsTable}
 	    SELECT [{Tables.Record.Id.Name}] FROM [{streamName}].[{Tables.Record.Table.Name}]
@@ -385,11 +385,11 @@ BEGIN
 			AND
 			(
 				(
-					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundById}')
+					(@{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.DoNotWriteIfFoundById}' OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.ThrowIfFoundById}' OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.PruneIfFoundById}')
 				)
 				OR
 				(
-					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType}')
+					(@{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.DoNotWriteIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.ThrowIfFoundByIdAndType}' OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.PruneIfFoundByIdAndType}')
 					AND
 					(
 						(
@@ -407,7 +407,7 @@ BEGIN
 				)
 				OR
 				(
-					(@{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent}')
+					(@{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}' OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.ThrowIfFoundByIdAndTypeAndContent}')
 					AND
 					(
 						(
@@ -433,7 +433,7 @@ BEGIN
         SELECT @{OutputParamName.ExistingRecordIdsCsv} = STRING_AGG([{Tables.Tag.Id.Name}], ',') FROM @{existingIdsTable}
 	END
 
-	IF (@{OutputParamName.ExistingRecordIdsCsv} IS NULL OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundById}' OR @{InputParamName.ExistingRecordEncounteredStrategy} = '{ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType}')
+	IF (@{OutputParamName.ExistingRecordIdsCsv} IS NULL OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.PruneIfFoundById}' OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.PruneIfFoundByIdAndType}')
 	BEGIN
 		DECLARE @{recordCreatedUtc} {Tables.Record.RecordCreatedUtc.DataType.DeclarationInSqlSyntax}
 		SET @RecordCreatedUtc = GETUTCDATE()

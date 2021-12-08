@@ -87,7 +87,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 timestampUtc);
 
             var payload = new BinaryDescribedSerialization(payloadType, serializerRepresentation, new byte[3000000]);
-            var putOp = new PutRecordOp(metadata, payload);
+            var putOp = new StandardPutRecordOp(metadata, payload);
             var commandTimeout = TimeSpan.FromSeconds(1000);
             var listOfStreams = Enumerable.Range(1, 10)
                                           .Select(
@@ -155,27 +155,27 @@ namespace Naos.SqlServer.Protocol.Client.Test
             result.MustForTest().NotBeNull();
             result.TypeRepresentationOfObject.WithVersion.MustForTest().BeEqualTo(typeof(MyObject).ToRepresentation());
 
-            stream.PutWithId(key, "hello", firstTags, ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById);
+            stream.PutWithId(key, "hello", firstTags, ExistingRecordStrategy.DoNotWriteIfFoundById);
             result = stream.GetLatestRecordMetadataById(key);
             result.TimestampUtc.MustForTest().BeEqualTo(firstRecordTimestamp);
 
-            stream.PutWithId(key, "hello", firstTags, ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType);
+            stream.PutWithId(key, "hello", firstTags, ExistingRecordStrategy.DoNotWriteIfFoundByIdAndType);
             result = stream.GetLatestRecordMetadataById(key);
             var secondRecordTimestamp = result.TimestampUtc;
             result.TimestampUtc.MustForTest().NotBeEqualTo(firstRecordTimestamp);
             result.TypeRepresentationOfObject.WithVersion.MustForTest().BeEqualTo(typeof(string).ToRepresentation());
 
-            stream.PutWithId(key, "hello", firstTags, ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType);
+            stream.PutWithId(key, "hello", firstTags, ExistingRecordStrategy.DoNotWriteIfFoundByIdAndType);
             result = stream.GetLatestRecordMetadataById(key);
             result.TimestampUtc.MustForTest().BeEqualTo(secondRecordTimestamp);
             result.TypeRepresentationOfObject.WithVersion.MustForTest().BeEqualTo(typeof(string).ToRepresentation());
 
-            stream.PutWithId(key, "hello", firstTags, ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent);
+            stream.PutWithId(key, "hello", firstTags, ExistingRecordStrategy.DoNotWriteIfFoundByIdAndTypeAndContent);
             result = stream.GetLatestRecordMetadataById(key);
             result.TimestampUtc.MustForTest().BeEqualTo(secondRecordTimestamp);
             result.TypeRepresentationOfObject.WithVersion.MustForTest().BeEqualTo(typeof(string).ToRepresentation());
 
-            stream.PutWithId(key, "goodbye", firstTags, ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent);
+            stream.PutWithId(key, "goodbye", firstTags, ExistingRecordStrategy.DoNotWriteIfFoundByIdAndTypeAndContent);
             result = stream.GetLatestRecordMetadataById(key);
             result.TimestampUtc.MustForTest().NotBeEqualTo(secondRecordTimestamp);
             result.TypeRepresentationOfObject.WithVersion.MustForTest().BeEqualTo(typeof(string).ToRepresentation());
@@ -293,61 +293,61 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 stream.PutWithId(firstObject.Id, firstObject, firstTags);
                 var metadata = stream.GetLatestRecordMetadataById("monkeyAintThere");
                 metadata.MustForTest().BeNull();
-                var first = stream.Execute(new TryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                var first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
                 first.RecordToHandle.MustForTest().NotBeNull();
 
-                var getFirstStatusByTagsOp = new GetHandlingStatusOfRecordSetByTagOp(
+                var getFirstStatusByTagsOp = new StandardGetHandlingStatusOp(
                     firstConcern,
-                    firstTags);
-                    
+                    tagsToMatch: firstTags);
+
                 stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 var firstInternalRecordId = first.RecordToHandle.InternalRecordId;
                 stream.Execute(
-                    new CancelRunningHandleRecordExecutionOp(
+                    new CancelRunningHandleRecordOp(
                         firstInternalRecordId,
                         firstConcern,
                         "Resources unavailable; node out of disk space.",
-                        tags: firstRecordAndHandleTags));
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.CanceledRunning);
+                        tags: firstRecordAndHandleTags).Standardize());
+                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterExternalCancellation);
 
-                stream.Execute(new BlockRecordHandlingOp("Stop processing, fixing resource issue."));
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Blocked);
-                first = stream.Execute(new TryHandleRecordOp(firstConcern, tags: firstTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                stream.Execute(new DisableHandlingForStreamOp("Stop processing, fixing resource issue.").Standardize());
+                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: firstTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
                 first.RecordToHandle.MustForTest().BeNull();
                 first.IsBlocked.MustForTest().BeTrue();
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Blocked);
+                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
 
-                stream.Execute(new CancelBlockedRecordHandlingOp("Resume processing, fixed resource issue."));
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.CanceledRunning);
+                stream.Execute(new EnableHandlingForStreamOp("Resume processing, fixed resource issue.").Standardize());
+                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterExternalCancellation);
 
-                first = stream.Execute(new TryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
                 first.RecordToHandle.MustForTest().NotBeNull();
                 stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 stream.Execute(
-                    new SelfCancelRunningHandleRecordExecutionOp(
+                    new SelfCancelRunningHandleRecordOp(
                         firstInternalRecordId,
                         firstConcern,
                         "Processing not finished, check later.",
-                        tags: firstRecordAndHandleTags));
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.SelfCanceledRunning);
-                first = stream.Execute(new TryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                        tags: firstRecordAndHandleTags).Standardize());
+                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterSelfCancellation);
+                first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
                 first.RecordToHandle.MustForTest().NotBeNull();
                 stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 stream.Execute(
-                    new CompleteRunningHandleRecordExecutionOp(
+                    new CompleteRunningHandleRecordOp(
                         firstInternalRecordId,
                         firstConcern,
                         "Processing not finished, check later.",
-                        tags: firstRecordAndHandleTags));
+                        tags: firstRecordAndHandleTags).Standardize());
                 stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Completed);
-                first = stream.Execute(new TryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
                 first.RecordToHandle.MustForTest().BeNull();
                 stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Completed);
 
-                //var firstHistory = stream.Execute(new GetHandlingHistoryOfRecordOp(firstInternalRecordId, firstConcern));
+                //var firstHistory = stream.Execute(new StandardGetHandlingHistoryOp(firstInternalRecordId, firstConcern));
                 //firstHistory.MustForTest().HaveCount(7);
                 //foreach (var history in firstHistory)
                // {
@@ -357,7 +357,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 //}
 
                 var secondConcern = "FailedRetriedScenario";
-                var second = stream.Execute(new TryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
+                var second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
                 second.RecordToHandle.MustForTest().NotBeNull();
                 var secondInternalRecordId = second.RecordToHandle.InternalRecordId;
                 //var getSecondStatusByIdOp = new GetHandlingStatusOfRecordsByIdOp(
@@ -370,50 +370,51 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 stream.Execute(
-                    new FailRunningHandleRecordExecutionOp(
+                    new FailRunningHandleRecordOp(
                         secondInternalRecordId,
                         secondConcern,
                         "NullReferenceException: Bot v1.0.1 doesn't work.",
-                        tags: firstRecordAndHandleTags));
+                        tags: firstRecordAndHandleTags).Standardize());
 
                 //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Failed);
-                second = stream.Execute(new TryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
+                second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
                 second.RecordToHandle.MustForTest().BeNull();
                // stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Failed);
 
                 stream.Execute(
-                    new RetryFailedHandleRecordExecutionOp(secondInternalRecordId, secondConcern, "Redeployed Bot v1.0.1-hotfix, re-run.", tags: firstRecordAndHandleTags));
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.RetryFailed);
+                    new ResetFailedHandleRecordOp(secondInternalRecordId, secondConcern, "Redeployed Bot v1.0.1-hotfix, re-run.", tags: firstRecordAndHandleTags).Standardize());
+                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
 
                 //stream.Execute(new BlockRecordHandlingOp("Stop processing, need to confirm deployment."));
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Blocked);
-                //second = stream.Execute(new TryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation()));
+                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                //second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation()));
                 //second.RecordToHandle.MustForTest().BeNull();
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Blocked);
+                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
 
                 //stream.Execute(new CancelBlockedRecordHandlingOp("Resume processing, confirmed deployment."));
                 //second.MustForTest().BeNull();
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.RetryFailed);
+                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
 
-                second = stream.Execute(new TryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
+                second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
                 second.RecordToHandle.MustForTest().NotBeNull();
                 //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 stream.Execute(
-                    new FailRunningHandleRecordExecutionOp(
+                    new FailRunningHandleRecordOp(
                         secondInternalRecordId,
                         secondConcern,
                         "NullReferenceException: Bot v1.0.1-hotfix doesn't work.",
-                        tags: firstRecordAndHandleTags));
+                        tags: firstRecordAndHandleTags).Standardize());
                 //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Failed);
 
-                stream.Execute(new CancelHandleRecordExecutionRequestOp(firstInternalRecordId, secondConcern, "Giving up.", tags: firstRecordAndHandleTags));
+                stream.Execute(new DisableHandlingForRecordOp(firstInternalRecordId, "Giving up.", tags: firstRecordAndHandleTags).Standardize());
+
                 //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Canceled);
-                second = stream.Execute(new TryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
+                second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
                // stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Canceled);
                 second.RecordToHandle.MustForTest().BeNull();
 
-                //var secondHistory = stream.Execute(new GetHandlingHistoryOfRecordOp(secondInternalRecordId, secondConcern));
+                //var secondHistory = stream.Execute(new StandardGetHandlingHistoryOp(secondInternalRecordId, secondConcern));
                 //secondHistory.MustForTest().HaveCount(7);
 
                 //foreach (var history in secondHistory)
@@ -423,7 +424,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 //            $"{history.Metadata.Concern}: {history.InternalHandlingEntryId}:{history.Metadata.InternalRecordId} - {history.Metadata.Status} - {history.Payload.DeserializePayloadUsingSpecificFactory<IHaveDetails>(stream.SerializerFactory).Details ?? "<no details specified>"}"));
                 //}
 
-                //var blockingHistory = stream.Execute(new GetHandlingHistoryOfRecordOp(0, Concerns.RecordHandlingConcern));
+                //var blockingHistory = stream.Execute(new StandardGetHandlingHistoryOp(0, Concerns.StreamHandlingDisabledConcern));
 
                 //foreach (var history in blockingHistory)
                 //{
@@ -439,7 +440,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             /*
             var allLocators = stream.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp()).ToList();
             var pruneDate = start.AddMilliseconds((stop - start).TotalMilliseconds / 2);
-            allLocators.ForEach(_ => stream.Execute(new PruneBeforeInternalRecordDateOp(pruneDate, "Pruning by date.", _)));
+            allLocators.ForEach(_ => stream.Execute(new StandardPruneStreamOp(pruneDate, "Pruning by date.", _)));
             allLocators.ForEach(_ => stream.Execute(new PruneBeforeInternalRecordIdOp(7, "Pruning by id.", _)));
             */
         }
@@ -453,7 +454,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             var putOpTwo = new PutWithIdAndReturnInternalRecordIdOp<string, string>(id, A.Dummy<string>());
             var internalRecordIdTwo = stream.GetStreamWritingWithIdProtocols<string, string>().Execute(putOpTwo);
-            var latestTwo = stream.Execute(new GetLatestRecordByIdOp("\"" + id + "\""));
+            var latestTwo = stream.Execute(new StandardGetLatestRecordByIdOp("\"" + id + "\""));
             latestTwo.InternalRecordId.MustForTest().BeEqualTo((long)internalRecordIdTwo);
             latestTwo.Metadata.Tags.MustForTest().BeNull();
         }
@@ -472,7 +473,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             int? maxConcurrentHandlingCount = null)
         {
             var sqlServerLocator = GetSqlServerLocator();
-            var resourceLocatorProtocol = new SingleResourceLocatorProtocol(sqlServerLocator);
+            var resourceLocatorProtocol = new SingleResourceLocatorProtocols(sqlServerLocator);
 
             var defaultSerializerRepresentation = GetSerializerRepresentation();
 
@@ -487,7 +488,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 new JsonSerializerFactory(),
                 resourceLocatorProtocol);
 
-            stream.Execute(new CreateStreamOp(stream.StreamRepresentation, ExistingStreamEncounteredStrategy.Skip));
+            stream.Execute(new StandardCreateStreamOp(stream.StreamRepresentation, ExistingStreamStrategy.Skip));
             stream.Execute(new UpdateStreamStoredProceduresOp(recordTagAssociationManagementStrategy, maxConcurrentHandlingCount));
 
             return stream;

@@ -27,7 +27,7 @@ namespace Naos.SqlServer.Domain
             new { textToCheck }.AsArg().Must().NotBeNull();
 
             const string pattern = @"[a-zA-Z0-9 _]*";
-            Match match = Regex.Match(textToCheck, pattern);
+            var match = Regex.Match(textToCheck, pattern);
             if (match.Value != textToCheck)
             {
                 var customMessageAddIn = string.IsNullOrWhiteSpace(customErrorMessage) ? string.Empty : FormattableString.Invariant($" ({customErrorMessage})");

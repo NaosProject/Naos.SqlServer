@@ -24,7 +24,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the streams.")]
         public override CreateStreamResult Execute(
-            CreateStreamOp operation)
+            StandardCreateStreamOp operation)
         {
             var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
             var alreadyExisted = false;
@@ -41,14 +41,14 @@ namespace Naos.SqlServer.Protocol.Client
                         alreadyExisted = alreadyExisted || streamAlreadyExists;
                         if (streamAlreadyExists)
                         {
-                            switch (operation.ExistingStreamEncounteredStrategy)
+                            switch (operation.ExistingStreamStrategy)
                             {
-                                case ExistingStreamEncounteredStrategy.Overwrite:
+                                case ExistingStreamStrategy.Overwrite:
                                     throw new NotSupportedException(FormattableString.Invariant(
-                                        $"Overwriting streams is not currently supported; stream '{this.Name}' already exists, {nameof(operation)}.{nameof(operation.ExistingStreamEncounteredStrategy)} was set to {ExistingStreamEncounteredStrategy.Overwrite}."));
-                                case ExistingStreamEncounteredStrategy.Throw:
-                                    throw new InvalidDataException(FormattableString.Invariant($"Stream '{this.Name}' already exists, {nameof(operation)}.{nameof(operation.ExistingStreamEncounteredStrategy)} was set to {ExistingStreamEncounteredStrategy.Throw}."));
-                                case ExistingStreamEncounteredStrategy.Skip:
+                                        $"Overwriting streams is not currently supported; stream '{this.Name}' already exists, {nameof(operation)}.{nameof(operation.ExistingStreamStrategy)} was set to {ExistingStreamStrategy.Overwrite}."));
+                                case ExistingStreamStrategy.Throw:
+                                    throw new InvalidDataException(FormattableString.Invariant($"Stream '{this.Name}' already exists, {nameof(operation)}.{nameof(operation.ExistingStreamStrategy)} was set to {ExistingStreamStrategy.Throw}."));
+                                case ExistingStreamStrategy.Skip:
                                     wasCreated = false;
                                     break;
                             }
@@ -67,7 +67,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.RecordTag.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.Handling.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.HandlingTag.BuildCreationScript(this.Name),
-                                                      StreamSchema.Tables.CompositeHandlingStatusSortOrder.BuildCreationScript(this.Name),
+                                                      // StreamSchema.Tables.CompositeHandlingStatusSortOrder.BuildCreationScript(this.Name),
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.BuildCreationScript(this.Name),

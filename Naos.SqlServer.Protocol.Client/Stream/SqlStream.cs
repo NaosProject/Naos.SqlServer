@@ -35,11 +35,11 @@ namespace Naos.SqlServer.Protocol.Client
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
     /// <summary>
-    /// SQL implementation of an <see cref="StandardReadWriteStreamBase"/>.
+    /// SQL implementation of an <see cref="StandardStreamBase"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the stream.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = NaosSuppressBecause.CA1711_IdentifiersShouldNotHaveIncorrectSuffix_TypeNameAddedAsSuffixForTestsWhereTypeIsPrimaryConcern)]
-    public partial class SqlStream : StandardReadWriteStreamBase,
+    public partial class SqlStream : StandardStreamBase,
                                      ISyncAndAsyncReturningProtocol<GetIdAddIfNecessarySerializerRepresentationOp, int>,
                                      ISyncAndAsyncVoidProtocol<CreateStreamUserOp>
     {
@@ -92,7 +92,7 @@ namespace Naos.SqlServer.Protocol.Client
 
         /// <inheritdoc />
         public override long Execute(
-            GetNextUniqueLongOp operation)
+            StandardGetNextUniqueLongOp operation)
         {
             var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
             var sqlServerLocator = locator as SqlServerLocator
@@ -110,49 +110,49 @@ namespace Naos.SqlServer.Protocol.Client
 
         /// <inheritdoc />
         public override StreamRecord Execute(
-            GetLatestRecordOp operation)
+            StandardGetLatestRecordOp operation)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override void Execute(
-            DeleteStreamOp operation)
+            StandardDeleteStreamOp operation)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override void Execute(
-            PruneBeforeInternalRecordDateOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override void Execute(
-            PruneBeforeInternalRecordIdOp operation)
+            StandardPruneStreamOp operation)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override bool Execute(
-            DoesAnyExistByIdOp operation)
+            StandardDoesAnyExistByIdOp operation)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override IReadOnlyList<StreamRecord> Execute(
-            GetAllRecordsByIdOp operation)
+            StandardGetAllRecordsByIdOp operation)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override IReadOnlyList<StreamRecordMetadata> Execute(
-            GetAllRecordsMetadataByIdOp operation)
+            StandardGetAllRecordsMetadataByIdOp operation)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override string Execute(
+            StandardGetLatestStringSerializedObjectByIdOp operation)
         {
             throw new NotImplementedException();
         }

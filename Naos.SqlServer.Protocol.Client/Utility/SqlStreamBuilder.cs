@@ -51,7 +51,8 @@ namespace Naos.SqlServer.Protocol.Client
                 throw new ArgumentException(Invariant($"The provided {nameof(serializerFactory)} ({serializerFactoryTypeRepresentation}) is not the same type as specified in the {nameof(streamConfigObject)} ({streamConfigObject.SerializerFactoryTypeRepresentation})."));
             }
 
-            var resourceLocatorProtocol = new SingleResourceLocatorProtocol(streamConfigObject.AllLocators.Single());
+            var resourceLocatorProtocol = new SingleResourceLocatorProtocols(streamConfigObject.AllLocators.Single());
+
             var result = new SqlStream(
                 streamConfigObject.Name,
                 streamConfigObject.DefaultConnectionTimeout,

@@ -25,7 +25,7 @@ namespace Naos.SqlServer.Protocol.Client
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = NaosSuppressBecause.CA1502_AvoidExcessiveComplexity_DisagreeWithAssessment)]
         public override PutRecordResult Execute(
-            PutRecordOp operation)
+            StandardPutRecordOp operation)
         {
             var sqlServerLocator = this.TryGetLocator(operation);
             var payloadSerializationFormat = operation.Payload.GetSerializationFormat();
@@ -47,7 +47,7 @@ namespace Naos.SqlServer.Protocol.Client
                 payloadSerializationFormat == SerializationFormat.Binary ? operation.Payload.GetSerializedPayloadAsEncodedBytes() : null,
                 operation.Metadata.ObjectTimestampUtc,
                 tagIdsCsv,
-                operation.ExistingRecordEncounteredStrategy,
+                operation.ExistingRecordStrategy,
                 operation.RecordRetentionCount,
                 operation.VersionMatchStrategy);
 
@@ -68,37 +68,37 @@ namespace Naos.SqlServer.Protocol.Client
 
             if (existingRecordIds.Any())
             {
-                switch (operation.ExistingRecordEncounteredStrategy)
+                switch (operation.ExistingRecordStrategy)
                 {
-                    case ExistingRecordEncounteredStrategy.None:
-                        throw new InvalidOperationException(Invariant($"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; did not expect any '{nameof(existingRecordIds)}' value but got '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
-                    case ExistingRecordEncounteredStrategy.ThrowIfFoundById:
+                    case ExistingRecordStrategy.None:
+                        throw new InvalidOperationException(Invariant($"Operation {nameof(ExistingRecordStrategy)} was {operation.ExistingRecordStrategy}; did not expect any '{nameof(existingRecordIds)}' value but got '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
+                    case ExistingRecordStrategy.ThrowIfFoundById:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' yet found  '{nameof(existingRecordIds)}' '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
-                    case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndType:
+                                $"Operation {nameof(ExistingRecordStrategy)} was {operation.ExistingRecordStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' yet found  '{nameof(existingRecordIds)}' '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
+                    case ExistingRecordStrategy.ThrowIfFoundByIdAndType:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
-                    case ExistingRecordEncounteredStrategy.ThrowIfFoundByIdAndTypeAndContent:
+                                $"Operation {nameof(ExistingRecordStrategy)} was {operation.ExistingRecordStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
+                    case ExistingRecordStrategy.ThrowIfFoundByIdAndTypeAndContent:
                         throw new InvalidOperationException(
                             Invariant(
-                                $"Operation {nameof(ExistingRecordEncounteredStrategy)} was {operation.ExistingRecordEncounteredStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and contents '{operation.Payload}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
-                    case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundById:
-                    case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndType:
-                    case ExistingRecordEncounteredStrategy.DoNotWriteIfFoundByIdAndTypeAndContent:
+                                $"Operation {nameof(ExistingRecordStrategy)} was {operation.ExistingRecordStrategy}; expected to not find a record by identifier '{operation.Metadata.StringSerializedId}' and identifier type '{operation.Metadata.TypeRepresentationOfId.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and object type '{operation.Metadata.TypeRepresentationOfObject.GetTypeRepresentationByStrategy(operation.VersionMatchStrategy)}' and contents '{operation.Payload}' yet found  '{nameof(existingRecordIds)}': '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'."));
+                    case ExistingRecordStrategy.DoNotWriteIfFoundById:
+                    case ExistingRecordStrategy.DoNotWriteIfFoundByIdAndType:
+                    case ExistingRecordStrategy.DoNotWriteIfFoundByIdAndTypeAndContent:
                         if (newRecordId != null)
                         {
-                            throw new InvalidOperationException(Invariant($"Expect {nameof(ExistingRecordEncounteredStrategy)} of {operation.ExistingRecordEncounteredStrategy} to not write when there are existing ids found: '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'; new record id: '{newRecordId}'."));
+                            throw new InvalidOperationException(Invariant($"Expect {nameof(ExistingRecordStrategy)} of {operation.ExistingRecordStrategy} to not write when there are existing ids found: '{existingRecordIds.Select(_ => _.ToString(CultureInfo.InvariantCulture)).ToCsv()}'; new record id: '{newRecordId}'."));
                         }
 
                         return new PutRecordResult(null, existingRecordIds, prunedRecordIds);
-                    case ExistingRecordEncounteredStrategy.PruneIfFoundById:
-                    case ExistingRecordEncounteredStrategy.PruneIfFoundByIdAndType:
+                    case ExistingRecordStrategy.PruneIfFoundById:
+                    case ExistingRecordStrategy.PruneIfFoundByIdAndType:
                         return new PutRecordResult(newRecordId, existingRecordIds, prunedRecordIds);
                     default:
                         throw new NotSupportedException(
-                            Invariant($"{nameof(ExistingRecordEncounteredStrategy)} {operation.ExistingRecordEncounteredStrategy} is not supported."));
+                            Invariant($"{nameof(ExistingRecordStrategy)} {operation.ExistingRecordStrategy} is not supported."));
                 }
             }
             else

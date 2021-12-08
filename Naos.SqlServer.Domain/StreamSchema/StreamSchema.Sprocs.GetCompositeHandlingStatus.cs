@@ -101,47 +101,48 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     bool asAlter = false)
                 {
-                    const string blockedStatus = "BlockedStatus";
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
-                    var result = Invariant(
-                        $@"
-{createOrModify} PROCEDURE [{streamName}].[{GetCompositeHandlingStatus.Name}](
-  @{InputParamName.Concern} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
-, @{OutputParamName.Status} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax} OUTPUT
-)
-AS
-BEGIN
-    DECLARE @{blockedStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
-	SELECT TOP 1 @{blockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
-	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingConcern}'
-    IF (@{blockedStatus} = '{HandlingStatus.Blocked}')
-    BEGIN
-        -- Blocked trumps everything...
-        SET @{OutputParamName.Status} = '{HandlingStatus.Blocked}'
-    END
-    ELSE
-        BEGIN
-        SELECT TOP 1
-            @{OutputParamName.Status} = h1.[{Tables.Handling.Status.Name}]
-        FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht
-        INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-            ON h1.[{Tables.Handling.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
-        LEFT OUTER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h2
-            ON h1.[{Tables.Handling.RecordId.Name}] = h2.[{Tables.Handling.RecordId.Name}] AND h1.[{Tables.Handling.Id.Name}] < h2.[{Tables.Handling.Id.Name}]
-        LEFT JOIN [{streamName}].[{Tables.CompositeHandlingStatusSortOrder.Table.Name}] s
-            ON s.[{Tables.CompositeHandlingStatusSortOrder.Status.Name}] = h1.[{Tables.Handling.Status.Name}]
-        WHERE h2.[{Tables.Handling.Id.Name}] IS NULL AND h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-            AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT value AS [{Tables.Tag.Id.Name}] FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ','))
-        ORDER BY s.[{Tables.CompositeHandlingStatusSortOrder.SortOrder.Name}] DESC
+                    throw new NotImplementedException();
+                    ////const string streamBlockedStatus = "StreamBlockedStatus";
+                    ////var createOrModify = asAlter ? "ALTER" : "CREATE";
+////                    var result = Invariant(
+////                        $@"
+////{createOrModify} PROCEDURE [{streamName}].[{GetCompositeHandlingStatus.Name}](
+////  @{InputParamName.Concern} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+////, @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.DataType.DeclarationInSqlSyntax}
+////, @{OutputParamName.Status} AS {Tables.Handling.Status.DataType.DeclarationInSqlSyntax} OUTPUT
+////)
+////AS
+////BEGIN
+////    DECLARE @{streamBlockedStatus} {Tables.Handling.Status.DataType.DeclarationInSqlSyntax}
+////	SELECT TOP 1 @{streamBlockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
+////	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.StreamHandlingDisabledConcern}'
+////    IF (@{streamBlockedStatus} = '{HandlingStatus.DisabledForStream}')
+////    BEGIN
+////        -- Blocked trumps everything...
+////        SET @{OutputParamName.Status} = '{HandlingStatus.DisabledForStream}'
+////    END
+////    ELSE
+////        BEGIN
+////        SELECT TOP 1
+////            @{OutputParamName.Status} = h1.[{Tables.Handling.Status.Name}]
+////        FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht
+////        INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+////            ON h1.[{Tables.Handling.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
+////        LEFT OUTER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h2
+////            ON h1.[{Tables.Handling.RecordId.Name}] = h2.[{Tables.Handling.RecordId.Name}] AND h1.[{Tables.Handling.Id.Name}] < h2.[{Tables.Handling.Id.Name}]
+////        LEFT JOIN [{streamName}].[{Tables.CompositeHandlingStatusSortOrder.Table.Name}] s
+////            ON s.[{Tables.CompositeHandlingStatusSortOrder.Status.Name}] = h1.[{Tables.Handling.Status.Name}]
+////        WHERE h2.[{Tables.Handling.Id.Name}] IS NULL AND h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+////            AND ht.[{Tables.HandlingTag.TagId.Name}] IN (SELECT value AS [{Tables.Tag.Id.Name}] FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ','))
+////        ORDER BY s.[{Tables.CompositeHandlingStatusSortOrder.SortOrder.Name}] DESC
 
-        IF (@{OutputParamName.Status} IS NULL)
-        BEGIN
-            SET @{OutputParamName.Status} = '{HandlingStatus.None}'
-        END
-    END
-END");
-                    return result;
+////        IF (@{OutputParamName.Status} IS NULL)
+////        BEGIN
+////            SET @{OutputParamName.Status} = '{HandlingStatus.Unknown}'
+////        END
+////    END
+////END");
+////                    return result;
                 }
             }
         }
