@@ -349,7 +349,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<CreateDatabaseOp>(),
                         A.Dummy<DeleteDatabaseOp>(),
                         A.Dummy<ExecuteStoredProcedureOp>(),
-                        A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>(),
+                        A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>(),
                         A.Dummy<UpdateStreamStoredProceduresOp>(),
                     },
                 });

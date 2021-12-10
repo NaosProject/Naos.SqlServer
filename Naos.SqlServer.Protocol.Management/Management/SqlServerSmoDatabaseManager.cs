@@ -13,7 +13,6 @@ namespace Naos.SqlServer.Protocol.Management
     using Microsoft.SqlServer.Management.Common;
     using Microsoft.SqlServer.Management.Smo;
     using Naos.CodeAnalysis.Recipes;
-    using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Protocol.Client;
     using OBeautifulCode.Execution.Recipes;
     using static System.FormattableString;

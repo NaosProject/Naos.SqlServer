@@ -50,12 +50,11 @@ namespace Naos.SqlServer.Domain
             long logFileMaxSizeInKb,
             long logFileGrowthSizeInKb)
         {
-            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace();
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName, nameof(databaseName));
+            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
 
             if (!string.IsNullOrWhiteSpace(dataFileLogicalName))
             {
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(dataFileLogicalName, nameof(dataFileLogicalName));
+                dataFileLogicalName.MustForArg(nameof(dataFileLogicalName)).BeAlphanumeric(new[] { ' ', '_' });
             }
 
             if (!string.IsNullOrWhiteSpace(dataFilePath))
@@ -65,7 +64,7 @@ namespace Naos.SqlServer.Domain
 
             if (!string.IsNullOrWhiteSpace(logFileLogicalName))
             {
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(logFileLogicalName, nameof(logFileLogicalName));
+                logFileLogicalName.MustForArg(nameof(logFileLogicalName)).BeAlphanumeric(new[] { ' ', '_' });
             }
 
             if (!string.IsNullOrWhiteSpace(logFilePath))

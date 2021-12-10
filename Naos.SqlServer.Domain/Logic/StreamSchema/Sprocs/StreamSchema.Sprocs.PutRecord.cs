@@ -179,9 +179,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.PrunedRecordIdsCsv), Tables.Record.TagIdsCsv.SqlDataType),
                                      };
 
-                    var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToDetailsMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

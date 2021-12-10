@@ -105,9 +105,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.SerializerRepresentation.Id.SqlDataType),
                                      };
 
-                    var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToRepresentationMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

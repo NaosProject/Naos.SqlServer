@@ -25,7 +25,7 @@ namespace Naos.SqlServer.Domain
             string name,
             SqlDataTypeRepresentationBase sqlDataType)
         {
-            name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace().And().BeAlphanumeric();
+            name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { '@', '_' });
             sqlDataType.MustForArg(nameof(sqlDataType)).NotBeNull();
 
             this.Name = name;

@@ -22,7 +22,7 @@ namespace Naos.SqlServer.Protocol.Client
     public partial class SqlStream : ISyncReturningProtocol<UpdateStreamStoredProceduresOp, UpdateStreamStoredProceduresResult>
     {
         /// <inheritdoc />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the streams.")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the streams.")]
         public override CreateStreamResult Execute(
             StandardCreateStreamOp operation)
         {
@@ -123,9 +123,7 @@ namespace Naos.SqlServer.Protocol.Client
 
                         if (!streamAlreadyExists)
                         {
-                            throw new InvalidDataException(
-                                FormattableString.Invariant(
-                                    $"Stream '{this.Name}' did exist, this is unexpected and not possible to ALTER stored procedures as they are not present."));
+                            throw new InvalidDataException(Invariant($"Stream '{this.Name}' did exist, this is unexpected and not possible to ALTER stored procedures as they are not present."));
                         }
 
                         var alterScripts = new[]
@@ -141,12 +139,12 @@ namespace Naos.SqlServer.Protocol.Client
                                                StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name, true),
-                                               StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name, operation.RecordTagAssociationManagementStrategy ?? RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction, true),
+                                               StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name, operation.RecordTagAssociationManagementStrategy, true),
                                                StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name, operation.MaxConcurrentHandlingCount, true),
                                                StreamSchema.Sprocs.CreateStreamUser.BuildCreationScript(this.Name, true),
-                                               StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(this.Name, operation.RecordTagAssociationManagementStrategy ?? RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction, operation.MaxConcurrentHandlingCount, true),
+                                               StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(this.Name, operation.RecordTagAssociationManagementStrategy, operation.MaxConcurrentHandlingCount, true),
                                            };
 
                         var detailsOperation = StreamSchema.Sprocs.GetStreamDetails.BuildExecuteStoredProcedureOp(this.Name);

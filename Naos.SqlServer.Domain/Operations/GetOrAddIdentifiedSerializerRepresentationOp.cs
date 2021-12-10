@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetIdAddIfNecessarySerializerRepresentationOp.cs" company="Naos Project">
+// <copyright file="GetOrAddIdentifiedSerializerRepresentationOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,15 +14,15 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Find the identity of a <see cref="SerializerRepresentation"/>.
     /// </summary>
-    public partial class GetIdAddIfNecessarySerializerRepresentationOp : ReturningOperationBase<int>, ISpecifyResourceLocator
+    public partial class GetOrAddIdentifiedSerializerRepresentationOp : ReturningOperationBase<int>, ISpecifyResourceLocator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetIdAddIfNecessarySerializerRepresentationOp"/> class.
+        /// Initializes a new instance of the <see cref="GetOrAddIdentifiedSerializerRepresentationOp"/> class.
         /// </summary>
         /// <param name="specifiedResourceLocator">The stream locator to inspect.</param>
         /// <param name="serializerRepresentation">The serializer representation.</param>
         /// <param name="serializationFormat">The serialization format.</param>
-        public GetIdAddIfNecessarySerializerRepresentationOp(
+        public GetOrAddIdentifiedSerializerRepresentationOp(
             IResourceLocator specifiedResourceLocator,
             SerializerRepresentation serializerRepresentation,
             SerializationFormat serializationFormat)

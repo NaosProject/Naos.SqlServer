@@ -68,9 +68,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), roles),
                                      };
 
-                    var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToDetailsMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

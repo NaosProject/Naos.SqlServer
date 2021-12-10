@@ -27,12 +27,12 @@ namespace Naos.SqlServer.Domain
         /// The <see cref="TypeRepresentation"/>'s of the supported protocols sets that stream users can be created with.
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
-        public static readonly IReadOnlyCollection<TypeRepresentation> SupportedProtocolTypeRepresentations = new[]
+        public static readonly IReadOnlyCollection<TypeRepresentation> VersionlessSupportedProtocolTypeRepresentations = new[]
         {
-            typeof(IStreamReadProtocols).ToRepresentation(),
-            typeof(IStreamWriteProtocols).ToRepresentation(),
-            typeof(IStreamRecordHandlingProtocols).ToRepresentation(),
-            typeof(IStreamManagementProtocols).ToRepresentation(),
+            typeof(IStreamReadProtocols).ToRepresentation().RemoveAssemblyVersions(),
+            typeof(IStreamWriteProtocols).ToRepresentation().RemoveAssemblyVersions(),
+            typeof(IStreamRecordHandlingProtocols).ToRepresentation().RemoveAssemblyVersions(),
+            typeof(IStreamManagementProtocols).ToRepresentation().RemoveAssemblyVersions(),
         };
 
         /// <summary>
@@ -47,12 +47,12 @@ namespace Naos.SqlServer.Domain
             IReadOnlyCollection<TypeRepresentation> protocolsToGrantAccessFor)
         {
             userName.MustForArg(nameof(userName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { '-' });
-            clearTextPassword.MustForArg(clearTextPassword).NotBeNull();
+            clearTextPassword.MustForArg(clearTextPassword).NotBeNullNorWhiteSpace();
             protocolsToGrantAccessFor.MustForArg(nameof(protocolsToGrantAccessFor)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
 
-            if (protocolsToGrantAccessFor.Any(_ => !SupportedProtocolTypeRepresentations.Contains(_)))
+            if (protocolsToGrantAccessFor.Select(_ => _.RemoveAssemblyVersions()).Any(_ => !VersionlessSupportedProtocolTypeRepresentations.Contains(_)))
             {
-                var supportedValuesString = SupportedProtocolTypeRepresentations.Select(_ => _.ToString()).ToDelimitedString(",");
+                var supportedValuesString = VersionlessSupportedProtocolTypeRepresentations.Select(_ => _.ToString()).ToDelimitedString(",");
 
                 var providedValuesString = protocolsToGrantAccessFor.Select(_ => _.ToString()).ToDelimitedString(",");
 

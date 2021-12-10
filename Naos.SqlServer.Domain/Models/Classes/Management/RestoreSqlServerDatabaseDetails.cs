@@ -60,9 +60,7 @@ namespace Naos.SqlServer.Domain
 
             if (device == Device.Url)
             {
-                credential.MustForArg(nameof(credential)).NotBeNullNorWhiteSpace("Credential cannot be null or whitespace when Device is URL");
-
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(credential, nameof(credential));
+                credential.MustForArg(nameof(credential)).NotBeNullNorWhiteSpace("Credential cannot be null or whitespace when Device is URL").And().BeAlphanumeric(new[] { ' ', '_' });
             }
 
             if (checksumOption == ChecksumOption.Checksum)

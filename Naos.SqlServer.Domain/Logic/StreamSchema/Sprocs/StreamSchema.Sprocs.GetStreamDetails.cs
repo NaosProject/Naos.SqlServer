@@ -57,9 +57,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.DetailsXml), new XmlSqlDataTypeRepresentation()),
                                      };
 
-                    var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToRepresentationMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

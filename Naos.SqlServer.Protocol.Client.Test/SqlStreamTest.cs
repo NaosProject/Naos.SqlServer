@@ -26,9 +26,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using Xunit.Abstractions;
     using static System.FormattableString;
 
-    /// <summary>
-    /// Tests for <see cref="SqlStream{TKey}"/>.
-    /// </summary>
     public partial class SqlStreamTest
     {
         private readonly string streamName = "Stream065";
@@ -469,7 +466,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
         private SqlStream GetCreatedSqlStream(
             TimeSpan? commandTimeout = null,
-            RecordTagAssociationManagementStrategy? recordTagAssociationManagementStrategy = null,
+            RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy = RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
             int? maxConcurrentHandlingCount = null)
         {
             var sqlServerLocator = GetSqlServerLocator();

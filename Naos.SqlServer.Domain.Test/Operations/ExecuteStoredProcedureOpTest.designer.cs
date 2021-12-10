@@ -47,7 +47,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<ExecuteStoredProcedureOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ExecuteStoredProcedureOp: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ParameterNameToRepresentationMap = {systemUnderTest.ParameterNameToRepresentationMap?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ExecuteStoredProcedureOp: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Parameters = {systemUnderTest.Parameters?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
@@ -65,7 +65,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ExecuteStoredProcedureOp(
                                              null,
-                                             referenceObject.ParameterNameToRepresentationMap);
+                                             referenceObject.Parameters);
 
                         return result;
                     },
@@ -82,7 +82,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ExecuteStoredProcedureOp(
                                              Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.ParameterNameToRepresentationMap);
+                                             referenceObject.Parameters);
 
                         return result;
                     },
@@ -92,7 +92,7 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'parameterNameToRepresentationMap' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'parameters' is null scenario",
                     ConstructionFunc = () =>
                     {
                         var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
@@ -104,47 +104,41 @@ namespace Naos.SqlServer.Domain.Test
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "parameterNameToRepresentationMap", },
+                    ExpectedExceptionMessageContains = new[] { "parameters", },
                 })
             .AddScenario(() =>
                 new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
                 {
-                    Name = "constructor should throw ArgumentException when parameter 'parameterNameToRepresentationMap' is an empty dictionary scenario",
+                    Name = "constructor should throw ArgumentException when parameter 'parameters' is an empty enumerable scenario",
                     ConstructionFunc = () =>
                     {
                         var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
 
                         var result = new ExecuteStoredProcedureOp(
                                              referenceObject.Name,
-                                             new Dictionary<string, SqlParameterRepresentationBase>());
+                                             new List<SqlParameterRepresentationBase>());
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "parameterNameToRepresentationMap", "is an empty dictionary", },
+                    ExpectedExceptionMessageContains = new[] { "parameters", "is an empty enumerable", },
                 })
             .AddScenario(() =>
                 new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
                 {
-                    Name = "constructor should throw ArgumentException when parameter 'parameterNameToRepresentationMap' contains a key-value pair with a null value scenario",
+                    Name = "constructor should throw ArgumentException when parameter 'parameters' contains a null element scenario",
                     ConstructionFunc = () =>
                     {
                         var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
 
-                        var dictionaryWithNullValue = referenceObject.ParameterNameToRepresentationMap.ToDictionary(_ => _.Key, _ => _.Value);
-
-                        var randomKey = dictionaryWithNullValue.Keys.ElementAt(ThreadSafeRandom.Next(0, dictionaryWithNullValue.Count));
-
-                        dictionaryWithNullValue[randomKey] = null;
-
                         var result = new ExecuteStoredProcedureOp(
                                              referenceObject.Name,
-                                             dictionaryWithNullValue);
+                                             new SqlParameterRepresentationBase[0].Concat(referenceObject.Parameters).Concat(new SqlParameterRepresentationBase[] { null }).Concat(referenceObject.Parameters).ToList());
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "parameterNameToRepresentationMap", "contains at least one key-value pair with a null value", },
+                    ExpectedExceptionMessageContains = new[] { "parameters", "contains at least one null element", },
                 });
 
         private static readonly ConstructorPropertyAssignmentTestScenarios<ExecuteStoredProcedureOp> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<ExecuteStoredProcedureOp>()
@@ -160,7 +154,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new ExecuteStoredProcedureOp(
                                                       referenceObject.Name,
-                                                      referenceObject.ParameterNameToRepresentationMap),
+                                                      referenceObject.Parameters),
                             ExpectedPropertyValue = referenceObject.Name,
                         };
 
@@ -171,7 +165,7 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<ExecuteStoredProcedureOp>
                 {
-                    Name = "ParameterNameToRepresentationMap should return same 'parameterNameToRepresentationMap' parameter passed to constructor when getting",
+                    Name = "Parameters should return same 'parameters' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
                         var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
@@ -180,13 +174,13 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new ExecuteStoredProcedureOp(
                                                       referenceObject.Name,
-                                                      referenceObject.ParameterNameToRepresentationMap),
-                            ExpectedPropertyValue = referenceObject.ParameterNameToRepresentationMap,
+                                                      referenceObject.Parameters),
+                            ExpectedPropertyValue = referenceObject.Parameters,
                         };
 
                         return result;
                     },
-                    PropertyName = "ParameterNameToRepresentationMap",
+                    PropertyName = "Parameters",
                 });
 
         private static readonly DeepCloneWithTestScenarios<ExecuteStoredProcedureOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ExecuteStoredProcedureOp>()
@@ -213,18 +207,18 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new DeepCloneWithTestScenario<ExecuteStoredProcedureOp>
                 {
-                    Name = "DeepCloneWithParameterNameToRepresentationMap should deep clone object and replace ParameterNameToRepresentationMap with the provided parameterNameToRepresentationMap",
-                    WithPropertyName = "ParameterNameToRepresentationMap",
+                    Name = "DeepCloneWithParameters should deep clone object and replace Parameters with the provided parameters",
+                    WithPropertyName = "Parameters",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
                         var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
 
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>().ThatIs(_ => !systemUnderTest.ParameterNameToRepresentationMap.IsEqualTo(_.ParameterNameToRepresentationMap));
+                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>().ThatIs(_ => !systemUnderTest.Parameters.IsEqualTo(_.Parameters));
 
                         var result = new SystemUnderTestDeepCloneWithValue<ExecuteStoredProcedureOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.ParameterNameToRepresentationMap,
+                            DeepCloneWithValue = referenceObject.Parameters,
                         };
 
                         return result;
@@ -243,16 +237,16 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         new ExecuteStoredProcedureOp(
                                 ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.ParameterNameToRepresentationMap),
+                                ReferenceObjectForEquatableTestScenarios.Parameters),
                     },
                     ObjectsThatAreNotEqualToReferenceObject = new ExecuteStoredProcedureOp[]
                     {
                         new ExecuteStoredProcedureOp(
                                 A.Dummy<ExecuteStoredProcedureOp>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
-                                ReferenceObjectForEquatableTestScenarios.ParameterNameToRepresentationMap),
+                                ReferenceObjectForEquatableTestScenarios.Parameters),
                         new ExecuteStoredProcedureOp(
                                 ReferenceObjectForEquatableTestScenarios.Name,
-                                A.Dummy<ExecuteStoredProcedureOp>().Whose(_ => !_.ParameterNameToRepresentationMap.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ParameterNameToRepresentationMap)).ParameterNameToRepresentationMap),
+                                A.Dummy<ExecuteStoredProcedureOp>().Whose(_ => !_.Parameters.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Parameters)).Parameters),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -264,7 +258,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<CreateDatabaseOp>(),
                         A.Dummy<CreateStreamUserOp>(),
                         A.Dummy<DeleteDatabaseOp>(),
-                        A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>(),
+                        A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>(),
                         A.Dummy<UpdateStreamStoredProceduresOp>(),
                     },
                 });
@@ -539,16 +533,16 @@ namespace Naos.SqlServer.Domain.Test
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
 
-                if (systemUnderTest.ParameterNameToRepresentationMap == null)
+                if (systemUnderTest.Parameters == null)
                 {
-                    actual.ParameterNameToRepresentationMap.AsTest().Must().BeNull();
+                    actual.Parameters.AsTest().Must().BeNull();
                 }
-                else if (!actual.ParameterNameToRepresentationMap.GetType().IsValueType)
+                else if (!actual.Parameters.GetType().IsValueType)
                 {
                     // When the declared type is a reference type, we still have to check the runtime type.
                     // The object could be a boxed value type, which will fail this asseration because
                     // a deep clone of a value type object is the same object.
-                    actual.ParameterNameToRepresentationMap.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.ParameterNameToRepresentationMap);
+                    actual.Parameters.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Parameters);
                 }
             }
 
@@ -568,7 +562,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Name", "ParameterNameToRepresentationMap" };
+                var propertyNames = new string[] { "Name", "Parameters" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 

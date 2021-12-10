@@ -47,7 +47,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<UpdateStreamStoredProceduresOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.UpdateStreamStoredProceduresOp: RecordTagAssociationManagementStrategy = {systemUnderTest.RecordTagAssociationManagementStrategy?.ToString() ?? "<null>"}, MaxConcurrentHandlingCount = {systemUnderTest.MaxConcurrentHandlingCount?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.UpdateStreamStoredProceduresOp: RecordTagAssociationManagementStrategy = {systemUnderTest.RecordTagAssociationManagementStrategy.ToString() ?? "<null>"}, MaxConcurrentHandlingCount = {systemUnderTest.MaxConcurrentHandlingCount?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
@@ -174,7 +174,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<CreateStreamUserOp>(),
                         A.Dummy<DeleteDatabaseOp>(),
                         A.Dummy<ExecuteStoredProcedureOp>(),
-                        A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>(),
+                        A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>(),
                     },
                 });
 

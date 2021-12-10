@@ -42,7 +42,7 @@ namespace Naos.SqlServer.Domain
         public static string BuildCreationScriptForRoles(
             string streamName)
         {
-            var allRoles = CreateStreamUserOp.SupportedProtocolTypeRepresentations;
+            var allRoles = CreateStreamUserOp.VersionlessSupportedProtocolTypeRepresentations;
 
             var result = new StringBuilder();
 

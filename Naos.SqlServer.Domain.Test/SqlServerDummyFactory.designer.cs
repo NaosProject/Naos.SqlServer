@@ -114,7 +114,7 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<IReadOnlyDictionary<string, SqlParameterRepresentationBase>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new GetIdAddIfNecessarySerializerRepresentationOp(
+                () => new GetOrAddIdentifiedSerializerRepresentationOp(
                                  A.Dummy<IResourceLocator>(),
                                  A.Dummy<SerializerRepresentation>(),
                                  A.Dummy<SerializationFormat>()));
@@ -306,7 +306,7 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new UpdateStreamStoredProceduresOp(
-                                 A.Dummy<RecordTagAssociationManagementStrategy?>(),
+                                 A.Dummy<RecordTagAssociationManagementStrategy>(),
                                  A.Dummy<int?>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(

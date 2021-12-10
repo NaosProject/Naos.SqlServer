@@ -6,27 +6,13 @@
 
 namespace Naos.SqlServer.Protocol.Client
 {
-    using System;
     using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.SqlClient;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Xml.Linq;
-    using Naos.CodeAnalysis.Recipes;
+    using System.Diagnostics.CodeAnalysis;
     using Naos.Database.Domain;
-    using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Compression;
-    using OBeautifulCode.Database.Recipes;
-    using OBeautifulCode.Enum.Recipes;
-    using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
-    using static System.FormattableString;
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
     public partial class SqlStream
@@ -99,7 +85,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="serializerRepresentation">Optional <see cref="SerializerRepresentation"/>; default is DefaultSerializerRepresentation.</param>
         /// <param name="serializationFormat">Optional <see cref="SerializationFormat"/>; default is <see cref="SerializationFormat.String"/>.</param>
         /// <returns>DescribedSerializer.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "This is the prefered type.")]
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "This is the prefered type.")]
         public IdentifiedSerializerRepresentation GetIdAddIfNecessarySerializerRepresentation(
             SqlServerLocator resourceLocator,
             SerializerRepresentation serializerRepresentation = null,
@@ -115,7 +101,7 @@ namespace Naos.SqlServer.Protocol.Client
             else
             {
                 var id = this.Execute(
-                    new GetIdAddIfNecessarySerializerRepresentationOp(resourceLocator, localSerializerRepresentation, serializationFormat));
+                    new GetOrAddIdentifiedSerializerRepresentationOp(resourceLocator, localSerializerRepresentation, serializationFormat));
                 var item = new IdentifiedSerializerRepresentation(id, localSerializerRepresentation, serializationFormat);
                 this.serializerRepresentationIdToIdentifiedSerializerMap.TryAdd(item.Id, item);
                 this.serializerRepresentationToIdentifiedSerializerMap.TryAdd(item.SerializerRepresentation, item);
@@ -126,10 +112,10 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         /// <inheritdoc />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Should dispose correctly.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Built internally and should be safe from injection.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Should dispose correctly.")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Built internally and should be safe from injection.")]
         public int Execute(
-            GetIdAddIfNecessarySerializerRepresentationOp operation)
+            GetOrAddIdentifiedSerializerRepresentationOp operation)
         {
             var sqlLocator = this.TryGetLocator(operation);
 

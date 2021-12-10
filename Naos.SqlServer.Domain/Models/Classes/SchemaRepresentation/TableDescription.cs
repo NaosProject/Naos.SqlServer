@@ -28,15 +28,9 @@ namespace Naos.SqlServer.Domain
             string tableName,
             IReadOnlyCollection<ColumnDescription> columns)
         {
-            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace();
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName, nameof(databaseName));
-
-            tableSchema.MustForArg(nameof(tableSchema)).NotBeNullNorWhiteSpace();
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(tableSchema, nameof(tableSchema));
-
-            tableName.MustForArg(nameof(tableName)).NotBeNullNorWhiteSpace();
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(tableName, nameof(tableName));
-
+            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            tableSchema.MustForArg(nameof(tableSchema)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            tableName.MustForArg(nameof(tableName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
             columns.MustForArg(nameof(columns)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
 
             this.DatabaseName = databaseName;

@@ -35,19 +35,19 @@ namespace Naos.SqlServer.Protocol.Client
                     command.CommandType = CommandType.StoredProcedure;
 
                     var outputParameters = new List<Tuple<SqlParameter, SqlOutputParameterRepresentationBase>>();
-                    foreach (var paramNameAndDetails in operation.ParameterNameToRepresentationMap)
+                    foreach (var parameterRepresentation in operation.Parameters)
                     {
-                        var parameter = paramNameAndDetails.Value.ToSqlParameter();
+                        var parameter = parameterRepresentation.ToSqlParameter();
 
                         if (parameter.Direction == ParameterDirection.Output)
                         {
-                            if (paramNameAndDetails.Value is SqlOutputParameterRepresentationBase outputParameterRepresentation)
+                            if (parameterRepresentation is SqlOutputParameterRepresentationBase outputParameterRepresentation)
                             {
                                 outputParameters.Add(new Tuple<SqlParameter, SqlOutputParameterRepresentationBase>(parameter, outputParameterRepresentation));
                             }
                             else
                             {
-                                throw new NotSupportedException(FormattableString.Invariant($"Cannot have a {nameof(SqlParameter)} with {nameof(SqlParameter.Direction)} equal to {nameof(ParameterDirection.Output)} and the representation not be a {nameof(SqlOutputParameterRepresentationBase)}, it was a {paramNameAndDetails.Value.GetType().ToStringReadable()}."));
+                                throw new NotSupportedException(FormattableString.Invariant($"Cannot have a {nameof(SqlParameter)} with {nameof(SqlParameter.Direction)} equal to {nameof(ParameterDirection.Output)} and the representation not be a {nameof(SqlOutputParameterRepresentationBase)}, it was a {parameterRepresentation.GetType().ToStringReadable()}."));
                             }
                         }
 
@@ -59,12 +59,14 @@ namespace Naos.SqlServer.Protocol.Client
                     foreach (var outputParameter in outputParameters)
                     {
                         var outputParameterWithResult = outputParameter.Item2.CreateWithResult(outputParameter.Item1.Value);
+
                         outputParametersWithExecutionResult.Add(outputParameter.Item2.Name,  outputParameterWithResult);
                     }
                 }
             }
 
             var result = new StoredProcedureExecutionResult(operation, outputParametersWithExecutionResult);
+
             return result;
         }
 

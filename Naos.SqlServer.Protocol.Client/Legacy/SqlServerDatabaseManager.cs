@@ -8,15 +8,12 @@ namespace Naos.SqlServer.Protocol.Client
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-
     using Naos.Database.Domain;
-    using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Database.Recipes;
@@ -34,6 +31,11 @@ namespace Naos.SqlServer.Protocol.Client
         /// Name of the master database.
         /// </summary>
         public const string MasterDatabaseName = "master";
+
+        /// <summary>
+        /// The default timeout.
+        /// </summary>
+        public static readonly TimeSpan DefaultTimeoutTimespan = TimeSpan.FromSeconds(30);
 
         /// <summary>
         /// Builds the connection string.
@@ -65,7 +67,11 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Database connection string.</param>
         /// <param name="infoMessageCallback">Optional callback to capture information messages sent on connection.</param>
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Object is disposed correctly.")]
-        public static void RunOperationOnSqlConnection(this Action<SqlConnection> action, string connectionString, SqlInfoMessageEventHandler infoMessageCallback = null)
+        public static void RunOperationOnSqlConnection(
+            this Action<SqlConnection> action,
+            string connectionString,
+            SqlInfoMessageEventHandler
+                infoMessageCallback = null)
         {
             Task AsyncOperation(SqlConnection connection)
             {
@@ -83,12 +89,15 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Database connection string.</param>
         /// <param name="infoMessageCallback">Optional callback to capture information messages sent on connection.</param>
         /// <returns>Task for async.</returns>
-        public static async Task RunOperationOnSqlConnectionAsync(this Func<SqlConnection, Task> asyncAction, string connectionString, SqlInfoMessageEventHandler infoMessageCallback = null)
+        public static async Task RunOperationOnSqlConnectionAsync(
+            this Func<SqlConnection, Task> asyncAction,
+            string connectionString,
+            SqlInfoMessageEventHandler infoMessageCallback = null)
         {
             new { asyncAction }.AsArg().Must().NotBeNull();
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
 
-            using (var connection = connectionString.OpenSqlConnection(infoMessageCallback))
+            using (var connection = await connectionString.OpenSqlConnectionAsync(infoMessageCallback))
             {
                 await asyncAction(connection);
 
@@ -102,7 +111,10 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">The connection string to the intended server.</param>
         /// <param name="databaseName">The name of the target database.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
-        public static void PutDatabaseInSingleUserMode(string connectionString, string databaseName, TimeSpan timeout = default(TimeSpan))
+        public static void PutDatabaseInSingleUserMode(
+            string connectionString,
+            string databaseName,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -123,7 +135,10 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Multi", Justification = "Spelling/name is correct.")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "MultiUser", Justification = "Spelling/name is correct.")]
-        public static void PutDatabaseIntoMultiUserMode(string connectionString, string databaseName, TimeSpan timeout = default(TimeSpan))
+        public static void PutDatabaseIntoMultiUserMode(
+            string connectionString,
+            string databaseName,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -142,17 +157,16 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">The connection string to the intended server.</param>
         /// <param name="databaseName">The name of the target database.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
-        public static void TakeDatabaseOffline(string connectionString, string databaseName, TimeSpan timeout = default(TimeSpan))
+        public static void TakeDatabaseOffline(
+            string connectionString,
+            string databaseName,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
             var commandText = "ALTER DATABASE " + databaseName + " SET offline WITH ROLLBACK IMMEDIATE";
 
             void Logic(SqlConnection connection)
@@ -169,17 +183,16 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">The connection string to the intended server.</param>
         /// <param name="databaseName">The name of the target database.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
-        public static void BringDatabaseOnline(string connectionString, string databaseName, TimeSpan timeout = default(TimeSpan))
+        public static void BringDatabaseOnline(
+            string connectionString,
+            string databaseName,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
             var commandText = "ALTER DATABASE " + databaseName + " SET online";
 
             void Logic(SqlConnection connection)
@@ -196,15 +209,15 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Connection string to the intended database server.</param>
         /// <param name="configuration">Detailed information about the database.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
-        public static void Create(string connectionString, DatabaseConfiguration configuration, TimeSpan timeout = default(TimeSpan))
+        public static void Create(
+            string connectionString,
+            DatabaseConfiguration configuration,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { configuration }.AsArg().Must().NotBeNull();
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             ThrowIfBadOnCreateOrModify(configuration);
             var databaseFileMaxSize = configuration.DataFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{configuration.DataFileMaxSizeInKb}KB");
@@ -249,10 +262,7 @@ namespace Naos.SqlServer.Protocol.Client
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { configuration = tableDescription }.AsArg().Must().NotBeNull();
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             ThrowIfBadOnCreateOrModify(tableDescription);
             var databaseFileMaxSize = tableDescription.DataFileMaxSizeInKb == Constants.InfinityMaxSize ? "UNLIMITED" : tableDescription.DataFileMaxSizeInKb + "KB";
@@ -287,18 +297,17 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Connection string to the intended database server.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         /// <returns>All databases from server.</returns>
-        public static DatabaseConfiguration[] Retrieve(string connectionString, TimeSpan timeout = default(TimeSpan))
+        public static DatabaseConfiguration[] Retrieve(
+            string connectionString,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             // using the database name is the only good way to differentiate System from User databases
             // see: http://stackoverflow.com/a/9682659/356790.  This is how the SMO does it.
-            const string Query = @"
+            const string query = @"
                 SELECT
                     d.name as DatabaseName,
                     df.name as DataFileLogicalName,
@@ -313,17 +322,19 @@ namespace Naos.SqlServer.Protocol.Client
 	                Round(Cast(lf.size as bigint) * 125 / 16, 0) as LogFileCurrentSizeInKb,
 	                Case When lf.max_size = -1 Then -1 Else Round(Cast(lf.max_size as bigint) * 125 / 16, 0) End as LogFileMaxSizeInKb,
 	                Case When lf.is_percent_growth = 1 Then 0 Else Round(Cast(lf.growth as bigint) * 125 / 16, 0) End as LogFileGrowthSizeInKb
-                FROM sys.databases d 
+                FROM sys.databases d
                 INNER JOIN sys.master_files df
                     ON d.database_id = df.database_id AND df.type = 0
                 INNER JOIN sys.master_files lf
                     ON d.database_id = lf.database_id AND lf.type = 1";
 
             var propertyBagSerializer = new ObcPropertyBagSerializer();
-            DatabaseConfiguration[] ret = new DatabaseConfiguration[0];
+
+            var result = new DatabaseConfiguration[0];
+
             void Logic(SqlConnection connection)
             {
-                ret = connection.ReadAllRowsWithNamedColumns(Query, (int)timeout.TotalSeconds)
+                result = connection.ReadAllRowsWithNamedColumns(query, (int)timeout.TotalSeconds)
                                 .Select(_ =>
                                         {
                                             var enumConvertedDictionary = _
@@ -348,7 +359,8 @@ namespace Naos.SqlServer.Protocol.Client
             }
 
             RunOperationOnSqlConnection(Logic, connectionString);
-            return ret;
+
+            return result;
         }
 
         /// <summary>
@@ -362,16 +374,13 @@ namespace Naos.SqlServer.Protocol.Client
             string connectionString,
             DatabaseConfiguration currentConfiguration,
             DatabaseConfiguration newConfiguration,
-            TimeSpan timeout = default(TimeSpan))
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { currentConfiguration }.AsArg().Must().NotBeNull();
             new { newConfiguration }.AsArg().Must().NotBeNull();
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             ThrowIfBadOnCreateOrModify(currentConfiguration);
             ThrowIfBadOnCreateOrModify(newConfiguration);
@@ -461,6 +470,7 @@ namespace Naos.SqlServer.Protocol.Client
             }
 
             var realConnectionString = connectionString.AddOrUpdateInitialCatalogInConnectionString(currentConfiguration.DatabaseName); // make sure it's going to take the only connection when it goes in single user
+
             RunOperationOnSqlConnection(Logic, realConnectionString);
         }
 
@@ -470,18 +480,18 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Connection string to the intended database server.</param>
         /// <param name="databaseName">Name of the database to delete.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
-        public static void Delete(string connectionString, string databaseName, TimeSpan timeout = default(TimeSpan))
+        public static void Delete(
+            string connectionString,
+            string databaseName,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
             var realConnectionString = connectionString.AddOrUpdateInitialCatalogInConnectionString(databaseName); // make sure it's going to take the only connection when it goes in single user
+
             var commandText = "USE master; DROP DATABASE " + databaseName;
 
             void Logic(SqlConnection connection)
@@ -499,14 +509,13 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Connection string to the intended database server.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         /// <returns>Default location that the server will save data files to.</returns>
-        public static string GetInstanceDefaultDataPath(string connectionString, TimeSpan timeout = default(TimeSpan))
+        public static string GetInstanceDefaultDataPath(
+            string connectionString,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             string ret = null;
             void Logic(SqlConnection connection)
@@ -528,14 +537,13 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Connection string to the intended database server.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         /// <returns>Default location that the server will save log files to.</returns>
-        public static string GetInstanceDefaultLogPath(string connectionString, TimeSpan timeout = default(TimeSpan))
+        public static string GetInstanceDefaultLogPath(
+            string connectionString,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             string ret = null;
             void Logic(SqlConnection connection)
@@ -571,7 +579,7 @@ namespace Naos.SqlServer.Protocol.Client
             string databaseName,
             BackupSqlServerDatabaseDetails backupDetails,
             Action<Func<object>> announcer = null,
-            TimeSpan timeout = default(TimeSpan))
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -601,7 +609,7 @@ namespace Naos.SqlServer.Protocol.Client
             string databaseName,
             BackupSqlServerDatabaseDetails backupDetails,
             Action<Func<object>> announcer = null,
-            TimeSpan timeout = default(TimeSpan))
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -789,7 +797,7 @@ namespace Naos.SqlServer.Protocol.Client
             string databaseName,
             RestoreSqlServerDatabaseDetails restoreDetails,
             Action<Func<object>> announcer = null,
-            TimeSpan timeout = default(TimeSpan))
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -812,7 +820,7 @@ namespace Naos.SqlServer.Protocol.Client
             string databaseName,
             RestoreSqlServerDatabaseDetails restoreDetails,
             Action<Func<object>> announcer = null,
-            TimeSpan timeout = default(TimeSpan))
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -1020,16 +1028,17 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="recoveryMode">Recovery mode to set database to.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         /// <returns>Task for async.</returns>
-        public static async Task SetRecoveryModeAsync(string connectionString, string databaseName, RecoveryMode recoveryMode, TimeSpan timeout = default(TimeSpan))
+        public static async Task SetRecoveryModeAsync(
+            string connectionString,
+            string databaseName,
+            RecoveryMode recoveryMode,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { recoveryMode }.AsArg().Must().NotBeEqualTo(RecoveryMode.Unspecified);
 
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             async Task Logic(SqlConnection connection)
             {
@@ -1046,18 +1055,22 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="databaseName">Name of the database to restore.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         /// <returns>Recovery mode.</returns>
-        public static async Task<RecoveryMode> GetRecoveryModeAsync(string connectionString, string databaseName, TimeSpan timeout = default(TimeSpan))
+        public static async Task<RecoveryMode> GetRecoveryModeAsync(
+            string connectionString,
+            string databaseName,
+            TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace();
-
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
 
             var commandText = $"SELECT recovery_model_desc FROM sys.databases WHERE name = '{databaseName}'";
-            RecoveryMode recoveryMode = RecoveryMode.Unspecified;
+
+            var recoveryMode = RecoveryMode.Unspecified;
+
             async Task Logic(SqlConnection connection)
             {
                 var recoveryModeRaw = (await connection.ReadSingleValueAsync(commandText, (int)timeout.TotalSeconds))?.ToString();
+
                 if (string.IsNullOrWhiteSpace(recoveryModeRaw))
                 {
                     throw new InvalidOperationException(Invariant($"'{commandText}' should have returned a value but was null or whitespace."));
@@ -1080,23 +1093,25 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="tableSchema">The schema of the table to query details for.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         /// <returns>Detailed information about a table's makeup.</returns>
-        public static TableDescription GetTableDescription(string connectionString, string databaseName, string tableName, string tableSchema = "dbo", TimeSpan timeout = default(TimeSpan))
+        public static TableDescription GetTableDescription(
+            string connectionString,
+            string databaseName,
+            string tableName,
+            string tableSchema = "dbo",
+            TimeSpan timeout = default)
         {
-            if (timeout == default(TimeSpan))
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { tableName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { tableSchema }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
+
+            var sqlParams = new[]
             {
-                timeout = TimeSpan.FromSeconds(30);
-            }
-
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(tableName);
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(tableSchema);
-
-            var sqlParams = new SqlParameter[]
-                            {
-                                databaseName.CreateInputSqlParameter("DatabaseName"),
-                                tableSchema.CreateInputSqlParameter("Schema"),
-                                tableName.CreateInputSqlParameter("TableName"),
-                            };
+                databaseName.CreateInputSqlParameter("DatabaseName"),
+                tableSchema.CreateInputSqlParameter("Schema"),
+                tableName.CreateInputSqlParameter("TableName"),
+            };
 
             var commandText =
                 @"SELECT
@@ -1114,9 +1129,11 @@ namespace Naos.SqlServer.Protocol.Client
                 ORDER BY ORDINAL_POSITION";
 
             var columns = new ColumnDescription[0];
+
             var targetedDatabaseConnectionString = connectionString.AddOrUpdateInitialCatalogInConnectionString(databaseName);
 
             var propertyBagSerializer = new ObcPropertyBagSerializer();
+
             void QueryColumnsFilesLogic(SqlConnection connection)
             {
                 columns = connection.ReadAllRowsWithNamedColumns(commandText, (int)timeout.TotalSeconds, sqlParams)
@@ -1132,9 +1149,16 @@ namespace Naos.SqlServer.Protocol.Client
             return ret;
         }
 
-        private static async Task SetRecoveryModeAsync(SqlConnection connection, string databaseName, RecoveryMode recoveryMode, TimeSpan timeout)
+        private static async Task SetRecoveryModeAsync(
+            SqlConnection connection,
+            string databaseName,
+            RecoveryMode recoveryMode,
+            TimeSpan timeout)
         {
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+
             string modeMixIn;
+
             switch (recoveryMode)
             {
                 case RecoveryMode.Simple:
@@ -1150,23 +1174,24 @@ namespace Naos.SqlServer.Protocol.Client
                     throw new NotSupportedException($"Unsupported recovery mode to set: {recoveryMode}");
             }
 
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
-
             var commandText = "ALTER DATABASE " + databaseName + " SET RECOVERY " + modeMixIn;
 
             await connection.ExecuteNonQueryAsync(commandText, (int)timeout.TotalSeconds);
         }
 
-        private static void ThrowIfBad(DatabaseConfiguration configuration)
+        private static void ThrowIfBad(
+            DatabaseConfiguration configuration)
         {
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(configuration.DatabaseName);
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(configuration.DataFileLogicalName);
+            new { configuration.DatabaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { configuration.DataFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { configuration.LogFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+
             SqlInjectorChecker.ThrowIfNotValidPath(configuration.DataFilePath);
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(configuration.LogFileLogicalName);
             SqlInjectorChecker.ThrowIfNotValidPath(configuration.LogFilePath);
         }
 
-        private static void ThrowIfBadOnCreateOrModify(DatabaseConfiguration configuration)
+        private static void ThrowIfBadOnCreateOrModify(
+            DatabaseConfiguration configuration)
         {
             ThrowIfBad(configuration);
             if (configuration.DatabaseType == DatabaseType.System)
@@ -1175,27 +1200,31 @@ namespace Naos.SqlServer.Protocol.Client
             }
         }
 
-        private static void PutDatabaseInSingleUserMode(SqlConnection connection, string databaseName, TimeSpan timeout = default(TimeSpan))
+        private static void PutDatabaseInSingleUserMode(
+            SqlConnection connection,
+            string databaseName,
+            TimeSpan timeout = default)
         {
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
 
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
+
             var commandText = "ALTER DATABASE " + databaseName + " SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
+
             connection.ExecuteNonQuery(commandText, (int)timeout.TotalSeconds);
         }
 
-        private static void PutDatabaseIntoMultiUserMode(SqlConnection connection, string databaseName, TimeSpan timeout = default(TimeSpan))
+        private static void PutDatabaseIntoMultiUserMode(
+            SqlConnection connection,
+            string databaseName,
+            TimeSpan timeout = default)
         {
-            if (timeout == default(TimeSpan))
-            {
-                timeout = TimeSpan.FromSeconds(30);
-            }
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
 
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
+            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
+
             var commandText = "ALTER DATABASE " + databaseName + " SET MULTI_USER WITH ROLLBACK IMMEDIATE";
+
             connection.ExecuteNonQuery(commandText, (int)timeout.TotalSeconds);
         }
     }

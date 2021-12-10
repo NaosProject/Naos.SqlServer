@@ -64,7 +64,8 @@ namespace Naos.SqlServer.Domain
                     int typeId,
                     bool versioned)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetTypeFromId)}");
+                    var sprocName = Invariant($"[{streamName}].{nameof(GetTypeFromId)}");
+
                     var parameters = new List<SqlParameterRepresentationBase>()
                                      {
                                          new SqlInputParameterRepresentation<int>(nameof(InputParamName.Id), versioned ? Tables.TypeWithVersion.Id.SqlDataType : Tables.TypeWithoutVersion.Id.SqlDataType, typeId),
@@ -72,9 +73,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.AssemblyQualifiedName), versioned ? Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType : Tables.TypeWithoutVersion.AssemblyQualifiedName.SqlDataType),
                                      };
 
-                    var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToDetailsMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

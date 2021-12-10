@@ -8,8 +8,6 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.IO;
-    using System.Text.RegularExpressions;
-
     using OBeautifulCode.Assertion.Recipes;
 
     /// <summary>
@@ -17,29 +15,6 @@ namespace Naos.SqlServer.Domain
     /// </summary>
     public static class SqlInjectorChecker
     {
-        /// <summary>
-        /// Throws an <see cref="ArgumentException"/> if input has any characters that are not alpha-numeric nor the space character nor the underscore character.
-        /// </summary>
-        /// <param name="textToCheck">Text to check.</param>
-        /// <param name="customErrorMessage">Optional additional text for exception (like a parameter name).</param>
-        public static void ThrowIfNotAlphanumericOrSpaceOrUnderscore(
-            string textToCheck,
-            string customErrorMessage = null)
-        {
-            new { textToCheck }.AsArg().Must().NotBeNull();
-
-            const string pattern = @"[a-zA-Z0-9 _]*";
-
-            var match = Regex.Match(textToCheck, pattern);
-
-            if (match.Value != textToCheck)
-            {
-                var customMessageAddIn = string.IsNullOrWhiteSpace(customErrorMessage) ? string.Empty : FormattableString.Invariant($" ({customErrorMessage})");
-
-                throw new ArgumentException("The provided input: " + textToCheck + " is not alphanumeric and is not valid " + customMessageAddIn + ".");
-            }
-        }
-
         /// <summary>
         /// Throws an ArgumentException if input is not a valid path.
         /// </summary>

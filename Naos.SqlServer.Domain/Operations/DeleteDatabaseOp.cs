@@ -21,8 +21,7 @@ namespace Naos.SqlServer.Domain
         public DeleteDatabaseOp(
             string databaseName)
         {
-            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace();
-            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(databaseName);
+            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
 
             this.DatabaseName = databaseName;
         }

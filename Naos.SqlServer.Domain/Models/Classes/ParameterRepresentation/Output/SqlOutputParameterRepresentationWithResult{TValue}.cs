@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
     using OBeautifulCode.Type.Recipes;
 
@@ -28,9 +29,9 @@ namespace Naos.SqlServer.Domain
             TValue value)
             : base(name, sqlDataType)
         {
-            ////sqlDataType.MustForArg(nameof(sqlDataType)).NotBeNull();
+            sqlDataType.MustForArg(nameof(sqlDataType)).NotBeNull();
 
-            ////this.ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(sqlDataType, typeof(TValue));
+            this.ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(sqlDataType, typeof(TValue));
 
             this.Value = value;
         }

@@ -16,7 +16,7 @@ namespace Naos.SqlServer.Domain
         public static partial class Funcs
         {
             /// <summary>
-            /// DESCRIPTION HERE.
+            /// Function: GetTagsTableVariableFromTagsXml.
             /// </summary>
             public static class GetTagsTableVariableFromTagsXml
             {

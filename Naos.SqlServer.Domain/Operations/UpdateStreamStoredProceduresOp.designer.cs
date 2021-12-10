@@ -109,7 +109,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public UpdateStreamStoredProceduresOp DeepCloneWithRecordTagAssociationManagementStrategy(RecordTagAssociationManagementStrategy? recordTagAssociationManagementStrategy)
+        public UpdateStreamStoredProceduresOp DeepCloneWithRecordTagAssociationManagementStrategy(RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy)
         {
             var result = new UpdateStreamStoredProceduresOp(
                                  recordTagAssociationManagementStrategy,
@@ -143,7 +143,7 @@ namespace Naos.SqlServer.Domain
         public UpdateStreamStoredProceduresOp DeepCloneWithMaxConcurrentHandlingCount(int? maxConcurrentHandlingCount)
         {
             var result = new UpdateStreamStoredProceduresOp(
-                                 this.RecordTagAssociationManagementStrategy?.DeepClone(),
+                                 this.RecordTagAssociationManagementStrategy.DeepClone(),
                                  maxConcurrentHandlingCount);
 
             return result;
@@ -154,7 +154,7 @@ namespace Naos.SqlServer.Domain
         protected override OperationBase DeepCloneInternal()
         {
             var result = new UpdateStreamStoredProceduresOp(
-                                 this.RecordTagAssociationManagementStrategy?.DeepClone(),
+                                 this.RecordTagAssociationManagementStrategy.DeepClone(),
                                  this.MaxConcurrentHandlingCount?.DeepClone());
 
             return result;
@@ -164,7 +164,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.UpdateStreamStoredProceduresOp: RecordTagAssociationManagementStrategy = {this.RecordTagAssociationManagementStrategy?.ToString() ?? "<null>"}, MaxConcurrentHandlingCount = {this.MaxConcurrentHandlingCount?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.UpdateStreamStoredProceduresOp: RecordTagAssociationManagementStrategy = {this.RecordTagAssociationManagementStrategy.ToString() ?? "<null>"}, MaxConcurrentHandlingCount = {this.MaxConcurrentHandlingCount?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
 
             return result;
         }

@@ -29,6 +29,7 @@ namespace Naos.SqlServer.Domain
         private static readonly Type[] AcceptableTypes =
         {
             typeof(decimal),
+            typeof(decimal?),
         };
 
         /// <summary>

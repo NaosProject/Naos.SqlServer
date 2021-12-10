@@ -19,16 +19,16 @@ namespace Naos.SqlServer.Domain
         /// Initializes a new instance of the <see cref="ExecuteStoredProcedureOp"/> class.
         /// </summary>
         /// <param name="name">The name of the stored procedure.</param>
-        /// <param name="parameterNameToRepresentationMap">A map of parameter name to the parameter's representation.</param>
+        /// <param name="parameters">The parameters.</param>
         public ExecuteStoredProcedureOp(
             string name,
-            IReadOnlyDictionary<string, SqlParameterRepresentationBase> parameterNameToRepresentationMap)
+            IReadOnlyList<SqlParameterRepresentationBase> parameters)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
-            parameterNameToRepresentationMap.MustForArg(nameof(parameterNameToRepresentationMap)).NotBeNull();
+            parameters.MustForArg(nameof(parameters)).NotBeNull().And().NotContainAnyNullElements();
 
             this.Name = name;
-            this.ParameterNameToRepresentationMap = parameterNameToRepresentationMap;
+            this.Parameters = parameters;
         }
 
         /// <summary>
@@ -37,8 +37,8 @@ namespace Naos.SqlServer.Domain
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets a map of parameter name to the parameter's representation.
+        /// Gets the parameters.
         /// </summary>
-        public IReadOnlyDictionary<string, SqlParameterRepresentationBase> ParameterNameToRepresentationMap { get; private set; }
+        public IReadOnlyList<SqlParameterRepresentationBase> Parameters { get; private set; }
     }
 }

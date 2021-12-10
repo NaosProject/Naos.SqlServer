@@ -7,7 +7,9 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+    using static System.FormattableString;
 
     /// <summary>
     /// Results of executing a stored procedure.
@@ -23,6 +25,10 @@ namespace Naos.SqlServer.Domain
             ExecuteStoredProcedureOp operation,
             IReadOnlyDictionary<string, ISqlOutputParameterRepresentationWithResult> outputParameters)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+            outputParameters.MustForArg(nameof(outputParameters)).NotBeNull().And().NotContainAnyKeyValuePairsWithNullValue();
+            outputParameters.Values.MustForArg(Invariant($"{nameof(outputParameters)}.{nameof(IReadOnlyDictionary<string, ISqlOutputParameterRepresentationWithResult>.Values)}")).Each().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { '@', '_' });
+
             this.Operation = operation;
             this.OutputParameters = outputParameters;
         }

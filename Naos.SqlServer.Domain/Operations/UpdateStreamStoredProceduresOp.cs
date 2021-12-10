@@ -19,9 +19,11 @@ namespace Naos.SqlServer.Domain
         /// <param name="recordTagAssociationManagementStrategy">OPTIONAL record tag association management strategy.  DEFAULT is AssociatedDuringPutInSprocInTransaction."/>.</param>
         /// <param name="maxConcurrentHandlingCount">OPTIONAL maximum concurrent handling count.  DEFAULT is no limit.</param>
         public UpdateStreamStoredProceduresOp(
-            RecordTagAssociationManagementStrategy? recordTagAssociationManagementStrategy,
-            int? maxConcurrentHandlingCount)
+            RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy = RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
+            int? maxConcurrentHandlingCount = null)
         {
+            // maxConcurrentHandlingCount.MustForArg(nameof(maxConcurrentHandlingCount)).greater
+
             this.RecordTagAssociationManagementStrategy = recordTagAssociationManagementStrategy;
             this.MaxConcurrentHandlingCount = maxConcurrentHandlingCount;
         }
@@ -29,7 +31,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the record tag association management strategy.
         /// </summary>
-        public RecordTagAssociationManagementStrategy? RecordTagAssociationManagementStrategy { get; private set; }
+        public RecordTagAssociationManagementStrategy RecordTagAssociationManagementStrategy { get; private set; }
 
         /// <summary>
         /// Gets the maximum concurrent handling count.

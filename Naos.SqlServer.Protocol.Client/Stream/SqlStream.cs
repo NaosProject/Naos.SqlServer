@@ -40,7 +40,7 @@ namespace Naos.SqlServer.Protocol.Client
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the stream.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = NaosSuppressBecause.CA1711_IdentifiersShouldNotHaveIncorrectSuffix_TypeNameAddedAsSuffixForTestsWhereTypeIsPrimaryConcern)]
     public partial class SqlStream : StandardStreamBase,
-                                     ISyncAndAsyncReturningProtocol<GetIdAddIfNecessarySerializerRepresentationOp, int>,
+                                     ISyncAndAsyncReturningProtocol<GetOrAddIdentifiedSerializerRepresentationOp, int>,
                                      ISyncAndAsyncVoidProtocol<CreateStreamUserOp>
     {
         private readonly SqlServerLocator singleLocator;
@@ -159,7 +159,7 @@ namespace Naos.SqlServer.Protocol.Client
 
         /// <inheritdoc />
         public async Task<int> ExecuteAsync(
-            GetIdAddIfNecessarySerializerRepresentationOp operation)
+            GetOrAddIdentifiedSerializerRepresentationOp operation)
         {
             var syncResult = this.Execute(operation);
             return await Task.FromResult(syncResult);

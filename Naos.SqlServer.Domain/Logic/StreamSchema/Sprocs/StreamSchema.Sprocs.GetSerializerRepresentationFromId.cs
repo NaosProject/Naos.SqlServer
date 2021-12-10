@@ -95,9 +95,7 @@ namespace Naos.SqlServer.Domain
                                              Tables.SerializerRepresentation.SerializationFormat.SqlDataType),
                                      };
 
-                    var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToDetailsMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

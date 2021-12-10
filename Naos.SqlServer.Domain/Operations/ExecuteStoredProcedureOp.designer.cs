@@ -70,7 +70,7 @@ namespace Naos.SqlServer.Domain
             }
 
             var result = this.Name.IsEqualTo(other.Name, StringComparer.Ordinal)
-                      && this.ParameterNameToRepresentationMap.IsEqualTo(other.ParameterNameToRepresentationMap);
+                      && this.Parameters.IsEqualTo(other.Parameters);
 
             return result;
         }
@@ -81,7 +81,7 @@ namespace Naos.SqlServer.Domain
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
             .Hash(this.Name)
-            .Hash(this.ParameterNameToRepresentationMap)
+            .Hash(this.Parameters)
             .Value;
 
         /// <inheritdoc />
@@ -113,16 +113,16 @@ namespace Naos.SqlServer.Domain
         {
             var result = new ExecuteStoredProcedureOp(
                                  name,
-                                 this.ParameterNameToRepresentationMap?.DeepClone());
+                                 this.Parameters?.DeepClone());
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="ParameterNameToRepresentationMap" />.
+        /// Deep clones this object with a new <see cref="Parameters" />.
         /// </summary>
-        /// <param name="parameterNameToRepresentationMap">The new <see cref="ParameterNameToRepresentationMap" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="ExecuteStoredProcedureOp" /> using the specified <paramref name="parameterNameToRepresentationMap" /> for <see cref="ParameterNameToRepresentationMap" /> and a deep clone of every other property.</returns>
+        /// <param name="parameters">The new <see cref="Parameters" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="ExecuteStoredProcedureOp" /> using the specified <paramref name="parameters" /> for <see cref="Parameters" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -140,11 +140,11 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public ExecuteStoredProcedureOp DeepCloneWithParameterNameToRepresentationMap(IReadOnlyDictionary<string, SqlParameterRepresentationBase> parameterNameToRepresentationMap)
+        public ExecuteStoredProcedureOp DeepCloneWithParameters(IReadOnlyList<SqlParameterRepresentationBase> parameters)
         {
             var result = new ExecuteStoredProcedureOp(
                                  this.Name?.DeepClone(),
-                                 parameterNameToRepresentationMap);
+                                 parameters);
 
             return result;
         }
@@ -155,7 +155,7 @@ namespace Naos.SqlServer.Domain
         {
             var result = new ExecuteStoredProcedureOp(
                                  this.Name?.DeepClone(),
-                                 this.ParameterNameToRepresentationMap?.DeepClone());
+                                 this.Parameters?.DeepClone());
 
             return result;
         }
@@ -164,7 +164,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.ExecuteStoredProcedureOp: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ParameterNameToRepresentationMap = {this.ParameterNameToRepresentationMap?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.ExecuteStoredProcedureOp: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Parameters = {this.Parameters?.ToString() ?? "<null>"}.");
 
             return result;
         }

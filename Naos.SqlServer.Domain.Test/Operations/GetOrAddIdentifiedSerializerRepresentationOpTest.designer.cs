@@ -35,37 +35,37 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class GetIdAddIfNecessarySerializerRepresentationOpTest
+    public static partial class GetOrAddIdentifiedSerializerRepresentationOpTest
     {
-        private static readonly StringRepresentationTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp>()
+        private static readonly StringRepresentationTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new StringRepresentationTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var systemUnderTest = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<GetIdAddIfNecessarySerializerRepresentationOp>
+                        var result = new SystemUnderTestExpectedStringRepresentation<GetOrAddIdentifiedSerializerRepresentationOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.GetIdAddIfNecessarySerializerRepresentationOp: SpecifiedResourceLocator = {systemUnderTest.SpecifiedResourceLocator?.ToString() ?? "<null>"}, SerializerRepresentation = {systemUnderTest.SerializerRepresentation?.ToString() ?? "<null>"}, SerializationFormat = {systemUnderTest.SerializationFormat.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.GetOrAddIdentifiedSerializerRepresentationOp: SpecifiedResourceLocator = {systemUnderTest.SpecifiedResourceLocator?.ToString() ?? "<null>"}, SerializerRepresentation = {systemUnderTest.SerializerRepresentation?.ToString() ?? "<null>"}, SerializationFormat = {systemUnderTest.SerializationFormat.ToString() ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp>()
+        private static readonly ConstructorArgumentValidationTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp>()
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new ConstructorArgumentValidationTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "constructor should throw ArgumentNullException when parameter 'specifiedResourceLocator' is null scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var referenceObject = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var result = new GetIdAddIfNecessarySerializerRepresentationOp(
+                        var result = new GetOrAddIdentifiedSerializerRepresentationOp(
                                              null,
                                              referenceObject.SerializerRepresentation,
                                              referenceObject.SerializationFormat);
@@ -76,14 +76,14 @@ namespace Naos.SqlServer.Domain.Test
                     ExpectedExceptionMessageContains = new[] { "specifiedResourceLocator", },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new ConstructorArgumentValidationTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "constructor should throw ArgumentNullException when parameter 'serializerRepresentation' is null scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var referenceObject = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var result = new GetIdAddIfNecessarySerializerRepresentationOp(
+                        var result = new GetOrAddIdentifiedSerializerRepresentationOp(
                                              referenceObject.SpecifiedResourceLocator,
                                              null,
                                              referenceObject.SerializationFormat);
@@ -94,18 +94,18 @@ namespace Naos.SqlServer.Domain.Test
                     ExpectedExceptionMessageContains = new[] { "serializerRepresentation", },
                 });
 
-        private static readonly ConstructorPropertyAssignmentTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp>()
+        private static readonly ConstructorPropertyAssignmentTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new ConstructorPropertyAssignmentTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "SpecifiedResourceLocator should return same 'specifiedResourceLocator' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var referenceObject = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<GetIdAddIfNecessarySerializerRepresentationOp>
+                        var result = new SystemUnderTestExpectedPropertyValue<GetOrAddIdentifiedSerializerRepresentationOp>
                         {
-                            SystemUnderTest = new GetIdAddIfNecessarySerializerRepresentationOp(
+                            SystemUnderTest = new GetOrAddIdentifiedSerializerRepresentationOp(
                                                       referenceObject.SpecifiedResourceLocator,
                                                       referenceObject.SerializerRepresentation,
                                                       referenceObject.SerializationFormat),
@@ -117,16 +117,16 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "SpecifiedResourceLocator",
                 })
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new ConstructorPropertyAssignmentTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "SerializerRepresentation should return same 'serializerRepresentation' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var referenceObject = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<GetIdAddIfNecessarySerializerRepresentationOp>
+                        var result = new SystemUnderTestExpectedPropertyValue<GetOrAddIdentifiedSerializerRepresentationOp>
                         {
-                            SystemUnderTest = new GetIdAddIfNecessarySerializerRepresentationOp(
+                            SystemUnderTest = new GetOrAddIdentifiedSerializerRepresentationOp(
                                                       referenceObject.SpecifiedResourceLocator,
                                                       referenceObject.SerializerRepresentation,
                                                       referenceObject.SerializationFormat),
@@ -138,16 +138,16 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "SerializerRepresentation",
                 })
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new ConstructorPropertyAssignmentTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "SerializationFormat should return same 'serializationFormat' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var referenceObject = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<GetIdAddIfNecessarySerializerRepresentationOp>
+                        var result = new SystemUnderTestExpectedPropertyValue<GetOrAddIdentifiedSerializerRepresentationOp>
                         {
-                            SystemUnderTest = new GetIdAddIfNecessarySerializerRepresentationOp(
+                            SystemUnderTest = new GetOrAddIdentifiedSerializerRepresentationOp(
                                                       referenceObject.SpecifiedResourceLocator,
                                                       referenceObject.SerializerRepresentation,
                                                       referenceObject.SerializationFormat),
@@ -159,19 +159,19 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "SerializationFormat",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp>()
+        private static readonly DeepCloneWithTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new DeepCloneWithTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "DeepCloneWithSpecifiedResourceLocator should deep clone object and replace SpecifiedResourceLocator with the provided specifiedResourceLocator",
                     WithPropertyName = "SpecifiedResourceLocator",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var systemUnderTest = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var referenceObject = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>().ThatIs(_ => !systemUnderTest.SpecifiedResourceLocator.IsEqualTo(_.SpecifiedResourceLocator));
+                        var referenceObject = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>().ThatIs(_ => !systemUnderTest.SpecifiedResourceLocator.IsEqualTo(_.SpecifiedResourceLocator));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<GetIdAddIfNecessarySerializerRepresentationOp>
+                        var result = new SystemUnderTestDeepCloneWithValue<GetOrAddIdentifiedSerializerRepresentationOp>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.SpecifiedResourceLocator,
@@ -181,17 +181,17 @@ namespace Naos.SqlServer.Domain.Test
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new DeepCloneWithTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "DeepCloneWithSerializerRepresentation should deep clone object and replace SerializerRepresentation with the provided serializerRepresentation",
                     WithPropertyName = "SerializerRepresentation",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var systemUnderTest = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var referenceObject = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>().ThatIs(_ => !systemUnderTest.SerializerRepresentation.IsEqualTo(_.SerializerRepresentation));
+                        var referenceObject = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>().ThatIs(_ => !systemUnderTest.SerializerRepresentation.IsEqualTo(_.SerializerRepresentation));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<GetIdAddIfNecessarySerializerRepresentationOp>
+                        var result = new SystemUnderTestDeepCloneWithValue<GetOrAddIdentifiedSerializerRepresentationOp>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.SerializerRepresentation,
@@ -201,17 +201,17 @@ namespace Naos.SqlServer.Domain.Test
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new DeepCloneWithTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "DeepCloneWithSerializationFormat should deep clone object and replace SerializationFormat with the provided serializationFormat",
                     WithPropertyName = "SerializationFormat",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                        var systemUnderTest = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-                        var referenceObject = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>().ThatIs(_ => !systemUnderTest.SerializationFormat.IsEqualTo(_.SerializationFormat));
+                        var referenceObject = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>().ThatIs(_ => !systemUnderTest.SerializationFormat.IsEqualTo(_.SerializationFormat));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<GetIdAddIfNecessarySerializerRepresentationOp>
+                        var result = new SystemUnderTestDeepCloneWithValue<GetOrAddIdentifiedSerializerRepresentationOp>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.SerializationFormat,
@@ -221,35 +221,35 @@ namespace Naos.SqlServer.Domain.Test
                     },
                 });
 
-        private static readonly GetIdAddIfNecessarySerializerRepresentationOp ReferenceObjectForEquatableTestScenarios = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+        private static readonly GetOrAddIdentifiedSerializerRepresentationOp ReferenceObjectForEquatableTestScenarios = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
-        private static readonly EquatableTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp> EquatableTestScenarios = new EquatableTestScenarios<GetIdAddIfNecessarySerializerRepresentationOp>()
+        private static readonly EquatableTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp> EquatableTestScenarios = new EquatableTestScenarios<GetOrAddIdentifiedSerializerRepresentationOp>()
             .AddScenario(() =>
-                new EquatableTestScenario<GetIdAddIfNecessarySerializerRepresentationOp>
+                new EquatableTestScenario<GetOrAddIdentifiedSerializerRepresentationOp>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new GetIdAddIfNecessarySerializerRepresentationOp[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new GetOrAddIdentifiedSerializerRepresentationOp[]
                     {
-                        new GetIdAddIfNecessarySerializerRepresentationOp(
+                        new GetOrAddIdentifiedSerializerRepresentationOp(
                                 ReferenceObjectForEquatableTestScenarios.SpecifiedResourceLocator,
                                 ReferenceObjectForEquatableTestScenarios.SerializerRepresentation,
                                 ReferenceObjectForEquatableTestScenarios.SerializationFormat),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new GetIdAddIfNecessarySerializerRepresentationOp[]
+                    ObjectsThatAreNotEqualToReferenceObject = new GetOrAddIdentifiedSerializerRepresentationOp[]
                     {
-                        new GetIdAddIfNecessarySerializerRepresentationOp(
-                                A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>().Whose(_ => !_.SpecifiedResourceLocator.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SpecifiedResourceLocator)).SpecifiedResourceLocator,
+                        new GetOrAddIdentifiedSerializerRepresentationOp(
+                                A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>().Whose(_ => !_.SpecifiedResourceLocator.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SpecifiedResourceLocator)).SpecifiedResourceLocator,
                                 ReferenceObjectForEquatableTestScenarios.SerializerRepresentation,
                                 ReferenceObjectForEquatableTestScenarios.SerializationFormat),
-                        new GetIdAddIfNecessarySerializerRepresentationOp(
+                        new GetOrAddIdentifiedSerializerRepresentationOp(
                                 ReferenceObjectForEquatableTestScenarios.SpecifiedResourceLocator,
-                                A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>().Whose(_ => !_.SerializerRepresentation.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SerializerRepresentation)).SerializerRepresentation,
+                                A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>().Whose(_ => !_.SerializerRepresentation.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SerializerRepresentation)).SerializerRepresentation,
                                 ReferenceObjectForEquatableTestScenarios.SerializationFormat),
-                        new GetIdAddIfNecessarySerializerRepresentationOp(
+                        new GetOrAddIdentifiedSerializerRepresentationOp(
                                 ReferenceObjectForEquatableTestScenarios.SpecifiedResourceLocator,
                                 ReferenceObjectForEquatableTestScenarios.SerializerRepresentation,
-                                A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>().Whose(_ => !_.SerializationFormat.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SerializationFormat)).SerializationFormat),
+                                A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>().Whose(_ => !_.SerializationFormat.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SerializationFormat)).SerializationFormat),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -284,12 +284,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void GetIdAddIfNecessarySerializerRepresentationOp___Should_implement_IModel_of_GetIdAddIfNecessarySerializerRepresentationOp___When_reflecting()
+            public static void GetOrAddIdentifiedSerializerRepresentationOp___Should_implement_IModel_of_GetOrAddIdentifiedSerializerRepresentationOp___When_reflecting()
             {
                 // Arrange
-                var type = typeof(GetIdAddIfNecessarySerializerRepresentationOp);
+                var type = typeof(GetOrAddIdentifiedSerializerRepresentationOp);
 
-                var expectedModelMethods = typeof(IModel<GetIdAddIfNecessarySerializerRepresentationOp>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<GetOrAddIdentifiedSerializerRepresentationOp>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -299,7 +299,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<GetIdAddIfNecessarySerializerRepresentationOp>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<GetOrAddIdentifiedSerializerRepresentationOp>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -317,10 +317,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void GetIdAddIfNecessarySerializerRepresentationOp___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void GetOrAddIdentifiedSerializerRepresentationOp___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(GetIdAddIfNecessarySerializerRepresentationOp);
+                var type = typeof(GetOrAddIdentifiedSerializerRepresentationOp);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -500,10 +500,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                var systemUnderTest = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
                 // Act
-                var actual = (GetIdAddIfNecessarySerializerRepresentationOp)systemUnderTest.Clone();
+                var actual = (GetOrAddIdentifiedSerializerRepresentationOp)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -527,7 +527,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                var systemUnderTest = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -590,12 +590,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (GetIdAddIfNecessarySerializerRepresentationOp)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (GetOrAddIdentifiedSerializerRepresentationOp)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach(var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(GetIdAddIfNecessarySerializerRepresentationOp).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(GetOrAddIdentifiedSerializerRepresentationOp).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -657,7 +657,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                var expected = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -686,7 +686,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                var expected = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -715,7 +715,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                var expected = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -744,7 +744,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<GetIdAddIfNecessarySerializerRepresentationOp>();
+                var expected = A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -778,8 +778,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                GetIdAddIfNecessarySerializerRepresentationOp systemUnderTest1 = null;
-                GetIdAddIfNecessarySerializerRepresentationOp systemUnderTest2 = null;
+                GetOrAddIdentifiedSerializerRepresentationOp systemUnderTest1 = null;
+                GetOrAddIdentifiedSerializerRepresentationOp systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -809,7 +809,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    GetIdAddIfNecessarySerializerRepresentationOp systemUnderTest = null;
+                    GetOrAddIdentifiedSerializerRepresentationOp systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -958,8 +958,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                GetIdAddIfNecessarySerializerRepresentationOp systemUnderTest1 = null;
-                GetIdAddIfNecessarySerializerRepresentationOp systemUnderTest2 = null;
+                GetOrAddIdentifiedSerializerRepresentationOp systemUnderTest1 = null;
+                GetOrAddIdentifiedSerializerRepresentationOp systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -989,7 +989,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    GetIdAddIfNecessarySerializerRepresentationOp systemUnderTest = null;
+                    GetOrAddIdentifiedSerializerRepresentationOp systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1421,14 +1421,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_GetIdAddIfNecessarySerializerRepresentationOp___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_GetOrAddIdentifiedSerializerRepresentationOp___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    GetIdAddIfNecessarySerializerRepresentationOp systemUnderTest = null;
+                    GetOrAddIdentifiedSerializerRepresentationOp systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1452,7 +1452,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_GetIdAddIfNecessarySerializerRepresentationOp___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_GetOrAddIdentifiedSerializerRepresentationOp___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1480,7 +1480,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_GetIdAddIfNecessarySerializerRepresentationOp___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_GetOrAddIdentifiedSerializerRepresentationOp___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1508,7 +1508,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_GetIdAddIfNecessarySerializerRepresentationOp___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_GetOrAddIdentifiedSerializerRepresentationOp___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1536,7 +1536,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_GetIdAddIfNecessarySerializerRepresentationOp___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_GetOrAddIdentifiedSerializerRepresentationOp___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

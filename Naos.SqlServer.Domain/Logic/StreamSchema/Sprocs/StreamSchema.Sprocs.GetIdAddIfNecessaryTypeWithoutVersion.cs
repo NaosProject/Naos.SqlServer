@@ -7,7 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
-    using System.Linq;
     using static System.FormattableString;
 
     public static partial class StreamSchema
@@ -58,18 +57,14 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetIdAddIfNecessaryTypeWithoutVersion)}]");
 
-                    var parameters = new List<SqlParameterRepresentationBase>()
-                                     {
-                                         new SqlInputParameterRepresentation<string>(
-                                             nameof(InputParamName.AssemblyQualifiedNameWithoutVersion),
-                                             Tables.TypeWithoutVersion.AssemblyQualifiedName.SqlDataType,
-                                             assemblyQualifiedNameWithoutVersion),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.TypeWithoutVersion.Id.SqlDataType),
-                                     };
+                    var parameters =
+                        new List<SqlParameterRepresentationBase>
+                        {
+                            new SqlInputParameterRepresentation<string>(nameof(InputParamName.AssemblyQualifiedNameWithoutVersion), Tables.TypeWithoutVersion.AssemblyQualifiedName.SqlDataType, assemblyQualifiedNameWithoutVersion),
+                            new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.TypeWithoutVersion.Id.SqlDataType),
+                        };
 
-                    var parameterNameToDetailsMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToDetailsMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

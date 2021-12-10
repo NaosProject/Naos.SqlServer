@@ -52,7 +52,7 @@ namespace Naos.SqlServer.Domain
                     throw new ArgumentException("Name cannot be more than 128 characters in length.");
                 }
 
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(name, nameof(name));
+                new { name }.AsArg().Must().BeAlphanumeric(new[] { ' ', '_' });
             }
 
             if (!string.IsNullOrWhiteSpace(description))
@@ -62,16 +62,14 @@ namespace Naos.SqlServer.Domain
                     throw new ArgumentException("Description cannot be more than 255 characters in length.");
                 }
 
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(description, nameof(description));
+                new { description }.AsArg().Must().BeAlphanumeric(new[] { ' ', '_' });
             }
 
             backupTo.MustForArg(nameof(backupTo)).NotBeNull();
 
             if (device == Device.Url)
             {
-                credential.MustForArg(nameof(credential)).NotBeNullNorWhiteSpace("Credential cannot be null or whitespace when Device is URL");
-
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(credential, nameof(credential));
+                credential.MustForArg(nameof(credential)).NotBeNullNorWhiteSpace("Credential cannot be null or whitespace when Device is URL").And().BeAlphanumeric(new[] { ' ', '_' });
             }
 
             if (checksumOption == ChecksumOption.Checksum)
@@ -89,9 +87,7 @@ namespace Naos.SqlServer.Domain
                     throw new ArgumentException("Encryptor is required when any Cipher != NoEncryption");
                 }
 
-                encryptorName.MustForArg(nameof(encryptorName)).NotBeNullNorWhiteSpace("EncryptorName is required when any Cipher != NoEncryption.");
-
-                SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(encryptorName, nameof(encryptorName));
+                encryptorName.MustForArg(nameof(encryptorName)).NotBeNullNorWhiteSpace("EncryptorName is required when any Cipher != NoEncryption.").And().BeAlphanumeric(new[] { ' ', '_' });
             }
 
             this.Name = name;

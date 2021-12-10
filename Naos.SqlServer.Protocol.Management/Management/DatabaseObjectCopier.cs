@@ -10,13 +10,10 @@ namespace Naos.SqlServer.Protocol.Management
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.SqlServer.Management.Common;
     using Microsoft.SqlServer.Management.Smo;
     using Naos.SqlServer.Domain;
-    using Naos.SqlServer.Protocol.Client;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Database.Recipes;
     using static System.FormattableString;
@@ -58,7 +55,7 @@ namespace Naos.SqlServer.Protocol.Management
 
             var scriptedObjects = Scripter.ScriptObjectsFromDatabase(sourceDatabaseConnectionString, orderedObjectNamesToCopy);
 
-            using (var targetConnection = targetDatabaseConnectionString.OpenSqlConnection(SqlMessagesToAnnouncerAdapter))
+            using (var targetConnection = await targetDatabaseConnectionString.OpenSqlConnectionAsync(SqlMessagesToAnnouncerAdapter))
             {
                 async Task RunScriptOnServer(ScriptedObject scriptedObject, string scriptToRun)
                 {
@@ -69,6 +66,7 @@ namespace Naos.SqlServer.Protocol.Management
                         {
                             // because it might contain "GO" statements most likely this needs to be executed via the SMO connection.
                             server.ConnectionContext.ExecuteNonQuery(scriptToRun);
+
                             await Task.Run(() => { });
                         }
 
@@ -100,11 +98,13 @@ namespace Naos.SqlServer.Protocol.Management
                                     | SqlBulkCopyOptions.KeepIdentity
                                     | SqlBulkCopyOptions.KeepNulls
                                     | SqlBulkCopyOptions.TableLock;
-                    using (var sourceConnection = sourceDatabaseConnectionString.OpenSqlConnection(SqlMessagesToAnnouncerAdapter))
+
+                    using (var sourceConnection = await sourceDatabaseConnectionString.OpenSqlConnectionAsync(SqlMessagesToAnnouncerAdapter))
                     {
                         foreach (var table in tables)
                         {
-                            SqlInjectorChecker.ThrowIfNotAlphanumericOrSpaceOrUnderscore(table.Name);
+                            table.Name.MustForArg(Invariant($"{nameof(table)}.{nameof(ScriptedObject.Name)}")).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+
                             using (var transaction = targetConnection.BeginTransaction("BcpTable-" + table.Name))
                             {
                                 using (var bcp = new SqlBulkCopy(targetConnection, copyOptions, transaction) { DestinationTableName = table.Name })

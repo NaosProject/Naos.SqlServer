@@ -66,16 +66,14 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetCompositeHandlingStatus)}]");
 
-                    var parameters = new List<SqlParameterRepresentationBase>()
+                    var parameters = new List<SqlParameterRepresentationBase>
                                      {
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.SqlDataType, concern),
                                          new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
                                          new SqlOutputParameterRepresentation<HandlingStatus>(nameof(OutputParamName.Status), Tables.Handling.Status.SqlDataType),
                                      };
 
-                    var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToRepresentationMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

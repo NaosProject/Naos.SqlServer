@@ -120,9 +120,7 @@ namespace Naos.SqlServer.Domain
                                          new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
                                      };
 
-                    var parameterNameToRepresentationMap = parameters.ToDictionary(k => k.Name, v => v);
-
-                    var result = new ExecuteStoredProcedureOp(sprocName, parameterNameToRepresentationMap);
+                    var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
                     return result;
                 }

@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.Type;
@@ -37,6 +38,12 @@ namespace Naos.SqlServer.Domain
             SerializationFormat defaultSerializationFormat,
             IReadOnlyCollection<ISqlServerLocator> allLocators)
         {
+            name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
+            serializerFactoryTypeRepresentation.MustForArg(nameof(serializerFactoryTypeRepresentation)).NotBeNull();
+            defaultSerializerRepresentation.MustForArg(nameof(defaultSerializerRepresentation)).NotBeNull();
+            defaultSerializationFormat.MustForArg(nameof(defaultSerializationFormat)).NotBeEqualTo(SerializationFormat.Invalid);
+            allLocators.MustForArg(nameof(allLocators)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.Name = name;
             this.SerializerFactoryTypeRepresentation = serializerFactoryTypeRepresentation;
             this.DefaultConnectionTimeout = defaultConnectionTimeout;

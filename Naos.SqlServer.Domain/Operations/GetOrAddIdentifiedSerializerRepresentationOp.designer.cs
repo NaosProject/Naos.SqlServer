@@ -26,15 +26,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class GetIdAddIfNecessarySerializerRepresentationOp : IModel<GetIdAddIfNecessarySerializerRepresentationOp>
+    public partial class GetOrAddIdentifiedSerializerRepresentationOp : IModel<GetOrAddIdentifiedSerializerRepresentationOp>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="GetIdAddIfNecessarySerializerRepresentationOp"/> are equal.
+        /// Determines whether two objects of type <see cref="GetOrAddIdentifiedSerializerRepresentationOp"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(GetIdAddIfNecessarySerializerRepresentationOp left, GetIdAddIfNecessarySerializerRepresentationOp right)
+        public static bool operator ==(GetOrAddIdentifiedSerializerRepresentationOp left, GetOrAddIdentifiedSerializerRepresentationOp right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -52,15 +52,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="GetIdAddIfNecessarySerializerRepresentationOp"/> are not equal.
+        /// Determines whether two objects of type <see cref="GetOrAddIdentifiedSerializerRepresentationOp"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(GetIdAddIfNecessarySerializerRepresentationOp left, GetIdAddIfNecessarySerializerRepresentationOp right) => !(left == right);
+        public static bool operator !=(GetOrAddIdentifiedSerializerRepresentationOp left, GetOrAddIdentifiedSerializerRepresentationOp right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(GetIdAddIfNecessarySerializerRepresentationOp other)
+        public bool Equals(GetOrAddIdentifiedSerializerRepresentationOp other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -80,7 +80,7 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as GetIdAddIfNecessarySerializerRepresentationOp);
+        public override bool Equals(object obj) => this == (obj as GetOrAddIdentifiedSerializerRepresentationOp);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
@@ -90,13 +90,13 @@ namespace Naos.SqlServer.Domain
             .Value;
 
         /// <inheritdoc />
-        public new GetIdAddIfNecessarySerializerRepresentationOp DeepClone() => (GetIdAddIfNecessarySerializerRepresentationOp)this.DeepCloneInternal();
+        public new GetOrAddIdentifiedSerializerRepresentationOp DeepClone() => (GetOrAddIdentifiedSerializerRepresentationOp)this.DeepCloneInternal();
 
         /// <summary>
         /// Deep clones this object with a new <see cref="SpecifiedResourceLocator" />.
         /// </summary>
         /// <param name="specifiedResourceLocator">The new <see cref="SpecifiedResourceLocator" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="GetIdAddIfNecessarySerializerRepresentationOp" /> using the specified <paramref name="specifiedResourceLocator" /> for <see cref="SpecifiedResourceLocator" /> and a deep clone of every other property.</returns>
+        /// <returns>New <see cref="GetOrAddIdentifiedSerializerRepresentationOp" /> using the specified <paramref name="specifiedResourceLocator" /> for <see cref="SpecifiedResourceLocator" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -114,9 +114,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public GetIdAddIfNecessarySerializerRepresentationOp DeepCloneWithSpecifiedResourceLocator(IResourceLocator specifiedResourceLocator)
+        public GetOrAddIdentifiedSerializerRepresentationOp DeepCloneWithSpecifiedResourceLocator(IResourceLocator specifiedResourceLocator)
         {
-            var result = new GetIdAddIfNecessarySerializerRepresentationOp(
+            var result = new GetOrAddIdentifiedSerializerRepresentationOp(
                                  specifiedResourceLocator,
                                  this.SerializerRepresentation?.DeepClone(),
                                  this.SerializationFormat.DeepClone());
@@ -128,7 +128,7 @@ namespace Naos.SqlServer.Domain
         /// Deep clones this object with a new <see cref="SerializerRepresentation" />.
         /// </summary>
         /// <param name="serializerRepresentation">The new <see cref="SerializerRepresentation" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="GetIdAddIfNecessarySerializerRepresentationOp" /> using the specified <paramref name="serializerRepresentation" /> for <see cref="SerializerRepresentation" /> and a deep clone of every other property.</returns>
+        /// <returns>New <see cref="GetOrAddIdentifiedSerializerRepresentationOp" /> using the specified <paramref name="serializerRepresentation" /> for <see cref="SerializerRepresentation" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -146,9 +146,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public GetIdAddIfNecessarySerializerRepresentationOp DeepCloneWithSerializerRepresentation(SerializerRepresentation serializerRepresentation)
+        public GetOrAddIdentifiedSerializerRepresentationOp DeepCloneWithSerializerRepresentation(SerializerRepresentation serializerRepresentation)
         {
-            var result = new GetIdAddIfNecessarySerializerRepresentationOp(
+            var result = new GetOrAddIdentifiedSerializerRepresentationOp(
                                  this.SpecifiedResourceLocator?.DeepClone(),
                                  serializerRepresentation,
                                  this.SerializationFormat.DeepClone());
@@ -160,7 +160,7 @@ namespace Naos.SqlServer.Domain
         /// Deep clones this object with a new <see cref="SerializationFormat" />.
         /// </summary>
         /// <param name="serializationFormat">The new <see cref="SerializationFormat" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="GetIdAddIfNecessarySerializerRepresentationOp" /> using the specified <paramref name="serializationFormat" /> for <see cref="SerializationFormat" /> and a deep clone of every other property.</returns>
+        /// <returns>New <see cref="GetOrAddIdentifiedSerializerRepresentationOp" /> using the specified <paramref name="serializationFormat" /> for <see cref="SerializationFormat" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -178,9 +178,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public GetIdAddIfNecessarySerializerRepresentationOp DeepCloneWithSerializationFormat(SerializationFormat serializationFormat)
+        public GetOrAddIdentifiedSerializerRepresentationOp DeepCloneWithSerializationFormat(SerializationFormat serializationFormat)
         {
-            var result = new GetIdAddIfNecessarySerializerRepresentationOp(
+            var result = new GetOrAddIdentifiedSerializerRepresentationOp(
                                  this.SpecifiedResourceLocator?.DeepClone(),
                                  this.SerializerRepresentation?.DeepClone(),
                                  serializationFormat);
@@ -192,7 +192,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         protected override OperationBase DeepCloneInternal()
         {
-            var result = new GetIdAddIfNecessarySerializerRepresentationOp(
+            var result = new GetOrAddIdentifiedSerializerRepresentationOp(
                                  this.SpecifiedResourceLocator?.DeepClone(),
                                  this.SerializerRepresentation?.DeepClone(),
                                  this.SerializationFormat.DeepClone());
@@ -204,7 +204,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.GetIdAddIfNecessarySerializerRepresentationOp: SpecifiedResourceLocator = {this.SpecifiedResourceLocator?.ToString() ?? "<null>"}, SerializerRepresentation = {this.SerializerRepresentation?.ToString() ?? "<null>"}, SerializationFormat = {this.SerializationFormat.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.GetOrAddIdentifiedSerializerRepresentationOp: SpecifiedResourceLocator = {this.SpecifiedResourceLocator?.ToString() ?? "<null>"}, SerializerRepresentation = {this.SerializerRepresentation?.ToString() ?? "<null>"}, SerializationFormat = {this.SerializationFormat.ToString() ?? "<null>"}.");
 
             return result;
         }
