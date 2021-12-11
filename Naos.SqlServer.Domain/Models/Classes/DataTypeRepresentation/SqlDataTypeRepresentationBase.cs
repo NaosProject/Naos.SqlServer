@@ -42,7 +42,7 @@ namespace Naos.SqlServer.Domain
         {
             objectType.MustForArg(nameof(objectType)).NotBeNull();
 
-            objectType.MustForOp(nameof(objectType)).BeEqualToAnyOf(acceptableTypes, Invariant($"Supported object types: {acceptableTypes.Select(_ => _.ToStringReadable()).ToDelimitedString(",")}; provided type: {objectType.ToStringReadable()}."));
+            objectType.MustForOp(nameof(objectType)).BeElementIn(acceptableTypes, Invariant($"Supported object types: {acceptableTypes.Select(_ => _.ToStringReadable()).ToDelimitedString(",")}; provided type: {objectType.ToStringReadable()}."));
         }
     }
 }

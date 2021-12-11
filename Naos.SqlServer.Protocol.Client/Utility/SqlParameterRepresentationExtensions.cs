@@ -436,68 +436,68 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         /// <summary>
-        /// Creates a <see cref="ISqlOutputParameterRepresentationWithResult"/> with the provided result.
+        /// Creates a <see cref="ISqlOutputParameterResult"/> with the provided result.
         /// </summary>
         /// <param name="outputParameterRepresentation">The output parameter representation.</param>
         /// <param name="valueFromActualStoredProcedureParameter">The value from actual stored procedure parameter.</param>
-        /// <returns>A <see cref="ISqlOutputParameterRepresentationWithResult"/> with the provided result.</returns>
-        public static ISqlOutputParameterRepresentationWithResult CreateWithResult(
+        /// <returns>A <see cref="ISqlOutputParameterResult"/> with the provided result.</returns>
+        public static ISqlOutputParameterResult CreateResult(
             this SqlOutputParameterRepresentationBase outputParameterRepresentation,
             object valueFromActualStoredProcedureParameter)
         {
             // accommodate DBNull situation here.
             var rawValue = DBNull.Value.Equals(valueFromActualStoredProcedureParameter) ? null : valueFromActualStoredProcedureParameter;
 
-            ISqlOutputParameterRepresentationWithResult result = null;
+            ISqlOutputParameterResult result = null;
 
-            if (outputParameterRepresentation is SqlOutputParameterRepresentation<byte[]>)
+            if (outputParameterRepresentation is SqlOutputParameterRepresentation<byte[]> byteArrayOutputParameterRepresentation)
             {
                 var byteArrayValue = (byte[])rawValue;
-                result = new SqlOutputParameterRepresentationWithResult<byte[]>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, byteArrayValue);
+                result = new SqlOutputParameterResult<byte[]>(byteArrayOutputParameterRepresentation, byteArrayValue);
             }
-            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<decimal>)
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<decimal> decimalOutputParameterRepresentation)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var decimalValue = Convert.ToDecimal(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<decimal>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, decimalValue);
+                result = new SqlOutputParameterResult<decimal>(decimalOutputParameterRepresentation, decimalValue);
             }
-            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<int>)
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<int> intOutputParameterRepresentation)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var intValue = Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<int>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, intValue);
+                result = new SqlOutputParameterResult<int>(intOutputParameterRepresentation, intValue);
             }
-            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<int?>)
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<int?> nullableIntOutputParameterRepresentation)
             {
                 var intValue = rawValue == null ? (int?)null : Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<int?>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, intValue);
+                result = new SqlOutputParameterResult<int?>(nullableIntOutputParameterRepresentation, intValue);
             }
-            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long>)
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long> longOutputParameterRepresentation)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var longValue = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<long>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, longValue);
+                result = new SqlOutputParameterResult<long>(longOutputParameterRepresentation, longValue);
             }
-            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long?>)
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<long?> nullableLongOutputParameterRepresentation)
             {
                 var longValue = rawValue == null ? (long?)null : Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
-                result = new SqlOutputParameterRepresentationWithResult<long?>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, longValue);
+                result = new SqlOutputParameterResult<long?>(nullableLongOutputParameterRepresentation, longValue);
             }
-            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<string>)
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<string> stringLongOutputParameterRepresentation)
             {
                 var stringValue = rawValue?.ToString();
-                result = new SqlOutputParameterRepresentationWithResult<string>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, stringValue);
+                result = new SqlOutputParameterResult<string>(stringLongOutputParameterRepresentation, stringValue);
             }
-            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<DateTime>)
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<DateTime> dateTimeOutputParameterRepresentation)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var dateTimeValue = (DateTime)rawValue;
-                result = new SqlOutputParameterRepresentationWithResult<DateTime>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, dateTimeValue);
+                result = new SqlOutputParameterResult<DateTime>(dateTimeOutputParameterRepresentation, dateTimeValue);
             }
-            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<DateTime?>)
+            else if (outputParameterRepresentation is SqlOutputParameterRepresentation<DateTime?> nullableDateTimeOutputParameterRepresentation)
             {
                 var dateTimeNullableValue = (DateTime?)rawValue;
-                result = new SqlOutputParameterRepresentationWithResult<DateTime?>(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, dateTimeNullableValue);
+                result = new SqlOutputParameterResult<DateTime?>(nullableDateTimeOutputParameterRepresentation, dateTimeNullableValue);
             }
             else if (outputParameterRepresentation.GetType().GetGenericArguments().SingleOrDefault()?.IsEnum ?? false)
             {
@@ -509,9 +509,9 @@ namespace Naos.SqlServer.Protocol.Client
                 var genericArguments = outputParameterRepresentation.GetType().GetGenericArguments().ToList();
                 var enumType = genericArguments.Single();
                 var enumValue = Enum.Parse(enumType, rawValue.ToString());
-                var resultType = typeof(SqlOutputParameterRepresentationWithResult<>).MakeGenericType(enumType);
+                var resultType = typeof(SqlOutputParameterResult<>).MakeGenericType(enumType);
                 var rawResult = resultType.Construct(outputParameterRepresentation.Name, outputParameterRepresentation.SqlDataType, enumValue);
-                result = (ISqlOutputParameterRepresentationWithResult)rawResult;
+                result = (ISqlOutputParameterResult)rawResult;
             }
             else
             {

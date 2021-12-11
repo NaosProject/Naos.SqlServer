@@ -12,6 +12,7 @@ namespace Naos.SqlServer.Domain
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.Type;
+    using static System.FormattableString;
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
     /// <summary>
@@ -40,6 +41,8 @@ namespace Naos.SqlServer.Domain
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
             serializerFactoryTypeRepresentation.MustForArg(nameof(serializerFactoryTypeRepresentation)).NotBeNull();
+            defaultConnectionTimeout.TotalMilliseconds.MustForArg(Invariant($"{nameof(defaultConnectionTimeout)}.{nameof(TimeSpan.TotalMilliseconds)}")).BeGreaterThanOrEqualTo(0d);
+            defaultCommandTimeout.TotalMilliseconds.MustForArg(Invariant($"{nameof(defaultCommandTimeout)}.{nameof(TimeSpan.TotalMilliseconds)}")).BeGreaterThanOrEqualTo(0d);
             defaultSerializerRepresentation.MustForArg(nameof(defaultSerializerRepresentation)).NotBeNull();
             defaultSerializationFormat.MustForArg(nameof(defaultSerializationFormat)).NotBeEqualTo(SerializationFormat.Invalid);
             allLocators.MustForArg(nameof(allLocators)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();

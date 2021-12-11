@@ -6,6 +6,7 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -22,7 +23,7 @@ namespace Naos.SqlServer.Domain
             RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy = RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
             int? maxConcurrentHandlingCount = null)
         {
-            // maxConcurrentHandlingCount.MustForArg(nameof(maxConcurrentHandlingCount)).greater
+            maxConcurrentHandlingCount.MustForArg(nameof(maxConcurrentHandlingCount)).BeGreaterThanWhenNotNull((decimal?)0);
 
             this.RecordTagAssociationManagementStrategy = recordTagAssociationManagementStrategy;
             this.MaxConcurrentHandlingCount = maxConcurrentHandlingCount;

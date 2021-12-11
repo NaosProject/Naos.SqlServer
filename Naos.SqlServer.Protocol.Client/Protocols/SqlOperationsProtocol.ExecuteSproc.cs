@@ -27,7 +27,7 @@ namespace Naos.SqlServer.Protocol.Client
         public StoredProcedureExecutionResult Execute(
             ExecuteStoredProcedureOp operation)
         {
-            var outputParametersWithExecutionResult = new Dictionary<string, ISqlOutputParameterRepresentationWithResult>();
+            var outputParametersWithExecutionResult = new Dictionary<string, ISqlOutputParameterResult>();
             using (var sqlConnection = this.sqlServerLocator.OpenSqlConnection(this.defaultConnectionTimeout))
             {
                 using (var command = sqlConnection.BuildSqlCommand(operation.Name, (int)this.defaultCommandTimeout.TotalSeconds))
@@ -58,7 +58,7 @@ namespace Naos.SqlServer.Protocol.Client
 
                     foreach (var outputParameter in outputParameters)
                     {
-                        var outputParameterWithResult = outputParameter.Item2.CreateWithResult(outputParameter.Item1.Value);
+                        var outputParameterWithResult = outputParameter.Item2.CreateResult(outputParameter.Item1.Value);
 
                         outputParametersWithExecutionResult.Add(outputParameter.Item2.Name,  outputParameterWithResult);
                     }
