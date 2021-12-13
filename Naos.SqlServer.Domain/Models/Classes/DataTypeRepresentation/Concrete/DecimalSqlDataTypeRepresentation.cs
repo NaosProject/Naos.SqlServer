@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
     using static System.FormattableString;
 
@@ -41,6 +42,9 @@ namespace Naos.SqlServer.Domain
             byte precision = DefaultNumericPrecisionToHoldDotNetDecimal,
             byte scale = DefaultNumericScaleToHoldDotNetDecimal)
         {
+            precision.MustForArg(nameof(precision)).BeGreaterThanOrEqualTo(1).And().BeLessThanOrEqualTo(38);
+            scale.MustForArg(nameof(scale)).BeGreaterThanOrEqualTo(0).And().BeLessThanOrEqualTo(precision);
+
             this.Precision = precision;
             this.Scale = scale;
         }

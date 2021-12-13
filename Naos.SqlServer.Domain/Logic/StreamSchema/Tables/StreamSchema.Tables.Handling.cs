@@ -45,7 +45,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Gets the details.
                 /// </summary>
-                public static ColumnDefinition Details => new ColumnDefinition(nameof(Details), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
+                public static ColumnDefinition Details => new ColumnDefinition(nameof(Details), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant));
 
                 /// <summary>
                 /// Gets the entry created in UTC.

@@ -64,7 +64,7 @@ namespace Naos.SqlServer.Domain
                                      {
                                          new InputParameterDefinition<string>(nameof(InputParamName.Username), new StringSqlDataTypeRepresentation(true, 128), username),
                                          new InputParameterDefinition<string>(nameof(InputParamName.ClearTextPassword), new StringSqlDataTypeRepresentation(true, 128), clearTextPassword),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), roles),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant), roles),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
@@ -88,7 +88,7 @@ namespace Naos.SqlServer.Domain
 {createOrModify} PROCEDURE [{streamName}].[{Name}](
   @{InputParamName.Username} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
 , @{InputParamName.ClearTextPassword} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-, @{InputParamName.RoleCsv} AS {new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.RoleCsv} AS {new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}
 )
 AS
 BEGIN
@@ -105,7 +105,7 @@ BEGIN
     EXEC('CREATE USER ' + @quotedUsername + ' FOR LOGIN ' + @quotedLogin + ' WITH DEFAULT_SCHEMA=[{streamName}]')
 
     -- Iterate over all roles
-    DECLARE @role {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant).DeclarationInSqlSyntax}
+    DECLARE @role {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
     DECLARE cur CURSOR LOCAL FOR
     SELECT value
     FROM STRING_SPLIT(@{InputParamName.RoleCsv}, ',')

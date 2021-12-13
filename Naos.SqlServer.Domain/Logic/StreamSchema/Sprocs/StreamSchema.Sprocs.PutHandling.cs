@@ -113,7 +113,7 @@ namespace Naos.SqlServer.Domain
                                          new InputParameterDefinition<string>(nameof(InputParamName.Details), Tables.Handling.Details.SqlDataType, details),
                                          new InputParameterDefinition<long>(nameof(InputParamName.RecordId), Tables.Handling.RecordId.SqlDataType, recordId),
                                          new InputParameterDefinition<string>(nameof(InputParamName.NewStatus), Tables.Handling.Status.SqlDataType, newStatus.ToString()),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.AcceptableCurrentStatusesCsv), new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant), acceptableCurrentStatusesCsv),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.AcceptableCurrentStatusesCsv), new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant), acceptableCurrentStatusesCsv),
                                          new InputParameterDefinition<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
                                          new InputParameterDefinition<int>(nameof(InputParamName.IsUnHandledRecord), new IntSqlDataTypeRepresentation(), 0),
                                          new InputParameterDefinition<int>(nameof(InputParamName.IsClaimingRecordId), new IntSqlDataTypeRepresentation(), 0),
@@ -146,7 +146,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.Details} AS {Tables.Handling.Details.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.RecordId} AS {Tables.Handling.RecordId.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.NewStatus} AS {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.AcceptableCurrentStatusesCsv} AS {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.AcceptableCurrentStatusesCsv} AS {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
 , @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.IsUnHandledRecord} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.IsClaimingRecordId} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}

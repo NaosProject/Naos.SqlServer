@@ -368,7 +368,6 @@
     <Compile Include="Models\Classes\DataTypeRepresentation\SqlDataTypeRepresentationBaseTest.designer.cs">
       <DependentUpon>SqlDataTypeRepresentationBaseTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Logic\SqlInjectorCheckerTest.cs" />
     <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinitionTest.cs" />
     <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinitionTest.designer.cs">
       <DependentUpon>SqlServerConnectionDefinitionTest.cs</DependentUpon>
@@ -450,6 +449,7 @@
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Logic\" />
     <Folder Include="Models\Classes\Scripting\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

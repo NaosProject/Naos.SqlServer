@@ -60,7 +60,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Gets the string serialized object string.
                 /// </summary>
-                public static ColumnDefinition StringSerializedObject => new ColumnDefinition(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
+                public static ColumnDefinition StringSerializedObject => new ColumnDefinition(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant));
 
                 /// <summary>
                 /// Gets the binary serialized object string.
@@ -72,7 +72,7 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 public static ColumnDefinition TagIdsCsv => new ColumnDefinition(
                     nameof(TagIdsCsv),
-                    new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant));
+                    new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant));
 
                 /// <summary>
                 /// Gets the record created UTC.

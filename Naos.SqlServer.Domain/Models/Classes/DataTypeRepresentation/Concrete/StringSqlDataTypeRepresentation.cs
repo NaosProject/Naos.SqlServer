@@ -20,19 +20,26 @@ namespace Naos.SqlServer.Domain
     public partial class StringSqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IModelViaCodeGen
     {
         /// <summary>
-        /// The maximum length constant.
+        /// The maximum length of a non-unicode string, assuming single-byte encoding character sets such as Latin.
         /// </summary>
-        public const int MaxLengthConstant = -1;
+        public const int MaxNonUnicodeLengthConstant = int.MaxValue - 2;
+
+        /// <summary>
+        /// The maximum length of a unicode string, assuming double-byte encoding character sets such as USC-2.
+        /// </summary>
+        public const int MaxUnicodeLengthConstant = 1073741822;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StringSqlDataTypeRepresentation"/> class.
         /// </summary>
         /// <param name="supportUnicode">Specifies whether unicode is supported.</param>
-        /// <param name="supportedLength">Specifies the length of the string that is supported; <see cref="MaxLengthConstant"/> will be maximum.</param>
+        /// <param name="supportedLength">Specifies the maximum length of a string that is supported; <see cref="MaxUnicodeLengthConstant"/> will be maximum.</param>
         public StringSqlDataTypeRepresentation(
             bool supportUnicode,
             int supportedLength)
         {
+            supportedLength.MustForArg(nameof(supportedLength)).BeGreaterThanOrEqualTo(1).And().BeLessThanOrEqualTo(supportUnicode ? MaxUnicodeLengthConstant : MaxNonUnicodeLengthConstant);
+
             this.SupportUnicode = supportUnicode;
             this.SupportedLength = supportedLength;
         }
@@ -43,7 +50,7 @@ namespace Naos.SqlServer.Domain
         public bool SupportUnicode { get; private set; }
 
         /// <summary>
-        /// Gets the length of the string that is supported.
+        /// Gets the maximum length of a string that is supported.
         /// </summary>
         public int SupportedLength { get; private set; }
 
@@ -52,9 +59,13 @@ namespace Naos.SqlServer.Domain
         {
             get
             {
-                var supportedLength = this.SupportedLength == MaxLengthConstant
-                    ? "MAX"
-                    : this.SupportedLength.ToString(CultureInfo.InvariantCulture);
+                var supportedLength = this.SupportUnicode
+                    ? this.SupportedLength > 4000
+                        ? "MAX"
+                        : this.SupportedLength.ToString(CultureInfo.InvariantCulture)
+                    : this.SupportedLength > 8000
+                        ? "MAX"
+                        : this.SupportedLength.ToString(CultureInfo.InvariantCulture);
 
                 var result = this.SupportUnicode
                     ? Invariant($"[NVARCHAR]({supportedLength})")
