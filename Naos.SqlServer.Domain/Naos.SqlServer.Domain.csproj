@@ -109,6 +109,12 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Models\Classes\Definition\TableDefinition.designer.cs">
+      <DependentUpon>TableDefinition.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}.designer.cs">
+      <DependentUpon>SqlOutputParameterResult{TValue}.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
@@ -123,18 +129,18 @@
     <Compile Include="Logic\StreamSchema\StreamSchema.Funcs.cs" />
     <Compile Include="Logic\StreamSchema\StreamSchema.Sprocs.cs" />
     <Compile Include="Logic\StreamSchema\StreamSchema.Tables.cs" />
-    <Compile Include="Models\Classes\Config\SqlStreamConfigObject.designer.cs">
+    <Compile Include="Models\Classes\Stream\SqlStreamConfigObject.designer.cs">
       <DependentUpon>SqlStreamConfigObject.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Legacy\SqlServerConnectionDefinition.designer.cs">
+    <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinition.designer.cs">
       <DependentUpon>SqlServerConnectionDefinition.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Config\SqlStreamConfigObject.cs" />
+    <Compile Include="Models\Classes\Stream\SqlStreamConfigObject.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\XmlSqlDataTypeRepresentation.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\XmlSqlDataTypeRepresentation.designer.cs">
       <DependentUpon>XmlSqlDataTypeRepresentation.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Scripting\ScriptedObject.designer.cs">
+    <Compile Include="Models\Classes\Management\ScriptedObject.designer.cs">
       <DependentUpon>ScriptedObject.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Stream\IdentifiedSerializerRepresentation.designer.cs">
@@ -146,8 +152,8 @@
     <Compile Include="Models\Classes\Management\BackupSqlServerDatabaseDetails.designer.cs">
       <DependentUpon>BackupSqlServerDatabaseDetails.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Management\DatabaseConfiguration.designer.cs">
-      <DependentUpon>DatabaseConfiguration.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\DatabaseDefinition.designer.cs">
+      <DependentUpon>DatabaseDefinition.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Management\RestoreFile.designer.cs">
       <DependentUpon>RestoreFile.cs</DependentUpon>
@@ -184,53 +190,47 @@
       <DependentUpon>UtcDateTimeSqlDataTypeRepresentation.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Stream\IdentifiedSerializerRepresentation.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Input\SqlInputParameterRepresentationBase.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Input\SqlInputParameterRepresentationBase.designer.cs">
-      <DependentUpon>SqlInputParameterRepresentationBase.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinitionBase.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinitionBase.designer.cs">
+      <DependentUpon>SqlInputParameterDefinitionBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\Input\SqlInputParameterRepresentation{TValue}.designer.cs">
-      <DependentUpon>SqlInputParameterRepresentation{TValue}.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinition{TValue}.designer.cs">
+      <DependentUpon>SqlInputParameterDefinition{TValue}.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentationBase.designer.cs">
-      <DependentUpon>SqlOutputParameterRepresentationBase.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinitionBase.designer.cs">
+      <DependentUpon>SqlOutputParameterDefinitionBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentationWithResult{TValue}.designer.cs">
-      <DependentUpon>SqlOutputParameterRepresentationWithResult{TValue}.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinition{TValue}.designer.cs">
+      <DependentUpon>SqlOutputParameterDefinition{TValue}.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentation{TValue}.designer.cs">
-      <DependentUpon>SqlOutputParameterRepresentation{TValue}.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\SqlParameterRepresentationBase.designer.cs">
-      <DependentUpon>SqlParameterRepresentationBase.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\SqlParameterDefinitionBase.designer.cs">
+      <DependentUpon>SqlParameterDefinitionBase.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Interfaces\ISqlServerLocator.cs" />
-    <Compile Include="Models\Interfaces\ISqlOutputParameterRepresentationWithResult.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Input\SqlInputParameterRepresentation{TValue}.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentationBase.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentationWithResult{TValue}.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentation{TValue}.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\SqlParameterRepresentationBase.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\ColumnDescription.designer.cs">
+    <Compile Include="Models\Interfaces\ISqlOutputParameterResult.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinition{TValue}.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinitionBase.cs" />
+    <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinition{TValue}.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\SqlParameterDefinitionBase.cs" />
+    <Compile Include="Models\Classes\Management\ColumnDescription.designer.cs">
       <DependentUpon>ColumnDescription.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\SchemaRepresentation\ColumnRepresentation.designer.cs">
-      <DependentUpon>ColumnRepresentation.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\ColumnDefinition.designer.cs">
+      <DependentUpon>ColumnDefinition.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\SchemaRepresentation\TableDescription.designer.cs">
+    <Compile Include="Models\Classes\Management\TableDescription.designer.cs">
       <DependentUpon>TableDescription.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\SchemaRepresentation\TableRepresentation.designer.cs">
-      <DependentUpon>TableRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Enums\Scripting\ScriptableObjectType.cs" />
+    <Compile Include="Models\Enums\Management\ScriptableObjectType.cs" />
     <Compile Include="Models\Classes\ResourceLocation\SqlServerLocator.cs" />
     <Compile Include="Models\Classes\ResourceLocation\SqlServerLocator.designer.cs">
       <DependentUpon>SqlServerLocator.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Stream\IdentifiedType.cs" />
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\ColumnRepresentation.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\TableRepresentation.cs" />
+    <Compile Include="Models\Classes\Definition\ColumnDefinition.cs" />
+    <Compile Include="Models\Classes\Definition\TableDefinition.cs" />
     <Compile Include="Operations\CreateDatabaseOp.designer.cs">
       <DependentUpon>CreateDatabaseOp.cs</DependentUpon>
     </Compile>
@@ -255,7 +255,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
-    <Compile Include="Models\Classes\Legacy\SqlServerConnectionDefinition.cs" />
+    <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinition.cs" />
     <Compile Include="Logic\StreamSchema\StreamSchema.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetCompositeHandlingStatus.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetStreamDetails.cs" />
@@ -287,9 +287,9 @@
     <Compile Include="Models\Classes\Management\BackupSqlServerDatabaseDetails.cs" />
     <Compile Include="Models\Enums\Management\ChecksumOption.cs" />
     <Compile Include="Models\Enums\Management\Cipher.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\ColumnDescription.cs" />
+    <Compile Include="Models\Classes\Management\ColumnDescription.cs" />
     <Compile Include="Models\Enums\Management\CompressionOption.cs" />
-    <Compile Include="Models\Classes\Management\DatabaseConfiguration.cs" />
+    <Compile Include="Models\Classes\Definition\DatabaseDefinition.cs" />
     <Compile Include="Models\Enums\Management\DatabaseType.cs" />
     <Compile Include="Models\Enums\Management\Device.cs" />
     <Compile Include="Models\Enums\Management\EncryptionCipher.cs" />
@@ -301,8 +301,8 @@
     <Compile Include="Models\Classes\Management\RestoreFile.cs" />
     <Compile Include="Models\Classes\Management\RestoreSqlServerDatabaseDetails.cs" />
     <Compile Include="Models\Enums\Management\RestrictedUserOption.cs" />
-    <Compile Include="Models\Classes\Scripting\ScriptedObject.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\TableDescription.cs" />
+    <Compile Include="Models\Classes\Management\ScriptedObject.cs" />
+    <Compile Include="Models\Classes\Management\TableDescription.cs" />
     <Compile Include="Logic\SqlInjectorChecker.cs" />
     <Compile Include="Models\Enums\Stream\RecordTagAssociationManagementStrategy.cs" />
     <Compile Include="Logic\TagConversionTool.cs" />
@@ -318,6 +318,7 @@
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Naos.Build.Analyzers.1.55.57\build\Naos.Build.Analyzers.targets" Condition="Exists('..\packages\Naos.Build.Analyzers.1.55.57\build\Naos.Build.Analyzers.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

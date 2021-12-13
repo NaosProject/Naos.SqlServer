@@ -7,7 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
-    using System.Linq;
 
     public static partial class StreamSchema
     {
@@ -21,27 +20,27 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Gets the identifier.
                 /// </summary>
-                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
+                public static ColumnDefinition Id => new ColumnDefinition(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the handling entry identifier.
                 /// </summary>
-                public static ColumnRepresentation HandlingId => new ColumnRepresentation(nameof(HandlingId), Tables.Handling.Id.SqlDataType);
+                public static ColumnDefinition HandlingId => new ColumnDefinition(nameof(HandlingId), Tables.Handling.Id.SqlDataType);
 
                 /// <summary>
                 /// Gets the tag identifier.
                 /// </summary>
-                public static ColumnRepresentation TagId => new ColumnRepresentation(nameof(TagId), Tables.Tag.Id.SqlDataType);
+                public static ColumnDefinition TagId => new ColumnDefinition(nameof(TagId), Tag.Id.SqlDataType);
 
                 /// <summary>
                 /// Gets the record created UTC.
                 /// </summary>
-                public static ColumnRepresentation RecordCreatedUtc => new ColumnRepresentation(nameof(RecordCreatedUtc), new UtcDateTimeSqlDataTypeRepresentation());
+                public static ColumnDefinition RecordCreatedUtc => new ColumnDefinition(nameof(RecordCreatedUtc), new UtcDateTimeSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the table.
                 /// </summary>
-                public static TableRepresentation Table => new TableRepresentation(
+                public static TableDefinition Table => new TableDefinition(
                     nameof(HandlingTag),
                     new[]
                     {
@@ -49,7 +48,7 @@ namespace Naos.SqlServer.Domain
                         HandlingId,
                         TagId,
                         RecordCreatedUtc,
-                    }.ToDictionary(k => k.Name, v => v));
+                    });
 
                 /// <summary>
                 /// Builds the creation script for HandlingTag table.

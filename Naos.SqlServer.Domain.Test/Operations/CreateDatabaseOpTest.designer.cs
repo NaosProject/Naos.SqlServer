@@ -47,7 +47,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<CreateDatabaseOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.CreateDatabaseOp: DatabaseConfiguration = {systemUnderTest.DatabaseConfiguration?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.CreateDatabaseOp: Definition = {systemUnderTest.Definition?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
@@ -58,7 +58,7 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorArgumentValidationTestScenario<CreateDatabaseOp>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'databaseConfiguration' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'definition' is null scenario",
                     ConstructionFunc = () =>
                     {
                         var result = new CreateDatabaseOp(
@@ -67,14 +67,14 @@ namespace Naos.SqlServer.Domain.Test
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "databaseConfiguration", },
+                    ExpectedExceptionMessageContains = new[] { "definition", },
                 });
 
         private static readonly ConstructorPropertyAssignmentTestScenarios<CreateDatabaseOp> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<CreateDatabaseOp>()
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<CreateDatabaseOp>
                 {
-                    Name = "DatabaseConfiguration should return same 'databaseConfiguration' parameter passed to constructor when getting",
+                    Name = "Definition should return same 'definition' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
                         var referenceObject = A.Dummy<CreateDatabaseOp>();
@@ -82,31 +82,31 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<CreateDatabaseOp>
                         {
                             SystemUnderTest = new CreateDatabaseOp(
-                                                      referenceObject.DatabaseConfiguration),
-                            ExpectedPropertyValue = referenceObject.DatabaseConfiguration,
+                                                      referenceObject.Definition),
+                            ExpectedPropertyValue = referenceObject.Definition,
                         };
 
                         return result;
                     },
-                    PropertyName = "DatabaseConfiguration",
+                    PropertyName = "Definition",
                 });
 
         private static readonly DeepCloneWithTestScenarios<CreateDatabaseOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<CreateDatabaseOp>()
             .AddScenario(() =>
                 new DeepCloneWithTestScenario<CreateDatabaseOp>
                 {
-                    Name = "DeepCloneWithDatabaseConfiguration should deep clone object and replace DatabaseConfiguration with the provided databaseConfiguration",
-                    WithPropertyName = "DatabaseConfiguration",
+                    Name = "DeepCloneWithDefinition should deep clone object and replace Definition with the provided definition",
+                    WithPropertyName = "Definition",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
                         var systemUnderTest = A.Dummy<CreateDatabaseOp>();
 
-                        var referenceObject = A.Dummy<CreateDatabaseOp>().ThatIs(_ => !systemUnderTest.DatabaseConfiguration.IsEqualTo(_.DatabaseConfiguration));
+                        var referenceObject = A.Dummy<CreateDatabaseOp>().ThatIs(_ => !systemUnderTest.Definition.IsEqualTo(_.Definition));
 
                         var result = new SystemUnderTestDeepCloneWithValue<CreateDatabaseOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.DatabaseConfiguration,
+                            DeepCloneWithValue = referenceObject.Definition,
                         };
 
                         return result;
@@ -124,12 +124,12 @@ namespace Naos.SqlServer.Domain.Test
                     ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new CreateDatabaseOp[]
                     {
                         new CreateDatabaseOp(
-                                ReferenceObjectForEquatableTestScenarios.DatabaseConfiguration),
+                                ReferenceObjectForEquatableTestScenarios.Definition),
                     },
                     ObjectsThatAreNotEqualToReferenceObject = new CreateDatabaseOp[]
                     {
                         new CreateDatabaseOp(
-                                A.Dummy<CreateDatabaseOp>().Whose(_ => !_.DatabaseConfiguration.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DatabaseConfiguration)).DatabaseConfiguration),
+                                A.Dummy<CreateDatabaseOp>().Whose(_ => !_.Definition.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Definition)).Definition),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -416,16 +416,16 @@ namespace Naos.SqlServer.Domain.Test
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
 
-                if (systemUnderTest.DatabaseConfiguration == null)
+                if (systemUnderTest.Definition == null)
                 {
-                    actual.DatabaseConfiguration.AsTest().Must().BeNull();
+                    actual.Definition.AsTest().Must().BeNull();
                 }
-                else if (!actual.DatabaseConfiguration.GetType().IsValueType)
+                else if (!actual.Definition.GetType().IsValueType)
                 {
                     // When the declared type is a reference type, we still have to check the runtime type.
                     // The object could be a boxed value type, which will fail this asseration because
                     // a deep clone of a value type object is the same object.
-                    actual.DatabaseConfiguration.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.DatabaseConfiguration);
+                    actual.Definition.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Definition);
                 }
             }
 
@@ -445,7 +445,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "DatabaseConfiguration" };
+                var propertyNames = new string[] { "Definition" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 

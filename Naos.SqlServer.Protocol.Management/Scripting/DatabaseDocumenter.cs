@@ -7,10 +7,9 @@
 namespace Naos.SqlServer.Protocol.Management
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
-
     using Microsoft.SqlServer.Management.Smo;
-
     using OBeautifulCode.Assertion.Recipes;
 
     /// <summary>
@@ -33,7 +32,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="UserDefinedDataType" />.
         /// </summary>
         /// <param name="userDefinedDataType">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(UserDefinedDataType userDefinedDataType)
         {
             new { userDefinedDataType }.AsArg().Must().NotBeNull();
@@ -68,7 +67,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="DatabaseRole" />.
         /// </summary>
         /// <param name="databaseRole">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(DatabaseRole databaseRole)
         {
             new { databaseRole }.AsArg().Must().NotBeNull();
@@ -88,7 +87,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="User" />.
         /// </summary>
         /// <param name="user">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(User user)
         {
             new { user }.AsArg().Must().NotBeNull();
@@ -108,7 +107,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="Index" />.
         /// </summary>
         /// <param name="index">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(Index index)
         {
             new { index }.AsArg().Must().NotBeNull();
@@ -158,7 +157,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="Check" />.
         /// </summary>
         /// <param name="check">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(Check check)
         {
             new { check }.AsArg().Must().NotBeNull();
@@ -178,7 +177,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="ParameterCollectionBase" />.
         /// </summary>
         /// <param name="parameters">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(ParameterCollectionBase parameters)
         {
             new { parameters }.AsArg().Must().NotBeNull();
@@ -217,7 +216,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="Trigger" />.
         /// </summary>
         /// <param name="trigger">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(Trigger trigger)
         {
             new { trigger }.AsArg().Must().NotBeNull();
@@ -240,7 +239,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="StoredProcedure" />.
         /// </summary>
         /// <param name="storedProcedure">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(StoredProcedure storedProcedure)
         {
             new { storedProcedure }.AsArg().Must().NotBeNull();
@@ -257,7 +256,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="UserDefinedFunction" />.
         /// </summary>
         /// <param name="userDefinedFunction">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(UserDefinedFunction userDefinedFunction)
         {
             new { userDefinedFunction }.AsArg().Must().NotBeNull();
@@ -276,7 +275,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="Table" />.
         /// </summary>
         /// <param name="table">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(Table table)
         {
             new { table }.AsArg().Must().NotBeNull();
@@ -293,7 +292,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="View" />.
         /// </summary>
         /// <param name="view">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(View view)
         {
             new { view }.AsArg().Must().NotBeNull();
@@ -310,7 +309,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="ForeignKey" />.
         /// </summary>
         /// <param name="foreignKey">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(ForeignKey foreignKey)
         {
             new { foreignKey }.AsArg().Must().NotBeNull();
@@ -360,7 +359,7 @@ namespace Naos.SqlServer.Protocol.Management
         /// Document a <see cref="ColumnCollection" />.
         /// </summary>
         /// <param name="columns">Object to document.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
+        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body", Justification = "Specifically using a multi-dimensional array.")]
         public void Document(ColumnCollection columns)
         {
             new { columns }.AsArg().Must().NotBeNull();

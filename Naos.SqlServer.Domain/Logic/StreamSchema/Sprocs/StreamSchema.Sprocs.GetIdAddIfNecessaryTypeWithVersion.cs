@@ -59,13 +59,13 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetIdAddIfNecessaryTypeWithVersion)}]");
 
-                    var parameters = new List<SqlParameterRepresentationBase>()
+                    var parameters = new List<SqlParameterDefinitionBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(
+                                         new SqlInputParameterDefinition<string>(
                                              nameof(InputParamName.AssemblyQualifiedNameWithVersion),
                                              Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType,
                                              assemblyQualifiedNameWithVersion),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.TypeWithVersion.Id.SqlDataType),
+                                         new SqlOutputParameterDefinition<int>(nameof(OutputParamName.Id), Tables.TypeWithVersion.Id.SqlDataType),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);

@@ -158,25 +158,25 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(PutRecord)}");
 
-                    var parameters = new List<SqlParameterRepresentationBase>()
+                    var parameters = new List<SqlParameterDefinitionBase>()
                                      {
-                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.SqlDataType, serializerRepresentation.Id),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.SqlDataType, identifierType?.IdWithoutVersion),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.SqlDataType, identifierType?.IdWithVersion),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.SqlDataType, objectType?.IdWithoutVersion),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.SqlDataType, objectType?.IdWithVersion),
-                                         new SqlInputParameterRepresentation<long?>(nameof(InputParamName.InternalRecordId), Tables.Record.Id.SqlDataType, internalRecordId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.SqlDataType, serializedObjectId),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.SqlDataType, serializedObjectString),
-                                         new SqlInputParameterRepresentation<byte[]>(nameof(InputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.SqlDataType, serializedObjectBytes),
-                                         new SqlInputParameterRepresentation<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.SqlDataType, objectDateTimeUtc),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
-                                         new SqlInputParameterRepresentation<ExistingRecordStrategy>(nameof(InputParamName.ExistingRecordStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordStrategy),
-                                         new SqlInputParameterRepresentation<int?>(nameof(InputParamName.RecordRetentionCount), new IntSqlDataTypeRepresentation(), recordRetentionCount),
-                                         new SqlInputParameterRepresentation<VersionMatchStrategy>(nameof(InputParamName.VersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), versionMatchStrategy),
-                                         new SqlOutputParameterRepresentation<long?>(nameof(OutputParamName.Id), Tables.Record.Id.SqlDataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.ExistingRecordIdsCsv), Tables.Record.TagIdsCsv.SqlDataType),
-                                         new SqlOutputParameterRepresentation<string>(nameof(OutputParamName.PrunedRecordIdsCsv), Tables.Record.TagIdsCsv.SqlDataType),
+                                         new SqlInputParameterDefinition<int>(nameof(InputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.SqlDataType, serializerRepresentation.Id),
+                                         new SqlInputParameterDefinition<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.SqlDataType, identifierType?.IdWithoutVersion),
+                                         new SqlInputParameterDefinition<int?>(nameof(InputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.SqlDataType, identifierType?.IdWithVersion),
+                                         new SqlInputParameterDefinition<int?>(nameof(InputParamName.ObjectTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.SqlDataType, objectType?.IdWithoutVersion),
+                                         new SqlInputParameterDefinition<int?>(nameof(InputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.SqlDataType, objectType?.IdWithVersion),
+                                         new SqlInputParameterDefinition<long?>(nameof(InputParamName.InternalRecordId), Tables.Record.Id.SqlDataType, internalRecordId),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.StringSerializedId), Tables.Record.StringSerializedId.SqlDataType, serializedObjectId),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.SqlDataType, serializedObjectString),
+                                         new SqlInputParameterDefinition<byte[]>(nameof(InputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.SqlDataType, serializedObjectBytes),
+                                         new SqlInputParameterDefinition<DateTime?>(nameof(InputParamName.ObjectDateTimeUtc), Tables.Record.ObjectDateTimeUtc.SqlDataType, objectDateTimeUtc),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
+                                         new SqlInputParameterDefinition<ExistingRecordStrategy>(nameof(InputParamName.ExistingRecordStrategy), new StringSqlDataTypeRepresentation(false, 50), existingRecordStrategy),
+                                         new SqlInputParameterDefinition<int?>(nameof(InputParamName.RecordRetentionCount), new IntSqlDataTypeRepresentation(), recordRetentionCount),
+                                         new SqlInputParameterDefinition<VersionMatchStrategy>(nameof(InputParamName.VersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), versionMatchStrategy),
+                                         new SqlOutputParameterDefinition<long?>(nameof(OutputParamName.Id), Tables.Record.Id.SqlDataType),
+                                         new SqlOutputParameterDefinition<string>(nameof(OutputParamName.ExistingRecordIdsCsv), Tables.Record.TagIdsCsv.SqlDataType),
+                                         new SqlOutputParameterDefinition<string>(nameof(OutputParamName.PrunedRecordIdsCsv), Tables.Record.TagIdsCsv.SqlDataType),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);

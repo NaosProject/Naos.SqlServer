@@ -7,7 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
-    using System.Linq;
 
     public static partial class StreamSchema
     {
@@ -26,37 +25,37 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Gets the identifier.
                 /// </summary>
-                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
+                public static ColumnDefinition Id => new ColumnDefinition(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the record identifier.
                 /// </summary>
-                public static ColumnRepresentation RecordId => new ColumnRepresentation(nameof(RecordId), new BigIntSqlDataTypeRepresentation());
+                public static ColumnDefinition RecordId => new ColumnDefinition(nameof(RecordId), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the concern.
                 /// </summary>
-                public static ColumnRepresentation Concern => new ColumnRepresentation(nameof(Concern), new StringSqlDataTypeRepresentation(true, 450));
+                public static ColumnDefinition Concern => new ColumnDefinition(nameof(Concern), new StringSqlDataTypeRepresentation(true, 450));
 
                 /// <summary>
                 /// Gets the status.
                 /// </summary>
-                public static ColumnRepresentation Status => new ColumnRepresentation(nameof(Status), new StringSqlDataTypeRepresentation(false, 50));
+                public static ColumnDefinition Status => new ColumnDefinition(nameof(Status), new StringSqlDataTypeRepresentation(false, 50));
 
                 /// <summary>
                 /// Gets the details.
                 /// </summary>
-                public static ColumnRepresentation Details => new ColumnRepresentation(nameof(Details), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
+                public static ColumnDefinition Details => new ColumnDefinition(nameof(Details), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
                 /// Gets the entry created in UTC.
                 /// </summary>
-                public static ColumnRepresentation RecordCreatedUtc => new ColumnRepresentation(nameof(RecordCreatedUtc), new UtcDateTimeSqlDataTypeRepresentation());
+                public static ColumnDefinition RecordCreatedUtc => new ColumnDefinition(nameof(RecordCreatedUtc), new UtcDateTimeSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the table.
                 /// </summary>
-                public static TableRepresentation Table => new TableRepresentation(
+                public static TableDefinition Table => new TableDefinition(
                     nameof(Handling),
                     new[]
                     {
@@ -66,7 +65,7 @@ namespace Naos.SqlServer.Domain
                         Status,
                         Details,
                         RecordCreatedUtc,
-                    }.ToDictionary(k => k.Name, v => v));
+                    });
 
                 /// <summary>
                 /// Builds the creation script for Handling table.

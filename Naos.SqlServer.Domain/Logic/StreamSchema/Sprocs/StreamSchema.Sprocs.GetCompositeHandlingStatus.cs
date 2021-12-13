@@ -66,11 +66,11 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetCompositeHandlingStatus)}]");
 
-                    var parameters = new List<SqlParameterRepresentationBase>
+                    var parameters = new List<SqlParameterDefinitionBase>
                                      {
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.SqlDataType, concern),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
-                                         new SqlOutputParameterRepresentation<HandlingStatus>(nameof(OutputParamName.Status), Tables.Handling.Status.SqlDataType),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.SqlDataType, concern),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
+                                         new SqlOutputParameterDefinition<HandlingStatus>(nameof(OutputParamName.Status), Tables.Handling.Status.SqlDataType),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);

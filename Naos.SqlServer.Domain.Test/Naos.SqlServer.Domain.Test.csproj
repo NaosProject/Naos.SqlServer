@@ -263,6 +263,17 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Models\Classes\Definition\ColumnDefinitionTest.cs" />
+    <Compile Include="Models\Classes\Definition\ColumnDefinitionTest.designer.cs">
+      <DependentUpon>ColumnDefinitionTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\DatabaseDefinitionTest.cs" />
+    <Compile Include="Models\Classes\Definition\DatabaseDefinitionTest.designer.cs">
+      <DependentUpon>DatabaseDefinitionTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResultTest.designer.cs">
+      <DependentUpon>StoredProcedureExecutionResultTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Operations\GetOrAddIdentifiedSerializerRepresentationOpTest.cs" />
     <Compile Include="Operations\GetOrAddIdentifiedSerializerRepresentationOpTest.designer.cs">
       <DependentUpon>GetOrAddIdentifiedSerializerRepresentationOpTest.cs</DependentUpon>
@@ -279,13 +290,9 @@
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\BinarySqlDataTypeRepresentationTest.designer.cs">
       <DependentUpon>BinarySqlDataTypeRepresentationTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\SchemaRepresentation\ColumnDescriptionTest.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\ColumnDescriptionTest.designer.cs">
+    <Compile Include="Models\Classes\Management\ColumnDescriptionTest.cs" />
+    <Compile Include="Models\Classes\Management\ColumnDescriptionTest.designer.cs">
       <DependentUpon>ColumnDescriptionTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\SchemaRepresentation\ColumnRepresentationTest.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\ColumnRepresentationTest.designer.cs">
-      <DependentUpon>ColumnRepresentationTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ConsoleAbstraction.cs" />
     <Compile Include="Operations\CreateDatabaseOpTest.cs" />
@@ -295,10 +302,6 @@
     <Compile Include="Operations\CreateStreamUserOpTest.cs" />
     <Compile Include="Operations\CreateStreamUserOpTest.designer.cs">
       <DependentUpon>CreateStreamUserOpTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\Management\DatabaseConfigurationTest.cs" />
-    <Compile Include="Models\Classes\Management\DatabaseConfigurationTest.designer.cs">
-      <DependentUpon>DatabaseConfigurationTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\DecimalSqlDataTypeRepresentationTest.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\DecimalSqlDataTypeRepresentationTest.designer.cs">
@@ -334,8 +337,8 @@
     <Compile Include="Models\Classes\Management\RestoreSqlServerDatabaseDetailsTest.designer.cs">
       <DependentUpon>RestoreSqlServerDatabaseDetailsTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Scripting\ScriptedObjectTest.cs" />
-    <Compile Include="Models\Classes\Scripting\ScriptedObjectTest.designer.cs">
+    <Compile Include="Models\Classes\Management\ScriptedObjectTest.cs" />
+    <Compile Include="Models\Classes\Management\ScriptedObjectTest.designer.cs">
       <DependentUpon>ScriptedObjectTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\ProjectInfo.cs" />
@@ -346,33 +349,33 @@
       <DependentUpon>SqlDataTypeRepresentationBaseTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Logic\SqlInjectorCheckerTest.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Input\SqlInputParameterRepresentationBaseTest.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Input\SqlInputParameterRepresentationBaseTest.designer.cs">
-      <DependentUpon>SqlInputParameterRepresentationBaseTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\Input\SqlInputParameterRepresentation{TValue}Test.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Input\SqlInputParameterRepresentation{TValue}Test.designer.cs">
-      <DependentUpon>SqlInputParameterRepresentation{TValue}Test.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentationBaseTest.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentationBaseTest.designer.cs">
-      <DependentUpon>SqlOutputParameterRepresentationBaseTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentationWithResult{TValue}Test.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentationWithResult{TValue}Test.designer.cs">
-      <DependentUpon>SqlOutputParameterRepresentationWithResult{TValue}Test.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentation{TValue}Test.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\Output\SqlOutputParameterRepresentation{TValue}Test.designer.cs">
-      <DependentUpon>SqlOutputParameterRepresentation{TValue}Test.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\ParameterRepresentation\SqlParameterRepresentationBaseTest.cs" />
-    <Compile Include="Models\Classes\ParameterRepresentation\SqlParameterRepresentationBaseTest.designer.cs">
-      <DependentUpon>SqlParameterRepresentationBaseTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\Legacy\SqlServerConnectionDefinitionTest.cs" />
-    <Compile Include="Models\Classes\Legacy\SqlServerConnectionDefinitionTest.designer.cs">
+    <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinitionTest.cs" />
+    <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinitionTest.designer.cs">
       <DependentUpon>SqlServerConnectionDefinitionTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinitionBaseTest.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinitionBaseTest.designer.cs">
+      <DependentUpon>SqlInputParameterDefinitionBaseTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinition{TValue}Test.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinition{TValue}Test.designer.cs">
+      <DependentUpon>SqlInputParameterDefinition{TValue}Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinitionBaseTest.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinitionBaseTest.designer.cs">
+      <DependentUpon>SqlOutputParameterDefinitionBaseTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinition{TValue}Test.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinition{TValue}Test.designer.cs">
+      <DependentUpon>SqlOutputParameterDefinition{TValue}Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}Test.cs" />
+    <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}Test.designer.cs">
+      <DependentUpon>SqlOutputParameterResult{TValue}Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\SqlParameterDefinitionBaseTest.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\SqlParameterDefinitionBaseTest.designer.cs">
+      <DependentUpon>SqlParameterDefinitionBaseTest.cs</DependentUpon>
     </Compile>
     <Compile Include="SqlServerDummyFactory.cs" />
     <Compile Include="SqlServerDummyFactory.designer.cs">
@@ -386,25 +389,18 @@
     <Compile Include="Models\Classes\ResourceLocation\SqlServerLocatorTest.designer.cs">
       <DependentUpon>SqlServerLocatorTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Config\SqlStreamConfigObjectTest.cs" />
-    <Compile Include="Models\Classes\Config\SqlStreamConfigObjectTest.designer.cs">
+    <Compile Include="Models\Classes\Stream\SqlStreamConfigObjectTest.cs" />
+    <Compile Include="Models\Classes\Stream\SqlStreamConfigObjectTest.designer.cs">
       <DependentUpon>SqlStreamConfigObjectTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResultTest.cs" />
-    <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResultTest.designer.cs">
-      <DependentUpon>StoredProcedureExecutionResultTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\StringSqlDataTypeRepresentationTest.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\StringSqlDataTypeRepresentationTest.designer.cs">
       <DependentUpon>StringSqlDataTypeRepresentationTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\SchemaRepresentation\TableDescriptionTest.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\TableDescriptionTest.designer.cs">
+    <Compile Include="Models\Classes\Management\TableDescriptionTest.cs" />
+    <Compile Include="Models\Classes\Management\TableDescriptionTest.designer.cs">
       <DependentUpon>TableDescriptionTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\SchemaRepresentation\TableRepresentationTest.cs" />
-    <Compile Include="Models\Classes\SchemaRepresentation\TableRepresentationTest.designer.cs">
-      <DependentUpon>TableRepresentationTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Operations\UpdateStreamStoredProceduresOpTest.cs" />
     <Compile Include="Operations\UpdateStreamStoredProceduresOpTest.designer.cs">
@@ -423,6 +419,10 @@
       <DependentUpon>XmlSqlDataTypeRepresentationTest.cs</DependentUpon>
     </Compile>
     <AdditionalFiles Include=".analyzers\stylecop.json" />
+    <Compile Include="Models\Classes\Definition\TableDefinitionTest.cs" />
+    <Compile Include="Models\Classes\Definition\TableDefinitionTest.designer.cs">
+      <DependentUpon>TableDefinitionTest.cs</DependentUpon>
+    </Compile>
     <None Include=".analyzers\test.ruleset" />
     <None Include="DummyFactory.recipe-nuspec" />
     <None Include="packages.config" />
@@ -448,6 +448,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Classes\Scripting\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

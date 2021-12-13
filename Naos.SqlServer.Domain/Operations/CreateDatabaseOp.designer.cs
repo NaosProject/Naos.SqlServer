@@ -69,7 +69,7 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.DatabaseConfiguration.IsEqualTo(other.DatabaseConfiguration);
+            var result = this.Definition.IsEqualTo(other.Definition);
 
             return result;
         }
@@ -79,17 +79,17 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.DatabaseConfiguration)
+            .Hash(this.Definition)
             .Value;
 
         /// <inheritdoc />
         public new CreateDatabaseOp DeepClone() => (CreateDatabaseOp)this.DeepCloneInternal();
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="DatabaseConfiguration" />.
+        /// Deep clones this object with a new <see cref="Definition" />.
         /// </summary>
-        /// <param name="databaseConfiguration">The new <see cref="DatabaseConfiguration" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="CreateDatabaseOp" /> using the specified <paramref name="databaseConfiguration" /> for <see cref="DatabaseConfiguration" /> and a deep clone of every other property.</returns>
+        /// <param name="definition">The new <see cref="Definition" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="CreateDatabaseOp" /> using the specified <paramref name="definition" /> for <see cref="Definition" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -107,10 +107,10 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public CreateDatabaseOp DeepCloneWithDatabaseConfiguration(DatabaseConfiguration databaseConfiguration)
+        public CreateDatabaseOp DeepCloneWithDefinition(DatabaseDefinition definition)
         {
             var result = new CreateDatabaseOp(
-                                 databaseConfiguration);
+                                 definition);
 
             return result;
         }
@@ -120,7 +120,7 @@ namespace Naos.SqlServer.Domain
         protected override OperationBase DeepCloneInternal()
         {
             var result = new CreateDatabaseOp(
-                                 this.DatabaseConfiguration?.DeepClone());
+                                 this.Definition?.DeepClone());
 
             return result;
         }
@@ -129,7 +129,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.CreateDatabaseOp: DatabaseConfiguration = {this.DatabaseConfiguration?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.CreateDatabaseOp: Definition = {this.Definition?.ToString() ?? "<null>"}.");
 
             return result;
         }

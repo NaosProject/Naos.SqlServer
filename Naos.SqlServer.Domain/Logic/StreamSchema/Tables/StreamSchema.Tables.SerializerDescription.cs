@@ -7,7 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
-    using System.Linq;
 
     public static partial class StreamSchema
     {
@@ -26,61 +25,61 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Gets the identifier.
                 /// </summary>
-                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new IntSqlDataTypeRepresentation());
+                public static ColumnDefinition Id => new ColumnDefinition(nameof(Id), new IntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the serialization kind.
                 /// </summary>
-                public static ColumnRepresentation SerializationKind => new ColumnRepresentation(
+                public static ColumnDefinition SerializationKind => new ColumnDefinition(
                     nameof(SerializationKind),
                     new StringSqlDataTypeRepresentation(false, 50));
 
                 /// <summary>
                 /// Gets the serialization format.
                 /// </summary>
-                public static ColumnRepresentation SerializationFormat => new ColumnRepresentation(
+                public static ColumnDefinition SerializationFormat => new ColumnDefinition(
                     nameof(SerializationFormat),
                     new StringSqlDataTypeRepresentation(false, 50));
 
                 /// <summary>
                 /// Gets the serialization configuration type without version identifier.
                 /// </summary>
-                public static ColumnRepresentation SerializationConfigurationTypeWithoutVersionId => new ColumnRepresentation(
+                public static ColumnDefinition SerializationConfigurationTypeWithoutVersionId => new ColumnDefinition(
                     nameof(SerializationConfigurationTypeWithoutVersionId),
                     new IntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the serialization configuration type with version identifier.
                 /// </summary>
-                public static ColumnRepresentation SerializationConfigurationTypeWithVersionId => new ColumnRepresentation(
+                public static ColumnDefinition SerializationConfigurationTypeWithVersionId => new ColumnDefinition(
                     nameof(SerializationConfigurationTypeWithVersionId),
                     new IntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the kind of the compression.
                 /// </summary>
-                public static ColumnRepresentation CompressionKind => new ColumnRepresentation(
+                public static ColumnDefinition CompressionKind => new ColumnDefinition(
                     nameof(CompressionKind),
                     new StringSqlDataTypeRepresentation(false, 50));
 
                 /// <summary>
                 /// Gets the unregistered type encountered strategy.
                 /// </summary>
-                public static ColumnRepresentation UnregisteredTypeEncounteredStrategy => new ColumnRepresentation(
+                public static ColumnDefinition UnregisteredTypeEncounteredStrategy => new ColumnDefinition(
                     nameof(UnregisteredTypeEncounteredStrategy),
                     new StringSqlDataTypeRepresentation(false, 50));
 
                 /// <summary>
                 /// Gets the record created UTC.
                 /// </summary>
-                public static ColumnRepresentation RecordCreatedUtc => new ColumnRepresentation(
+                public static ColumnDefinition RecordCreatedUtc => new ColumnDefinition(
                     nameof(RecordCreatedUtc),
                     new UtcDateTimeSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the table.
                 /// </summary>
-                public static TableRepresentation Table => new TableRepresentation(
+                public static TableDefinition Table => new TableDefinition(
                     nameof(SerializerRepresentation),
                     new[]
                     {
@@ -92,7 +91,7 @@ namespace Naos.SqlServer.Domain
                         CompressionKind,
                         UnregisteredTypeEncounteredStrategy,
                         RecordCreatedUtc,
-                    }.ToDictionary(k => k.Name, v => v));
+                    });
 
                 /// <summary>
                 /// Builds the creation script for SerializerRepresentation table.

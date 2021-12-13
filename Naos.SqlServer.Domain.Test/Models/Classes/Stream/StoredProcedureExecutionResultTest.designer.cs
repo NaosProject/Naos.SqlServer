@@ -99,7 +99,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new StoredProcedureExecutionResult(
                                              referenceObject.Operation,
-                                             new Dictionary<string, ISqlOutputParameterRepresentationWithResult>());
+                                             new Dictionary<string, ISqlOutputParameterResult>());
 
                         return result;
                     },

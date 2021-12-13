@@ -75,22 +75,22 @@ namespace Naos.SqlServer.Domain
                     int serializerRepresentationId)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetSerializerRepresentationFromId)}");
-                    var parameters = new List<SqlParameterRepresentationBase>()
+                    var parameters = new List<SqlParameterDefinitionBase>()
                                      {
-                                         new SqlInputParameterRepresentation<int>(
+                                         new SqlInputParameterDefinition<int>(
                                              nameof(InputParamName.Id),
                                              Tables.SerializerRepresentation.Id.SqlDataType,
                                              serializerRepresentationId),
-                                         new SqlOutputParameterRepresentation<SerializationKind>(
+                                         new SqlOutputParameterDefinition<SerializationKind>(
                                              nameof(OutputParamName.SerializationKind),
                                              Tables.SerializerRepresentation.SerializationKind.SqlDataType),
-                                         new SqlOutputParameterRepresentation<int>(
+                                         new SqlOutputParameterDefinition<int>(
                                              nameof(OutputParamName.ConfigTypeWithVersionId),
                                              Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.SqlDataType),
-                                         new SqlOutputParameterRepresentation<CompressionKind>(
+                                         new SqlOutputParameterDefinition<CompressionKind>(
                                              nameof(OutputParamName.CompressionKind),
                                              Tables.SerializerRepresentation.CompressionKind.SqlDataType),
-                                         new SqlOutputParameterRepresentation<SerializationFormat>(
+                                         new SqlOutputParameterDefinition<SerializationFormat>(
                                              nameof(OutputParamName.SerializationFormat),
                                              Tables.SerializerRepresentation.SerializationFormat.SqlDataType),
                                      };

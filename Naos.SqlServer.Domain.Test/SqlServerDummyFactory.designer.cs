@@ -61,6 +61,11 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<int>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ColumnDefinition(
+                                 A.Dummy<string>(),
+                                 A.Dummy<SqlDataTypeRepresentationBase>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new ColumnDescription(
                                  A.Dummy<string>(),
                                  A.Dummy<int>(),
@@ -69,13 +74,8 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new ColumnRepresentation(
-                                 A.Dummy<string>(),
-                                 A.Dummy<SqlDataTypeRepresentationBase>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateDatabaseOp(
-                                 A.Dummy<DatabaseConfiguration>()));
+                                 A.Dummy<DatabaseDefinition>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateStreamUserOp(
@@ -84,7 +84,7 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<IReadOnlyCollection<TypeRepresentation>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new DatabaseConfiguration(
+                () => new DatabaseDefinition(
                                  A.Dummy<string>(),
                                  A.Dummy<DatabaseType>(),
                                  A.Dummy<RecoveryMode>(),
@@ -111,7 +111,7 @@ namespace Naos.SqlServer.Domain.Test
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new ExecuteStoredProcedureOp(
                                  A.Dummy<string>(),
-                                 A.Dummy<IReadOnlyDictionary<string, SqlParameterRepresentationBase>>()));
+                                 A.Dummy<IReadOnlyList<SqlParameterDefinitionBase>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new GetOrAddIdentifiedSerializerRepresentationOp(
@@ -183,7 +183,7 @@ namespace Naos.SqlServer.Domain.Test
                 });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlInputParameterRepresentation<Version>(
+                () => new SqlInputParameterDefinition<Version>(
                                  A.Dummy<string>(),
                                  A.Dummy<SqlDataTypeRepresentationBase>(),
                                  A.Dummy<Version>()));
@@ -193,20 +193,20 @@ namespace Naos.SqlServer.Domain.Test
                 {
                     var availableTypes = new[]
                     {
-                        typeof(SqlInputParameterRepresentation<Version>)
+                        typeof(SqlInputParameterDefinition<Version>)
                     };
 
                     var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
 
                     var randomType = availableTypes[randomIndex];
 
-                    var result = (SqlInputParameterRepresentationBase)AD.ummy(randomType);
+                    var result = (SqlInputParameterDefinitionBase)AD.ummy(randomType);
 
                     return result;
                 });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterRepresentation<Version>(
+                () => new SqlOutputParameterDefinition<Version>(
                                  A.Dummy<string>(),
                                  A.Dummy<SqlDataTypeRepresentationBase>()));
 
@@ -215,23 +215,21 @@ namespace Naos.SqlServer.Domain.Test
                 {
                     var availableTypes = new[]
                     {
-                        typeof(SqlOutputParameterRepresentation<Version>),
-                        typeof(SqlOutputParameterRepresentationWithResult<Version>)
+                        typeof(SqlOutputParameterDefinition<Version>)
                     };
 
                     var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
 
                     var randomType = availableTypes[randomIndex];
 
-                    var result = (SqlOutputParameterRepresentationBase)AD.ummy(randomType);
+                    var result = (SqlOutputParameterDefinitionBase)AD.ummy(randomType);
 
                     return result;
                 });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterRepresentationWithResult<Version>(
-                                 A.Dummy<string>(),
-                                 A.Dummy<SqlDataTypeRepresentationBase>(),
+                () => new SqlOutputParameterResult<Version>(
+                                 A.Dummy<SqlOutputParameterDefinition<Version>>(),
                                  A.Dummy<Version>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
@@ -239,16 +237,15 @@ namespace Naos.SqlServer.Domain.Test
                 {
                     var availableTypes = new[]
                     {
-                        typeof(SqlInputParameterRepresentation<Version>),
-                        typeof(SqlOutputParameterRepresentation<Version>),
-                        typeof(SqlOutputParameterRepresentationWithResult<Version>)
+                        typeof(SqlInputParameterDefinition<Version>),
+                        typeof(SqlOutputParameterDefinition<Version>)
                     };
 
                     var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
 
                     var randomType = availableTypes[randomIndex];
 
-                    var result = (SqlParameterRepresentationBase)AD.ummy(randomType);
+                    var result = (SqlParameterDefinitionBase)AD.ummy(randomType);
 
                     return result;
                 });
@@ -285,7 +282,7 @@ namespace Naos.SqlServer.Domain.Test
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new StoredProcedureExecutionResult(
                                  A.Dummy<ExecuteStoredProcedureOp>(),
-                                 A.Dummy<IReadOnlyDictionary<string, ISqlOutputParameterRepresentationWithResult>>()));
+                                 A.Dummy<IReadOnlyDictionary<string, ISqlOutputParameterResult>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new StringSqlDataTypeRepresentation(
@@ -293,16 +290,16 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<int>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new TableDefinition(
+                                 A.Dummy<string>(),
+                                 A.Dummy<IReadOnlyList<ColumnDefinition>>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new TableDescription(
                                  A.Dummy<string>(),
                                  A.Dummy<string>(),
                                  A.Dummy<string>(),
                                  A.Dummy<IReadOnlyCollection<ColumnDescription>>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new TableRepresentation(
-                                 A.Dummy<string>(),
-                                 A.Dummy<IReadOnlyDictionary<string, ColumnRepresentation>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new UpdateStreamStoredProceduresOp(

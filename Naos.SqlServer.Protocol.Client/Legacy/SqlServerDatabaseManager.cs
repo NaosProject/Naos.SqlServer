@@ -163,7 +163,7 @@ namespace Naos.SqlServer.Protocol.Client
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -189,7 +189,7 @@ namespace Naos.SqlServer.Protocol.Client
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -207,43 +207,43 @@ namespace Naos.SqlServer.Protocol.Client
         /// Create a new database using provided definition.
         /// </summary>
         /// <param name="connectionString">Connection string to the intended database server.</param>
-        /// <param name="configuration">Detailed information about the database.</param>
+        /// <param name="definition">Detailed information about the database.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         public static void Create(
             string connectionString,
-            DatabaseConfiguration configuration,
+            DatabaseDefinition definition,
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { configuration }.AsArg().Must().NotBeNull();
+            new { definition }.AsArg().Must().NotBeNull();
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
-            ThrowIfBadOnCreateOrModify(configuration);
-            var databaseFileMaxSize = configuration.DataFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{configuration.DataFileMaxSizeInKb}KB");
-            var logFileMaxSize = configuration.LogFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{configuration.LogFileMaxSizeInKb}KB");
+            ThrowIfBadOnCreateOrModify(definition);
+            var databaseFileMaxSize = definition.DataFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.DataFileMaxSizeInKb}KB");
+            var logFileMaxSize = definition.LogFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.LogFileMaxSizeInKb}KB");
             var commandText =
-                Invariant($@"CREATE DATABASE {configuration.DatabaseName}
+                Invariant($@"CREATE DATABASE {definition.DatabaseName}
                         ON
-                        ( NAME = '{configuration.DataFileLogicalName}',
-                        FILENAME = '{configuration.DataFilePath}',
-                        SIZE = {configuration.DataFileCurrentSizeInKb}KB,
+                        ( NAME = '{definition.DataFileLogicalName}',
+                        FILENAME = '{definition.DataFilePath}',
+                        SIZE = {definition.DataFileCurrentSizeInKb}KB,
                         MAXSIZE = {databaseFileMaxSize},
-                        FILEGROWTH = {configuration.DataFileGrowthSizeInKb}KB )
+                        FILEGROWTH = {definition.DataFileGrowthSizeInKb}KB )
                         LOG ON
-                        ( NAME = '{configuration.LogFileLogicalName}',
-                        FILENAME = '{configuration.LogFilePath}',
-                        SIZE = {configuration.LogFileCurrentSizeInKb}KB,
+                        ( NAME = '{definition.LogFileLogicalName}',
+                        FILENAME = '{definition.LogFilePath}',
+                        SIZE = {definition.LogFileCurrentSizeInKb}KB,
                         MAXSIZE = {logFileMaxSize},
-                        FILEGROWTH = {configuration.LogFileGrowthSizeInKb}KB )");
+                        FILEGROWTH = {definition.LogFileGrowthSizeInKb}KB )");
 
             void Logic(SqlConnection connection)
             {
                 connection.ExecuteNonQuery(commandText, (int)timeout.TotalSeconds);
 
-                if (configuration.RecoveryMode != RecoveryMode.Unspecified)
+                if (definition.RecoveryMode != RecoveryMode.Unspecified)
                 {
-                    SetRecoveryModeAsync(connection, configuration.DatabaseName, configuration.RecoveryMode, timeout).Wait();
+                    SetRecoveryModeAsync(connection, definition.DatabaseName, definition.RecoveryMode, timeout).Wait();
                 }
             }
 
@@ -297,7 +297,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Connection string to the intended database server.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         /// <returns>All databases from server.</returns>
-        public static DatabaseConfiguration[] Retrieve(
+        public static DatabaseDefinition[] Retrieve(
             string connectionString,
             TimeSpan timeout = default)
         {
@@ -330,7 +330,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             var propertyBagSerializer = new ObcPropertyBagSerializer();
 
-            var result = new DatabaseConfiguration[0];
+            var result = new DatabaseDefinition[0];
 
             void Logic(SqlConnection connection)
             {
@@ -353,7 +353,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                         }
                                                     });
 
-                                            return propertyBagSerializer.Deserialize<DatabaseConfiguration>(enumConvertedDictionary);
+                                            return propertyBagSerializer.Deserialize<DatabaseDefinition>(enumConvertedDictionary);
                                         })
                                 .ToArray();
             }
@@ -367,109 +367,109 @@ namespace Naos.SqlServer.Protocol.Client
         /// Update a database to the new definition.
         /// </summary>
         /// <param name="connectionString">Connection string to the intended database server.</param>
-        /// <param name="currentConfiguration">Detailed information about how the database is.</param>
-        /// <param name="newConfiguration">Detailed information about how the database should look after the update.</param>
+        /// <param name="currentDefinition">Detailed information about how the database is.</param>
+        /// <param name="newDefinition">Detailed information about how the database should look after the update.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         public static void Update(
             string connectionString,
-            DatabaseConfiguration currentConfiguration,
-            DatabaseConfiguration newConfiguration,
+            DatabaseDefinition currentDefinition,
+            DatabaseDefinition newDefinition,
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { currentConfiguration }.AsArg().Must().NotBeNull();
-            new { newConfiguration }.AsArg().Must().NotBeNull();
+            new { currentDefinition }.AsArg().Must().NotBeNull();
+            new { newDefinition }.AsArg().Must().NotBeNull();
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
-            ThrowIfBadOnCreateOrModify(currentConfiguration);
-            ThrowIfBadOnCreateOrModify(newConfiguration);
+            ThrowIfBadOnCreateOrModify(currentDefinition);
+            ThrowIfBadOnCreateOrModify(newDefinition);
 
             void Logic(SqlConnection connection)
             {
-                PutDatabaseInSingleUserMode(connection, currentConfiguration.DatabaseName, timeout);
+                PutDatabaseInSingleUserMode(connection, currentDefinition.DatabaseName, timeout);
 
                 try
                 {
-                    if (currentConfiguration.DatabaseName != newConfiguration.DatabaseName)
+                    if (currentDefinition.DatabaseName != newDefinition.DatabaseName)
                     {
-                        var renameDatabaseText = @"ALTER DATABASE " + currentConfiguration.DatabaseName + " MODIFY NAME = "
-                                                 + newConfiguration.DatabaseName;
+                        var renameDatabaseText = @"ALTER DATABASE " + currentDefinition.DatabaseName + " MODIFY NAME = "
+                                                 + newDefinition.DatabaseName;
                         connection.ExecuteNonQuery(renameDatabaseText, (int)timeout.TotalSeconds);
                     }
 
-                    if ((currentConfiguration.DataFileLogicalName != newConfiguration.DataFileLogicalName)
-                        && (currentConfiguration.DataFilePath != newConfiguration.DataFilePath))
+                    if ((currentDefinition.DataFileLogicalName != newDefinition.DataFileLogicalName)
+                        && (currentDefinition.DataFilePath != newDefinition.DataFilePath))
                     {
                         var updateDataFileText =
-                            Invariant($@"ALTER DATABASE {newConfiguration.DatabaseName} MODIFY FILE (
-                        NAME = '{currentConfiguration.DataFileLogicalName}',
-                        NEWNAME = '{newConfiguration.DataFileLogicalName}',
-                        FILENAME = '{newConfiguration.DataFilePath}')");
+                            Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (
+                        NAME = '{currentDefinition.DataFileLogicalName}',
+                        NEWNAME = '{newDefinition.DataFileLogicalName}',
+                        FILENAME = '{newDefinition.DataFilePath}')");
                         connection.ExecuteNonQuery(updateDataFileText, (int)timeout.TotalSeconds);
                     }
 
-                    if ((currentConfiguration.LogFileLogicalName != newConfiguration.LogFileLogicalName)
-                        && (currentConfiguration.LogFilePath != newConfiguration.LogFilePath))
+                    if ((currentDefinition.LogFileLogicalName != newDefinition.LogFileLogicalName)
+                        && (currentDefinition.LogFilePath != newDefinition.LogFilePath))
                     {
                         var updateLogFileText =
-                            Invariant($@"ALTER DATABASE {newConfiguration.DatabaseName} MODIFY FILE (
-                        NAME = '{currentConfiguration.LogFileLogicalName}',
-                        NEWNAME = '{newConfiguration.LogFileLogicalName}',
-                        FILENAME = '{newConfiguration.LogFilePath}')");
+                            Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (
+                        NAME = '{currentDefinition.LogFileLogicalName}',
+                        NEWNAME = '{newDefinition.LogFileLogicalName}',
+                        FILENAME = '{newDefinition.LogFilePath}')");
                         connection.ExecuteNonQuery(updateLogFileText, (int)timeout.TotalSeconds);
                     }
 
-                    if ((newConfiguration.RecoveryMode != RecoveryMode.Unspecified) && (currentConfiguration.RecoveryMode != newConfiguration.RecoveryMode))
+                    if ((newDefinition.RecoveryMode != RecoveryMode.Unspecified) && (currentDefinition.RecoveryMode != newDefinition.RecoveryMode))
                     {
-                        SetRecoveryModeAsync(connection, newConfiguration.DatabaseName, newConfiguration.RecoveryMode, timeout).Wait();
+                        SetRecoveryModeAsync(connection, newDefinition.DatabaseName, newDefinition.RecoveryMode, timeout).Wait();
                     }
 
-                    if (newConfiguration.DataFileMaxSizeInKb != currentConfiguration.DataFileMaxSizeInKb)
+                    if (newDefinition.DataFileMaxSizeInKb != currentDefinition.DataFileMaxSizeInKb)
                     {
-                        var maxSize = newConfiguration.DataFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newConfiguration.DataFileMaxSizeInKb}KB");
-                        var updateDataFileMaxSizeText = Invariant($@"ALTER DATABASE {newConfiguration.DatabaseName} MODIFY FILE (NAME = '{newConfiguration.DataFileLogicalName}', MAXSIZE = {maxSize})");
+                        var maxSize = newDefinition.DataFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.DataFileMaxSizeInKb}KB");
+                        var updateDataFileMaxSizeText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.DataFileLogicalName}', MAXSIZE = {maxSize})");
                         connection.ExecuteNonQuery(updateDataFileMaxSizeText, (int)timeout.TotalSeconds);
                     }
 
-                    if (newConfiguration.DataFileCurrentSizeInKb != currentConfiguration.DataFileCurrentSizeInKb)
+                    if (newDefinition.DataFileCurrentSizeInKb != currentDefinition.DataFileCurrentSizeInKb)
                     {
-                        var updateDataFileCurrentSizeText = Invariant($@"ALTER DATABASE {newConfiguration.DatabaseName} MODIFY FILE (NAME = '{newConfiguration.DataFileLogicalName}', SIZE = {newConfiguration.DataFileCurrentSizeInKb}KB)");
+                        var updateDataFileCurrentSizeText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.DataFileLogicalName}', SIZE = {newDefinition.DataFileCurrentSizeInKb}KB)");
                         connection.ExecuteNonQuery(updateDataFileCurrentSizeText, (int)timeout.TotalSeconds);
                     }
 
-                    if (newConfiguration.DataFileGrowthSizeInKb != currentConfiguration.DataFileGrowthSizeInKb)
+                    if (newDefinition.DataFileGrowthSizeInKb != currentDefinition.DataFileGrowthSizeInKb)
                     {
-                        var updateDataFileGrowthText = Invariant($@"ALTER DATABASE {newConfiguration.DatabaseName} MODIFY FILE (NAME = '{newConfiguration.DataFileLogicalName}', FILEGROWTH = {newConfiguration.DataFileGrowthSizeInKb}KB)");
+                        var updateDataFileGrowthText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.DataFileLogicalName}', FILEGROWTH = {newDefinition.DataFileGrowthSizeInKb}KB)");
                         connection.ExecuteNonQuery(updateDataFileGrowthText, (int)timeout.TotalSeconds);
                     }
 
-                    if (newConfiguration.LogFileMaxSizeInKb != currentConfiguration.LogFileMaxSizeInKb)
+                    if (newDefinition.LogFileMaxSizeInKb != currentDefinition.LogFileMaxSizeInKb)
                     {
-                        var maxSize = newConfiguration.LogFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newConfiguration.LogFileMaxSizeInKb}KB");
-                        var updateLogFileMaxSizeText = Invariant($@"ALTER DATABASE {newConfiguration.DatabaseName} MODIFY FILE (NAME = '{newConfiguration.LogFileLogicalName}', MAXSIZE = {maxSize})");
+                        var maxSize = newDefinition.LogFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.LogFileMaxSizeInKb}KB");
+                        var updateLogFileMaxSizeText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.LogFileLogicalName}', MAXSIZE = {maxSize})");
                         connection.ExecuteNonQuery(updateLogFileMaxSizeText, (int)timeout.TotalSeconds);
                     }
 
-                    if (newConfiguration.LogFileCurrentSizeInKb != currentConfiguration.LogFileCurrentSizeInKb)
+                    if (newDefinition.LogFileCurrentSizeInKb != currentDefinition.LogFileCurrentSizeInKb)
                     {
-                        var updateLogFileCurrentSizeText = Invariant($@"ALTER DATABASE {newConfiguration.DatabaseName} MODIFY FILE (NAME = '{newConfiguration.LogFileLogicalName}', SIZE = {newConfiguration.LogFileCurrentSizeInKb}KB)");
+                        var updateLogFileCurrentSizeText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.LogFileLogicalName}', SIZE = {newDefinition.LogFileCurrentSizeInKb}KB)");
                         connection.ExecuteNonQuery(updateLogFileCurrentSizeText, (int)timeout.TotalSeconds);
                     }
 
-                    if (newConfiguration.LogFileGrowthSizeInKb != currentConfiguration.LogFileGrowthSizeInKb)
+                    if (newDefinition.LogFileGrowthSizeInKb != currentDefinition.LogFileGrowthSizeInKb)
                     {
-                        var updateLogFileGrowthText = Invariant($@"ALTER DATABASE {newConfiguration.DatabaseName} MODIFY FILE (NAME = '{newConfiguration.LogFileLogicalName}', FILEGROWTH = {newConfiguration.LogFileGrowthSizeInKb}KB)");
+                        var updateLogFileGrowthText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.LogFileLogicalName}', FILEGROWTH = {newDefinition.LogFileGrowthSizeInKb}KB)");
                         connection.ExecuteNonQuery(updateLogFileGrowthText, (int)timeout.TotalSeconds);
                     }
                 }
                 finally
                 {
-                    PutDatabaseIntoMultiUserMode(connection, newConfiguration.DatabaseName, timeout);
+                    PutDatabaseIntoMultiUserMode(connection, newDefinition.DatabaseName, timeout);
                 }
             }
 
-            var realConnectionString = connectionString.AddOrUpdateInitialCatalogInConnectionString(currentConfiguration.DatabaseName); // make sure it's going to take the only connection when it goes in single user
+            var realConnectionString = connectionString.AddOrUpdateInitialCatalogInConnectionString(currentDefinition.DatabaseName); // make sure it's going to take the only connection when it goes in single user
 
             RunOperationOnSqlConnection(Logic, realConnectionString);
         }
@@ -486,7 +486,7 @@ namespace Naos.SqlServer.Protocol.Client
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -1061,7 +1061,7 @@ namespace Naos.SqlServer.Protocol.Client
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             var commandText = $"SELECT recovery_model_desc FROM sys.databases WHERE name = '{databaseName}'";
 
@@ -1100,9 +1100,9 @@ namespace Naos.SqlServer.Protocol.Client
             string tableSchema = "dbo",
             TimeSpan timeout = default)
         {
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
-            new { tableName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
-            new { tableSchema }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { tableName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(TableDefinition.TableNameAlphanumericOtherAllowedCharacters);
+            new { tableSchema }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(TableDefinition.TableSchemaNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -1155,7 +1155,7 @@ namespace Naos.SqlServer.Protocol.Client
             RecoveryMode recoveryMode,
             TimeSpan timeout)
         {
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             string modeMixIn;
 
@@ -1180,21 +1180,21 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         private static void ThrowIfBad(
-            DatabaseConfiguration configuration)
+            DatabaseDefinition definition)
         {
-            new { configuration.DatabaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
-            new { configuration.DataFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
-            new { configuration.LogFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { definition.DatabaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { definition.DataFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseLogicalFileNameAlphanumericOtherAllowedCharacters);
+            new { definition.LogFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseLogicalFileNameAlphanumericOtherAllowedCharacters);
 
-            SqlInjectorChecker.ThrowIfNotValidPath(configuration.DataFilePath);
-            SqlInjectorChecker.ThrowIfNotValidPath(configuration.LogFilePath);
+            SqlInjectorChecker.ThrowIfNotValidPath(definition.DataFilePath);
+            SqlInjectorChecker.ThrowIfNotValidPath(definition.LogFilePath);
         }
 
         private static void ThrowIfBadOnCreateOrModify(
-            DatabaseConfiguration configuration)
+            DatabaseDefinition definition)
         {
-            ThrowIfBad(configuration);
-            if (configuration.DatabaseType == DatabaseType.System)
+            ThrowIfBad(definition);
+            if (definition.DatabaseType == DatabaseType.System)
             {
                 throw new InvalidOperationException("Cannot create nor modify system databases.");
             }
@@ -1205,7 +1205,7 @@ namespace Naos.SqlServer.Protocol.Client
             string databaseName,
             TimeSpan timeout = default)
         {
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -1219,7 +1219,7 @@ namespace Naos.SqlServer.Protocol.Client
             string databaseName,
             TimeSpan timeout = default)
         {
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 

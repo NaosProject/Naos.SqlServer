@@ -41,7 +41,7 @@
 ////                /// Gets the table.
 ////                /// </summary>
 ////                /// <value>The table.</value>
-////                public static TableRepresentation Table => new TableRepresentation(
+////                public static TableDefinition Table => new TableDefinition(
 ////                    nameof(CompositeHandlingStatusSortOrder),
 ////                    new[]
 ////                    {
@@ -57,7 +57,7 @@
 ////                public static string BuildCreationScript(
 ////                    string streamName)
 ////                {
-////                    var result = FormattableString.Invariant(
+////                    var result = Invariant(
 ////                        $@"
 ////SET ANSI_NULLS ON
 

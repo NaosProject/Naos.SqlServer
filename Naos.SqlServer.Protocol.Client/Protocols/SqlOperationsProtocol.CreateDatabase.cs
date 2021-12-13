@@ -26,7 +26,7 @@ namespace Naos.SqlServer.Protocol.Client
                                        .DeepCloneWithDatabaseName(SqlServerDatabaseManager.MasterDatabaseName)
                                        .BuildConnectionString(this.defaultConnectionTimeout);
 
-            SqlServerDatabaseManager.Create(connectionString, operation.DatabaseConfiguration, this.defaultCommandTimeout);
+            SqlServerDatabaseManager.Create(connectionString, operation.Definition, this.defaultCommandTimeout);
         }
 
         /// <inheritdoc />

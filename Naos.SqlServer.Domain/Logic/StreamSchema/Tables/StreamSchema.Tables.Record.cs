@@ -7,7 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
-    using System.Linq;
 
     public static partial class StreamSchema
     {
@@ -26,69 +25,69 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Gets the identifier column.
                 /// </summary>
-                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
+                public static ColumnDefinition Id => new ColumnDefinition(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the identifier type without version identifier.
                 /// </summary>
-                public static ColumnRepresentation IdentifierTypeWithoutVersionId => new ColumnRepresentation(nameof(IdentifierTypeWithoutVersionId), new IntSqlDataTypeRepresentation());
+                public static ColumnDefinition IdentifierTypeWithoutVersionId => new ColumnDefinition(nameof(IdentifierTypeWithoutVersionId), new IntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the identifier type without version identifier.
                 /// </summary>
-                public static ColumnRepresentation IdentifierTypeWithVersionId => new ColumnRepresentation(nameof(IdentifierTypeWithVersionId), new IntSqlDataTypeRepresentation());
+                public static ColumnDefinition IdentifierTypeWithVersionId => new ColumnDefinition(nameof(IdentifierTypeWithVersionId), new IntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the object type without version identifier.
                 /// </summary>
-                public static ColumnRepresentation ObjectTypeWithoutVersionId => new ColumnRepresentation(nameof(ObjectTypeWithoutVersionId), new IntSqlDataTypeRepresentation());
+                public static ColumnDefinition ObjectTypeWithoutVersionId => new ColumnDefinition(nameof(ObjectTypeWithoutVersionId), new IntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the object type without version identifier.
                 /// </summary>
-                public static ColumnRepresentation ObjectTypeWithVersionId => new ColumnRepresentation(nameof(ObjectTypeWithVersionId), new IntSqlDataTypeRepresentation());
+                public static ColumnDefinition ObjectTypeWithVersionId => new ColumnDefinition(nameof(ObjectTypeWithVersionId), new IntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the serializer description identifier.
                 /// </summary>
-                public static ColumnRepresentation SerializerRepresentationId => new ColumnRepresentation(nameof(SerializerRepresentationId), new IntSqlDataTypeRepresentation());
+                public static ColumnDefinition SerializerRepresentationId => new ColumnDefinition(nameof(SerializerRepresentationId), new IntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the string serialized object identifier.
                 /// </summary>
-                public static ColumnRepresentation StringSerializedId => new ColumnRepresentation(nameof(StringSerializedId), new StringSqlDataTypeRepresentation(true, 450));
+                public static ColumnDefinition StringSerializedId => new ColumnDefinition(nameof(StringSerializedId), new StringSqlDataTypeRepresentation(true, 450));
 
                 /// <summary>
                 /// Gets the string serialized object string.
                 /// </summary>
-                public static ColumnRepresentation StringSerializedObject => new ColumnRepresentation(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
+                public static ColumnDefinition StringSerializedObject => new ColumnDefinition(nameof(StringSerializedObject), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
                 /// Gets the binary serialized object string.
                 /// </summary>
-                public static ColumnRepresentation BinarySerializedObject => new ColumnRepresentation(nameof(BinarySerializedObject), new BinarySqlDataTypeRepresentation(BinarySqlDataTypeRepresentation.MaxLengthConstant));
+                public static ColumnDefinition BinarySerializedObject => new ColumnDefinition(nameof(BinarySerializedObject), new BinarySqlDataTypeRepresentation(BinarySqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
                 /// Gets the tag identifiers as CSV.
                 /// </summary>
-                public static ColumnRepresentation TagIdsCsv => new ColumnRepresentation(
+                public static ColumnDefinition TagIdsCsv => new ColumnDefinition(
                     nameof(TagIdsCsv),
                     new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant));
 
                 /// <summary>
                 /// Gets the record created UTC.
                 /// </summary>
-                public static ColumnRepresentation RecordCreatedUtc => new ColumnRepresentation(nameof(RecordCreatedUtc), new UtcDateTimeSqlDataTypeRepresentation());
+                public static ColumnDefinition RecordCreatedUtc => new ColumnDefinition(nameof(RecordCreatedUtc), new UtcDateTimeSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the date time from object.
                 /// </summary>
-                public static ColumnRepresentation ObjectDateTimeUtc => new ColumnRepresentation(nameof(ObjectDateTimeUtc), new UtcDateTimeSqlDataTypeRepresentation());
+                public static ColumnDefinition ObjectDateTimeUtc => new ColumnDefinition(nameof(ObjectDateTimeUtc), new UtcDateTimeSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the table.
                 /// </summary>
-                public static TableRepresentation Table => new TableRepresentation(
+                public static TableDefinition Table => new TableDefinition(
                     nameof(Record),
                     new[]
                     {
@@ -102,7 +101,7 @@ namespace Naos.SqlServer.Domain
                         StringSerializedObject,
                         RecordCreatedUtc,
                         ObjectDateTimeUtc,
-                    }.ToDictionary(k => k.Name, v => v));
+                    });
 
                 /// <summary>
                 /// Builds the creation script for object table.

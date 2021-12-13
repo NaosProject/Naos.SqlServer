@@ -59,13 +59,13 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetIdsAddIfNecessaryTagSet)}]");
                     var tagsXml = TagConversionTool.GetTagsXmlString(tags);
-                    var parameters = new List<SqlParameterRepresentationBase>()
+                    var parameters = new List<SqlParameterDefinitionBase>()
                                      {
-                                         new SqlInputParameterRepresentation<string>(
+                                         new SqlInputParameterDefinition<string>(
                                              nameof(InputParamName.TagsXml),
                                              new XmlSqlDataTypeRepresentation(),
                                              tagsXml),
-                                         new SqlOutputParameterRepresentation<string>(
+                                         new SqlOutputParameterDefinition<string>(
                                              nameof(OutputParamName.TagIdsXml),
                                              new XmlSqlDataTypeRepresentation()),
                                      };

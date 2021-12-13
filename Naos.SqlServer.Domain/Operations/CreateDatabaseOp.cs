@@ -17,18 +17,18 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateDatabaseOp"/> class.
         /// </summary>
-        /// <param name="databaseConfiguration">The database configuration.</param>
+        /// <param name="definition">The database definition.</param>
         public CreateDatabaseOp(
-            DatabaseConfiguration databaseConfiguration)
+            DatabaseDefinition definition)
         {
-            databaseConfiguration.MustForArg(nameof(databaseConfiguration)).NotBeNull();
+            definition.MustForArg(nameof(definition)).NotBeNull();
 
-            this.DatabaseConfiguration = databaseConfiguration;
+            this.Definition = definition;
         }
 
         /// <summary>
-        /// Gets the database configuration.
+        /// Gets the database definition.
         /// </summary>
-        public DatabaseConfiguration DatabaseConfiguration { get; private set; }
+        public DatabaseDefinition Definition { get; private set; }
     }
 }

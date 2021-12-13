@@ -23,11 +23,11 @@ namespace Naos.SqlServer.Domain
         /// <param name="outputParameters">The output parameters.</param>
         public StoredProcedureExecutionResult(
             ExecuteStoredProcedureOp operation,
-            IReadOnlyDictionary<string, ISqlOutputParameterRepresentationWithResult> outputParameters)
+            IReadOnlyDictionary<string, ISqlOutputParameterResult> outputParameters)
         {
             operation.MustForArg(nameof(operation)).NotBeNull();
             outputParameters.MustForArg(nameof(outputParameters)).NotBeNull().And().NotContainAnyKeyValuePairsWithNullValue();
-            outputParameters.Values.MustForArg(Invariant($"{nameof(outputParameters)}.{nameof(IReadOnlyDictionary<string, ISqlOutputParameterRepresentationWithResult>.Values)}")).Each().NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { '@', '_' });
+            outputParameters.Values.MustForArg(Invariant($"{nameof(outputParameters)}.{nameof(IReadOnlyDictionary<string, ISqlOutputParameterResult>.Values)}")).Each().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlParameterDefinitionBase.ParameterNameAlphanumericOtherAllowedCharacters);
 
             this.Operation = operation;
             this.OutputParameters = outputParameters;
@@ -41,6 +41,6 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the output parameters.
         /// </summary>
-        public IReadOnlyDictionary<string, ISqlOutputParameterRepresentationWithResult> OutputParameters { get; private set; }
+        public IReadOnlyDictionary<string, ISqlOutputParameterResult> OutputParameters { get; private set; }
     }
 }

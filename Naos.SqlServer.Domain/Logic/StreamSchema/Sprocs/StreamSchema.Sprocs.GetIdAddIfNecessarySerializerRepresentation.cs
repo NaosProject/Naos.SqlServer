@@ -94,15 +94,15 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetIdAddIfNecessarySerializerRepresentation)}]");
 
-                    var parameters = new List<SqlParameterRepresentationBase>()
+                    var parameters = new List<SqlParameterDefinitionBase>()
                                      {
-                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.ConfigTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.SqlDataType, configType.IdWithoutVersion),
-                                         new SqlInputParameterRepresentation<int>(nameof(InputParamName.ConfigTypeWithVersionId), Tables.TypeWithVersion.Id.SqlDataType, configType.IdWithVersion),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.SerializationKind), Tables.SerializerRepresentation.SerializationKind.SqlDataType, serializationKind.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.SqlDataType, serializationFormat.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.CompressionKind), Tables.SerializerRepresentation.CompressionKind.SqlDataType, compressionKind.ToString()),
-                                         new SqlInputParameterRepresentation<string>(nameof(InputParamName.UnregisteredTypeEncounteredStrategy), Tables.SerializerRepresentation.SerializationKind.SqlDataType, unregisteredTypeEncounteredStrategy.ToString()),
-                                         new SqlOutputParameterRepresentation<int>(nameof(OutputParamName.Id), Tables.SerializerRepresentation.Id.SqlDataType),
+                                         new SqlInputParameterDefinition<int>(nameof(InputParamName.ConfigTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.SqlDataType, configType.IdWithoutVersion),
+                                         new SqlInputParameterDefinition<int>(nameof(InputParamName.ConfigTypeWithVersionId), Tables.TypeWithVersion.Id.SqlDataType, configType.IdWithVersion),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.SerializationKind), Tables.SerializerRepresentation.SerializationKind.SqlDataType, serializationKind.ToString()),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.SerializationFormat), Tables.SerializerRepresentation.SerializationFormat.SqlDataType, serializationFormat.ToString()),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.CompressionKind), Tables.SerializerRepresentation.CompressionKind.SqlDataType, compressionKind.ToString()),
+                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.UnregisteredTypeEncounteredStrategy), Tables.SerializerRepresentation.SerializationKind.SqlDataType, unregisteredTypeEncounteredStrategy.ToString()),
+                                         new SqlOutputParameterDefinition<int>(nameof(OutputParamName.Id), Tables.SerializerRepresentation.Id.SqlDataType),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);

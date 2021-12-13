@@ -7,7 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
-    using System.Linq;
 
     public static partial class StreamSchema
     {
@@ -21,25 +20,25 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Gets the identifier.
                 /// </summary>
-                public static ColumnRepresentation Id => new ColumnRepresentation(nameof(Id), new BigIntSqlDataTypeRepresentation());
+                public static ColumnDefinition Id => new ColumnDefinition(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the record created UTC.
                 /// </summary>
-                public static ColumnRepresentation RecordCreatedUtc => new ColumnRepresentation(
+                public static ColumnDefinition RecordCreatedUtc => new ColumnDefinition(
                     nameof(RecordCreatedUtc),
                     new UtcDateTimeSqlDataTypeRepresentation());
 
                 /// <summary>
                 /// Gets the table.
                 /// </summary>
-                public static TableRepresentation Table => new TableRepresentation(
+                public static TableDefinition Table => new TableDefinition(
                     nameof(NextUniqueLong),
                     new[]
                     {
                         Id,
                         RecordCreatedUtc,
-                    }.ToDictionary(k => k.Name, v => v));
+                    });
 
                 /// <summary>
                 /// Builds the creation script for NextUniqueLong table.

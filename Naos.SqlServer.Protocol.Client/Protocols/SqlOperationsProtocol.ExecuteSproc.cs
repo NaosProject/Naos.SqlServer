@@ -34,20 +34,20 @@ namespace Naos.SqlServer.Protocol.Client
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    var outputParameters = new List<Tuple<SqlParameter, SqlOutputParameterRepresentationBase>>();
+                    var outputParameters = new List<Tuple<SqlParameter, SqlOutputParameterDefinitionBase>>();
                     foreach (var parameterRepresentation in operation.Parameters)
                     {
                         var parameter = parameterRepresentation.ToSqlParameter();
 
                         if (parameter.Direction == ParameterDirection.Output)
                         {
-                            if (parameterRepresentation is SqlOutputParameterRepresentationBase outputParameterRepresentation)
+                            if (parameterRepresentation is SqlOutputParameterDefinitionBase outputParameterRepresentation)
                             {
-                                outputParameters.Add(new Tuple<SqlParameter, SqlOutputParameterRepresentationBase>(parameter, outputParameterRepresentation));
+                                outputParameters.Add(new Tuple<SqlParameter, SqlOutputParameterDefinitionBase>(parameter, outputParameterRepresentation));
                             }
                             else
                             {
-                                throw new NotSupportedException(FormattableString.Invariant($"Cannot have a {nameof(SqlParameter)} with {nameof(SqlParameter.Direction)} equal to {nameof(ParameterDirection.Output)} and the representation not be a {nameof(SqlOutputParameterRepresentationBase)}, it was a {parameterRepresentation.GetType().ToStringReadable()}."));
+                                throw new NotSupportedException(FormattableString.Invariant($"Cannot have a {nameof(SqlParameter)} with {nameof(SqlParameter.Direction)} equal to {nameof(ParameterDirection.Output)} and the representation not be a {nameof(SqlOutputParameterDefinitionBase)}, it was a {parameterRepresentation.GetType().ToStringReadable()}."));
                             }
                         }
 

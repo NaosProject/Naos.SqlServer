@@ -93,34 +93,33 @@ namespace Naos.SqlServer.Domain.Test
                 });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new TableRepresentation(
+                () => new TableDefinition(
                     A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<IReadOnlyDictionary<string, ColumnRepresentation>>()));
+                    A.Dummy<IReadOnlyList<ColumnDefinition>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new ColumnRepresentation(
+                () => new ColumnDefinition(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<SqlDataTypeRepresentationBase>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterRepresentationWithResult<int>(
+                () => new SqlOutputParameterResult<int>(
+                    A.Dummy<SqlOutputParameterDefinition<int>>(),
+                    A.Dummy<int>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlOutputParameterDefinition<int>(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<SqlDataTypeRepresentationBase>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlInputParameterDefinition<int>(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<SqlDataTypeRepresentationBase>(),
                     A.Dummy<int>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterRepresentation<int>(
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<SqlDataTypeRepresentationBase>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlInputParameterRepresentation<int>(
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<SqlDataTypeRepresentationBase>(),
-                    A.Dummy<int>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new DatabaseConfiguration(
+                () => new DatabaseDefinition(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<DatabaseType>(),
                     A.Dummy<RecoveryMode>(),
@@ -143,9 +142,9 @@ namespace Naos.SqlServer.Domain.Test
                     A.Dummy<IReadOnlyCollection<ColumnDescription>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new TableRepresentation(
+                () => new TableDefinition(
                     A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<IReadOnlyDictionary<string, ColumnRepresentation>>()));
+                    A.Dummy<IReadOnlyList<ColumnDefinition>>()));
         }
     }
 }

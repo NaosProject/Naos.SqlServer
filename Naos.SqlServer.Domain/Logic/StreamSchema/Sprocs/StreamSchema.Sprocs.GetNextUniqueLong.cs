@@ -45,9 +45,9 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetNextUniqueLong)}]");
 
-                    var parameters = new List<SqlParameterRepresentationBase>()
+                    var parameters = new List<SqlParameterDefinitionBase>()
                                      {
-                                         new SqlOutputParameterRepresentation<long>(nameof(OutputParamName.Value), Tables.NextUniqueLong.Id.SqlDataType),
+                                         new SqlOutputParameterDefinition<long>(nameof(OutputParamName.Value), Tables.NextUniqueLong.Id.SqlDataType),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);

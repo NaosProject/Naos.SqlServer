@@ -58,7 +58,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void CreateStreamsTestingDatabase()
         {
             var sqlServerLocator = GetSqlServerLocator();
-            var configuration = DatabaseConfiguration.BuildDatabaseConfigurationUsingDefaultsAsNecessary("Streams", @"D:\SQL\");
+            var configuration = DatabaseDefinition.BuildDatabaseConfigurationUsingDefaultsAsNecessary("Streams", @"D:\SQL\");
             var createDatabaseOp = new CreateDatabaseOp(configuration);
             var protocol = new SqlOperationsProtocol(sqlServerLocator);
             protocol.Execute(createDatabaseOp);

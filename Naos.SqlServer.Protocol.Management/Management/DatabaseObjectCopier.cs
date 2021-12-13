@@ -103,7 +103,7 @@ namespace Naos.SqlServer.Protocol.Management
                     {
                         foreach (var table in tables)
                         {
-                            table.Name.MustForArg(Invariant($"{nameof(table)}.{nameof(ScriptedObject.Name)}")).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { ' ', '_' });
+                            table.Name.MustForArg(Invariant($"{nameof(table)}.{nameof(ScriptedObject.Name)}")).NotBeNullNorWhiteSpace().And().BeAlphanumeric(TableDefinition.TableNameAlphanumericOtherAllowedCharacters);
 
                             using (var transaction = targetConnection.BeginTransaction("BcpTable-" + table.Name))
                             {
