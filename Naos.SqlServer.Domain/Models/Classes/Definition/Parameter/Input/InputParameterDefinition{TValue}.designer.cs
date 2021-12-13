@@ -23,15 +23,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlInputParameterDefinition<TValue> : IModel<SqlInputParameterDefinition<TValue>>
+    public partial class InputParameterDefinition<TValue> : IModel<InputParameterDefinition<TValue>>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlInputParameterDefinition{TValue}"/> are equal.
+        /// Determines whether two objects of type <see cref="InputParameterDefinition{TValue}"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlInputParameterDefinition<TValue> left, SqlInputParameterDefinition<TValue> right)
+        public static bool operator ==(InputParameterDefinition<TValue> left, InputParameterDefinition<TValue> right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -49,15 +49,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlInputParameterDefinition{TValue}"/> are not equal.
+        /// Determines whether two objects of type <see cref="InputParameterDefinition{TValue}"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlInputParameterDefinition<TValue> left, SqlInputParameterDefinition<TValue> right) => !(left == right);
+        public static bool operator !=(InputParameterDefinition<TValue> left, InputParameterDefinition<TValue> right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlInputParameterDefinition<TValue> other)
+        public bool Equals(InputParameterDefinition<TValue> other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -77,7 +77,7 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as SqlInputParameterDefinition<TValue>);
+        public override bool Equals(object obj) => this == (obj as InputParameterDefinition<TValue>);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
@@ -87,7 +87,7 @@ namespace Naos.SqlServer.Domain
             .Value;
 
         /// <inheritdoc />
-        public new SqlInputParameterDefinition<TValue> DeepClone() => (SqlInputParameterDefinition<TValue>)this.DeepCloneInternal();
+        public new InputParameterDefinition<TValue> DeepClone() => (InputParameterDefinition<TValue>)this.DeepCloneInternal();
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
@@ -107,9 +107,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override SqlParameterDefinitionBase DeepCloneWithName(string name)
+        public override ParameterDefinitionBase DeepCloneWithName(string name)
         {
-            var result = new SqlInputParameterDefinition<TValue>(
+            var result = new InputParameterDefinition<TValue>(
                                  name,
                                  this.SqlDataType?.DeepClone(),
                                  this.Value == null ? default : this.Value.DeepClone());
@@ -135,9 +135,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override SqlParameterDefinitionBase DeepCloneWithSqlDataType(SqlDataTypeRepresentationBase sqlDataType)
+        public override ParameterDefinitionBase DeepCloneWithSqlDataType(SqlDataTypeRepresentationBase sqlDataType)
         {
-            var result = new SqlInputParameterDefinition<TValue>(
+            var result = new InputParameterDefinition<TValue>(
                                  this.Name?.DeepClone(),
                                  sqlDataType,
                                  this.Value == null ? default : this.Value.DeepClone());
@@ -149,7 +149,7 @@ namespace Naos.SqlServer.Domain
         /// Deep clones this object with a new <see cref="Value" />.
         /// </summary>
         /// <param name="value">The new <see cref="Value" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlInputParameterDefinition{TValue}" /> using the specified <paramref name="value" /> for <see cref="Value" /> and a deep clone of every other property.</returns>
+        /// <returns>New <see cref="InputParameterDefinition{TValue}" /> using the specified <paramref name="value" /> for <see cref="Value" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -167,9 +167,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlInputParameterDefinition<TValue> DeepCloneWithValue(TValue value)
+        public InputParameterDefinition<TValue> DeepCloneWithValue(TValue value)
         {
-            var result = new SqlInputParameterDefinition<TValue>(
+            var result = new InputParameterDefinition<TValue>(
                                  this.Name?.DeepClone(),
                                  this.SqlDataType?.DeepClone(),
                                  value);
@@ -179,9 +179,9 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        protected override SqlParameterDefinitionBase DeepCloneInternal()
+        protected override ParameterDefinitionBase DeepCloneInternal()
         {
-            var result = new SqlInputParameterDefinition<TValue>(
+            var result = new InputParameterDefinition<TValue>(
                                  this.Name?.DeepClone(),
                                  this.SqlDataType?.DeepClone(),
                                  this.Value == null ? default : this.Value.DeepClone());

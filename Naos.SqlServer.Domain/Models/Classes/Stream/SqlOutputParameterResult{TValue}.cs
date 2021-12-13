@@ -20,22 +20,22 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlOutputParameterResult{TValue}"/> class.
         /// </summary>
-        /// <param name="sqlOutputParameter">The name.</param>
+        /// <param name="outputParameter">The name.</param>
         /// <param name="value">The value.</param>
         public SqlOutputParameterResult(
-            SqlOutputParameterDefinition<TValue> sqlOutputParameter,
+            OutputParameterDefinition<TValue> outputParameter,
             TValue value)
         {
-            sqlOutputParameter.MustForArg(nameof(sqlOutputParameter)).NotBeNull();
+            outputParameter.MustForArg(nameof(outputParameter)).NotBeNull();
 
-            this.SqlOutputParameter = sqlOutputParameter;
+            this.OutputParameter = outputParameter;
             this.Value = value;
         }
 
         /// <summary>
         /// Gets the sql output parameter.
         /// </summary>
-        public SqlOutputParameterDefinition<TValue> SqlOutputParameter { get; private set; }
+        public OutputParameterDefinition<TValue> OutputParameter { get; private set; }
 
         /// <summary>
         /// Gets the value.

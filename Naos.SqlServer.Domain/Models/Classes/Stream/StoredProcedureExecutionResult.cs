@@ -27,7 +27,7 @@ namespace Naos.SqlServer.Domain
         {
             operation.MustForArg(nameof(operation)).NotBeNull();
             outputParameters.MustForArg(nameof(outputParameters)).NotBeNull().And().NotContainAnyKeyValuePairsWithNullValue();
-            outputParameters.Values.MustForArg(Invariant($"{nameof(outputParameters)}.{nameof(IReadOnlyDictionary<string, ISqlOutputParameterResult>.Values)}")).Each().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlParameterDefinitionBase.ParameterNameAlphanumericOtherAllowedCharacters);
+            outputParameters.Values.MustForArg(Invariant($"{nameof(outputParameters)}.{nameof(IReadOnlyDictionary<string, ISqlOutputParameterResult>.Values)}")).Each().NotBeNullNorWhiteSpace().And().BeAlphanumeric(ParameterDefinitionBase.ParameterNameAlphanumericOtherAllowedCharacters);
 
             this.Operation = operation;
             this.OutputParameters = outputParameters;

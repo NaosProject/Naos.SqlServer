@@ -23,15 +23,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlOutputParameterDefinitionBase : IModel<SqlOutputParameterDefinitionBase>
+    public partial class InputParameterDefinitionBase : IModel<InputParameterDefinitionBase>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlOutputParameterDefinitionBase"/> are equal.
+        /// Determines whether two objects of type <see cref="InputParameterDefinitionBase"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlOutputParameterDefinitionBase left, SqlOutputParameterDefinitionBase right)
+        public static bool operator ==(InputParameterDefinitionBase left, InputParameterDefinitionBase right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -49,15 +49,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlOutputParameterDefinitionBase"/> are not equal.
+        /// Determines whether two objects of type <see cref="InputParameterDefinitionBase"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlOutputParameterDefinitionBase left, SqlOutputParameterDefinitionBase right) => !(left == right);
+        public static bool operator !=(InputParameterDefinitionBase left, InputParameterDefinitionBase right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlOutputParameterDefinitionBase other) => this == other;
+        public bool Equals(InputParameterDefinitionBase other) => this == other;
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
@@ -74,7 +74,7 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <inheritdoc />
-        public new SqlOutputParameterDefinitionBase DeepClone() => (SqlOutputParameterDefinitionBase)this.DeepCloneInternal();
+        public new InputParameterDefinitionBase DeepClone() => (InputParameterDefinitionBase)this.DeepCloneInternal();
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]

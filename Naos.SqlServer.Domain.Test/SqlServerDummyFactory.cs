@@ -104,16 +104,16 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlOutputParameterResult<int>(
-                    A.Dummy<SqlOutputParameterDefinition<int>>(),
+                    A.Dummy<OutputParameterDefinition<int>>(),
                     A.Dummy<int>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterDefinition<int>(
+                () => new OutputParameterDefinition<int>(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<SqlDataTypeRepresentationBase>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlInputParameterDefinition<int>(
+                () => new InputParameterDefinition<int>(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<SqlDataTypeRepresentationBase>(),
                     A.Dummy<int>()));

@@ -28,96 +28,96 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="parameterDefinition">The parameter representation.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlParameterDefinitionBase parameterDefinition)
+            this ParameterDefinitionBase parameterDefinition)
         {
             parameterDefinition.MustForArg(nameof(parameterDefinition)).NotBeNull();
 
-            if (parameterDefinition is SqlInputParameterDefinition<byte[]> binaryRepresentationInput)
+            if (parameterDefinition is InputParameterDefinition<byte[]> binaryRepresentationInput)
             {
                 return binaryRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlInputParameterDefinition<decimal> decimalRepresentationInput)
+            else if (parameterDefinition is InputParameterDefinition<decimal> decimalRepresentationInput)
             {
                 return decimalRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlInputParameterDefinition<int> intRepresentationInput)
+            else if (parameterDefinition is InputParameterDefinition<int> intRepresentationInput)
             {
                 return intRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlInputParameterDefinition<int?> intNullableRepresentationInput)
+            else if (parameterDefinition is InputParameterDefinition<int?> intNullableRepresentationInput)
             {
                 return intNullableRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlInputParameterDefinition<long> longRepresentationInput)
+            else if (parameterDefinition is InputParameterDefinition<long> longRepresentationInput)
             {
                 return longRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlInputParameterDefinition<long?> longNullableRepresentationInput)
+            else if (parameterDefinition is InputParameterDefinition<long?> longNullableRepresentationInput)
             {
                 return longNullableRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlInputParameterDefinition<string> stringRepresentationInput)
+            else if (parameterDefinition is InputParameterDefinition<string> stringRepresentationInput)
             {
                 return stringRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlInputParameterDefinition<DateTime> dateTimeRepresentationInput)
+            else if (parameterDefinition is InputParameterDefinition<DateTime> dateTimeRepresentationInput)
             {
                 return dateTimeRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlInputParameterDefinition<DateTime?> dateTimeNullableRepresentationInput)
+            else if (parameterDefinition is InputParameterDefinition<DateTime?> dateTimeNullableRepresentationInput)
             {
                 return dateTimeNullableRepresentationInput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<byte[]> binaryRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<byte[]> binaryRepresentationOutput)
             {
                 return binaryRepresentationOutput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<decimal> decimalRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<decimal> decimalRepresentationOutput)
             {
                 return decimalRepresentationOutput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<int> intRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<int> intRepresentationOutput)
             {
                 return intRepresentationOutput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<int?> intNullableRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<int?> intNullableRepresentationOutput)
             {
                 return intNullableRepresentationOutput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<long> longRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<long> longRepresentationOutput)
             {
                 return longRepresentationOutput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<long?> longNullableRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<long?> longNullableRepresentationOutput)
             {
                 return longNullableRepresentationOutput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<string> stringRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<string> stringRepresentationOutput)
             {
                 return stringRepresentationOutput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<DateTime> dateTimeRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<DateTime> dateTimeRepresentationOutput)
             {
                 return dateTimeRepresentationOutput.ToSqlParameter();
             }
-            else if (parameterDefinition is SqlOutputParameterDefinition<DateTime?> dateTimeNullableRepresentationOutput)
+            else if (parameterDefinition is OutputParameterDefinition<DateTime?> dateTimeNullableRepresentationOutput)
             {
                 return dateTimeNullableRepresentationOutput.ToSqlParameter();
             }
             else if (parameterDefinition.GetType().GetGenericArguments().SingleOrDefault()?.IsEnum ?? false)
             {
                 var genericDefinition = parameterDefinition.GetType().GetGenericTypeDefinition();
-                if (genericDefinition == typeof(SqlInputParameterDefinition<>))
+                if (genericDefinition == typeof(InputParameterDefinition<>))
                 {
                     var enumValue = parameterDefinition.GetType()
-                                                           .GetProperty(nameof(SqlInputParameterDefinition<string>.Value))
+                                                           .GetProperty(nameof(InputParameterDefinition<string>.Value))
                                                           ?.GetValue(parameterDefinition);
-                    var stringParameter = new SqlInputParameterDefinition<string>(parameterDefinition.Name, parameterDefinition.SqlDataType, enumValue?.ToString());
+                    var stringParameter = new InputParameterDefinition<string>(parameterDefinition.Name, parameterDefinition.SqlDataType, enumValue?.ToString());
                     return stringParameter.ToSqlParameter();
                 }
-                else if (genericDefinition == typeof(SqlOutputParameterDefinition<>))
+                else if (genericDefinition == typeof(OutputParameterDefinition<>))
                 {
-                    var stringParameter = new SqlOutputParameterDefinition<string>(parameterDefinition.Name, parameterDefinition.SqlDataType);
+                    var stringParameter = new OutputParameterDefinition<string>(parameterDefinition.Name, parameterDefinition.SqlDataType);
                     return stringParameter.ToSqlParameter();
                 }
                 else
@@ -127,7 +127,7 @@ namespace Naos.SqlServer.Protocol.Client
             }
             else
             {
-                throw new NotSupportedException(FormattableString.Invariant($"{nameof(SqlParameterDefinitionBase)} {nameof(parameterDefinition)} of type {parameterDefinition.GetType().ToStringReadable()} is not a supported type parameter."));
+                throw new NotSupportedException(FormattableString.Invariant($"{nameof(ParameterDefinitionBase)} {nameof(parameterDefinition)} of type {parameterDefinition.GetType().ToStringReadable()} is not a supported type parameter."));
             }
         }
 
@@ -137,7 +137,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="binaryInputParameter">The decimal input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<byte[]> binaryInputParameter)
+            this InputParameterDefinition<byte[]> binaryInputParameter)
         {
             binaryInputParameter.MustForArg(nameof(binaryInputParameter)).NotBeNull();
             var name = binaryInputParameter.Name;
@@ -152,7 +152,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="decimalInputParameter">The decimal input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<decimal> decimalInputParameter)
+            this InputParameterDefinition<decimal> decimalInputParameter)
         {
             decimalInputParameter.MustForArg(nameof(decimalInputParameter)).NotBeNull();
             var name = decimalInputParameter.Name;
@@ -167,7 +167,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="intInputParameter">The int input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<int> intInputParameter)
+            this InputParameterDefinition<int> intInputParameter)
         {
             intInputParameter.MustForArg(nameof(intInputParameter)).NotBeNull();
             var name = intInputParameter.Name;
@@ -182,7 +182,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="intInputParameter">The int input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<int?> intInputParameter)
+            this InputParameterDefinition<int?> intInputParameter)
         {
             intInputParameter.MustForArg(nameof(intInputParameter)).NotBeNull();
             var name = intInputParameter.Name;
@@ -197,7 +197,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="longInputParameter">The long input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<long> longInputParameter)
+            this InputParameterDefinition<long> longInputParameter)
         {
             longInputParameter.MustForArg(nameof(longInputParameter)).NotBeNull();
             var name = longInputParameter.Name;
@@ -212,7 +212,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="longInputParameter">The long input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<long?> longInputParameter)
+            this InputParameterDefinition<long?> longInputParameter)
         {
             longInputParameter.MustForArg(nameof(longInputParameter)).NotBeNull();
             var name = longInputParameter.Name;
@@ -227,7 +227,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="stringInputParameter">The string input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<string> stringInputParameter)
+            this InputParameterDefinition<string> stringInputParameter)
         {
             stringInputParameter.MustForArg(nameof(stringInputParameter)).NotBeNull();
 
@@ -248,7 +248,7 @@ namespace Naos.SqlServer.Protocol.Client
             }
             else
             {
-                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(SqlInputParameterDefinition<string>)} with a datatype of {stringInputParameter.SqlDataType}."));
+                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(InputParameterDefinition<string>)} with a datatype of {stringInputParameter.SqlDataType}."));
             }
         }
 
@@ -258,7 +258,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="dateTimeInputParameter">The <see cref="DateTime"/> input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<DateTime> dateTimeInputParameter)
+            this InputParameterDefinition<DateTime> dateTimeInputParameter)
         {
             dateTimeInputParameter.MustForArg(nameof(dateTimeInputParameter)).NotBeNull();
             var name = dateTimeInputParameter.Name;
@@ -273,7 +273,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="dateTimeInputParameter">The nullable <see cref="DateTime"/> input parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlInputParameterDefinition<DateTime?> dateTimeInputParameter)
+            this InputParameterDefinition<DateTime?> dateTimeInputParameter)
         {
             dateTimeInputParameter.MustForArg(nameof(dateTimeInputParameter)).NotBeNull();
             var name = dateTimeInputParameter.Name;
@@ -288,7 +288,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="binaryOutputParameter">The decimal Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<byte[]> binaryOutputParameter)
+            this OutputParameterDefinition<byte[]> binaryOutputParameter)
         {
             binaryOutputParameter.MustForArg(nameof(binaryOutputParameter)).NotBeNull();
             var dataType = (BinarySqlDataTypeRepresentation)binaryOutputParameter.SqlDataType;
@@ -304,7 +304,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="decimalOutputParameter">The decimal Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<decimal> decimalOutputParameter)
+            this OutputParameterDefinition<decimal> decimalOutputParameter)
         {
             decimalOutputParameter.MustForArg(nameof(decimalOutputParameter)).NotBeNull();
             var dataType = (DecimalSqlDataTypeRepresentation)decimalOutputParameter.SqlDataType;
@@ -320,7 +320,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="intOutputParameter">The int Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<int> intOutputParameter)
+            this OutputParameterDefinition<int> intOutputParameter)
         {
             intOutputParameter.MustForArg(nameof(intOutputParameter)).NotBeNull();
             var name = intOutputParameter.Name;
@@ -335,7 +335,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="intOutputParameter">The int Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<int?> intOutputParameter)
+            this OutputParameterDefinition<int?> intOutputParameter)
         {
             intOutputParameter.MustForArg(nameof(intOutputParameter)).NotBeNull();
             var name = intOutputParameter.Name;
@@ -350,7 +350,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="longOutputParameter">The long Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<long> longOutputParameter)
+            this OutputParameterDefinition<long> longOutputParameter)
         {
             longOutputParameter.MustForArg(nameof(longOutputParameter)).NotBeNull();
             var name = longOutputParameter.Name;
@@ -365,7 +365,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="longOutputParameter">The long Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<long?> longOutputParameter)
+            this OutputParameterDefinition<long?> longOutputParameter)
         {
             longOutputParameter.MustForArg(nameof(longOutputParameter)).NotBeNull();
             var name = longOutputParameter.Name;
@@ -380,7 +380,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="stringOutputParameter">The string Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<string> stringOutputParameter)
+            this OutputParameterDefinition<string> stringOutputParameter)
         {
             stringOutputParameter.MustForArg(nameof(stringOutputParameter)).NotBeNull();
 
@@ -401,7 +401,7 @@ namespace Naos.SqlServer.Protocol.Client
             }
             else
             {
-                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(SqlOutputParameterDefinition<string>)} with a datatype of {stringOutputParameter.SqlDataType}."));
+                throw new NotSupportedException(FormattableString.Invariant($"Cannot create a {nameof(SqlParameter)} from {nameof(OutputParameterDefinition<string>)} with a datatype of {stringOutputParameter.SqlDataType}."));
             }
         }
 
@@ -411,7 +411,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="dateTimeOutputParameter">The <see cref="DateTime"/> Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<DateTime> dateTimeOutputParameter)
+            this OutputParameterDefinition<DateTime> dateTimeOutputParameter)
         {
             dateTimeOutputParameter.MustForArg(nameof(dateTimeOutputParameter)).NotBeNull();
             var name = dateTimeOutputParameter.Name;
@@ -426,7 +426,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="dateTimeOutputParameter">The nullable <see cref="DateTime"/> Output parameter.</param>
         /// <returns>SqlParameter.</returns>
         public static SqlParameter ToSqlParameter(
-            this SqlOutputParameterDefinition<DateTime?> dateTimeOutputParameter)
+            this OutputParameterDefinition<DateTime?> dateTimeOutputParameter)
         {
             dateTimeOutputParameter.MustForArg(nameof(dateTimeOutputParameter)).NotBeNull();
             var name = dateTimeOutputParameter.Name;
@@ -442,7 +442,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="valueFromActualStoredProcedureParameter">The value from actual stored procedure parameter.</param>
         /// <returns>A <see cref="ISqlOutputParameterResult"/> with the provided result.</returns>
         public static ISqlOutputParameterResult CreateResult(
-            this SqlOutputParameterDefinitionBase outputParameterDefinition,
+            this OutputParameterDefinitionBase outputParameterDefinition,
             object valueFromActualStoredProcedureParameter)
         {
             // accommodate DBNull situation here.
@@ -450,51 +450,51 @@ namespace Naos.SqlServer.Protocol.Client
 
             ISqlOutputParameterResult result = null;
 
-            if (outputParameterDefinition is SqlOutputParameterDefinition<byte[]> byteArrayOutputParameterRepresentation)
+            if (outputParameterDefinition is OutputParameterDefinition<byte[]> byteArrayOutputParameterRepresentation)
             {
                 var byteArrayValue = (byte[])rawValue;
                 result = new SqlOutputParameterResult<byte[]>(byteArrayOutputParameterRepresentation, byteArrayValue);
             }
-            else if (outputParameterDefinition is SqlOutputParameterDefinition<decimal> decimalOutputParameterRepresentation)
+            else if (outputParameterDefinition is OutputParameterDefinition<decimal> decimalOutputParameterRepresentation)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var decimalValue = Convert.ToDecimal(rawValue, CultureInfo.InvariantCulture);
                 result = new SqlOutputParameterResult<decimal>(decimalOutputParameterRepresentation, decimalValue);
             }
-            else if (outputParameterDefinition is SqlOutputParameterDefinition<int> intOutputParameterRepresentation)
+            else if (outputParameterDefinition is OutputParameterDefinition<int> intOutputParameterRepresentation)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var intValue = Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
                 result = new SqlOutputParameterResult<int>(intOutputParameterRepresentation, intValue);
             }
-            else if (outputParameterDefinition is SqlOutputParameterDefinition<int?> nullableIntOutputParameterRepresentation)
+            else if (outputParameterDefinition is OutputParameterDefinition<int?> nullableIntOutputParameterRepresentation)
             {
                 var intValue = rawValue == null ? (int?)null : Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
                 result = new SqlOutputParameterResult<int?>(nullableIntOutputParameterRepresentation, intValue);
             }
-            else if (outputParameterDefinition is SqlOutputParameterDefinition<long> longOutputParameterRepresentation)
+            else if (outputParameterDefinition is OutputParameterDefinition<long> longOutputParameterRepresentation)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var longValue = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
                 result = new SqlOutputParameterResult<long>(longOutputParameterRepresentation, longValue);
             }
-            else if (outputParameterDefinition is SqlOutputParameterDefinition<long?> nullableLongOutputParameterRepresentation)
+            else if (outputParameterDefinition is OutputParameterDefinition<long?> nullableLongOutputParameterRepresentation)
             {
                 var longValue = rawValue == null ? (long?)null : Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
                 result = new SqlOutputParameterResult<long?>(nullableLongOutputParameterRepresentation, longValue);
             }
-            else if (outputParameterDefinition is SqlOutputParameterDefinition<string> stringLongOutputParameterRepresentation)
+            else if (outputParameterDefinition is OutputParameterDefinition<string> stringLongOutputParameterRepresentation)
             {
                 var stringValue = rawValue?.ToString();
                 result = new SqlOutputParameterResult<string>(stringLongOutputParameterRepresentation, stringValue);
             }
-            else if (outputParameterDefinition is SqlOutputParameterDefinition<DateTime> dateTimeOutputParameterRepresentation)
+            else if (outputParameterDefinition is OutputParameterDefinition<DateTime> dateTimeOutputParameterRepresentation)
             {
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
                 var dateTimeValue = (DateTime)rawValue;
                 result = new SqlOutputParameterResult<DateTime>(dateTimeOutputParameterRepresentation, dateTimeValue);
             }
-            else if (outputParameterDefinition is SqlOutputParameterDefinition<DateTime?> nullableDateTimeOutputParameterRepresentation)
+            else if (outputParameterDefinition is OutputParameterDefinition<DateTime?> nullableDateTimeOutputParameterRepresentation)
             {
                 var dateTimeNullableValue = (DateTime?)rawValue;
                 result = new SqlOutputParameterResult<DateTime?>(nullableDateTimeOutputParameterRepresentation, dateTimeNullableValue);
@@ -504,7 +504,7 @@ namespace Naos.SqlServer.Protocol.Client
                 rawValue.MustForArg(nameof(rawValue)).NotBeNull();
 
                 var genericDefinition = outputParameterDefinition.GetType().GetGenericTypeDefinition();
-                genericDefinition.MustForArg(nameof(genericDefinition)).BeEqualTo(typeof(SqlOutputParameterDefinition<>));
+                genericDefinition.MustForArg(nameof(genericDefinition)).BeEqualTo(typeof(OutputParameterDefinition<>));
 
                 var genericArguments = outputParameterDefinition.GetType().GetGenericArguments().ToList();
                 var enumType = genericArguments.Single();

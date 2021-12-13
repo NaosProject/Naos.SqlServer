@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlParameterDefinitionBase.cs" company="Naos Project">
+// <copyright file="ParameterDefinitionBase.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Base class representation of a SQL parameter.
     /// </summary>
-    public abstract partial class SqlParameterDefinitionBase : IModelViaCodeGen
+    public abstract partial class ParameterDefinitionBase : IModelViaCodeGen
     {
         /// <summary>
         /// The characters that are allowed in a parameter name, in addition to alphanumeric characters.
@@ -23,11 +23,11 @@ namespace Naos.SqlServer.Domain
         public static readonly IReadOnlyCollection<char> ParameterNameAlphanumericOtherAllowedCharacters = new[] { '@', '_' };
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlParameterDefinitionBase"/> class.
+        /// Initializes a new instance of the <see cref="ParameterDefinitionBase"/> class.
         /// </summary>
         /// <param name="name">The name of the parameter.</param>
         /// <param name="sqlDataType">The SQL data type of the parameter.</param>
-        protected SqlParameterDefinitionBase(
+        protected ParameterDefinitionBase(
             string name,
             SqlDataTypeRepresentationBase sqlDataType)
         {

@@ -60,11 +60,11 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(CreateStreamUser)}");
 
-                    var parameters = new List<SqlParameterDefinitionBase>()
+                    var parameters = new List<ParameterDefinitionBase>()
                                      {
-                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.Username), new StringSqlDataTypeRepresentation(true, 128), username),
-                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.ClearTextPassword), new StringSqlDataTypeRepresentation(true, 128), clearTextPassword),
-                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), roles),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.Username), new StringSqlDataTypeRepresentation(true, 128), username),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.ClearTextPassword), new StringSqlDataTypeRepresentation(true, 128), clearTextPassword),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxLengthConstant), roles),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);

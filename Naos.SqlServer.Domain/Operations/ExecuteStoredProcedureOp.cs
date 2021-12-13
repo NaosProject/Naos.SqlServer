@@ -22,7 +22,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="parameters">The parameters.</param>
         public ExecuteStoredProcedureOp(
             string name,
-            IReadOnlyList<SqlParameterDefinitionBase> parameters)
+            IReadOnlyList<ParameterDefinitionBase> parameters)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
             parameters.MustForArg(nameof(parameters)).NotBeNull().And().NotContainAnyNullElements();
@@ -39,6 +39,6 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the parameters.
         /// </summary>
-        public IReadOnlyList<SqlParameterDefinitionBase> Parameters { get; private set; }
+        public IReadOnlyList<ParameterDefinitionBase> Parameters { get; private set; }
     }
 }

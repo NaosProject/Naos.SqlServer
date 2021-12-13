@@ -1,29 +1,34 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlOutputParameterDefinitionBase.cs" company="Naos Project">
+// <copyright file="OutputParameterDefinition{TValue}.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Naos.SqlServer.Domain
 {
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
-    /// Base class representation of a SQL output parameter.
+    /// A representation of a SQL output parameter.
     /// </summary>
+    /// <typeparam name="TValue">Type of the output value.</typeparam>
     // ReSharper disable once RedundantExtendsListEntry
-    public abstract partial class SqlOutputParameterDefinitionBase : SqlParameterDefinitionBase, IModelViaCodeGen
+    public partial class OutputParameterDefinition<TValue> : OutputParameterDefinitionBase, IModelViaCodeGen
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlOutputParameterDefinitionBase"/> class.
+        /// Initializes a new instance of the <see cref="OutputParameterDefinition{TValue}"/> class.
         /// </summary>
         /// <param name="name">The name of the parameter.</param>
         /// <param name="sqlDataType">The SQL data type of the parameter.</param>
-        protected SqlOutputParameterDefinitionBase(
+        public OutputParameterDefinition(
             string name,
             SqlDataTypeRepresentationBase sqlDataType)
             : base(name, sqlDataType)
         {
+            sqlDataType.MustForArg(nameof(sqlDataType)).NotBeNull();
+
+            this.ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(sqlDataType, typeof(TValue));
         }
     }
 }

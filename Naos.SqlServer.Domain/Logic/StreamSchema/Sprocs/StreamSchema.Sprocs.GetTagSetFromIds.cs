@@ -64,13 +64,13 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].{Name}");
                     var tagIdsCsv = tagIds?.Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-                    var parameters = new List<SqlParameterDefinitionBase>()
+                    var parameters = new List<ParameterDefinitionBase>()
                                      {
-                                         new SqlInputParameterDefinition<string>(
+                                         new InputParameterDefinition<string>(
                                              nameof(InputParamName.TagIdsCsv),
                                              Tables.Record.TagIdsCsv.SqlDataType,
                                              tagIdsCsv),
-                                         new SqlOutputParameterDefinition<string>(
+                                         new OutputParameterDefinition<string>(
                                              nameof(OutputParamName.TagsXml),
                                              new XmlSqlDataTypeRepresentation()),
                                      };

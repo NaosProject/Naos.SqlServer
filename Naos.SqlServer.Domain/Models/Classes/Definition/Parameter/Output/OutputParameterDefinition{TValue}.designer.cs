@@ -23,15 +23,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlOutputParameterDefinition<TValue> : IModel<SqlOutputParameterDefinition<TValue>>
+    public partial class OutputParameterDefinition<TValue> : IModel<OutputParameterDefinition<TValue>>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlOutputParameterDefinition{TValue}"/> are equal.
+        /// Determines whether two objects of type <see cref="OutputParameterDefinition{TValue}"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlOutputParameterDefinition<TValue> left, SqlOutputParameterDefinition<TValue> right)
+        public static bool operator ==(OutputParameterDefinition<TValue> left, OutputParameterDefinition<TValue> right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -49,15 +49,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlOutputParameterDefinition{TValue}"/> are not equal.
+        /// Determines whether two objects of type <see cref="OutputParameterDefinition{TValue}"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlOutputParameterDefinition<TValue> left, SqlOutputParameterDefinition<TValue> right) => !(left == right);
+        public static bool operator !=(OutputParameterDefinition<TValue> left, OutputParameterDefinition<TValue> right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlOutputParameterDefinition<TValue> other)
+        public bool Equals(OutputParameterDefinition<TValue> other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -76,7 +76,7 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as SqlOutputParameterDefinition<TValue>);
+        public override bool Equals(object obj) => this == (obj as OutputParameterDefinition<TValue>);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
@@ -85,7 +85,7 @@ namespace Naos.SqlServer.Domain
             .Value;
 
         /// <inheritdoc />
-        public new SqlOutputParameterDefinition<TValue> DeepClone() => (SqlOutputParameterDefinition<TValue>)this.DeepCloneInternal();
+        public new OutputParameterDefinition<TValue> DeepClone() => (OutputParameterDefinition<TValue>)this.DeepCloneInternal();
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
@@ -105,9 +105,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override SqlParameterDefinitionBase DeepCloneWithName(string name)
+        public override ParameterDefinitionBase DeepCloneWithName(string name)
         {
-            var result = new SqlOutputParameterDefinition<TValue>(
+            var result = new OutputParameterDefinition<TValue>(
                                  name,
                                  this.SqlDataType?.DeepClone());
 
@@ -132,9 +132,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override SqlParameterDefinitionBase DeepCloneWithSqlDataType(SqlDataTypeRepresentationBase sqlDataType)
+        public override ParameterDefinitionBase DeepCloneWithSqlDataType(SqlDataTypeRepresentationBase sqlDataType)
         {
-            var result = new SqlOutputParameterDefinition<TValue>(
+            var result = new OutputParameterDefinition<TValue>(
                                  this.Name?.DeepClone(),
                                  sqlDataType);
 
@@ -143,9 +143,9 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        protected override SqlParameterDefinitionBase DeepCloneInternal()
+        protected override ParameterDefinitionBase DeepCloneInternal()
         {
-            var result = new SqlOutputParameterDefinition<TValue>(
+            var result = new OutputParameterDefinition<TValue>(
                                  this.Name?.DeepClone(),
                                  this.SqlDataType?.DeepClone());
 

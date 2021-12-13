@@ -111,7 +111,7 @@ namespace Naos.SqlServer.Domain.Test
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new ExecuteStoredProcedureOp(
                                  A.Dummy<string>(),
-                                 A.Dummy<IReadOnlyList<SqlParameterDefinitionBase>>()));
+                                 A.Dummy<IReadOnlyList<ParameterDefinitionBase>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new GetOrAddIdentifiedSerializerRepresentationOp(
@@ -131,7 +131,70 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<int>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new InputParameterDefinition<Version>(
+                                 A.Dummy<string>(),
+                                 A.Dummy<SqlDataTypeRepresentationBase>(),
+                                 A.Dummy<Version>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var availableTypes = new[]
+                    {
+                        typeof(InputParameterDefinition<Version>)
+                    };
+
+                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
+
+                    var randomType = availableTypes[randomIndex];
+
+                    var result = (InputParameterDefinitionBase)AD.ummy(randomType);
+
+                    return result;
+                });
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new IntSqlDataTypeRepresentation());
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new OutputParameterDefinition<Version>(
+                                 A.Dummy<string>(),
+                                 A.Dummy<SqlDataTypeRepresentationBase>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var availableTypes = new[]
+                    {
+                        typeof(OutputParameterDefinition<Version>)
+                    };
+
+                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
+
+                    var randomType = availableTypes[randomIndex];
+
+                    var result = (OutputParameterDefinitionBase)AD.ummy(randomType);
+
+                    return result;
+                });
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var availableTypes = new[]
+                    {
+                        typeof(InputParameterDefinition<Version>),
+                        typeof(OutputParameterDefinition<Version>)
+                    };
+
+                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
+
+                    var randomType = availableTypes[randomIndex];
+
+                    var result = (ParameterDefinitionBase)AD.ummy(randomType);
+
+                    return result;
+                });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new RestoreFile(
@@ -183,72 +246,9 @@ namespace Naos.SqlServer.Domain.Test
                 });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlInputParameterDefinition<Version>(
-                                 A.Dummy<string>(),
-                                 A.Dummy<SqlDataTypeRepresentationBase>(),
-                                 A.Dummy<Version>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () =>
-                {
-                    var availableTypes = new[]
-                    {
-                        typeof(SqlInputParameterDefinition<Version>)
-                    };
-
-                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
-
-                    var randomType = availableTypes[randomIndex];
-
-                    var result = (SqlInputParameterDefinitionBase)AD.ummy(randomType);
-
-                    return result;
-                });
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterDefinition<Version>(
-                                 A.Dummy<string>(),
-                                 A.Dummy<SqlDataTypeRepresentationBase>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () =>
-                {
-                    var availableTypes = new[]
-                    {
-                        typeof(SqlOutputParameterDefinition<Version>)
-                    };
-
-                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
-
-                    var randomType = availableTypes[randomIndex];
-
-                    var result = (SqlOutputParameterDefinitionBase)AD.ummy(randomType);
-
-                    return result;
-                });
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlOutputParameterResult<Version>(
-                                 A.Dummy<SqlOutputParameterDefinition<Version>>(),
+                                 A.Dummy<OutputParameterDefinition<Version>>(),
                                  A.Dummy<Version>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () =>
-                {
-                    var availableTypes = new[]
-                    {
-                        typeof(SqlInputParameterDefinition<Version>),
-                        typeof(SqlOutputParameterDefinition<Version>)
-                    };
-
-                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
-
-                    var randomType = availableTypes[randomIndex];
-
-                    var result = (SqlParameterDefinitionBase)AD.ummy(randomType);
-
-                    return result;
-                });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlServerConnectionDefinition

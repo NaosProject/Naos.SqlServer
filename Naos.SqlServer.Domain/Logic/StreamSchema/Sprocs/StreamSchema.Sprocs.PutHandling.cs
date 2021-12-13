@@ -107,17 +107,17 @@ namespace Naos.SqlServer.Domain
 
                     var acceptableCurrentStatusesCsv = acceptableCurrentStatuses.Select(_ => _.ToString()).ToCsv();
 
-                    var parameters = new List<SqlParameterDefinitionBase>()
+                    var parameters = new List<ParameterDefinitionBase>()
                                      {
-                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.SqlDataType, concern),
-                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.Details), Tables.Handling.Details.SqlDataType, details),
-                                         new SqlInputParameterDefinition<long>(nameof(InputParamName.RecordId), Tables.Handling.RecordId.SqlDataType, recordId),
-                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.NewStatus), Tables.Handling.Status.SqlDataType, newStatus.ToString()),
-                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.AcceptableCurrentStatusesCsv), new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant), acceptableCurrentStatusesCsv),
-                                         new SqlInputParameterDefinition<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
-                                         new SqlInputParameterDefinition<int>(nameof(InputParamName.IsUnHandledRecord), new IntSqlDataTypeRepresentation(), 0),
-                                         new SqlInputParameterDefinition<int>(nameof(InputParamName.IsClaimingRecordId), new IntSqlDataTypeRepresentation(), 0),
-                                         new SqlOutputParameterDefinition<long>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.SqlDataType, concern),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.Details), Tables.Handling.Details.SqlDataType, details),
+                                         new InputParameterDefinition<long>(nameof(InputParamName.RecordId), Tables.Handling.RecordId.SqlDataType, recordId),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.NewStatus), Tables.Handling.Status.SqlDataType, newStatus.ToString()),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.AcceptableCurrentStatusesCsv), new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxLengthConstant), acceptableCurrentStatusesCsv),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
+                                         new InputParameterDefinition<int>(nameof(InputParamName.IsUnHandledRecord), new IntSqlDataTypeRepresentation(), 0),
+                                         new InputParameterDefinition<int>(nameof(InputParamName.IsClaimingRecordId), new IntSqlDataTypeRepresentation(), 0),
+                                         new OutputParameterDefinition<long>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);

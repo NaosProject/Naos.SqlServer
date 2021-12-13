@@ -116,7 +116,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ExecuteStoredProcedureOp(
                                              referenceObject.Name,
-                                             new List<SqlParameterDefinitionBase>());
+                                             new List<ParameterDefinitionBase>());
 
                         return result;
                     },
@@ -133,7 +133,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ExecuteStoredProcedureOp(
                                              referenceObject.Name,
-                                             new SqlParameterDefinitionBase[0].Concat(referenceObject.Parameters).Concat(new SqlParameterDefinitionBase[] { null }).Concat(referenceObject.Parameters).ToList());
+                                             new ParameterDefinitionBase[0].Concat(referenceObject.Parameters).Concat(new ParameterDefinitionBase[] { null }).Concat(referenceObject.Parameters).ToList());
 
                         return result;
                     },

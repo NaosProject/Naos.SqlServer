@@ -190,29 +190,29 @@
       <DependentUpon>UtcDateTimeSqlDataTypeRepresentation.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Stream\IdentifiedSerializerRepresentation.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinitionBase.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinitionBase.designer.cs">
-      <DependentUpon>SqlInputParameterDefinitionBase.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinitionBase.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinitionBase.designer.cs">
+      <DependentUpon>InputParameterDefinitionBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinition{TValue}.designer.cs">
-      <DependentUpon>SqlInputParameterDefinition{TValue}.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinition{TValue}.designer.cs">
+      <DependentUpon>InputParameterDefinition{TValue}.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinitionBase.designer.cs">
-      <DependentUpon>SqlOutputParameterDefinitionBase.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\Output\OutputParameterDefinitionBase.designer.cs">
+      <DependentUpon>OutputParameterDefinitionBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinition{TValue}.designer.cs">
-      <DependentUpon>SqlOutputParameterDefinition{TValue}.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\Output\OutputParameterDefinition{TValue}.designer.cs">
+      <DependentUpon>OutputParameterDefinition{TValue}.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\SqlParameterDefinitionBase.designer.cs">
-      <DependentUpon>SqlParameterDefinitionBase.cs</DependentUpon>
+    <Compile Include="Models\Classes\Definition\Parameter\ParameterDefinitionBase.designer.cs">
+      <DependentUpon>ParameterDefinitionBase.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Interfaces\ISqlServerLocator.cs" />
     <Compile Include="Models\Interfaces\ISqlOutputParameterResult.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinition{TValue}.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinitionBase.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinition{TValue}.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Output\OutputParameterDefinitionBase.cs" />
     <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinition{TValue}.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\SqlParameterDefinitionBase.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Output\OutputParameterDefinition{TValue}.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\ParameterDefinitionBase.cs" />
     <Compile Include="Models\Classes\Management\ColumnDescription.designer.cs">
       <DependentUpon>ColumnDescription.cs</DependentUpon>
     </Compile>

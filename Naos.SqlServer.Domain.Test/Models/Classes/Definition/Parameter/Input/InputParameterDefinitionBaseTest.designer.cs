@@ -33,28 +33,28 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class SqlOutputParameterDefinitionBaseTest
+    public static partial class InputParameterDefinitionBaseTest
     {
-        private static readonly SqlOutputParameterDefinitionBase ReferenceObjectForEquatableTestScenarios = A.Dummy<SqlOutputParameterDefinitionBase>();
+        private static readonly InputParameterDefinitionBase ReferenceObjectForEquatableTestScenarios = A.Dummy<InputParameterDefinitionBase>();
 
-        private static readonly EquatableTestScenarios<SqlOutputParameterDefinitionBase> EquatableTestScenarios = new EquatableTestScenarios<SqlOutputParameterDefinitionBase>()
+        private static readonly EquatableTestScenarios<InputParameterDefinitionBase> EquatableTestScenarios = new EquatableTestScenarios<InputParameterDefinitionBase>()
             .AddScenario(() =>
-                new EquatableTestScenario<SqlOutputParameterDefinitionBase>
+                new EquatableTestScenario<InputParameterDefinitionBase>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SqlOutputParameterDefinitionBase[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new InputParameterDefinitionBase[]
                     {
                         ReferenceObjectForEquatableTestScenarios.DeepClone(),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new SqlOutputParameterDefinitionBase[]
+                    ObjectsThatAreNotEqualToReferenceObject = new InputParameterDefinitionBase[]
                     {
                         // DeepCloneWith___() methods implemented in concrete derivates throw NotSupportedException
                         // when the derivative's constructor in-use (by code gen) does not have a parameter that
                         // corresponds with the property who's value is provided in the DeepCloneWith___() method.
                         // We do not know in advance if this will happen.  As such, the following objects are commented out.
-                        // (SqlOutputParameterDefinitionBase)ReferenceObjectForEquatableTestScenarios.DeepCloneWithName(A.Dummy<SqlOutputParameterDefinitionBase>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name),
-                        // (SqlOutputParameterDefinitionBase)ReferenceObjectForEquatableTestScenarios.DeepCloneWithSqlDataType(A.Dummy<SqlOutputParameterDefinitionBase>().Whose(_ => !_.SqlDataType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SqlDataType)).SqlDataType),
+                        // (InputParameterDefinitionBase)ReferenceObjectForEquatableTestScenarios.DeepCloneWithName(A.Dummy<InputParameterDefinitionBase>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name),
+                        // (InputParameterDefinitionBase)ReferenceObjectForEquatableTestScenarios.DeepCloneWithSqlDataType(A.Dummy<InputParameterDefinitionBase>().Whose(_ => !_.SqlDataType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SqlDataType)).SqlDataType),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -84,12 +84,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SqlOutputParameterDefinitionBase___Should_implement_IModel_of_SqlOutputParameterDefinitionBase___When_reflecting()
+            public static void InputParameterDefinitionBase___Should_implement_IModel_of_InputParameterDefinitionBase___When_reflecting()
             {
                 // Arrange
-                var type = typeof(SqlOutputParameterDefinitionBase);
+                var type = typeof(InputParameterDefinitionBase);
 
-                var expectedModelMethods = typeof(IModel<SqlOutputParameterDefinitionBase>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<InputParameterDefinitionBase>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -99,7 +99,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SqlOutputParameterDefinitionBase>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<InputParameterDefinitionBase>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -117,10 +117,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SqlOutputParameterDefinitionBase___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void InputParameterDefinitionBase___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(SqlOutputParameterDefinitionBase);
+                var type = typeof(InputParameterDefinitionBase);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -151,10 +151,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SqlOutputParameterDefinitionBase>();
+                var systemUnderTest = A.Dummy<InputParameterDefinitionBase>();
 
                 // Act
-                var actual = (SqlOutputParameterDefinitionBase)systemUnderTest.Clone();
+                var actual = (InputParameterDefinitionBase)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -178,7 +178,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SqlOutputParameterDefinitionBase>();
+                var systemUnderTest = A.Dummy<InputParameterDefinitionBase>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -222,7 +222,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlOutputParameterDefinitionBase>();
+                var expected = A.Dummy<InputParameterDefinitionBase>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -251,7 +251,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlOutputParameterDefinitionBase>();
+                var expected = A.Dummy<InputParameterDefinitionBase>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -280,7 +280,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlOutputParameterDefinitionBase>();
+                var expected = A.Dummy<InputParameterDefinitionBase>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -309,7 +309,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlOutputParameterDefinitionBase>();
+                var expected = A.Dummy<InputParameterDefinitionBase>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -343,8 +343,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SqlOutputParameterDefinitionBase systemUnderTest1 = null;
-                SqlOutputParameterDefinitionBase systemUnderTest2 = null;
+                InputParameterDefinitionBase systemUnderTest1 = null;
+                InputParameterDefinitionBase systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -374,7 +374,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlOutputParameterDefinitionBase systemUnderTest = null;
+                    InputParameterDefinitionBase systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -523,8 +523,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SqlOutputParameterDefinitionBase systemUnderTest1 = null;
-                SqlOutputParameterDefinitionBase systemUnderTest2 = null;
+                InputParameterDefinitionBase systemUnderTest1 = null;
+                InputParameterDefinitionBase systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -554,7 +554,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlOutputParameterDefinitionBase systemUnderTest = null;
+                    InputParameterDefinitionBase systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -700,17 +700,17 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterDefinitionBase___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_ParameterDefinitionBase___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlParameterDefinitionBase systemUnderTest = null;
+                    ParameterDefinitionBase systemUnderTest = null;
 
                     // Act
-                    var actual = scenario.ReferenceObject.Equals((SqlParameterDefinitionBase)systemUnderTest);
+                    var actual = scenario.ReferenceObject.Equals((ParameterDefinitionBase)systemUnderTest);
 
                     // Assert
                     actual.AsTest().Must().BeFalse(because: scenario.Id);
@@ -731,14 +731,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterDefinitionBase___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_ParameterDefinitionBase___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actual = scenario.ReferenceObject.Equals((SqlParameterDefinitionBase)scenario.ReferenceObject);
+                    var actual = scenario.ReferenceObject.Equals((ParameterDefinitionBase)scenario.ReferenceObject);
 
                     // Assert
                     actual.AsTest().Must().BeTrue(because: scenario.Id);
@@ -759,14 +759,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterDefinitionBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_ParameterDefinitionBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlParameterDefinitionBase)_)).ToList();
+                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ParameterDefinitionBase)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
@@ -787,14 +787,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterDefinitionBase___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_ParameterDefinitionBase___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlParameterDefinitionBase)_)).ToList();
+                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ParameterDefinitionBase)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
@@ -815,14 +815,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlParameterDefinitionBase___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_ParameterDefinitionBase___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlParameterDefinitionBase)_)).ToList();
+                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ParameterDefinitionBase)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
@@ -843,14 +843,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterDefinitionBase___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_InputParameterDefinitionBase___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlOutputParameterDefinitionBase systemUnderTest = null;
+                    InputParameterDefinitionBase systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -874,7 +874,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterDefinitionBase___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_InputParameterDefinitionBase___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -902,7 +902,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterDefinitionBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_InputParameterDefinitionBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -930,7 +930,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterDefinitionBase___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_InputParameterDefinitionBase___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -958,7 +958,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlOutputParameterDefinitionBase___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_InputParameterDefinitionBase___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

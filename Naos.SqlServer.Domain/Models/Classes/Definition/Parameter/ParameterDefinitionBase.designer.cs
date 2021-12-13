@@ -23,15 +23,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlParameterDefinitionBase : IModel<SqlParameterDefinitionBase>
+    public partial class ParameterDefinitionBase : IModel<ParameterDefinitionBase>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlParameterDefinitionBase"/> are equal.
+        /// Determines whether two objects of type <see cref="ParameterDefinitionBase"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlParameterDefinitionBase left, SqlParameterDefinitionBase right)
+        public static bool operator ==(ParameterDefinitionBase left, ParameterDefinitionBase right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -49,15 +49,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlParameterDefinitionBase"/> are not equal.
+        /// Determines whether two objects of type <see cref="ParameterDefinitionBase"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlParameterDefinitionBase left, SqlParameterDefinitionBase right) => !(left == right);
+        public static bool operator !=(ParameterDefinitionBase left, ParameterDefinitionBase right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlParameterDefinitionBase other) => this == other;
+        public bool Equals(ParameterDefinitionBase other) => this == other;
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
@@ -77,13 +77,13 @@ namespace Naos.SqlServer.Domain
         public object Clone() => this.DeepClone();
 
         /// <inheritdoc />
-        public SqlParameterDefinitionBase DeepClone() => this.DeepCloneInternal();
+        public ParameterDefinitionBase DeepClone() => this.DeepCloneInternal();
 
         /// <summary>
         /// Deep clones this object with a new <see cref="Name" />.
         /// </summary>
         /// <param name="name">The new <see cref="Name" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlParameterDefinitionBase" /> using the specified <paramref name="name" /> for <see cref="Name" /> and a deep clone of every other property.</returns>
+        /// <returns>New <see cref="ParameterDefinitionBase" /> using the specified <paramref name="name" /> for <see cref="Name" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -101,7 +101,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public virtual SqlParameterDefinitionBase DeepCloneWithName(string name)
+        public virtual ParameterDefinitionBase DeepCloneWithName(string name)
         {
             throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
         }
@@ -110,7 +110,7 @@ namespace Naos.SqlServer.Domain
         /// Deep clones this object with a new <see cref="SqlDataType" />.
         /// </summary>
         /// <param name="sqlDataType">The new <see cref="SqlDataType" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlParameterDefinitionBase" /> using the specified <paramref name="sqlDataType" /> for <see cref="SqlDataType" /> and a deep clone of every other property.</returns>
+        /// <returns>New <see cref="ParameterDefinitionBase" /> using the specified <paramref name="sqlDataType" /> for <see cref="SqlDataType" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -128,7 +128,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public virtual SqlParameterDefinitionBase DeepCloneWithSqlDataType(SqlDataTypeRepresentationBase sqlDataType)
+        public virtual ParameterDefinitionBase DeepCloneWithSqlDataType(SqlDataTypeRepresentationBase sqlDataType)
         {
             throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
         }
@@ -139,7 +139,7 @@ namespace Naos.SqlServer.Domain
         /// <returns>
         /// A new object that is a deep clone of this instance.
         /// </returns>
-        protected virtual SqlParameterDefinitionBase DeepCloneInternal()
+        protected virtual ParameterDefinitionBase DeepCloneInternal()
         {
             throw new NotImplementedException("This method should be abstract.  It was generated as virtual so that you aren't forced to override it when you create a new model that derives from this model.  It will be overridden in the generated designer file.");
         }

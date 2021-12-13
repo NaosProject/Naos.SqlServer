@@ -47,7 +47,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<SqlOutputParameterResult<Version>>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlOutputParameterResult<Version>: SqlOutputParameter = {systemUnderTest.SqlOutputParameter?.ToString() ?? "<null>"}, Value = {systemUnderTest.Value?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlOutputParameterResult<Version>: OutputParameter = {systemUnderTest.OutputParameter?.ToString() ?? "<null>"}, Value = {systemUnderTest.Value?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
@@ -58,7 +58,7 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorArgumentValidationTestScenario<SqlOutputParameterResult<Version>>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'sqlOutputParameter' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'outputParameter' is null scenario",
                     ConstructionFunc = () =>
                     {
                         var referenceObject = A.Dummy<SqlOutputParameterResult<Version>>();
@@ -70,7 +70,7 @@ namespace Naos.SqlServer.Domain.Test
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "sqlOutputParameter", },
+                    ExpectedExceptionMessageContains = new[] { "outputParameter", },
                 })
             .AddScenario(() =>
                 new ConstructorArgumentValidationTestScenario<SqlOutputParameterResult<Version>>
@@ -81,7 +81,7 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<SqlOutputParameterResult<Version>>();
 
                         var result = new SqlOutputParameterResult<Version>(
-                                             referenceObject.SqlOutputParameter,
+                                             referenceObject.OutputParameter,
                                              null);
 
                         return result;
@@ -94,7 +94,7 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<SqlOutputParameterResult<Version>>
                 {
-                    Name = "SqlOutputParameter should return same 'sqlOutputParameter' parameter passed to constructor when getting",
+                    Name = "OutputParameter should return same 'outputParameter' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
                         var referenceObject = A.Dummy<SqlOutputParameterResult<Version>>();
@@ -102,14 +102,14 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<SqlOutputParameterResult<Version>>
                         {
                             SystemUnderTest = new SqlOutputParameterResult<Version>(
-                                                      referenceObject.SqlOutputParameter,
+                                                      referenceObject.OutputParameter,
                                                       referenceObject.Value),
-                            ExpectedPropertyValue = referenceObject.SqlOutputParameter,
+                            ExpectedPropertyValue = referenceObject.OutputParameter,
                         };
 
                         return result;
                     },
-                    PropertyName = "SqlOutputParameter",
+                    PropertyName = "OutputParameter",
                 })
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<SqlOutputParameterResult<Version>>
@@ -122,7 +122,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<SqlOutputParameterResult<Version>>
                         {
                             SystemUnderTest = new SqlOutputParameterResult<Version>(
-                                                      referenceObject.SqlOutputParameter,
+                                                      referenceObject.OutputParameter,
                                                       referenceObject.Value),
                             ExpectedPropertyValue = referenceObject.Value,
                         };
@@ -136,18 +136,18 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new DeepCloneWithTestScenario<SqlOutputParameterResult<Version>>
                 {
-                    Name = "DeepCloneWithSqlOutputParameter should deep clone object and replace SqlOutputParameter with the provided sqlOutputParameter",
-                    WithPropertyName = "SqlOutputParameter",
+                    Name = "DeepCloneWithOutputParameter should deep clone object and replace OutputParameter with the provided outputParameter",
+                    WithPropertyName = "OutputParameter",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
                         var systemUnderTest = A.Dummy<SqlOutputParameterResult<Version>>();
 
-                        var referenceObject = A.Dummy<SqlOutputParameterResult<Version>>().ThatIs(_ => !systemUnderTest.SqlOutputParameter.IsEqualTo(_.SqlOutputParameter));
+                        var referenceObject = A.Dummy<SqlOutputParameterResult<Version>>().ThatIs(_ => !systemUnderTest.OutputParameter.IsEqualTo(_.OutputParameter));
 
                         var result = new SystemUnderTestDeepCloneWithValue<SqlOutputParameterResult<Version>>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.SqlOutputParameter,
+                            DeepCloneWithValue = referenceObject.OutputParameter,
                         };
 
                         return result;
@@ -185,16 +185,16 @@ namespace Naos.SqlServer.Domain.Test
                     ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SqlOutputParameterResult<Version>[]
                     {
                         new SqlOutputParameterResult<Version>(
-                                ReferenceObjectForEquatableTestScenarios.SqlOutputParameter,
+                                ReferenceObjectForEquatableTestScenarios.OutputParameter,
                                 ReferenceObjectForEquatableTestScenarios.Value),
                     },
                     ObjectsThatAreNotEqualToReferenceObject = new SqlOutputParameterResult<Version>[]
                     {
                         new SqlOutputParameterResult<Version>(
-                                A.Dummy<SqlOutputParameterResult<Version>>().Whose(_ => !_.SqlOutputParameter.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SqlOutputParameter)).SqlOutputParameter,
+                                A.Dummy<SqlOutputParameterResult<Version>>().Whose(_ => !_.OutputParameter.IsEqualTo(ReferenceObjectForEquatableTestScenarios.OutputParameter)).OutputParameter,
                                 ReferenceObjectForEquatableTestScenarios.Value),
                         new SqlOutputParameterResult<Version>(
-                                ReferenceObjectForEquatableTestScenarios.SqlOutputParameter,
+                                ReferenceObjectForEquatableTestScenarios.OutputParameter,
                                 A.Dummy<SqlOutputParameterResult<Version>>().Whose(_ => !_.Value.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Value)).Value),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
@@ -477,16 +477,16 @@ namespace Naos.SqlServer.Domain.Test
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
 
-                if (systemUnderTest.SqlOutputParameter == null)
+                if (systemUnderTest.OutputParameter == null)
                 {
-                    actual.SqlOutputParameter.AsTest().Must().BeNull();
+                    actual.OutputParameter.AsTest().Must().BeNull();
                 }
-                else if (!actual.SqlOutputParameter.GetType().IsValueType)
+                else if (!actual.OutputParameter.GetType().IsValueType)
                 {
                     // When the declared type is a reference type, we still have to check the runtime type.
                     // The object could be a boxed value type, which will fail this asseration because
                     // a deep clone of a value type object is the same object.
-                    actual.SqlOutputParameter.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.SqlOutputParameter);
+                    actual.OutputParameter.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.OutputParameter);
                 }
 
                 if (systemUnderTest.Value == null)
@@ -518,7 +518,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "SqlOutputParameter", "Value" };
+                var propertyNames = new string[] { "OutputParameter", "Value" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 

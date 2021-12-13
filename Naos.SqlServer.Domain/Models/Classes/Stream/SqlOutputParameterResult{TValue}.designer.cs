@@ -69,7 +69,7 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.SqlOutputParameter.IsEqualTo(other.SqlOutputParameter)
+            var result = this.OutputParameter.IsEqualTo(other.OutputParameter)
                       && this.Value.IsEqualTo(other.Value);
 
             return result;
@@ -80,7 +80,7 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.SqlOutputParameter)
+            .Hash(this.OutputParameter)
             .Hash(this.Value)
             .Value;
 
@@ -91,17 +91,17 @@ namespace Naos.SqlServer.Domain
         public SqlOutputParameterResult<TValue> DeepClone()
         {
             var result = new SqlOutputParameterResult<TValue>(
-                                 this.SqlOutputParameter?.DeepClone(),
+                                 this.OutputParameter?.DeepClone(),
                                  this.Value == null ? default : this.Value.DeepClone());
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="SqlOutputParameter" />.
+        /// Deep clones this object with a new <see cref="OutputParameter" />.
         /// </summary>
-        /// <param name="sqlOutputParameter">The new <see cref="SqlOutputParameter" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlOutputParameterResult{TValue}" /> using the specified <paramref name="sqlOutputParameter" /> for <see cref="SqlOutputParameter" /> and a deep clone of every other property.</returns>
+        /// <param name="outputParameter">The new <see cref="OutputParameter" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="SqlOutputParameterResult{TValue}" /> using the specified <paramref name="outputParameter" /> for <see cref="OutputParameter" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -119,10 +119,10 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlOutputParameterResult<TValue> DeepCloneWithSqlOutputParameter(SqlOutputParameterDefinition<TValue> sqlOutputParameter)
+        public SqlOutputParameterResult<TValue> DeepCloneWithOutputParameter(OutputParameterDefinition<TValue> outputParameter)
         {
             var result = new SqlOutputParameterResult<TValue>(
-                                 sqlOutputParameter,
+                                 outputParameter,
                                  this.Value == null ? default : this.Value.DeepClone());
 
             return result;
@@ -153,7 +153,7 @@ namespace Naos.SqlServer.Domain
         public SqlOutputParameterResult<TValue> DeepCloneWithValue(TValue value)
         {
             var result = new SqlOutputParameterResult<TValue>(
-                                 this.SqlOutputParameter?.DeepClone(),
+                                 this.OutputParameter?.DeepClone(),
                                  value);
 
             return result;
@@ -163,7 +163,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.{this.GetType().ToStringReadable()}: SqlOutputParameter = {this.SqlOutputParameter?.ToString() ?? "<null>"}, Value = {this.Value?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.{this.GetType().ToStringReadable()}: OutputParameter = {this.OutputParameter?.ToString() ?? "<null>"}, Value = {this.Value?.ToString() ?? "<null>"}.");
 
             return result;
         }

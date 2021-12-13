@@ -263,6 +263,14 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinitionBaseTest.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinitionBaseTest.designer.cs">
+      <DependentUpon>InputParameterDefinitionBaseTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinition{TValue}Test.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinition{TValue}Test.designer.cs">
+      <DependentUpon>InputParameterDefinition{TValue}Test.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Definition\ColumnDefinitionTest.cs" />
     <Compile Include="Models\Classes\Definition\ColumnDefinitionTest.designer.cs">
       <DependentUpon>ColumnDefinitionTest.cs</DependentUpon>
@@ -327,6 +335,18 @@
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\IntSqlDataTypeRepresentationTest.designer.cs">
       <DependentUpon>IntSqlDataTypeRepresentationTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\Output\OutputParameterDefinitionBaseTest.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Output\OutputParameterDefinitionBaseTest.designer.cs">
+      <DependentUpon>OutputParameterDefinitionBaseTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\Output\OutputParameterDefinition{TValue}Test.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\Output\OutputParameterDefinition{TValue}Test.designer.cs">
+      <DependentUpon>OutputParameterDefinition{TValue}Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Definition\Parameter\ParameterDefinitionBaseTest.cs" />
+    <Compile Include="Models\Classes\Definition\Parameter\ParameterDefinitionBaseTest.designer.cs">
+      <DependentUpon>ParameterDefinitionBaseTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Classes\Management\RestoreFileTest.cs" />
@@ -353,29 +373,9 @@
     <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinitionTest.designer.cs">
       <DependentUpon>SqlServerConnectionDefinitionTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinitionBaseTest.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinitionBaseTest.designer.cs">
-      <DependentUpon>SqlInputParameterDefinitionBaseTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinition{TValue}Test.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Input\SqlInputParameterDefinition{TValue}Test.designer.cs">
-      <DependentUpon>SqlInputParameterDefinition{TValue}Test.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinitionBaseTest.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinitionBaseTest.designer.cs">
-      <DependentUpon>SqlOutputParameterDefinitionBaseTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinition{TValue}Test.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\Output\SqlOutputParameterDefinition{TValue}Test.designer.cs">
-      <DependentUpon>SqlOutputParameterDefinition{TValue}Test.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}Test.cs" />
     <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}Test.designer.cs">
       <DependentUpon>SqlOutputParameterResult{TValue}Test.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\Definition\Parameter\SqlParameterDefinitionBaseTest.cs" />
-    <Compile Include="Models\Classes\Definition\Parameter\SqlParameterDefinitionBaseTest.designer.cs">
-      <DependentUpon>SqlParameterDefinitionBaseTest.cs</DependentUpon>
     </Compile>
     <Compile Include="SqlServerDummyFactory.cs" />
     <Compile Include="SqlServerDummyFactory.designer.cs">

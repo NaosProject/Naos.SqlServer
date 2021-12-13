@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlInputParameterDefinition{TValue}.cs" company="Naos Project">
+// <copyright file="InputParameterDefinition{TValue}.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,15 +14,15 @@ namespace Naos.SqlServer.Domain
     /// </summary>
     /// <typeparam name="TValue">Type of the input value.</typeparam>
     // ReSharper disable once RedundantExtendsListEntry
-    public partial class SqlInputParameterDefinition<TValue> : SqlInputParameterDefinitionBase, IModelViaCodeGen
+    public partial class InputParameterDefinition<TValue> : InputParameterDefinitionBase, IModelViaCodeGen
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlInputParameterDefinition{TValue}"/> class.
+        /// Initializes a new instance of the <see cref="InputParameterDefinition{TValue}"/> class.
         /// </summary>
         /// <param name="name">The name of the parameter.</param>
         /// <param name="sqlDataType">The SQL data type of the parameter.</param>
         /// <param name="value">The value of the parameter.</param>
-        public SqlInputParameterDefinition(
+        public InputParameterDefinition(
             string name,
             SqlDataTypeRepresentationBase sqlDataType,
             TValue value)
