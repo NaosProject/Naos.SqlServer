@@ -7,7 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
-    using System.Linq;
     using OBeautifulCode.Type;
     using static System.FormattableString;
 

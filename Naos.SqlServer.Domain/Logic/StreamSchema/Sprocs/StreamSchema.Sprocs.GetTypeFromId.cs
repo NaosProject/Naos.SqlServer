@@ -6,9 +6,7 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using static System.FormattableString;
 
     public static partial class StreamSchema

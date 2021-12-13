@@ -7,7 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
-    using System.Linq;
     using OBeautifulCode.Compression;
     using OBeautifulCode.Serialization;
     using static System.FormattableString;
@@ -124,7 +123,7 @@ namespace Naos.SqlServer.Domain
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
-{createOrModify} PROCEDURE [{streamName}].[{GetIdAddIfNecessarySerializerRepresentation.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{Name}](
   @{InputParamName.ConfigTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.ConfigTypeWithVersionId} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.SqlDataType.DeclarationInSqlSyntax}
