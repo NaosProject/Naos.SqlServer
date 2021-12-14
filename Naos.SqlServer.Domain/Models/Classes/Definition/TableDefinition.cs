@@ -7,7 +7,9 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using Naos.CodeAnalysis.Recipes;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
@@ -19,11 +21,13 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// The characters that are allowed in a table name, in addition to alphanumeric characters.
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<char> TableNameAlphanumericOtherAllowedCharacters = new[] { ' ', '_' };
 
         /// <summary>
         /// The characters that are allowed in a table schema name, in addition to alphanumeric characters.
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<char> TableSchemaNameAlphanumericOtherAllowedCharacters = new[] { ' ', '_' };
 
         /// <summary>

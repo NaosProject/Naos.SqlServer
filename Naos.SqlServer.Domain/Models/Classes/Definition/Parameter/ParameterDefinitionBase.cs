@@ -8,6 +8,8 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using Naos.CodeAnalysis.Recipes;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
     using static System.FormattableString;
@@ -20,6 +22,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// The characters that are allowed in a parameter name, in addition to alphanumeric characters.
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<char> ParameterNameAlphanumericOtherAllowedCharacters = new[] { '@', '_' };
 
         /// <summary>
@@ -53,7 +56,7 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <param name="sqlDataType">The SQL data type.</param>
         /// <param name="dotNetDataType">The .NET data type.</param>
-        protected void ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(
+        protected static void ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(
             SqlDataTypeRepresentationBase sqlDataType,
             Type dotNetDataType)
         {

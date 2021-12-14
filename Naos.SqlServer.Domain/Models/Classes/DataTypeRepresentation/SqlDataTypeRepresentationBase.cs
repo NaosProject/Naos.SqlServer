@@ -36,7 +36,7 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <param name="objectType">The type of .NET object.</param>
         /// <param name="acceptableTypes">The set of acceptable types.</param>
-        protected void InternalValidateObjectTypeIsCompatible(
+        protected static void InternalValidateObjectTypeIsCompatible(
             Type objectType,
             IReadOnlyCollection<Type> acceptableTypes)
         {

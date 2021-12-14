@@ -26,6 +26,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// The <see cref="TypeRepresentation"/>'s of the supported protocols sets that stream users can be created with.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Versionless", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<TypeRepresentation> VersionlessSupportedProtocolTypeRepresentations = new[]
         {

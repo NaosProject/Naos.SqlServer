@@ -7,6 +7,8 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using Naos.CodeAnalysis.Recipes;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
@@ -18,6 +20,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// The characters that are allowed in a column name, in addition to alphanumeric characters.
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<char> ColumnNameAlphanumericOtherAllowedCharacters = new[] { '_' };
 
         /// <summary>

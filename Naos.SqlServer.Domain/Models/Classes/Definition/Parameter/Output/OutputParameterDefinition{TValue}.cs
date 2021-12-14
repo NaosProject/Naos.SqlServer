@@ -28,7 +28,7 @@ namespace Naos.SqlServer.Domain
         {
             sqlDataType.MustForArg(nameof(sqlDataType)).NotBeNull();
 
-            this.ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(sqlDataType, typeof(TValue));
+            ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(sqlDataType, typeof(TValue));
         }
     }
 }

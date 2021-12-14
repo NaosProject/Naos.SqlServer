@@ -53,7 +53,7 @@ namespace Naos.SqlServer.Domain
         public override void ValidateObjectTypeIsCompatible(
             Type objectType)
         {
-            this.InternalValidateObjectTypeIsCompatible(objectType, AcceptableTypes);
+            InternalValidateObjectTypeIsCompatible(objectType, AcceptableTypes);
         }
     }
 }

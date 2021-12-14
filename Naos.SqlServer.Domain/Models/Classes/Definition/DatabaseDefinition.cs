@@ -49,11 +49,13 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// The characters that are allowed in a database name, in addition to alphanumeric characters.
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<char> DatabaseNameAlphanumericOtherAllowedCharacters = new[] { ' ', '_' };
 
         /// <summary>
         /// The characters that are allowed in a database logical file name, in addition to alphanumeric characters.
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<char> DatabaseLogicalFileNameAlphanumericOtherAllowedCharacters = new[] { ' ', '_' };
 
         /// <summary>
