@@ -10,7 +10,7 @@ namespace Naos.SqlServer.Domain.Test
     using System.Diagnostics.CodeAnalysis;
 
     using FakeItEasy;
-
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -22,8 +22,72 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static DecimalSqlDataTypeRepresentationTest()
         {
-            // not possible for constructor to throw...
-            ConstructorArgumentValidationTestScenarios.AddScenario(ConstructorArgumentValidationTestScenario<DecimalSqlDataTypeRepresentation>.ForceGeneratedTestsToPassAndWriteMyOwnScenario);
+            ConstructorArgumentValidationTestScenarios
+                .RemoveAllScenarios()
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<DecimalSqlDataTypeRepresentation>
+                    {
+                        Name = "constructor should throw ArgumentOutOfRangeException when parameter 'precision' is 0",
+                        ConstructionFunc = () =>
+                        {
+                            var result = new DecimalSqlDataTypeRepresentation(0);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                        ExpectedExceptionMessageContains = new[] { "precision", },
+                    })
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<DecimalSqlDataTypeRepresentation>
+                    {
+                        Name = "constructor should throw ArgumentOutOfRangeException when parameter 'precision' is greater than 38",
+                        ConstructionFunc = () =>
+                        {
+                            var result = new DecimalSqlDataTypeRepresentation(A.Dummy<byte>().ThatIs(_ => _ > 38));
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                        ExpectedExceptionMessageContains = new[] { "precision", },
+                    })
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<DecimalSqlDataTypeRepresentation>
+                    {
+                        Name = "constructor should throw ArgumentOutOfRangeException when parameter 'scale' is greater than parameter 'precision'",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<DecimalSqlDataTypeRepresentation>();
+
+                            var result = new DecimalSqlDataTypeRepresentation(referenceObject.Precision, A.Dummy<byte>().ThatIs(_ => _ > referenceObject.Precision));
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                        ExpectedExceptionMessageContains = new[] { "scale", },
+                    });
+        }
+
+        [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_throw_InvalidOperationException___When_objectType_is_not_compatible()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int)));
+
+            // Act, Assert
+            actual.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual.Message.AsTest().Must().ContainString("Supported object types: decimal, decimal?; provided type: int");
+        }
+
+        [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
+        {
+            // Arrange, Act
+            var actual1 = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(decimal)));
+            var actual2 = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(decimal?)));
+
+            // Act, Assert
+            actual1.AsTest().Must().BeNull();
+            actual2.AsTest().Must().BeNull();
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Naos.SqlServer.Domain.Test
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
+    using OBeautifulCode.Equality.Recipes;
     using Xunit;
 
     using static System.FormattableString;
@@ -470,6 +471,137 @@ namespace Naos.SqlServer.Domain.Test
                                                                    "encryptorName",
                                                                },
                         });
+
+            EquatableTestScenarios
+                .RemoveAllScenarios()
+                .AddScenario(() =>
+                    new EquatableTestScenario<BackupSqlServerDatabaseDetails>
+                    {
+                        Name = "Default Code Generated Scenario",
+                        ReferenceObject = ReferenceObjectForEquatableTestScenarios,
+                        ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new BackupSqlServerDatabaseDetails[]
+                        {
+                            new BackupSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.Name,
+                                    ReferenceObjectForEquatableTestScenarios.Description,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.BackupTo,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.CompressionOption,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        },
+                        ObjectsThatAreNotEqualToReferenceObject = new BackupSqlServerDatabaseDetails[]
+                        {
+                            new BackupSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.Name,
+                                    ReferenceObjectForEquatableTestScenarios.Description,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.BackupTo.IsEqualTo(ReferenceObjectForEquatableTestScenarios.BackupTo)).BackupTo,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.CompressionOption,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                            new BackupSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.Name,
+                                    ReferenceObjectForEquatableTestScenarios.Description,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.BackupTo,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.CompressionOption,
+                                    A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.ChecksumOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ChecksumOption)).ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                            new BackupSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.Name,
+                                    ReferenceObjectForEquatableTestScenarios.Description,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.BackupTo,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.CompressionOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.CompressionOption)).CompressionOption,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                            new BackupSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.Name,
+                                    ReferenceObjectForEquatableTestScenarios.Description,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.BackupTo,
+                                    A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Credential.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Credential)).Credential,
+                                    ReferenceObjectForEquatableTestScenarios.CompressionOption,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                            new BackupSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.Name,
+                                    A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Description.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Description)).Description,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.BackupTo,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.CompressionOption,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                            new BackupSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.Name,
+                                    ReferenceObjectForEquatableTestScenarios.Description,
+                                    A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Device.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Device)).Device,
+                                    ReferenceObjectForEquatableTestScenarios.BackupTo,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.CompressionOption,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                            new BackupSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.Name,
+                                    ReferenceObjectForEquatableTestScenarios.Description,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.BackupTo,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.CompressionOption,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.EncryptorName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.EncryptorName)).EncryptorName),
+                            new BackupSqlServerDatabaseDetails(
+                                    A.Dummy<BackupSqlServerDatabaseDetails>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
+                                    ReferenceObjectForEquatableTestScenarios.Description,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.BackupTo,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.CompressionOption,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.Cipher,
+                                    ReferenceObjectForEquatableTestScenarios.Encryptor,
+                                    ReferenceObjectForEquatableTestScenarios.EncryptorName),
+                        },
+                        ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
+                        {
+                            A.Dummy<object>(),
+                            A.Dummy<string>(),
+                            A.Dummy<int>(),
+                            A.Dummy<int?>(),
+                            A.Dummy<Guid>(),
+                        },
+                    });
         }
 
         [Fact]

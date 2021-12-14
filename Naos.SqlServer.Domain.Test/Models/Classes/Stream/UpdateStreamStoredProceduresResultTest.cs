@@ -29,6 +29,9 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static UpdateStreamStoredProceduresResultTest()
         {
+            ConstructorArgumentValidationTestScenarios
+                .RemoveAllScenarios()
+                .AddScenario(ConstructorArgumentValidationTestScenario<UpdateStreamStoredProceduresResult>.ConstructorCannotThrowScenario);
         }
     }
 }

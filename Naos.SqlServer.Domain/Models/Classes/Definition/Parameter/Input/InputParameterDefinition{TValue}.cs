@@ -14,7 +14,7 @@ namespace Naos.SqlServer.Domain
     /// </summary>
     /// <typeparam name="TValue">Type of the input value.</typeparam>
     // ReSharper disable once RedundantExtendsListEntry
-    public partial class InputParameterDefinition<TValue> : InputParameterDefinitionBase, IModelViaCodeGen
+    public partial class InputParameterDefinition<TValue> : InputParameterDefinitionBase, IForsakeDeepCloneWithVariantsViaCodeGen, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="InputParameterDefinition{TValue}"/> class.

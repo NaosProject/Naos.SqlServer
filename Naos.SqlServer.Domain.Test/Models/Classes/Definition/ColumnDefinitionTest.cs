@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain.Test
     using System.Linq;
 
     using FakeItEasy;
-
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -29,6 +29,39 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static ColumnDefinitionTest()
         {
+            ConstructorArgumentValidationTestScenarios
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<ColumnDefinition>
+                    {
+                        Name = "constructor should throw ArgumentException when parameter 'name' is not alphanumeric nor _",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<ColumnDefinition>();
+
+                            var result = new ColumnDefinition(
+                                referenceObject.Name + "^",
+                                referenceObject.SqlDataType);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentException),
+                        ExpectedExceptionMessageContains = new[] { "name", "alphanumeric" },
+                    });
+        }
+
+        [Fact]
+        public static void Constructor___Should_not_throw___When_parameter_name_contains_underscore_character()
+        {
+            // Arrange
+            var referenceObject = A.Dummy<ColumnDefinition>();
+
+            // Act
+            var actual = Record.Exception(() => new ColumnDefinition(
+                referenceObject.Name + "_",
+                referenceObject.SqlDataType));
+
+            // Act, Assert
+            actual.AsTest().Must().BeNull();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Naos.SqlServer.Domain.Test
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
     using OBeautifulCode.Math.Recipes;
-
+    using OBeautifulCode.Serialization;
     using Xunit;
 
     using static System.FormattableString;
@@ -29,6 +29,25 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static IdentifiedSerializerRepresentationTest()
         {
+            ConstructorArgumentValidationTestScenarios
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<IdentifiedSerializerRepresentation>
+                    {
+                        Name = "constructor should throw ArgumentOutOfRangeException when parameter 'serializationFormat' is SerializationFormat.Invalid scenario",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<IdentifiedSerializerRepresentation>();
+
+                            var result = new IdentifiedSerializerRepresentation(
+                                referenceObject.Id,
+                                referenceObject.SerializerRepresentation,
+                                SerializationFormat.Invalid);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                        ExpectedExceptionMessageContains = new[] { "serializationFormat", "Invalid" },
+                    });
         }
     }
 }

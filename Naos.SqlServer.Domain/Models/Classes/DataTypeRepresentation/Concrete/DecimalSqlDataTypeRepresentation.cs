@@ -15,7 +15,7 @@ namespace Naos.SqlServer.Domain
     /// Represents the NUMERIC SQL Data Type.
     /// </summary>
     // ReSharper disable once RedundantExtendsListEntry
-    public partial class DecimalSqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IModelViaCodeGen
+    public partial class DecimalSqlDataTypeRepresentation : SqlDataTypeRepresentationBase, IForsakeDeepCloneWithVariantsViaCodeGen, IModelViaCodeGen
     {
         /// <summary>
         /// The default numeric precision to hold dot net decimal.
@@ -42,8 +42,8 @@ namespace Naos.SqlServer.Domain
             byte precision = DefaultNumericPrecisionToHoldDotNetDecimal,
             byte scale = DefaultNumericScaleToHoldDotNetDecimal)
         {
-            precision.MustForArg(nameof(precision)).BeGreaterThanOrEqualTo(1).And().BeLessThanOrEqualTo(38);
-            scale.MustForArg(nameof(scale)).BeGreaterThanOrEqualTo(0).And().BeLessThanOrEqualTo(precision);
+            precision.MustForArg(nameof(precision)).BeGreaterThanOrEqualTo((byte)1).And().BeLessThanOrEqualTo((byte)38);
+            scale.MustForArg(nameof(scale)).BeGreaterThanOrEqualTo((byte)0).And().BeLessThanOrEqualTo(precision);
 
             this.Precision = precision;
             this.Scale = scale;

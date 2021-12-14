@@ -12,12 +12,12 @@ namespace Naos.SqlServer.Domain.Test
     using System.Linq;
 
     using FakeItEasy;
-
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
     using OBeautifulCode.Math.Recipes;
-
+    using OBeautifulCode.Representation.System;
     using Xunit;
 
     using static System.FormattableString;
@@ -29,6 +29,41 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static CreateStreamUserOpTest()
         {
+            ConstructorArgumentValidationTestScenarios
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<CreateStreamUserOp>
+                    {
+                        Name = "constructor should throw ArgumentException when parameter 'protocolsToGrantAccessFor' contains unsupported protocols",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<CreateStreamUserOp>();
+
+                            var result = new CreateStreamUserOp(
+                                                 referenceObject.UserName,
+                                                 referenceObject.ClearTextPassword,
+                                                 Some.ReadOnlyDummies<TypeRepresentation>().ToList());
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentException),
+                        ExpectedExceptionMessageContains = new[] { "Unsupported access type provided; supported:", },
+                    });
+        }
+
+        [Fact]
+        public static void Constructor___Should_not_throw___When_parameter_username_contains_dash_character()
+        {
+            // Arrange
+            var referenceObject = A.Dummy<CreateStreamUserOp>();
+
+            // Act
+            var actual = Record.Exception(() => new CreateStreamUserOp(
+                referenceObject.UserName + "-",
+                referenceObject.ClearTextPassword,
+                referenceObject.ProtocolsToGrantAccessFor));
+
+            // Act, Assert
+            actual.AsTest().Must().BeNull();
         }
     }
 }

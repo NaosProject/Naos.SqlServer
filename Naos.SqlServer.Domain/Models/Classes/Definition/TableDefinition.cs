@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
+    using System.Linq;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
@@ -35,7 +36,8 @@ namespace Naos.SqlServer.Domain
             IReadOnlyList<ColumnDefinition> columns)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(TableNameAlphanumericOtherAllowedCharacters);
-            columns.MustForArg(nameof(columns)).NotBeNullNorEmptyDictionaryNorContainAnyNullValues();
+            columns.MustForArg(nameof(columns)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            columns.Select(_ => _.Name.ToUpperInvariant()).MustForArg("case-insensitive column names").ContainOnlyDistinctElements();
 
             this.Name = name;
             this.Columns = columns;

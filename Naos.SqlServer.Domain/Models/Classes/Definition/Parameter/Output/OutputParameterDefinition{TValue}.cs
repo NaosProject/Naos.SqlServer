@@ -14,7 +14,7 @@ namespace Naos.SqlServer.Domain
     /// </summary>
     /// <typeparam name="TValue">Type of the output value.</typeparam>
     // ReSharper disable once RedundantExtendsListEntry
-    public partial class OutputParameterDefinition<TValue> : OutputParameterDefinitionBase, IModelViaCodeGen
+    public partial class OutputParameterDefinition<TValue> : OutputParameterDefinitionBase, IForsakeDeepCloneWithVariantsViaCodeGen, IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OutputParameterDefinition{TValue}"/> class.

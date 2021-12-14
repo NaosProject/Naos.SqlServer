@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain.Test
     using System.Linq;
 
     using FakeItEasy;
-
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -29,6 +29,73 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static TableDefinitionTest()
         {
+            ConstructorArgumentValidationTestScenarios
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<TableDefinition>
+                    {
+                        Name = "constructor should throw ArgumentException when parameter 'name' is not alphanumeric nor space or underscore",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<TableDefinition>();
+
+                            var result = new TableDefinition(
+                                referenceObject.Name + "^",
+                                referenceObject.Columns);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentException),
+                        ExpectedExceptionMessageContains = new[] { "name", "alphanumeric" },
+                    })
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<TableDefinition>
+                    {
+                        Name = "constructor should throw ArgumentException when parameter 'columns' contains case-insensitive duplicate names",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<TableDefinition>();
+
+                            var result = new TableDefinition(
+                                referenceObject.Name,
+                                referenceObject.Columns.Concat(referenceObject.Columns.Select(_ => _.DeepCloneWithName(_.Name.ToUpperInvariant()))).ToList());
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentException),
+                        ExpectedExceptionMessageContains = new[] { "case-insensitive column names" },
+                    })
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<TableDefinition>
+                    {
+                        Name = "constructor should throw ArgumentException when parameter 'columns' contains case-insensitive duplicate names",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<TableDefinition>();
+
+                            var result = new TableDefinition(
+                                referenceObject.Name,
+                                referenceObject.Columns.Concat(referenceObject.Columns.Select(_ => _.DeepCloneWithName(_.Name.ToLowerInvariant()))).ToList());
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentException),
+                        ExpectedExceptionMessageContains = new[] { "case-insensitive column names" },
+                    });
+        }
+
+        [Fact]
+        public static void Constructor___Should_not_throw___When_parameter_name_contains_space_or_underscore_characters()
+        {
+            // Arrange
+            var referenceObject = A.Dummy<TableDefinition>();
+
+            // Act
+            var actual = Record.Exception(() => new TableDefinition(
+                referenceObject.Name + " _",
+                referenceObject.Columns));
+
+            // Act, Assert
+            actual.AsTest().Must().BeNull();
         }
     }
 }

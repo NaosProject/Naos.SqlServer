@@ -47,7 +47,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<ScriptedObject>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ScriptedObject: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseObjectType = {systemUnderTest.DatabaseObjectType.ToString() ?? "<null>"}, DropScript = {systemUnderTest.DropScript?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, CreateScript = {systemUnderTest.CreateScript?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ScriptedObject: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ScriptableObjectType = {systemUnderTest.ScriptableObjectType.ToString() ?? "<null>"}, DropScript = {systemUnderTest.DropScript?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, CreateScript = {systemUnderTest.CreateScript?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
@@ -65,7 +65,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ScriptedObject(
                                              null,
-                                             referenceObject.DatabaseObjectType,
+                                             referenceObject.ScriptableObjectType,
                                              referenceObject.DropScript,
                                              referenceObject.CreateScript);
 
@@ -84,7 +84,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ScriptedObject(
                                              Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.DatabaseObjectType,
+                                             referenceObject.ScriptableObjectType,
                                              referenceObject.DropScript,
                                              referenceObject.CreateScript);
 
@@ -103,7 +103,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ScriptedObject(
                                              referenceObject.Name,
-                                             referenceObject.DatabaseObjectType,
+                                             referenceObject.ScriptableObjectType,
                                              null,
                                              referenceObject.CreateScript);
 
@@ -122,7 +122,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ScriptedObject(
                                              referenceObject.Name,
-                                             referenceObject.DatabaseObjectType,
+                                             referenceObject.ScriptableObjectType,
                                              Invariant($"  {Environment.NewLine}  "),
                                              referenceObject.CreateScript);
 
@@ -141,7 +141,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ScriptedObject(
                                              referenceObject.Name,
-                                             referenceObject.DatabaseObjectType,
+                                             referenceObject.ScriptableObjectType,
                                              referenceObject.DropScript,
                                              null);
 
@@ -160,7 +160,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new ScriptedObject(
                                              referenceObject.Name,
-                                             referenceObject.DatabaseObjectType,
+                                             referenceObject.ScriptableObjectType,
                                              referenceObject.DropScript,
                                              Invariant($"  {Environment.NewLine}  "));
 
@@ -183,7 +183,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new ScriptedObject(
                                                       referenceObject.Name,
-                                                      referenceObject.DatabaseObjectType,
+                                                      referenceObject.ScriptableObjectType,
                                                       referenceObject.DropScript,
                                                       referenceObject.CreateScript),
                             ExpectedPropertyValue = referenceObject.Name,
@@ -196,7 +196,7 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<ScriptedObject>
                 {
-                    Name = "DatabaseObjectType should return same 'databaseObjectType' parameter passed to constructor when getting",
+                    Name = "ScriptableObjectType should return same 'scriptableObjectType' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
                         var referenceObject = A.Dummy<ScriptedObject>();
@@ -205,15 +205,15 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new ScriptedObject(
                                                       referenceObject.Name,
-                                                      referenceObject.DatabaseObjectType,
+                                                      referenceObject.ScriptableObjectType,
                                                       referenceObject.DropScript,
                                                       referenceObject.CreateScript),
-                            ExpectedPropertyValue = referenceObject.DatabaseObjectType,
+                            ExpectedPropertyValue = referenceObject.ScriptableObjectType,
                         };
 
                         return result;
                     },
-                    PropertyName = "DatabaseObjectType",
+                    PropertyName = "ScriptableObjectType",
                 })
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<ScriptedObject>
@@ -227,7 +227,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new ScriptedObject(
                                                       referenceObject.Name,
-                                                      referenceObject.DatabaseObjectType,
+                                                      referenceObject.ScriptableObjectType,
                                                       referenceObject.DropScript,
                                                       referenceObject.CreateScript),
                             ExpectedPropertyValue = referenceObject.DropScript,
@@ -249,7 +249,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new ScriptedObject(
                                                       referenceObject.Name,
-                                                      referenceObject.DatabaseObjectType,
+                                                      referenceObject.ScriptableObjectType,
                                                       referenceObject.DropScript,
                                                       referenceObject.CreateScript),
                             ExpectedPropertyValue = referenceObject.CreateScript,
@@ -284,18 +284,18 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new DeepCloneWithTestScenario<ScriptedObject>
                 {
-                    Name = "DeepCloneWithDatabaseObjectType should deep clone object and replace DatabaseObjectType with the provided databaseObjectType",
-                    WithPropertyName = "DatabaseObjectType",
+                    Name = "DeepCloneWithScriptableObjectType should deep clone object and replace ScriptableObjectType with the provided scriptableObjectType",
+                    WithPropertyName = "ScriptableObjectType",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
                         var systemUnderTest = A.Dummy<ScriptedObject>();
 
-                        var referenceObject = A.Dummy<ScriptedObject>().ThatIs(_ => !systemUnderTest.DatabaseObjectType.IsEqualTo(_.DatabaseObjectType));
+                        var referenceObject = A.Dummy<ScriptedObject>().ThatIs(_ => !systemUnderTest.ScriptableObjectType.IsEqualTo(_.ScriptableObjectType));
 
                         var result = new SystemUnderTestDeepCloneWithValue<ScriptedObject>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.DatabaseObjectType,
+                            DeepCloneWithValue = referenceObject.ScriptableObjectType,
                         };
 
                         return result;
@@ -354,7 +354,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         new ScriptedObject(
                                 ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.DatabaseObjectType,
+                                ReferenceObjectForEquatableTestScenarios.ScriptableObjectType,
                                 ReferenceObjectForEquatableTestScenarios.DropScript,
                                 ReferenceObjectForEquatableTestScenarios.CreateScript),
                     },
@@ -362,22 +362,22 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         new ScriptedObject(
                                 A.Dummy<ScriptedObject>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
-                                ReferenceObjectForEquatableTestScenarios.DatabaseObjectType,
+                                ReferenceObjectForEquatableTestScenarios.ScriptableObjectType,
                                 ReferenceObjectForEquatableTestScenarios.DropScript,
                                 ReferenceObjectForEquatableTestScenarios.CreateScript),
                         new ScriptedObject(
                                 ReferenceObjectForEquatableTestScenarios.Name,
-                                A.Dummy<ScriptedObject>().Whose(_ => !_.DatabaseObjectType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DatabaseObjectType)).DatabaseObjectType,
+                                A.Dummy<ScriptedObject>().Whose(_ => !_.ScriptableObjectType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ScriptableObjectType)).ScriptableObjectType,
                                 ReferenceObjectForEquatableTestScenarios.DropScript,
                                 ReferenceObjectForEquatableTestScenarios.CreateScript),
                         new ScriptedObject(
                                 ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.DatabaseObjectType,
+                                ReferenceObjectForEquatableTestScenarios.ScriptableObjectType,
                                 A.Dummy<ScriptedObject>().Whose(_ => !_.DropScript.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DropScript)).DropScript,
                                 ReferenceObjectForEquatableTestScenarios.CreateScript),
                         new ScriptedObject(
                                 ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.DatabaseObjectType,
+                                ReferenceObjectForEquatableTestScenarios.ScriptableObjectType,
                                 ReferenceObjectForEquatableTestScenarios.DropScript,
                                 A.Dummy<ScriptedObject>().Whose(_ => !_.CreateScript.IsEqualTo(ReferenceObjectForEquatableTestScenarios.CreateScript)).CreateScript),
                     },
@@ -678,7 +678,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Name", "DatabaseObjectType", "DropScript", "CreateScript" };
+                var propertyNames = new string[] { "Name", "ScriptableObjectType", "DropScript", "CreateScript" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 

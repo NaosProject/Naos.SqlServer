@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain.Test
     using System.Linq;
 
     using FakeItEasy;
-
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -29,6 +29,27 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static XmlSqlDataTypeRepresentationTest()
         {
+        }
+
+        [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_throw_InvalidOperationException___When_objectType_is_not_compatible()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => A.Dummy<XmlSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(byte[])));
+
+            // Act, Assert
+            actual.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual.Message.AsTest().Must().ContainString("Supported object types: string; provided type: byte[]");
+        }
+
+        [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => A.Dummy<XmlSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(string)));
+
+            // Act, Assert
+            actual.AsTest().Must().BeNull();
         }
     }
 }

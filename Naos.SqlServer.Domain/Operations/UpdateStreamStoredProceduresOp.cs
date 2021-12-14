@@ -23,7 +23,7 @@ namespace Naos.SqlServer.Domain
             RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy = RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
             int? maxConcurrentHandlingCount = null)
         {
-            maxConcurrentHandlingCount.MustForArg(nameof(maxConcurrentHandlingCount)).BeGreaterThanWhenNotNull((decimal?)0);
+            maxConcurrentHandlingCount.MustForArg(nameof(maxConcurrentHandlingCount)).BeGreaterThanWhenNotNull((int?)0);
 
             this.RecordTagAssociationManagementStrategy = recordTagAssociationManagementStrategy;
             this.MaxConcurrentHandlingCount = maxConcurrentHandlingCount;

@@ -97,7 +97,7 @@ namespace Naos.SqlServer.Domain.Test
                             ExpectedExceptionType = typeof(ArgumentNullException),
                             ExpectedExceptionMessageContains = new[]
                                                                {
-                                                                   "dataType",
+                                                                   "sqlDataType",
                                                                },
                         })
                .AddScenario(
@@ -121,7 +121,7 @@ namespace Naos.SqlServer.Domain.Test
                             ExpectedExceptionType = typeof(ArgumentException),
                             ExpectedExceptionMessageContains = new[]
                                                                {
-                                                                   "dataType",
+                                                                   "sqlDataType",
                                                                    "white space",
                                                                },
                         });

@@ -8,7 +8,7 @@ namespace Naos.SqlServer.Domain.Test
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-
+    using System.Globalization;
     using FakeItEasy;
 
     using OBeautifulCode.AutoFakeItEasy;
@@ -25,6 +25,26 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static SqlServerLocatorTest()
         {
+            StringRepresentationTestScenarios
+                .RemoveAllScenarios()
+                .AddScenario(() =>
+                    new StringRepresentationTestScenario<SqlServerLocator>
+                    {
+                        Name = "Override ToString scenario",
+                        SystemUnderTestExpectedStringRepresentationFunc = () =>
+                        {
+                            var systemUnderTest = A.Dummy<SqlServerLocator>();
+
+                            var result = new SystemUnderTestExpectedStringRepresentation<SqlServerLocator>
+                            {
+                                SystemUnderTest = systemUnderTest,
+                                ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlServerLocator: ServerName = {systemUnderTest.ServerName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseName = {systemUnderTest.DatabaseName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {systemUnderTest.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Password = ***, InstanceName = {systemUnderTest.InstanceName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Port = {systemUnderTest.Port?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            };
+
+                            return result;
+                        },
+                    });
+
             ConstructorArgumentValidationTestScenarios
                .RemoveAllScenarios()
                .AddScenario(

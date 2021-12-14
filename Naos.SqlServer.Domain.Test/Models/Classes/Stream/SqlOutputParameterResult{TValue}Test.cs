@@ -29,6 +29,25 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static SqlOutputParameterResultTValueTest()
         {
+            ConstructorArgumentValidationTestScenarios
+                .RemoveAllScenarios()
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<SqlOutputParameterResult<int?>>
+                    {
+                        Name = "constructor should throw ArgumentNullException when parameter 'outputParameter' is null scenario",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<SqlOutputParameterResult<int?>>();
+
+                            var result = new SqlOutputParameterResult<int?>(
+                                null,
+                                referenceObject.Value);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentNullException),
+                        ExpectedExceptionMessageContains = new[] { "outputParameter", },
+                    });
         }
     }
 }

@@ -20,6 +20,33 @@ namespace Naos.SqlServer.Domain
     public partial class DatabaseDefinition : IModelViaCodeGen
     {
         /// <summary>
+        /// The extension (WITHOUT the PERIOD) of an MS SQL Server Data File.
+        /// </summary>
+        public const string MicrosoftSqlDataFileExtension = "mdf";
+
+        /// <summary>
+        /// The extension (WITHOUT the PERIOD) of an MS SQL Server Log File.
+        /// </summary>
+        public const string MicrosoftSqlLogFileExtension = "ldf";
+
+        /// <summary>
+        /// The default size of the data and log files for MS SQL Server.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = NaosSuppressBecause.CA1709_IdentifiersShouldBeCasedCorrectly_CasingIsAsPreferred)]
+        public const long MicrosoftSqlDefaultCurrentFileSizeInKb = 8000L;
+
+        /// <summary>
+        /// The default size of growth for the data and log files for MS SQL Server.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = NaosSuppressBecause.CA1709_IdentifiersShouldBeCasedCorrectly_CasingIsAsPreferred)]
+        public const long MicrosoftSqlDefaultFileGrowthSizeInKb = 64000L;
+
+        /// <summary>
+        /// The value to be specified for unlimited file growth in an MS SQL Server file.
+        /// </summary>
+        public const int InfinityMaxSize = -1;
+
+        /// <summary>
         /// The characters that are allowed in a database name, in addition to alphanumeric characters.
         /// </summary>
         public static readonly IReadOnlyCollection<char> DatabaseNameAlphanumericOtherAllowedCharacters = new[] { ' ', '_' };
@@ -215,17 +242,17 @@ namespace Naos.SqlServer.Domain
                 dataFileLogicalName ?? Invariant($"{databaseName}Data"),
                 Path.Combine(
                     dataDirectory,
-                    dataFileNameOnDisk ?? Invariant($"{databaseName}Data.{SqlServerFileConstants.MicrosoftSqlDataFileExtension}")),
-                dataFileCurrentSizeInKb ?? SqlServerFileConstants.MicrosoftSqlDefaultCurrentFileSizeInKb,
-                dataFileMaxSizeInKb     ?? SqlServerFileConstants.InfinityMaxSize,
-                dataFileGrowthSizeInKb  ?? SqlServerFileConstants.MicrosoftSqlDefaultFileGrowthSizeInKb,
+                    dataFileNameOnDisk ?? Invariant($"{databaseName}Data.{MicrosoftSqlDataFileExtension}")),
+                dataFileCurrentSizeInKb ?? MicrosoftSqlDefaultCurrentFileSizeInKb,
+                dataFileMaxSizeInKb     ?? InfinityMaxSize,
+                dataFileGrowthSizeInKb  ?? MicrosoftSqlDefaultFileGrowthSizeInKb,
                 logFileLogicalName      ?? Invariant($"{databaseName}Log"),
                 Path.Combine(
                     logDirectory      ?? dataDirectory,
-                    logFileNameOnDisk ?? Invariant($"{databaseName}Log.{SqlServerFileConstants.MicrosoftSqlLogFileExtension}")),
-                logFileCurrentSizeInKb ?? SqlServerFileConstants.MicrosoftSqlDefaultCurrentFileSizeInKb,
-                logFileMaxSizeInKb     ?? SqlServerFileConstants.InfinityMaxSize,
-                logFileGrowthSizeInKb  ?? SqlServerFileConstants.MicrosoftSqlDefaultFileGrowthSizeInKb);
+                    logFileNameOnDisk ?? Invariant($"{databaseName}Log.{MicrosoftSqlLogFileExtension}")),
+                logFileCurrentSizeInKb ?? MicrosoftSqlDefaultCurrentFileSizeInKb,
+                logFileMaxSizeInKb     ?? InfinityMaxSize,
+                logFileGrowthSizeInKb  ?? MicrosoftSqlDefaultFileGrowthSizeInKb);
 
             return databaseConfiguration;
         }

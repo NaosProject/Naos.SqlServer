@@ -47,7 +47,7 @@ namespace Naos.SqlServer.Domain
             IReadOnlyCollection<TypeRepresentation> protocolsToGrantAccessFor)
         {
             userName.MustForArg(nameof(userName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { '-' });
-            clearTextPassword.MustForArg(clearTextPassword).NotBeNullNorWhiteSpace();
+            clearTextPassword.MustForArg(nameof(clearTextPassword)).NotBeNullNorWhiteSpace();
             protocolsToGrantAccessFor.MustForArg(nameof(protocolsToGrantAccessFor)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
 
             if (protocolsToGrantAccessFor.Select(_ => _.RemoveAssemblyVersions()).Any(_ => !VersionlessSupportedProtocolTypeRepresentations.Contains(_)))

@@ -220,8 +220,8 @@ namespace Naos.SqlServer.Protocol.Client
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             ThrowIfBadOnCreateOrModify(definition);
-            var databaseFileMaxSize = definition.DataFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.DataFileMaxSizeInKb}KB");
-            var logFileMaxSize = definition.LogFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.LogFileMaxSizeInKb}KB");
+            var databaseFileMaxSize = definition.DataFileMaxSizeInKb == DatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.DataFileMaxSizeInKb}KB");
+            var logFileMaxSize = definition.LogFileMaxSizeInKb == DatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.LogFileMaxSizeInKb}KB");
             var commandText =
                 Invariant($@"CREATE DATABASE {definition.DatabaseName}
                         ON
@@ -427,7 +427,7 @@ namespace Naos.SqlServer.Protocol.Client
 
                     if (newDefinition.DataFileMaxSizeInKb != currentDefinition.DataFileMaxSizeInKb)
                     {
-                        var maxSize = newDefinition.DataFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.DataFileMaxSizeInKb}KB");
+                        var maxSize = newDefinition.DataFileMaxSizeInKb == DatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.DataFileMaxSizeInKb}KB");
                         var updateDataFileMaxSizeText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.DataFileLogicalName}', MAXSIZE = {maxSize})");
                         connection.ExecuteNonQuery(updateDataFileMaxSizeText, (int)timeout.TotalSeconds);
                     }
@@ -446,7 +446,7 @@ namespace Naos.SqlServer.Protocol.Client
 
                     if (newDefinition.LogFileMaxSizeInKb != currentDefinition.LogFileMaxSizeInKb)
                     {
-                        var maxSize = newDefinition.LogFileMaxSizeInKb == SqlServerFileConstants.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.LogFileMaxSizeInKb}KB");
+                        var maxSize = newDefinition.LogFileMaxSizeInKb == DatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.LogFileMaxSizeInKb}KB");
                         var updateLogFileMaxSizeText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.LogFileLogicalName}', MAXSIZE = {maxSize})");
                         connection.ExecuteNonQuery(updateLogFileMaxSizeText, (int)timeout.TotalSeconds);
                     }

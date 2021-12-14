@@ -59,7 +59,7 @@ namespace Naos.SqlServer.Protocol.Management
             {
                 async Task RunScriptOnServer(ScriptedObject scriptedObject, string scriptToRun)
                 {
-                    localAnnouncer(() => Invariant($"Applying create script for '{scriptedObject.Name}' of type '{scriptedObject.DatabaseObjectType}'"));
+                    localAnnouncer(() => Invariant($"Applying create script for '{scriptedObject.Name}' of type '{scriptedObject.ScriptableObjectType}'"));
                     try
                     {
                         async Task ServerAction(Server server)
@@ -90,7 +90,7 @@ namespace Naos.SqlServer.Protocol.Management
                     await RunScriptOnServer(scriptedObject, scriptedObject.CreateScript);
                 }
 
-                var tables = scriptedObjects.Where(_ => _.DatabaseObjectType == ScriptableObjectType.Table).ToList();
+                var tables = scriptedObjects.Where(_ => _.ScriptableObjectType == ScriptableObjectType.Table).ToList();
                 if (tables.Any())
                 {
                     var copyOptions = SqlBulkCopyOptions.CheckConstraints

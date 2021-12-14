@@ -18,22 +18,22 @@ namespace Naos.SqlServer.Domain
         /// Initializes a new instance of the <see cref="ScriptedObject"/> class.
         /// </summary>
         /// <param name="name">Name of the object.</param>
-        /// <param name="databaseObjectType">Database type of object.</param>
+        /// <param name="scriptableObjectType">The type of scripted object.</param>
         /// <param name="dropScript">Script to drop the object.</param>
         /// <param name="createScript">Script to create the object.</param>
         public ScriptedObject(
             string name,
-            ScriptableObjectType databaseObjectType,
+            ScriptableObjectType scriptableObjectType,
             string dropScript,
             string createScript)
         {
             new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { scriptableObjectType }.AsArg().Must().NotBeEqualTo(ScriptableObjectType.Invalid);
             new { dropScript }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { createScript }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseObjectType }.AsArg().Must().NotBeEqualTo(ScriptableObjectType.Invalid);
 
             this.Name = name;
-            this.DatabaseObjectType = databaseObjectType;
+            this.ScriptableObjectType = scriptableObjectType;
             this.DropScript = dropScript;
             this.CreateScript = createScript;
         }
@@ -44,9 +44,9 @@ namespace Naos.SqlServer.Domain
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets the database type of object.
+        /// Gets the type of scripted object.
         /// </summary>
-        public ScriptableObjectType DatabaseObjectType { get; private set; }
+        public ScriptableObjectType ScriptableObjectType { get; private set; }
 
         /// <summary>
         /// Gets the drop script.

@@ -10,9 +10,10 @@ namespace Naos.SqlServer.Domain.Test
     using System.Diagnostics.CodeAnalysis;
 
     using FakeItEasy;
-
+    using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
+    using OBeautifulCode.Equality.Recipes;
     using Xunit;
 
     using static System.FormattableString;
@@ -408,6 +409,128 @@ namespace Naos.SqlServer.Domain.Test
                                                                    "ErrorHandling cannot be None when using checksum.",
                                                                },
                         });
+
+            EquatableTestScenarios
+                .RemoveAllScenarios()
+                .AddScenario(() =>
+                    new EquatableTestScenario<RestoreSqlServerDatabaseDetails>
+                    {
+                        Name = "Default Code Generated Scenario",
+                        ReferenceObject = ReferenceObjectForEquatableTestScenarios,
+                        ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new RestoreSqlServerDatabaseDetails[]
+                        {
+                            new RestoreSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                                    ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                    ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                        },
+                        ObjectsThatAreNotEqualToReferenceObject = new RestoreSqlServerDatabaseDetails[]
+                        {
+                            new RestoreSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                    A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.Credential.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Credential)).Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                                    ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                    ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                            new RestoreSqlServerDatabaseDetails(
+                                    A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.DataFilePath.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DataFilePath)).DataFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                                    ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                    ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                            new RestoreSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                    A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.Device.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Device)).Device,
+                                    ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                                    ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                    ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                            new RestoreSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                    A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.LogFilePath.IsEqualTo(ReferenceObjectForEquatableTestScenarios.LogFilePath)).LogFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                                    ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                    ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                            new RestoreSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.RecoveryOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RecoveryOption)).RecoveryOption,
+                                    ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                    ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                            new RestoreSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                                    A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.ReplaceOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ReplaceOption)).ReplaceOption,
+                                    ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                            new RestoreSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.RestoreFrom.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RestoreFrom)).RestoreFrom,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                                    ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                    ReferenceObjectForEquatableTestScenarios.RestrictedUserOption),
+                            new RestoreSqlServerDatabaseDetails(
+                                    ReferenceObjectForEquatableTestScenarios.DataFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.LogFilePath,
+                                    ReferenceObjectForEquatableTestScenarios.Device,
+                                    ReferenceObjectForEquatableTestScenarios.RestoreFrom,
+                                    ReferenceObjectForEquatableTestScenarios.Credential,
+                                    ReferenceObjectForEquatableTestScenarios.ChecksumOption,
+                                    ReferenceObjectForEquatableTestScenarios.ErrorHandling,
+                                    ReferenceObjectForEquatableTestScenarios.RecoveryOption,
+                                    ReferenceObjectForEquatableTestScenarios.ReplaceOption,
+                                    A.Dummy<RestoreSqlServerDatabaseDetails>().Whose(_ => !_.RestrictedUserOption.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RestrictedUserOption)).RestrictedUserOption),
+                        },
+                        ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
+                        {
+                            A.Dummy<object>(),
+                            A.Dummy<string>(),
+                            A.Dummy<int>(),
+                            A.Dummy<int?>(),
+                            A.Dummy<Guid>(),
+                        },
+                    });
         }
     }
 }

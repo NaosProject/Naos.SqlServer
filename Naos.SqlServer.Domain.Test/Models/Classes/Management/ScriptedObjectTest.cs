@@ -29,6 +29,26 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static ScriptedObjectTest()
         {
+            ConstructorArgumentValidationTestScenarios
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<ScriptedObject>
+                    {
+                        Name = "constructor should throw ArgumentOutOfRangeException when parameter 'databaseObjectType' is ScriptableObjectType.Invalid scenario",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<ScriptedObject>();
+
+                            var result = new ScriptedObject(
+                                referenceObject.Name,
+                                ScriptableObjectType.Invalid,
+                                referenceObject.DropScript,
+                                referenceObject.CreateScript);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                        ExpectedExceptionMessageContains = new[] { "scriptableObjectType", "Invalid" },
+                    });
         }
     }
 }

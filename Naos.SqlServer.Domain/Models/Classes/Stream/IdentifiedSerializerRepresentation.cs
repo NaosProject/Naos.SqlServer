@@ -28,6 +28,7 @@ namespace Naos.SqlServer.Domain
             SerializationFormat serializationFormat)
         {
             serializerRepresentation.MustForArg(nameof(serializerRepresentation)).NotBeNull();
+            serializationFormat.MustForArg(nameof(serializationFormat)).NotBeEqualTo(SerializationFormat.Invalid);
 
             this.Id = id;
             this.SerializerRepresentation = serializerRepresentation;

@@ -11,9 +11,13 @@ namespace Naos.SqlServer.Domain.Test
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using FakeItEasy;
     using Naos.Database.Domain;
     using OBeautifulCode.AutoFakeItEasy;
+    using OBeautifulCode.Math.Recipes;
+    using OBeautifulCode.Representation.System;
+    using OBeautifulCode.Serialization;
 
     /// <summary>
     /// A Dummy Factory for types in <see cref="Naos.SqlServer.Domain"/>.
@@ -29,8 +33,103 @@ namespace Naos.SqlServer.Domain.Test
     {
         public SqlServerDummyFactory()
         {
+            // --------------------------- Enums -----------------------------
             AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(ScriptableObjectType.Invalid);
 
+            // --------------------------- Interfaces ------------------------
+            AutoFixtureBackedDummyFactory.AddDummyCreator(() =>
+                (ISqlOutputParameterResult)new SqlOutputParameterResult<int?>(A.Dummy<OutputParameterDefinition<int?>>(), A.Dummy<int?>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(() =>
+                (IResourceLocator)A.Dummy<SqlServerLocator>());
+
+            // --------------------------- Data Type Representation -----------------------------
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var supportedLength = A.Dummy<PositiveInteger>().ThatIs(_ => (_ >= 1) && (_ <= BinarySqlDataTypeRepresentation.MaxLengthConstant));
+
+                    var result = new BinarySqlDataTypeRepresentation(supportedLength);
+
+                    return result;
+                });
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var precision = A.Dummy<byte>().ThatIs(_ => (_ >= 1) && (_ <= 38));
+
+                    var scale = A.Dummy<byte>().ThatIs(_ => (_ <= precision));
+
+                    var result = new DecimalSqlDataTypeRepresentation(precision, scale);
+
+                    return result;
+                });
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var supportUnicode = A.Dummy<bool>();
+
+                    var supportedLength = supportUnicode
+                        ? A.Dummy<PositiveInteger>().ThatIs(_ => (_ >= 1) && (_ <= StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant))
+                        : A.Dummy<PositiveInteger>().ThatIs(_ => (_ >= 1) && (_ <= StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant));
+
+                    var result = new StringSqlDataTypeRepresentation(supportUnicode, supportedLength);
+
+                    return result;
+                });
+
+            // ------------------------ Definition ---------------------------------
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => ThreadSafeRandom.Next(0, 2) == 0 
+                    ? (ParameterDefinitionBase)A.Dummy<InputParameterDefinition<int?>>()
+                    : A.Dummy<OutputParameterDefinition<int?>>());
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => (InputParameterDefinitionBase)A.Dummy<InputParameterDefinition<int?>>());
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => (OutputParameterDefinitionBase)A.Dummy<OutputParameterDefinition<int?>>());
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new InputParameterDefinition<int?>(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<IntSqlDataTypeRepresentation>(),
+                    A.Dummy<int?>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new OutputParameterDefinition<int?>(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<IntSqlDataTypeRepresentation>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ColumnDefinition(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<SqlDataTypeRepresentationBase>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new DatabaseDefinition(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<DatabaseType>(),
+                    A.Dummy<RecoveryMode>(),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<long>(),
+                    A.Dummy<long>(),
+                    A.Dummy<long>(),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<long>(),
+                    A.Dummy<long>(),
+                    A.Dummy<long>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new TableDefinition(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<IReadOnlyList<ColumnDefinition>>()));
+
+            // ------------------------ Management ---------------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () =>
                 {
@@ -56,11 +155,21 @@ namespace Naos.SqlServer.Domain.Test
                         errorHandling = A.Dummy<ErrorHandling>().ThatIsNot(ErrorHandling.None);
                     }
 
-                    var backupSqlServerDatabaseDetails = new BackupSqlServerDatabaseDetails(A.Dummy<string>().Replace("-", string.Empty), A.Dummy<string>().Replace("-", string.Empty), device, A.Dummy<Uri>(), A.Dummy<string>().Replace("-", string.Empty), compressionOption, checksumOption, errorHandling, cipher, encryptor, A.Dummy<string>().Replace("-", string.Empty));
+                    var backupSqlServerDatabaseDetails = new BackupSqlServerDatabaseDetails(
+                        A.Dummy<string>().Replace("-", string.Empty), 
+                        A.Dummy<string>().Replace("-", string.Empty), 
+                        device, 
+                        A.Dummy<Uri>(),
+                        A.Dummy<string>().Replace("-", string.Empty),
+                        compressionOption,
+                        checksumOption,
+                        errorHandling,
+                        cipher,
+                        encryptor,
+                        A.Dummy<string>().Replace("-", string.Empty));
 
                     return backupSqlServerDatabaseDetails;
                 });
-
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () =>
@@ -93,58 +202,43 @@ namespace Naos.SqlServer.Domain.Test
                 });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new TableDefinition(
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<IReadOnlyList<ColumnDefinition>>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new ColumnDefinition(
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<SqlDataTypeRepresentationBase>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlOutputParameterResult<int>(
-                    A.Dummy<OutputParameterDefinition<int>>(),
-                    A.Dummy<int>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new OutputParameterDefinition<int>(
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<SqlDataTypeRepresentationBase>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new InputParameterDefinition<int>(
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<SqlDataTypeRepresentationBase>(),
-                    A.Dummy<int>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new DatabaseDefinition(
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<DatabaseType>(),
-                    A.Dummy<RecoveryMode>(),
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<long>(),
-                    A.Dummy<long>(),
-                    A.Dummy<long>(),
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<long>(),
-                    A.Dummy<long>(),
-                    A.Dummy<long>()));
-
-            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new TableDescription(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<IReadOnlyCollection<ColumnDescription>>()));
 
+            // ------------------------ Resource Location ---------------------------------
+
+            // ------------------------ Stream ---------------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new TableDefinition(
-                    A.Dummy<string>().Replace("-", string.Empty),
-                    A.Dummy<IReadOnlyList<ColumnDefinition>>()));
+                () => new SqlOutputParameterResult<int?>(
+                    A.Dummy<OutputParameterDefinition<int?>>(),
+                    A.Dummy<int?>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlStreamConfigObject(
+                    A.Dummy<string>(),
+                    A.Dummy<TypeRepresentation>(),
+                    TimeSpan.FromSeconds(A.Dummy<PositiveDouble>()),
+                    TimeSpan.FromSeconds(A.Dummy<PositiveDouble>()),
+                    A.Dummy<SerializerRepresentation>(),
+                    A.Dummy<SerializationFormat>(),
+                    Some.ReadOnlyDummies<SqlServerLocator>().ToList()));
+
+            // ------------------------ Operations ---------------------------------
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new CreateStreamUserOp(
+                    A.Dummy<string>(),
+                    A.Dummy<string>(),
+                    CreateStreamUserOp.VersionlessSupportedProtocolTypeRepresentations.Take(ThreadSafeRandom.Next(1, CreateStreamUserOp.VersionlessSupportedProtocolTypeRepresentations.Count + 1)).ToList()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new DeleteDatabaseOp(
+                    A.Dummy<string>().Replace("-", string.Empty)));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new UpdateStreamStoredProceduresOp(A.Dummy<RecordTagAssociationManagementStrategy>(), A.Dummy<PositiveInteger>()));
         }
     }
 }

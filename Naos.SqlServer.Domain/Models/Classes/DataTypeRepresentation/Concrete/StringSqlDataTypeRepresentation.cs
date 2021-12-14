@@ -81,7 +81,7 @@ namespace Naos.SqlServer.Domain
         {
             objectType.MustForArg(nameof(objectType)).NotBeNull();
 
-            if (objectType != typeof(string) && !objectType.IsEnum)
+            if ((objectType != typeof(string)) && (!objectType.IsEnum))
             {
                 throw new InvalidOperationException(Invariant($"String data can only be used for strings and enums, objectType {objectType.ToStringReadable()} is not supported."));
             }

@@ -29,6 +29,41 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static UpdateStreamStoredProceduresOpTest()
         {
+            ConstructorArgumentValidationTestScenarios
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<UpdateStreamStoredProceduresOp>
+                    {
+                        Name = "constructor should throw ArgumentOutOfRangeException when parameter 'maxConcurrentHandlingCount' is 0 scenario",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<UpdateStreamStoredProceduresOp>();
+
+                            var result = new UpdateStreamStoredProceduresOp(
+                                referenceObject.RecordTagAssociationManagementStrategy,
+                                0);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                        ExpectedExceptionMessageContains = new[] { "maxConcurrentHandlingCount" },
+                    })
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<UpdateStreamStoredProceduresOp>
+                    {
+                        Name = "constructor should throw ArgumentOutOfRangeException when parameter 'maxConcurrentHandlingCount' is negative scenario",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<UpdateStreamStoredProceduresOp>();
+
+                            var result = new UpdateStreamStoredProceduresOp(
+                                referenceObject.RecordTagAssociationManagementStrategy,
+                                A.Dummy<NegativeInteger>());
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                        ExpectedExceptionMessageContains = new[] { "maxConcurrentHandlingCount" },
+                    });
         }
     }
 }

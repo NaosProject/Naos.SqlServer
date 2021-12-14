@@ -70,7 +70,7 @@ namespace Naos.SqlServer.Domain
             }
 
             var result = this.Name.IsEqualTo(other.Name, StringComparer.Ordinal)
-                      && this.DatabaseObjectType.IsEqualTo(other.DatabaseObjectType)
+                      && this.ScriptableObjectType.IsEqualTo(other.ScriptableObjectType)
                       && this.DropScript.IsEqualTo(other.DropScript, StringComparer.Ordinal)
                       && this.CreateScript.IsEqualTo(other.CreateScript, StringComparer.Ordinal);
 
@@ -83,7 +83,7 @@ namespace Naos.SqlServer.Domain
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
             .Hash(this.Name)
-            .Hash(this.DatabaseObjectType)
+            .Hash(this.ScriptableObjectType)
             .Hash(this.DropScript)
             .Hash(this.CreateScript)
             .Value;
@@ -96,7 +96,7 @@ namespace Naos.SqlServer.Domain
         {
             var result = new ScriptedObject(
                                  this.Name?.DeepClone(),
-                                 this.DatabaseObjectType.DeepClone(),
+                                 this.ScriptableObjectType.DeepClone(),
                                  this.DropScript?.DeepClone(),
                                  this.CreateScript?.DeepClone());
 
@@ -129,7 +129,7 @@ namespace Naos.SqlServer.Domain
         {
             var result = new ScriptedObject(
                                  name,
-                                 this.DatabaseObjectType.DeepClone(),
+                                 this.ScriptableObjectType.DeepClone(),
                                  this.DropScript?.DeepClone(),
                                  this.CreateScript?.DeepClone());
 
@@ -137,10 +137,10 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="DatabaseObjectType" />.
+        /// Deep clones this object with a new <see cref="ScriptableObjectType" />.
         /// </summary>
-        /// <param name="databaseObjectType">The new <see cref="DatabaseObjectType" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="ScriptedObject" /> using the specified <paramref name="databaseObjectType" /> for <see cref="DatabaseObjectType" /> and a deep clone of every other property.</returns>
+        /// <param name="scriptableObjectType">The new <see cref="ScriptableObjectType" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="ScriptedObject" /> using the specified <paramref name="scriptableObjectType" /> for <see cref="ScriptableObjectType" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -158,11 +158,11 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public ScriptedObject DeepCloneWithDatabaseObjectType(ScriptableObjectType databaseObjectType)
+        public ScriptedObject DeepCloneWithScriptableObjectType(ScriptableObjectType scriptableObjectType)
         {
             var result = new ScriptedObject(
                                  this.Name?.DeepClone(),
-                                 databaseObjectType,
+                                 scriptableObjectType,
                                  this.DropScript?.DeepClone(),
                                  this.CreateScript?.DeepClone());
 
@@ -195,7 +195,7 @@ namespace Naos.SqlServer.Domain
         {
             var result = new ScriptedObject(
                                  this.Name?.DeepClone(),
-                                 this.DatabaseObjectType.DeepClone(),
+                                 this.ScriptableObjectType.DeepClone(),
                                  dropScript,
                                  this.CreateScript?.DeepClone());
 
@@ -228,7 +228,7 @@ namespace Naos.SqlServer.Domain
         {
             var result = new ScriptedObject(
                                  this.Name?.DeepClone(),
-                                 this.DatabaseObjectType.DeepClone(),
+                                 this.ScriptableObjectType.DeepClone(),
                                  this.DropScript?.DeepClone(),
                                  createScript);
 
@@ -239,7 +239,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.ScriptedObject: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseObjectType = {this.DatabaseObjectType.ToString() ?? "<null>"}, DropScript = {this.DropScript?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, CreateScript = {this.CreateScript?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.ScriptedObject: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ScriptableObjectType = {this.ScriptableObjectType.ToString() ?? "<null>"}, DropScript = {this.DropScript?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, CreateScript = {this.CreateScript?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
 
             return result;
         }

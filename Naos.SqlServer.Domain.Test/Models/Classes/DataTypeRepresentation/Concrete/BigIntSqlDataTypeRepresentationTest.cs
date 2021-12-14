@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain.Test
     using System.Linq;
 
     using FakeItEasy;
-
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -29,6 +29,29 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static BigIntSqlDataTypeRepresentationTest()
         {
+        }
+
+        [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_throw_InvalidOperationException___When_objectType_is_not_compatible()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => A.Dummy<BigIntSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int)));
+
+            // Act, Assert
+            actual.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual.Message.AsTest().Must().ContainString("Supported object types: long, long?; provided type: int");
+        }
+
+        [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
+        {
+            // Arrange, Act
+            var actual1 = Record.Exception(() => A.Dummy<BigIntSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(long)));
+            var actual2 = Record.Exception(() => A.Dummy<BigIntSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(long?)));
+
+            // Act, Assert
+            actual1.AsTest().Must().BeNull();
+            actual2.AsTest().Must().BeNull();
         }
     }
 }
