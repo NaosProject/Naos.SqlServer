@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Protocol.Client
 {
     using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
+    using System.Threading.Tasks;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
@@ -136,6 +137,14 @@ namespace Naos.SqlServer.Protocol.Client
             var result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.OutputParamName.Id)]
                                     .GetValueOfType<int>();
             return result;
+        }
+
+        /// <inheritdoc />
+        public async Task<int> ExecuteAsync(
+            GetOrAddIdentifiedSerializerRepresentationOp operation)
+        {
+            var syncResult = this.Execute(operation);
+            return await Task.FromResult(syncResult);
         }
     }
 }

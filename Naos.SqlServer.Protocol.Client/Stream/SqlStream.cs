@@ -7,30 +7,13 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.SqlClient;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
     using System.Linq;
-    using System.Runtime.InteropServices;
-    using System.Runtime.InteropServices.ComTypes;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Xml.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.Compression;
-    using OBeautifulCode.Database.Recipes;
-    using OBeautifulCode.Enum.Recipes;
-    using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.Type;
-    using OBeautifulCode.Type.Recipes;
     using static System.FormattableString;
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
@@ -90,81 +73,6 @@ namespace Naos.SqlServer.Protocol.Client
         /// <value>The default command timeout.</value>
         public TimeSpan DefaultCommandTimeout { get; private set; }
 
-        /// <inheritdoc />
-        public override long Execute(
-            StandardGetNextUniqueLongOp operation)
-        {
-            var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
-            var sqlServerLocator = locator as SqlServerLocator
-                                ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-
-            var storedProcOp = StreamSchema.Sprocs.GetNextUniqueLong.BuildExecuteStoredProcedureOp(this.Name);
-
-            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var sprocResult = sqlProtocol.Execute(storedProcOp);
-
-            long result = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetNextUniqueLong.OutputParamName.Value)].GetValueOfType<long>();
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        public override StreamRecord Execute(
-            StandardGetLatestRecordOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override void Execute(
-            StandardDeleteStreamOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override void Execute(
-            StandardPruneStreamOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override bool Execute(
-            StandardDoesAnyExistByIdOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override IReadOnlyList<StreamRecord> Execute(
-            StandardGetAllRecordsByIdOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override IReadOnlyList<StreamRecordMetadata> Execute(
-            StandardGetAllRecordsMetadataByIdOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override string Execute(
-            StandardGetLatestStringSerializedObjectByIdOp operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public async Task<int> ExecuteAsync(
-            GetOrAddIdentifiedSerializerRepresentationOp operation)
-        {
-            var syncResult = this.Execute(operation);
-            return await Task.FromResult(syncResult);
-        }
-
         /// <summary>
         /// Builds the SQL operations protocol.
         /// </summary>
@@ -179,37 +87,6 @@ namespace Naos.SqlServer.Protocol.Client
 
         /// <inheritdoc />
         public override IStreamRepresentation StreamRepresentation { get; }
-
-        /// <inheritdoc />
-        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "sprocResult", Justification = "Part of contract, could be a output parameter in future.")]
-        public void Execute(
-            CreateStreamUserOp operation)
-        {
-            var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
-            foreach (var resourceLocator in allLocators)
-            {
-                var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
-
-                var roles = operation.ProtocolsToGrantAccessFor.Select(_ => StreamSchema.GetRoleNameFromProtocolType(_, this.Name)).ToList();
-                var rolesCsv = roles.ToCsv();
-                var storedProcOp = StreamSchema.Sprocs.CreateStreamUser.BuildExecuteStoredProcedureOp(
-                    this.Name,
-                    operation.UserName,
-                    operation.ClearTextPassword,
-                    rolesCsv);
-
-                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-                var sprocResult = sqlProtocol.Execute(storedProcOp);
-            }
-        }
-
-        /// <inheritdoc />
-        public async Task ExecuteAsync(
-            CreateStreamUserOp operation)
-        {
-            this.Execute(operation);
-            await Task.FromResult(true); // just for await
-        }
 
         private SqlServerLocator TryGetLocator(ISpecifyResourceLocator locatorSpecification = null)
         {
