@@ -39,8 +39,8 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Naos.Database.Domain, Version=1.1.341.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Naos.Database.Domain.1.1.341\lib\net462\Naos.Database.Domain.dll</HintPath>
+    <Reference Include="Naos.Database.Domain, Version=1.1.343.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Naos.Database.Domain.1.1.343\lib\net462\Naos.Database.Domain.dll</HintPath>
     </Reference>
     <Reference Include="OBeautifulCode.Compression, Version=1.0.24.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OBeautifulCode.Compression.1.0.24\lib\net462\OBeautifulCode.Compression.dll</HintPath>
@@ -109,6 +109,7 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.StandardGetDistinctStringSerializedIds.cs" />
     <Compile Include="Models\Classes\Definition\TableDefinition.designer.cs">
       <DependentUpon>TableDefinition.cs</DependentUpon>
     </Compile>
