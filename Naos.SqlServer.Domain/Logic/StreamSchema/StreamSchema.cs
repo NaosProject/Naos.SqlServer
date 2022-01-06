@@ -71,7 +71,8 @@ namespace Naos.SqlServer.Domain
         {
             var result = new StringBuilder();
 
-            var roleName = GetRoleNameFromProtocolType(protocolType, streamName);
+            var protocolTypeWithoutId = protocolType.RemoveAssemblyVersions();
+            var roleName = GetRoleNameFromProtocolType(protocolTypeWithoutId, streamName);
 
             string BuildGrant(string resourceName, string permission)
             {
@@ -100,14 +101,15 @@ namespace Naos.SqlServer.Domain
             result.AppendLine(BuildGrant(Tables.TypeWithVersion.Table.Name, readWrite));
             result.AppendLine(BuildGrant(Tables.Tag.Table.Name, readWrite));
 
-            if (protocolType == typeof(IStreamReadProtocols).ToRepresentation())
+            if (protocolTypeWithoutId == typeof(IStreamReadProtocols).ToRepresentation().RemoveAssemblyVersions())
             {
                 result.AppendLine(BuildGrant(Sprocs.GetLatestRecordMetadataById.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.GetLatestRecordById.Name, execute));
+                result.AppendLine(BuildGrant(Sprocs.StandardGetDistinctStringSerializedIds.Name, execute));
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
             }
-            else if (protocolType == typeof(IStreamWriteProtocols).ToRepresentation())
+            else if (protocolTypeWithoutId == typeof(IStreamWriteProtocols).ToRepresentation().RemoveAssemblyVersions())
             {
                 result.AppendLine(BuildGrant(Sprocs.PutRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.GetNextUniqueLong.Name, execute));
@@ -115,24 +117,24 @@ namespace Naos.SqlServer.Domain
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, readWrite));
             }
-            else if (protocolType == typeof(IStreamRecordHandlingProtocols).ToRepresentation())
+            else if (protocolTypeWithoutId == typeof(IStreamRecordHandlingProtocols).ToRepresentation().RemoveAssemblyVersions())
             {
                 result.AppendLine(BuildGrant(Sprocs.TryHandleRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.PutHandling.Name, execute));
-                result.AppendLine(BuildGrant(Sprocs.GetCompositeHandlingStatus.Name, execute));
+                //result.AppendLine(BuildGrant(Sprocs.GetCompositeHandlingStatus.Name, execute));
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.Handling.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.HandlingTag.Table.Name, readWrite));
                 // result.AppendLine(BuildGrant(Tables.CompositeHandlingStatusSortOrder.Table.Name, read));
             }
-            else if (protocolType == typeof(IStreamManagementProtocols).ToRepresentation())
+            else if (protocolTypeWithoutId == typeof(IStreamManagementProtocols).ToRepresentation().RemoveAssemblyVersions())
             {
                 result.AppendLine(BuildGrant(Sprocs.CreateStreamUser.Name, execute));
             }
             else
             {
-                throw new NotSupportedException(Invariant($"Type {protocolType} is not supported for granting table/sproc/function access."));
+                throw new NotSupportedException(Invariant($"Type {protocolTypeWithoutId} is not supported for granting table/sproc/function access."));
             }
 
             return result.ToString();
