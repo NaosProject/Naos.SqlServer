@@ -109,7 +109,7 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.StandardGetDistinctStringSerializedIds.cs" />
+    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetDistinctStringSerializedIds.cs" />
     <Compile Include="Models\Classes\Definition\TableDefinition.designer.cs">
       <DependentUpon>TableDefinition.cs</DependentUpon>
     </Compile>
@@ -258,7 +258,6 @@
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinition.cs" />
     <Compile Include="Logic\StreamSchema\StreamSchema.cs" />
-    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetCompositeHandlingStatus.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetStreamDetails.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetTypeFromId.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetSerializerRepresentationFromId.cs" />

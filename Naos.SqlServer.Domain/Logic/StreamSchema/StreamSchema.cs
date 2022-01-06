@@ -105,7 +105,7 @@ namespace Naos.SqlServer.Domain
             {
                 result.AppendLine(BuildGrant(Sprocs.GetLatestRecordMetadataById.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.GetLatestRecordById.Name, execute));
-                result.AppendLine(BuildGrant(Sprocs.StandardGetDistinctStringSerializedIds.Name, execute));
+                result.AppendLine(BuildGrant(Sprocs.GetDistinctStringSerializedIds.Name, execute));
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
             }
@@ -121,12 +121,10 @@ namespace Naos.SqlServer.Domain
             {
                 result.AppendLine(BuildGrant(Sprocs.TryHandleRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.PutHandling.Name, execute));
-                //result.AppendLine(BuildGrant(Sprocs.GetCompositeHandlingStatus.Name, execute));
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.Handling.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.HandlingTag.Table.Name, readWrite));
-                // result.AppendLine(BuildGrant(Tables.CompositeHandlingStatusSortOrder.Table.Name, read));
             }
             else if (protocolTypeWithoutId == typeof(IStreamManagementProtocols).ToRepresentation().RemoveAssemblyVersions())
             {

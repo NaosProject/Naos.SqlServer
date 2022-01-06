@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StreamSchema.Sprocs.StandardGetDistinctStringSerializedIds.cs" company="Naos Project">
+// <copyright file="StreamSchema.Sprocs.GetDistinctStringSerializedIds.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -21,12 +21,12 @@ namespace Naos.SqlServer.Domain
             /// <summary>
             /// Stored procedure: StandardGetDistinctStringSerializedIds.
             /// </summary>
-            public static class StandardGetDistinctStringSerializedIds
+            public static class GetDistinctStringSerializedIds
             {
                 /// <summary>
                 /// Gets the name.
                 /// </summary>
-                public static string Name => nameof(StandardGetDistinctStringSerializedIds);
+                public static string Name => nameof(GetDistinctStringSerializedIds);
 
                 /// <summary>
                 /// Input parameter names.
@@ -100,7 +100,7 @@ namespace Naos.SqlServer.Domain
                     IdentifiedType objectType,
                     VersionMatchStrategy versionMatchStrategy)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(StandardGetDistinctStringSerializedIds)}]");
+                    var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetDistinctStringSerializedIds)}]");
 
                     var parameters = new List<ParameterDefinitionBase>()
                                      {
@@ -145,7 +145,7 @@ namespace Naos.SqlServer.Domain
 
                     var result = Invariant(
                         $@"
-{createOrModify} PROCEDURE [{streamName}].[{StandardGetDistinctStringSerializedIds.Name}](
+{createOrModify} PROCEDURE [{streamName}].[{GetDistinctStringSerializedIds.Name}](
   @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.DeprecatedIdEventTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}

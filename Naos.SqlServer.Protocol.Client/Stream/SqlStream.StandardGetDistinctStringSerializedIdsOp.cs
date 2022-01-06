@@ -39,7 +39,7 @@ namespace Naos.SqlServer.Protocol.Client
                 ? null
                 : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.TagsToMatch).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
-            var storedProcOp = StreamSchema.Sprocs.StandardGetDistinctStringSerializedIds.BuildExecuteStoredProcedureOp(
+            var storedProcOp = StreamSchema.Sprocs.GetDistinctStringSerializedIds.BuildExecuteStoredProcedureOp(
                 this.Name,
                 tagIdsCsv,
                 deprecatedIdTypeId,
@@ -50,7 +50,7 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-            var resultXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.StandardGetDistinctStringSerializedIds.OutputParamName.StringIdentifiersXml)].GetValueOfType<string>();
+            var resultXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetDistinctStringSerializedIds.OutputParamName.StringIdentifiersXml)].GetValueOfType<string>();
             var resultList = TagConversionTool.GetTagsFromXmlString(resultXml);
             var result = resultList.Select(_ => _.Value).ToList();
 
