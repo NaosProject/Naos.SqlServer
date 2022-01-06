@@ -9,7 +9,9 @@ namespace Naos.SqlServer.Serialization.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Naos.Database.Domain;
     using Naos.Database.Serialization.Json;
+    using OBeautifulCode.Serialization;
     using OBeautifulCode.Serialization.Json;
     using OBeautifulCode.Type;
     using OBeautifulCode.Type.Recipes;

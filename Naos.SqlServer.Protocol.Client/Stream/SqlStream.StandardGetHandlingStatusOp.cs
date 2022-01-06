@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.HandlingStatus.cs" company="Naos Project">
+// <copyright file="SqlStream.StandardGetHandlingStatusOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -21,16 +21,6 @@ namespace Naos.SqlServer.Protocol.Client
 
     public partial class SqlStream
     {
-        private static readonly IReadOnlyCollection<HandlingStatus> AllHandlingStatusesExceptDisabledForStream = typeof(HandlingStatus)
-            .GetAllPossibleEnumValues()
-            .Cast<HandlingStatus>()
-            .Except(
-                new[]
-                {
-                    HandlingStatus.DisabledForStream,
-                })
-            .ToList();
-
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         public override IReadOnlyCollection<HandlingStatus> Execute(

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.GetRecordByInternalRecordId.cs" company="Naos Project">
+// <copyright file="SqlStream.StandardGetRecordByInternalRecordIdOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------

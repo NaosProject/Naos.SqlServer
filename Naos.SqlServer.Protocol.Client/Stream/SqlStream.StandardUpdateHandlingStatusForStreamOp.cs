@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.HandlingStatus.cs" company="Naos Project">
+// <copyright file="SqlStream.StandardUpdateHandlingStatusForStreamOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -21,6 +21,17 @@ namespace Naos.SqlServer.Protocol.Client
 
     public partial class SqlStream
     {
+        private static readonly IReadOnlyCollection<HandlingStatus> AllHandlingStatusesExceptDisabledForStream =
+            typeof(HandlingStatus)
+               .GetAllPossibleEnumValues()
+               .Cast<HandlingStatus>()
+               .Except(
+                    new[]
+                    {
+                        HandlingStatus.DisabledForStream,
+                    })
+               .ToList();
+
         /// <inheritdoc />
         public override void Execute(
             StandardUpdateHandlingStatusForStreamOp operation)
