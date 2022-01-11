@@ -25,6 +25,8 @@ namespace Naos.SqlServer.Protocol.Client
         public override IReadOnlyList<StreamRecordHandlingEntry> Execute(
             StandardGetHandlingHistoryOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             throw new NotImplementedException();
         }
     }

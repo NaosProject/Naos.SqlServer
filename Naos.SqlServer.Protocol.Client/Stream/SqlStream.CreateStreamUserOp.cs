@@ -15,6 +15,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.DateTime.Recipes;
     using OBeautifulCode.Serialization;
@@ -28,6 +29,8 @@ namespace Naos.SqlServer.Protocol.Client
         public void Execute(
             CreateStreamUserOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
             foreach (var resourceLocator in allLocators)
             {

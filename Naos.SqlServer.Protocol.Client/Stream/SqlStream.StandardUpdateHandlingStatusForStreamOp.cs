@@ -36,6 +36,8 @@ namespace Naos.SqlServer.Protocol.Client
         public override void Execute(
             StandardUpdateHandlingStatusForStreamOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             var locators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
 
             foreach (var locator in locators)

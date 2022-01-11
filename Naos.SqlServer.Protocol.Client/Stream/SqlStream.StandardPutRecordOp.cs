@@ -14,6 +14,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.String.Recipes;
@@ -27,6 +28,8 @@ namespace Naos.SqlServer.Protocol.Client
         public override PutRecordResult Execute(
             StandardPutRecordOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             var sqlServerLocator = this.TryGetLocator(operation);
             var payloadSerializationFormat = operation.Payload.GetSerializationFormat();
             var serializerRepresentation = this.GetIdAddIfNecessarySerializerRepresentation(sqlServerLocator, operation.Payload.SerializerRepresentation, payloadSerializationFormat);

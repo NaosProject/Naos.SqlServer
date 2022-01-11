@@ -14,6 +14,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.DateTime.Recipes;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.String.Recipes;
@@ -26,6 +27,8 @@ namespace Naos.SqlServer.Protocol.Client
         public override StreamRecord Execute(
             StandardGetLatestRecordByTagsOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             throw new NotImplementedException();
         }
     }

@@ -13,6 +13,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.DateTime.Recipes;
     using OBeautifulCode.Serialization;
@@ -26,6 +27,8 @@ namespace Naos.SqlServer.Protocol.Client
         public override TryHandleRecordResult Execute(
             StandardTryHandleRecordOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             var sqlServerLocator = this.TryGetLocator(operation);
             var identifierTypeQuery = operation.IdentifierType == null
                 ? null

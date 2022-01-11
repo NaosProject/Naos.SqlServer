@@ -14,6 +14,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.DateTime.Recipes;
     using OBeautifulCode.Serialization;
@@ -28,6 +29,8 @@ namespace Naos.SqlServer.Protocol.Client
         public override IReadOnlyCollection<string> Execute(
             StandardGetDistinctStringSerializedIdsOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
             var sqlServerLocator = locator as SqlServerLocator
                                 ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));

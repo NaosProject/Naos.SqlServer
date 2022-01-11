@@ -14,6 +14,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Database.Recipes;
     using OBeautifulCode.Type;
@@ -26,6 +27,8 @@ namespace Naos.SqlServer.Protocol.Client
         public override CreateStreamResult Execute(
             StandardCreateStreamOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
             var alreadyExisted = false;
             var wasCreated = true;

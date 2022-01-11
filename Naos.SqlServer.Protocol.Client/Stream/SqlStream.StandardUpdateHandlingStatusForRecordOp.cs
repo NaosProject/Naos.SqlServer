@@ -25,6 +25,8 @@ namespace Naos.SqlServer.Protocol.Client
         public override void Execute(
             StandardUpdateHandlingStatusForRecordOp operation)
         {
+            operation.MustForArg(nameof(operation)).NotBeNull();
+
             var sqlServerLocator = this.TryGetLocator(operation);
 
             var tagIdsCsv = operation.Tags == null
