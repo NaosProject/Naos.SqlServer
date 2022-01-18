@@ -15,7 +15,9 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Enum.Recipes;
+    using OBeautifulCode.Representation.System;
     using OBeautifulCode.String.Recipes;
+    using OBeautifulCode.Type;
     using OBeautifulCode.Type.Recipes;
     using static System.FormattableString;
 
@@ -23,59 +25,89 @@ namespace Naos.SqlServer.Protocol.Client
     {
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
-        public override IReadOnlyCollection<HandlingStatus> Execute(
+        public override IReadOnlyDictionary<long, HandlingStatus> Execute(
             StandardGetHandlingStatusOp operation)
         {
-            throw new NotImplementedException("Not yet implemented");
+            operation.MustForArg(nameof(operation)).NotBeNull();
 
-            ////if (operation.HandlingStatusCompositionStrategy != null)
-            ////{
-            ////    operation
-            ////       .HandlingStatusCompositionStrategy
-            ////       .IgnoreCancel
-            ////       .MustForArg(Invariant($"{nameof(StandardGetHandlingStatusOp)}.{nameof(HandlingStatusCompositionStrategy)}.{nameof(HandlingStatusCompositionStrategy.IgnoreCancel)}"))
-            ////       .BeFalse(Invariant($"{nameof(HandlingStatusCompositionStrategy)}.{nameof(HandlingStatusCompositionStrategy.IgnoreCancel)} is not supported."));
-            ////}
+            var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
+            var statusPerLocator = new List<HandlingStatus>();
+            foreach (var resourceLocator in allLocators)
+            {
+                var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
+                var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
 
-            ////if (operation.TagMatchStrategy != null)
-            ////{
-            ////    operation.TagMatchStrategy.ScopeOfFindSet
-            ////             .MustForArg(Invariant($"{nameof(StandardGetHandlingStatusOp)}.{nameof(TagMatchStrategy)}.{nameof(TagMatchStrategy.ScopeOfFindSet)}"))
-            ////             .BeEqualTo(Database.Domain.TagMatchScope.All);
+                var internalRecordIdsCsv = operation.RecordFilter.InternalRecordIds.Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
-            ////    operation.TagMatchStrategy.ScopeOfTarget
-            ////             .MustForArg(Invariant($"{nameof(StandardGetHandlingStatusOp)}.{nameof(TagMatchStrategy)}.{nameof(TagMatchStrategy.ScopeOfTarget)}"))
-            ////             .BeEqualTo(Database.Domain.TagMatchScope.Any);
-            ////}
+                var tagIdsCsv =
+                    operation.RecordFilter.Tags == null
+                        ? null
+                        : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.RecordFilter.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
 
-            ////var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
-            ////var statusPerLocator = new List<HandlingStatus>();
-            ////foreach (var resourceLocator in allLocators)
-            ////{
-            ////    var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
-            ////    var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+                var distinctIdentifierTypes = operation.RecordFilter.Ids?.Select(_ => _.IdentifierType).Distinct().ToList() ?? new List<TypeRepresentation>();
+                var typeToIdMap = distinctIdentifierTypes.ToDictionary(
+                    k => k,
+                    v => this.GetIdsAddIfNecessaryType(sqlServerLocator, v.ToWithAndWithoutVersion()));
 
-            ////    var tagIdsCsv =
-            ////        operation.TagsToMatch == null
-            ////            ? null
-            ////            : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.TagsToMatch).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
+                var identifierTypes = operation
+                             .RecordFilter
+                             .IdTypes
+                             .Select(_ => this.GetIdsAddIfNecessaryType(sqlServerLocator, _.ToWithAndWithoutVersion()))
+                             .ToList();
+                var identifierTypeIdsCsv = identifierTypes
+                                      .Select(
+                                           _ =>
+                                               operation.RecordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
+                                                   ? _.IdWithoutVersion.ToStringInvariantPreferred()
+                                                   : _.IdWithVersion.ToStringInvariantPreferred())
+                                      .ToCsv();
 
-            ////    var op = StreamSchema.Sprocs.GetCompositeHandlingStatus.BuildExecuteStoredProcedureOp(
-            ////        this.Name,
-            ////        operation.Concern,
-            ////        tagIdsCsv);
+                var objectTypes = operation
+                             .RecordFilter
+                             .ObjectTypes
+                             .Select(_ => this.GetIdsAddIfNecessaryType(sqlServerLocator, _.ToWithAndWithoutVersion()))
+                             .ToList();
+                var objectTypeIdsCsv = objectTypes
+                                      .Select(
+                                           _ =>
+                                               operation.RecordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
+                                                   ? _.IdWithoutVersion.ToStringInvariantPreferred()
+                                                   : _.IdWithVersion.ToStringInvariantPreferred())
+                                      .ToCsv();
 
-            ////    var sprocResult = sqlProtocol.Execute(op);
+                var stringIdsToMatchXml =
+                    operation.RecordFilter.Ids?
+                             .Select(
+                                  _ => new NamedValue<int>(
+                                      _.StringSerializedId,
+                                      operation.RecordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
+                                          ? typeToIdMap[_.IdentifierType].IdWithoutVersion
+                                          : typeToIdMap[_.IdentifierType].IdWithVersion))
+                             .ToList()
+                             .GetTagsXmlString()
+                 ?? TagConversionTool.EmptyTagSetXml;
 
-            ////    HandlingStatus status = sprocResult
-            ////                                     .OutputParameters[StreamSchema.Sprocs.GetCompositeHandlingStatus.OutputParamName.Status.ToString()]
-            ////                                     .GetValue<HandlingStatus>();
-            ////    statusPerLocator.Add(status);
-            ////}
+                var op = StreamSchema.Sprocs.GetHandlingStatuses.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    operation.Concern,
+                    internalRecordIdsCsv,
+                    identifierTypeIdsCsv,
+                    objectTypeIdsCsv,
+                    stringIdsToMatchXml,
+                    tagIdsCsv,
+                    operation.RecordFilter.TagMatchStrategy);
 
-            ////var result = statusPerLocator.ReduceToCompositeHandlingStatus(operation.HandlingStatusCompositionStrategy);
+                var sprocResult = sqlProtocol.Execute(op);
 
-            ////return result;
+                HandlingStatus status = sprocResult
+                                                 .OutputParameters[StreamSchema.Sprocs.GetCompositeHandlingStatus.OutputParamName.Status.ToString()]
+                                                 .GetValue<HandlingStatus>();
+                statusPerLocator.Add(status);
+            }
+
+            var result = statusPerLocator.ReduceToCompositeHandlingStatus(operation.HandlingStatusCompositionStrategy);
+
+            return result;
         }
     }
 }

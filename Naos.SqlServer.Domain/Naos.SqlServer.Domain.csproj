@@ -110,6 +110,7 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetDistinctStringSerializedIds.cs" />
+    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetHandlingStatuses.cs" />
     <Compile Include="Models\Classes\Definition\TableDefinition.designer.cs">
       <DependentUpon>TableDefinition.cs</DependentUpon>
     </Compile>
