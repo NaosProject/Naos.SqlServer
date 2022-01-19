@@ -114,6 +114,7 @@
     <Compile Include="Models\Classes\Definition\TableDefinition.designer.cs">
       <DependentUpon>TableDefinition.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Stream\RecordFilterConvertedForStoredProcedure.cs" />
     <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}.designer.cs">
       <DependentUpon>SqlOutputParameterResult{TValue}.cs</DependentUpon>
     </Compile>

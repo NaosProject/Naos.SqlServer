@@ -51,7 +51,7 @@ namespace Naos.SqlServer.Domain
                     ObjectTypeIdsCsv,
 
                     /// <summary>
-                    /// The string identifiers to match as XML
+                    /// The string identifiers to match as XML (key is string identifier and value is the appropriate type identifier per the <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>).
                     /// </summary>
                     StringIdentifiersXml,
 
@@ -87,24 +87,12 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">Handling concern.</param>
-                /// <param name="internalRecordIdsCsv">The internal record ids CSV.</param>
-                /// <param name="identifierTypeIdsCsv">The identifier type ids CSV.</param>
-                /// <param name="objectTypeIdsCsv">The object type ids CSV.</param>
-                /// <param name="stringIdsToMatchXml">The string ids to match XML.</param>
-                /// <param name="tagIdsCsv">The tag ids CSV.</param>
-                /// <param name="tagMatchStrategy">The tag match strategy.</param>
-                /// <param name="versionMatchStrategy">The version match strategy.</param>
+                /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter"/>.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,
-                    string internalRecordIdsCsv,
-                    string identifierTypeIdsCsv,
-                    string objectTypeIdsCsv,
-                    string stringIdsToMatchXml,
-                    string tagIdsCsv,
-                    TagMatchStrategy tagMatchStrategy,
-                    VersionMatchStrategy versionMatchStrategy)
+                    RecordFilterConvertedForStoredProcedure convertedRecordFilter)
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetHandlingStatuses)}]");
                     var parameters = new List<ParameterDefinitionBase>()
@@ -116,31 +104,31 @@ namespace Naos.SqlServer.Domain
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.InternalRecordIdsCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             internalRecordIdsCsv),
+                                             convertedRecordFilter.InternalRecordIdsCsv),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.IdentifierTypeIdsCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             identifierTypeIdsCsv),
+                                             convertedRecordFilter.IdentifierTypeIdsCsv),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.ObjectTypeIdsCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             objectTypeIdsCsv),
+                                             convertedRecordFilter.ObjectTypeIdsCsv),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.StringIdentifiersXml),
                                              new XmlSqlDataTypeRepresentation(),
-                                             stringIdsToMatchXml),
+                                             convertedRecordFilter.StringIdsToMatchXml),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.TagsIdsCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             tagIdsCsv),
+                                             convertedRecordFilter.TagIdsCsv),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.TagMatchStrategy),
                                              new StringSqlDataTypeRepresentation(false, 40),
-                                             tagMatchStrategy.ToString()),
+                                             convertedRecordFilter.TagMatchStrategy.ToString()),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.VersionMatchStrategy),
                                              new StringSqlDataTypeRepresentation(false, 20),
-                                             versionMatchStrategy.ToString()),
+                                             convertedRecordFilter.VersionMatchStrategy.ToString()),
                                          new OutputParameterDefinition<string>(
                                              nameof(OutputParamName.RecordIdHandlingStatusXml),
                                              new XmlSqlDataTypeRepresentation()),
@@ -236,48 +224,3 @@ END");
         }
     }
 }
-
-/*
-declare @RecordId bigint
-set @RecordId = 3
-declare @Concern varchar(50)
-set @Concern = 'Handle'
-declare @RecordIdHandlingStatusXml nvarchar(max)
-
-
-    DECLARE @RecordIdsTable TABLE ([RecordId] [BIGINT] NOT NULL)
-	IF (@RecordId IS NOT NULL)
-	BEGIN
-		INSERT @RecordIdsTable ([RecordId]) VALUES (@RecordId)
-	END
-
-	--IF (@RecordId IS NOT NULL)
-	--BEGIN
-	--	INSERT @RecordIdsTable ([RecordId])
-	--	SELECT 
-	--END
-
-    DECLARE @RecordIdsDistinctTable TABLE ([RecordId] [BIGINT] NOT NULL)
-	INSERT @RecordIdsDistinctTable ([RecordId])
-	SELECT DISTINCT [RecordId] FROM @RecordIdsTable
-
-    DECLARE @ResultsTable TABLE ([InternalRecordId] [VARCHAR](50) NOT NULL, [HandlingStatus] [NVARCHAR](450) NOT NULL)
-    INSERT INTO @ResultsTable ([InternalRecordId], [HandlingStatus])
-    SELECT CONVERT(VARCHAR(50), r.[Id]), ISNULL(h.[Status], 'None')
-	FROM [Stream082].[Record] r WITH (NOLOCK)
-	INNER JOIN @RecordIdsDistinctTable i
-		ON i.[RecordId] = r.[Id]
-    LEFT OUTER JOIN [Stream082].[Handling] h WITH (NOLOCK)
-        ON h.[RecordId] = r.[Id] AND h.Concern = @Concern
-    LEFT OUTER JOIN [Stream082].[Handling] h1 WITH (NOLOCK)
-        ON h.[RecordId] = h1.[RecordId]  AND h.Concern = @Concern AND r.[Id] < h1.[Id]
-
-    SELECT @RecordIdHandlingStatusXml = (SELECT
-			e.InternalRecordId AS [@Key],
-	        e.HandlingStatus AS [@Value]
-        FROM @ResultsTable e
-        FOR XML PATH ('Tag'), ROOT('Tags'))
-SELECT @RecordIdHandlingStatusXml
-
-
- */
