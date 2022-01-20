@@ -41,22 +41,22 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
-            var resultXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetDistinctStringSerializedIds.OutputParamName.StringIdentifiersXml)].GetValueOfType<string>();
+            var resultXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetDistinctStringSerializedIds.OutputParamName.StringIdentifiersOutputXml)].GetValueOfType<string>();
             var resultList = resultXml.GetTagsFromXmlString();
             var typeIdToTypeRepMap = resultList
                .ToDictionary(
-                    k => k.Value,
+                    k => k.Name,
                     v => this.GetTypeById(
                                   sqlServerLocator,
-                                  int.Parse(v.Value),
+                                  int.Parse(v.Name),
                                   true)
                              .WithVersion);
 
             var result = resultList
                         .Select(
                              _ => new StringSerializedIdentifier(
-                                 _.Name,
-                                 typeIdToTypeRepMap[_.Value]))
+                                 _.Value,
+                                 typeIdToTypeRepMap[_.Name]))
                         .ToList();
 
             return result;
