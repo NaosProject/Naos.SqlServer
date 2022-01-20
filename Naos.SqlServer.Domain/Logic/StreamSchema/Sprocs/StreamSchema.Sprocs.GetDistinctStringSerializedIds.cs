@@ -35,39 +35,44 @@ namespace Naos.SqlServer.Domain
                 public enum InputParamName
                 {
                     /// <summary>
-                    /// The tag identifiers as CSV of tags to match.
+                    /// The internal record identifiers as CSV.
                     /// </summary>
-                    TagIdsCsv,
+                    InternalRecordIdsCsv,
 
                     /// <summary>
-                    /// The identifier assembly qualified name without version of the object type to consider a deprecated event.
+                    /// The identifier type identifiers as CSV.
                     /// </summary>
-                    DeprecatedIdEventTypeWithoutVersionId,
+                    IdentifierTypeIdsCsv,
 
                     /// <summary>
-                    /// The identifier assembly qualified name without version
+                    /// The object type identifiers as CSV.
                     /// </summary>
-                    IdentifierTypeWithoutVersionIdQuery,
+                    ObjectTypeIdsCsv,
 
                     /// <summary>
-                    /// The identifier assembly qualified name with version
+                    /// The string identifiers to match as XML (key is string identifier and value is the appropriate type identifier per the <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>).
                     /// </summary>
-                    IdentifierTypeWithVersionIdQuery,
+                    StringIdentifiersXml,
 
                     /// <summary>
-                    /// The object assembly qualified name without version
+                    /// The tag identifiers as CSV.
                     /// </summary>
-                    ObjectTypeWithoutVersionIdQuery,
+                    TagsIdsCsv,
 
                     /// <summary>
-                    /// The object assembly qualified name with version
+                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
                     /// </summary>
-                    ObjectTypeWithVersionIdQuery,
+                    TagMatchStrategy,
 
                     /// <summary>
-                    /// The type version match strategy
+                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.
                     /// </summary>
                     VersionMatchStrategy,
+
+                    /// <summary>
+                    /// The deprecated identifier event type identifiers as CSV.
+                    /// </summary>
+                    DeprecatedIdEventTypeIdsCsv,
                 }
 
                 /// <summary>
@@ -86,32 +91,51 @@ namespace Naos.SqlServer.Domain
                 /// Builds the execute stored procedure operation.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
-                /// <param name="tagIdsCsv">The identifiers of the tags as CSV.</param>
-                /// <param name="deprecatedEventType">The type of the event to consider a deprecated identifier.</param>
-                /// <param name="identifierType">The identifier assembly qualified name with and without version.</param>
-                /// <param name="objectType">The object assembly qualified name with and without version.</param>
-                /// <param name="versionMatchStrategy">The type version match strategy.</param>
+                /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter"/>.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
-                    string tagIdsCsv,
-                    IdentifiedType deprecatedEventType,
-                    IdentifiedType identifierType,
-                    IdentifiedType objectType,
-                    VersionMatchStrategy versionMatchStrategy)
+                    RecordFilterConvertedForStoredProcedure convertedRecordFilter)
                 {
                     var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetDistinctStringSerializedIds)}]");
 
                     var parameters = new List<ParameterDefinitionBase>()
                                      {
-                                         new InputParameterDefinition<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.StringSerializedId.SqlDataType, tagIdsCsv),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.DeprecatedIdEventTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.SqlDataType, deprecatedEventType?.IdWithoutVersion),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.SqlDataType, identifierType?.IdWithoutVersion),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.IdentifierTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.SqlDataType, identifierType?.IdWithVersion),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.ObjectTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.SqlDataType, objectType?.IdWithoutVersion),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.SqlDataType, objectType?.IdWithVersion),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.VersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), versionMatchStrategy.ToString()),
-                                         new OutputParameterDefinition<string>(nameof(OutputParamName.StringIdentifiersXml), new XmlSqlDataTypeRepresentation()),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.InternalRecordIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.InternalRecordIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.IdentifierTypeIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.IdentifierTypeIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.ObjectTypeIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.ObjectTypeIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.StringIdentifiersXml),
+                                             new XmlSqlDataTypeRepresentation(),
+                                             convertedRecordFilter.StringIdsToMatchXml),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.TagsIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.TagIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.TagMatchStrategy),
+                                             new StringSqlDataTypeRepresentation(false, 40),
+                                             convertedRecordFilter.TagMatchStrategy.ToString()),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.VersionMatchStrategy),
+                                             new StringSqlDataTypeRepresentation(false, 20),
+                                             convertedRecordFilter.VersionMatchStrategy.ToString()),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
+                                         new OutputParameterDefinition<string>(
+                                             nameof(OutputParamName.StringIdentifiersXml),
+                                             new XmlSqlDataTypeRepresentation()),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
@@ -141,55 +165,90 @@ namespace Naos.SqlServer.Domain
                 {
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
 
+                    const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
+                    const string identifierTypesTable = "IdTypeIdentifiersTable";
+                    const string objectTypesTable = "ObjectTypeIdentifiersTable";
+                    const string stringSerializedIdsTable = "StringSerializedIdentifiersTable";
+                    const string tagIdsTable = "TagIdsTable";
+                    const string deprecatedTypesTable = "DeprecatedIdEventIdsTable";
+
                     const string resultTableName = "ResultsTable";
 
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetDistinctStringSerializedIds.Name}](
-  @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.DeprecatedIdEventTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.VersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 10).DeclarationInSqlSyntax}
-, @{OutputParamName.StringIdentifiersXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+    @{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+ ,  @{InputParamName.TagsIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
+ ,  @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
+ ,  @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{OutputParamName.StringIdentifiersXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
     DECLARE @{resultTableName} TABLE ([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NULL)
+
+    DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+    INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}]) VALUES
+    SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+
+    DECLARE @{identifierTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+    INSERT INTO @{identifierTypesTable} ([{Tables.TypeWithVersion.Id.Name}]) VALUES
+    SELECT value FROM STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',')
+
+    DECLARE @{objectTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+    INSERT INTO @{objectTypesTable} ([{Tables.TypeWithVersion.Id.Name}]) VALUES
+    SELECT value FROM STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',')
+
+    DECLARE @{stringSerializedIdsTable} TABLE([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NOT NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+    INSERT INTO @{stringSerializedIdsTable} ([{Tables.Record.StringSerializedId.Name}], [{Tables.TypeWithVersion.Id.Name}]) VALUES
+    SELECT @{TagConversionTool.TagEntryKeyAttributeName}, @{TagConversionTool.TagEntryValueAttributeName}
+    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) 
+
+    DECLARE @{tagIdsTable} TABLE([{Tables.Tag.Id.Name}] {Tables.Tag.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}]) VALUES
+    SELECT value FROM STRING_SPLIT(@{InputParamName.TagsIdsCsv}, ',')
+
+    DECLARE @{deprecatedTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+    INSERT INTO @{deprecatedTypesTable} ([{Tables.TypeWithVersion.Id.Name}]) VALUES
+    SELECT value FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ',')
+
+    INSERT INTO @{recordIdsToConsiderTable}
+    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+	FROM [{streamName}].[{Tables.Record.Table.Name}] (NOLOCK) r
+    LEFT JOIN [{recordIdsToConsiderTable}] ir ON
+        r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
+    LEFT JOIN [{identifierTypesTable}] itwith ON
+        r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = itwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+    LEFT JOIN [{identifierTypesTable}] itwithout ON
+        r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = itwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+    LEFT JOIN [{objectTypesTable}] otwith ON
+        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+    LEFT JOIN [{objectTypesTable}] otwithout ON
+        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+    LEFT JOIN [{Tables.Record.Table.Name}] rt (NOLOCK) ON
+        EXISTS (SELECT value FROM STRING_SPLIT(r.[{Tables.Record.TagIdsCsv.Name}], ',') INTERSECT SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
+    LEFT JOIN [{deprecatedTypesTable}] dtwith ON
+        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = dtwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+    LEFT JOIN [{deprecatedTypesTable}] dtwithout ON
+        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = dtwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+    WHERE
+                  r.[{Tables.Record.Id.Name}] IS NOT NULL
+      AND    dtwith.[{Tables.TypeWithVersion.Id.Name}] IS NULL
+      AND dtwithout.[{Tables.TypeWithVersion.Id.Name}] IS NULL
+
     INSERT INTO @{resultTableName} ([{Tables.Record.StringSerializedId.Name}])
     SELECT DISTINCT r.{Tables.Record.StringSerializedId.Name}
 	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+    INNER JOIN @{recordIdsToConsiderTable} rtc ON r.[{Tables.Record.Id.Name}] = rtc.[{Tables.Record.Id.Name}]
     LEFT OUTER JOIN [{streamName}].[{Tables.Record.Table.Name}] r1 WITH (NOLOCK)
         ON r.[{Tables.Record.StringSerializedId.Name}] = r1.[{Tables.Record.StringSerializedId.Name}] AND r.[{Tables.Record.Id.Name}] < r1.[{Tables.Record.Id.Name}]
 	WHERE
         r1.[{Tables.Record.Id.Name}] IS NULL
-        AND
-        (
-            -- No Type filter at all
-            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-            OR
-            -- Specific Only Id
-            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND r.{Tables.Record.IdentifierTypeWithVersionId.Name} = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-            OR
-            -- Specific Only Object
-            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND r.{Tables.Record.ObjectTypeWithVersionId.Name} = @{InputParamName.ObjectTypeWithVersionIdQuery})
-            OR
-            -- Specific Both
-            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND r.{Tables.Record.IdentifierTypeWithVersionId.Name} = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND r.{Tables.Record.ObjectTypeWithVersionId.Name} = @{InputParamName.ObjectTypeWithVersionIdQuery})
-            OR
-            -- Any Only Id
-            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND r.{Tables.Record.IdentifierTypeWithoutVersionId.Name} = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-            OR
-            -- Any Only Object
-            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND r.{Tables.Record.ObjectTypeWithoutVersionId.Name} = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-            OR
-            -- Any Both
-            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND r.{Tables.Record.IdentifierTypeWithoutVersionId.Name} = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND r.{Tables.Record.ObjectTypeWithoutVersionId.Name} = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-        )
-        AND
-        ((r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] <> @{InputParamName.DeprecatedIdEventTypeWithoutVersionId}) OR (@{InputParamName.DeprecatedIdEventTypeWithoutVersionId} IS NULL))
+        rtc.[{Tables.Record.Id.Name}] IS NOT NULL
 
         SELECT @{OutputParamName.StringIdentifiersXml} = (SELECT
             ROW_NUMBER() OVER (ORDER BY e.[{Tables.Record.StringSerializedId.Name}], ISNULL(e.[{Tables.Record.StringSerializedId.Name}], '{TagConversionTool.NullCanaryValue}')) AS [@{TagConversionTool.TagEntryKeyAttributeName}],

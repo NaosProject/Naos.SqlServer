@@ -24,7 +24,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
         /// <param name="tagMatchStrategy">The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.</param>
         /// <param name="versionMatchStrategy">The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.</param>
-        /// <param name="deprecatedIdTypeIdsCsv">The deprecated identifier event type identifiers as CSV.</param>
+        /// <param name="deprecatedIdEventTypeIdsCsv">The deprecated identifier event type identifiers as CSV.</param>
         public RecordFilterConvertedForStoredProcedure(
             string internalRecordIdsCsv,
             string identifierTypeIdsCsv,
@@ -33,7 +33,7 @@ namespace Naos.SqlServer.Domain
             string tagIdsCsv,
             TagMatchStrategy tagMatchStrategy,
             VersionMatchStrategy versionMatchStrategy,
-            string deprecatedIdTypeIdsCsv)
+            string deprecatedIdEventTypeIdsCsv)
         {
             this.InternalRecordIdsCsv = internalRecordIdsCsv;
             this.IdentifierTypeIdsCsv = identifierTypeIdsCsv;
@@ -42,7 +42,7 @@ namespace Naos.SqlServer.Domain
             this.TagIdsCsv = tagIdsCsv;
             this.TagMatchStrategy = tagMatchStrategy;
             this.VersionMatchStrategy = versionMatchStrategy;
-            this.DeprecatedIdTypeIdsCsv = deprecatedIdTypeIdsCsv;
+            this.DeprecatedIdEventTypeIdsCsv = deprecatedIdEventTypeIdsCsv;
         }
 
         /// <summary>
@@ -83,6 +83,6 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the deprecated identifier event type identifiers as CSV.
         /// </summary>
-        public string DeprecatedIdTypeIdsCsv { get; private set; }
+        public string DeprecatedIdEventTypeIdsCsv { get; private set; }
     }
 }

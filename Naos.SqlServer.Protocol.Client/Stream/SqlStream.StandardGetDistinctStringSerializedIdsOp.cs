@@ -26,36 +26,38 @@ namespace Naos.SqlServer.Protocol.Client
     {
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordId", Justification = "Leaving for debugging and future use.")]
-        public override IReadOnlyCollection<string> Execute(
+        public override IReadOnlyCollection<StringSerializedIdentifier> Execute(
             StandardGetDistinctStringSerializedIdsOp operation)
         {
             operation.MustForArg(nameof(operation)).NotBeNull();
+            var sqlServerLocator = this.TryGetLocator(operation);
 
-            var locator = this.ResourceLocatorProtocols.Execute(new GetResourceLocatorForUniqueIdentifierOp());
-            var sqlServerLocator = locator as SqlServerLocator
-                                ?? throw new NotSupportedException(Invariant($"{nameof(GetResourceLocatorForUniqueIdentifierOp)} should return a {nameof(SqlServerLocator)} and returned {locator?.GetType().ToStringReadable()}."));
-
-            var deprecatedIdTypeId = operation.DeprecatedIdentifierType == null ? null : this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.DeprecatedIdentifierType.ToWithAndWithoutVersion());
-            var identifierTypeId = operation.IdentifierType == null ? null : this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.IdentifierType.ToWithAndWithoutVersion());
-            var objectTypeId = operation.ObjectType == null ? null : this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.ObjectType.ToWithAndWithoutVersion());
-            var tagIdsCsv = operation.TagsToMatch == null
-                ? null
-                : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.TagsToMatch).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
+            var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
 
             var storedProcOp = StreamSchema.Sprocs.GetDistinctStringSerializedIds.BuildExecuteStoredProcedureOp(
                 this.Name,
-                tagIdsCsv,
-                deprecatedIdTypeId,
-                identifierTypeId,
-                objectTypeId,
-                operation.VersionMatchStrategy);
+                convertedRecordFilter);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
             var resultXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetDistinctStringSerializedIds.OutputParamName.StringIdentifiersXml)].GetValueOfType<string>();
-            var resultList = TagConversionTool.GetTagsFromXmlString(resultXml);
-            var result = resultList.Select(_ => _.Value).ToList();
+            var resultList = resultXml.GetTagsFromXmlString();
+            var typeIdToTypeRepMap = resultList
+               .ToDictionary(
+                    k => k.Value,
+                    v => this.GetTypeById(
+                                  sqlServerLocator,
+                                  int.Parse(v.Value),
+                                  true)
+                             .WithVersion);
+
+            var result = resultList
+                        .Select(
+                             _ => new StringSerializedIdentifier(
+                                 _.Name,
+                                 typeIdToTypeRepMap[_.Value]))
+                        .ToList();
 
             return result;
         }
