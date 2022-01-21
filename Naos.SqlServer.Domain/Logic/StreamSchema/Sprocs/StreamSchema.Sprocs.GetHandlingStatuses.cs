@@ -172,50 +172,56 @@ namespace Naos.SqlServer.Domain
 AS
 BEGIN
     DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}]) VALUES
+    INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
     SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
 
     DECLARE @{identifierTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{identifierTypesTable} ([{Tables.TypeWithVersion.Id.Name}]) VALUES
+    INSERT INTO @{identifierTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
     SELECT value FROM STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',')
 
     DECLARE @{objectTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{objectTypesTable} ([{Tables.TypeWithVersion.Id.Name}]) VALUES
+    INSERT INTO @{objectTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
     SELECT value FROM STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',')
 
     DECLARE @{stringSerializedIdsTable} TABLE([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NOT NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{stringSerializedIdsTable} ([{Tables.Record.StringSerializedId.Name}], [{Tables.TypeWithVersion.Id.Name}]) VALUES
-    SELECT @{TagConversionTool.TagEntryKeyAttributeName}, @{TagConversionTool.TagEntryValueAttributeName}
+    INSERT INTO @{stringSerializedIdsTable} ([{Tables.Record.StringSerializedId.Name}], [{Tables.TypeWithVersion.Id.Name}])
+    SELECT
+         [{Tables.Tag.TagKey.Name}]
+	   , [{Tables.Tag.TagValue.Name}]
     FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) 
 
     DECLARE @{tagIdsTable} TABLE([{Tables.Tag.Id.Name}] {Tables.Tag.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}]) VALUES
+    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
     SELECT value FROM STRING_SPLIT(@{InputParamName.TagsIdsCsv}, ',')
 
     INSERT INTO @{recordIdsToConsiderTable}
     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
 	FROM [{streamName}].[{Tables.Record.Table.Name}] (NOLOCK) r
-    LEFT JOIN [{recordIdsToConsiderTable}] ir ON
+    LEFT JOIN @{recordIdsToConsiderTable} ir ON
         r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
-    LEFT JOIN [{identifierTypesTable}] itwith ON
+    LEFT JOIN @{identifierTypesTable} itwith ON
         r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = itwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-    LEFT JOIN [{identifierTypesTable}] itwithout ON
+    LEFT JOIN @{identifierTypesTable} itwithout ON
         r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = itwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-    LEFT JOIN [{objectTypesTable}] otwith ON
+    LEFT JOIN @{objectTypesTable} otwith ON
         r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-    LEFT JOIN [{objectTypesTable}] otwithout ON
+    LEFT JOIN @{objectTypesTable} otwithout ON
         r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
     LEFT JOIN [{Tables.Record.Table.Name}] rt (NOLOCK) ON
         EXISTS (SELECT value FROM STRING_SPLIT(r.[{Tables.Record.TagIdsCsv.Name}], ',') INTERSECT SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
     WHERE
         r.[{Tables.Record.Id.Name}] IS NOT NULL
 
-    SELECT h.[{Tables.Handling.RecordId}], h.[{Tables.Handling.Status}]
-    FROM [{streamName}].[{Tables.Handling.Table.Name}] h
-	LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-	    ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
-    ORDER BY [{Tables.Handling.Id.Name}]
-    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+    SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
+        SELECT
+              h.[{Tables.Handling.RecordId.Name}] AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+            , h.[{Tables.Handling.Status.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
+        FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+	    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+	        ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+        ORDER BY h.[{Tables.Handling.Id.Name}]
+        FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}')
+    )
 END");
 
                     return result;

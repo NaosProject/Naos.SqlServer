@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
@@ -18,6 +19,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.DateTime.Recipes;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.String.Recipes;
+    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     public partial class SqlStream
@@ -30,26 +32,19 @@ namespace Naos.SqlServer.Protocol.Client
             operation.MustForArg(nameof(operation)).NotBeNull();
 
             var sqlServerLocator = this.TryGetLocator(operation);
-            var identifierTypeQuery = operation.IdentifierType == null
-                ? null
-                : this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.IdentifierType.ToWithAndWithoutVersion());
-            var objectTypeQuery = operation.ObjectType == null
-                ? null
-                : this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.ObjectType.ToWithAndWithoutVersion());
-
-            var entryTagIdsCsv = operation.Tags == null
-                ? null
-                : this.GetIdsAddIfNecessaryTag(sqlServerLocator, operation.Tags).Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-
+            var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
+            var tagIdsForEntryCsv = this.GetIdsAddIfNecessaryTag(
+                                                             sqlServerLocator,
+                                                             operation.Tags ?? new List<NamedValue<string>>())
+                                                        .Select(_ => _.ToStringInvariantPreferred())
+                                                        .ToCsv();
             var storedProcOp = StreamSchema.Sprocs.TryHandleRecord.BuildExecuteStoredProcedureOp(
                                                 this.Name,
                                                 operation.Concern,
                                                 operation.Details ?? Invariant($"Created by {nameof(StandardTryHandleRecordOp)}."),
-                                                identifierTypeQuery,
-                                                objectTypeQuery,
+                                                convertedRecordFilter,
+                                                tagIdsForEntryCsv,
                                                 operation.OrderRecordsBy,
-                                                operation.VersionMatchStrategy,
-                                                entryTagIdsCsv,
                                                 operation.MinimumInternalRecordId,
                                                 operation.InheritRecordTags);
 

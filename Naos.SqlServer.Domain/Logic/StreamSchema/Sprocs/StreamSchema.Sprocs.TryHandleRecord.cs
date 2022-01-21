@@ -46,34 +46,44 @@ namespace Naos.SqlServer.Domain
                     Details,
 
                     /// <summary>
-                    /// The identifier assembly qualified name without version
+                    /// The internal record identifiers as CSV.
                     /// </summary>
-                    IdentifierTypeWithoutVersionIdQuery,
+                    InternalRecordIdsCsv,
 
                     /// <summary>
-                    /// The identifier assembly qualified name with version
+                    /// The identifier type identifiers as CSV.
                     /// </summary>
-                    IdentifierTypeWithVersionIdQuery,
+                    IdentifierTypeIdsCsv,
 
                     /// <summary>
-                    /// The object assembly qualified name without version
+                    /// The object type identifiers as CSV.
                     /// </summary>
-                    ObjectTypeWithoutVersionIdQuery,
+                    ObjectTypeIdsCsv,
 
                     /// <summary>
-                    /// The object assembly qualified name with version
+                    /// The string identifiers to match as XML (key is string identifier and value is the appropriate type identifier per the <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>).
                     /// </summary>
-                    ObjectTypeWithVersionIdQuery,
+                    StringIdentifiersXml,
 
                     /// <summary>
-                    /// The order record strategy
+                    /// The tag identifiers as CSV.
                     /// </summary>
-                    OrderRecordsBy,
+                    TagsIdsCsv,
 
                     /// <summary>
-                    /// The type version match strategy
+                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
+                    /// </summary>
+                    TagMatchStrategy,
+
+                    /// <summary>
+                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.
                     /// </summary>
                     VersionMatchStrategy,
+
+                    /// <summary>
+                    /// The order record strategy.
+                    /// </summary>
+                    OrderRecordsBy,
 
                     /// <summary>
                     /// The tag identifiers as CSV.
@@ -169,11 +179,9 @@ namespace Naos.SqlServer.Domain
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">The concern.</param>
                 /// <param name="details">The details.</param>
-                /// <param name="identifierType">Type of the identifier.</param>
-                /// <param name="objectType">Type of the object.</param>
+                /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter"/>.</param>
+                /// <param name="tagIdsForEntryCsv">The tag identifiers of tags to add to new entries.</param>
                 /// <param name="orderRecordsBy">The order records strategy.</param>
-                /// <param name="versionMatchStrategy">The type version match strategy.</param>
-                /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
                 /// <param name="minimumInternalRecordId">The optional minimum internal record identifier, null for default.</param>
                 /// <param name="inheritRecordTags">The tags on the record should also be on the handling entry.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
@@ -181,11 +189,9 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     string concern,
                     string details,
-                    IdentifiedType identifierType,
-                    IdentifiedType objectType,
+                    RecordFilterConvertedForStoredProcedure convertedRecordFilter,
+                    string tagIdsForEntryCsv,
                     OrderRecordsBy orderRecordsBy,
-                    VersionMatchStrategy versionMatchStrategy,
-                    string tagIdsCsv,
                     long? minimumInternalRecordId,
                     bool inheritRecordTags)
                 {
@@ -195,13 +201,36 @@ namespace Naos.SqlServer.Domain
                                      {
                                          new InputParameterDefinition<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.SqlDataType, concern),
                                          new InputParameterDefinition<string>(nameof(InputParamName.Details), Tables.Handling.Details.SqlDataType, details),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.InternalRecordIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.InternalRecordIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.IdentifierTypeIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.IdentifierTypeIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.ObjectTypeIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.ObjectTypeIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.StringIdentifiersXml),
+                                             new XmlSqlDataTypeRepresentation(),
+                                             convertedRecordFilter.StringIdsToMatchXml),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.TagsIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.TagIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.TagMatchStrategy),
+                                             new StringSqlDataTypeRepresentation(false, 40),
+                                             convertedRecordFilter.TagMatchStrategy.ToString()),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.VersionMatchStrategy),
+                                             new StringSqlDataTypeRepresentation(false, 20),
+                                             convertedRecordFilter.VersionMatchStrategy.ToString()),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.TagIdsForEntryCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsForEntryCsv),
                                          new InputParameterDefinition<string>(nameof(InputParamName.OrderRecordsBy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsBy.ToString()),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.SqlDataType, identifierType?.IdWithoutVersion),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.IdentifierTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.SqlDataType, identifierType?.IdWithVersion),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.ObjectTypeWithoutVersionIdQuery), Tables.TypeWithoutVersion.Id.SqlDataType, objectType?.IdWithoutVersion),
-                                         new InputParameterDefinition<int?>(nameof(InputParamName.ObjectTypeWithVersionIdQuery), Tables.TypeWithVersion.Id.SqlDataType, objectType?.IdWithVersion),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.VersionMatchStrategy), new StringSqlDataTypeRepresentation(false, 50), versionMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.TagIdsForEntryCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
                                          new InputParameterDefinition<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), inheritRecordTags ? 1 : 0),
                                          new InputParameterDefinition<long?>(nameof(InputParamName.MinimumInternalRecordId), Tables.Record.Id.SqlDataType, minimumInternalRecordId),
                                          new OutputParameterDefinition<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
@@ -236,6 +265,12 @@ namespace Naos.SqlServer.Domain
                     int? maxConcurrentHandlingCount,
                     bool asAlter = false)
                 {
+                    const string recordIdsToConsiderHandledTable = "RecordIdsToConsiderHandledTable";
+                    const string recordIdsToConsiderUnhandledTable = "RecordIdsToConsiderUnhandledTable";
+                    const string identifierTypesTable = "IdTypeIdentifiersTable";
+                    const string objectTypesTable = "ObjectTypeIdentifiersTable";
+                    const string stringSerializedIdsTable = "StringSerializedIdentifiersTable";
+                    const string tagIdsTable = "TagIdsTable";
                     const string recordIdToAttemptToClaim = "RecordIdToAttemptToClaim";
                     const string candidateRecordIds = "CandidateRecordIds";
                     const string streamBlockedStatus = "StreamBlockedStatus";
@@ -276,12 +311,14 @@ namespace Naos.SqlServer.Domain
 {createOrModify} PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.Details} AS {Tables.Handling.Details.SqlDataType.DeclarationInSqlSyntax}
+, @{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+, @{InputParamName.TagsIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
+, @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
 , @{InputParamName.OrderRecordsBy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectTypeWithoutVersionIdQuery} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectTypeWithVersionIdQuery} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.VersionMatchStrategy} AS varchar(10)
 , @{InputParamName.TagIdsForEntryCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.MinimumInternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
@@ -321,41 +358,101 @@ BEGIN
 
 	IF (@{shouldAttemptHandling} = 1)
 	BEGIN
+        -- Shared join tables for record filtering
+	    DECLARE @{identifierTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+	    INSERT INTO @{identifierTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
+	    SELECT value FROM STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',')
+
+	    DECLARE @{objectTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+	    INSERT INTO @{objectTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
+	    SELECT value FROM STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',')
+
+	    DECLARE @{stringSerializedIdsTable} TABLE([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NOT NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+	    INSERT INTO @{stringSerializedIdsTable} ([{Tables.Record.StringSerializedId.Name}], [{Tables.TypeWithVersion.Id.Name}])
+	    SELECT
+             [{Tables.Tag.TagKey.Name}]
+     	   , [{Tables.Tag.TagValue.Name}]
+	    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) 
+
+	    DECLARE @{tagIdsTable} TABLE([{Tables.Tag.Id.Name}] {Tables.Tag.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+	    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
+	    SELECT value FROM STRING_SPLIT(@{InputParamName.TagsIdsCsv}, ',')
+
+        -- Record Ids to consider that have an existing handling status
+	    DECLARE @{recordIdsToConsiderHandledTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+	    INSERT INTO @{recordIdsToConsiderHandledTable} ([{Tables.Record.Id.Name}])
+	    SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+
+	    INSERT INTO @{recordIdsToConsiderHandledTable}
+	    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+		FROM [{streamName}].[{Tables.Handling.Table.Name}] (NOLOCK) h
+		LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+		    ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+        INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] (NOLOCK) r
+            ON h.[{Tables.Handling.Id.Name}] = r.[{Tables.Record.Id.Name}]
+	    LEFT JOIN @{recordIdsToConsiderHandledTable} ir ON
+	        r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
+	    LEFT JOIN @{identifierTypesTable} itwith ON
+	        r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = itwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+	    LEFT JOIN @{identifierTypesTable} itwithout ON
+	        r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = itwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+	    LEFT JOIN @{objectTypesTable} otwith ON
+	        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+	    LEFT JOIN @{objectTypesTable} otwithout ON
+	        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+	    --LEFT JOIN [{Tables.Record.Table.Name}] rt (NOLOCK) ON
+	    --    EXISTS (SELECT value FROM STRING_SPLIT(r.[{Tables.Record.TagIdsCsv.Name}], ',') INTERSECT SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
+	    WHERE
+	            r.[{Tables.Record.Id.Name}] IS NOT NULL
+	        AND h1.[{Tables.Handling.Id.Name}] IS NULL
+            AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+
+        -- Record Ids to consider that do NOT have an existing handling status
+	    DECLARE @{recordIdsToConsiderUnhandledTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+	    INSERT INTO @{recordIdsToConsiderUnhandledTable} ([{Tables.Record.Id.Name}])
+	    SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+
+	    INSERT INTO @{recordIdsToConsiderUnhandledTable}
+	    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+		FROM [{streamName}].[{Tables.Record.Table.Name}] (NOLOCK) r
+        LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] (NOLOCK) h
+            ON h.[{Tables.Handling.RecordId.Name}] = r.[{Tables.Record.Id.Name}]
+	    LEFT JOIN @{recordIdsToConsiderUnhandledTable} ir ON
+	        r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
+	    LEFT JOIN @{identifierTypesTable} itwith ON
+	        r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = itwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+	    LEFT JOIN @{identifierTypesTable} itwithout ON
+	        r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = itwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+	    LEFT JOIN @{objectTypesTable} otwith ON
+	        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+	    LEFT JOIN @{objectTypesTable} otwithout ON
+	        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+	    --LEFT JOIN [{Tables.Record.Table.Name}] rt (NOLOCK) ON
+	    --    EXISTS (SELECT value FROM STRING_SPLIT(r.[{Tables.Record.TagIdsCsv.Name}], ',') INTERSECT SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
+	    WHERE
+	            h.[{Tables.Handling.Id.Name}] IS NULL
+			AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+
         DECLARE @{candidateRecordIds} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 		DECLARE @{isUnhandledRecord} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 		IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
 		BEGIN
 			-- See if any reprocessing is needed
-			INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-			FROM [{streamName}].[{Tables.Handling.Table.Name}] h
-			INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
-			WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-	        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
-			AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
-		    AND (
-		            -- No Type filter at all
-		            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-		            OR
-		            -- Specific Only Id
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-		            OR
-		            -- Specific Only Object
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-		            OR
-		            -- Specific Both
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-		            OR
-		            -- Any Only Id
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-		            OR
-		            -- Any Only Object
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-		            OR
-		            -- Any Both
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-		        )
-			AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
-			-- Check for re-run scenario
+			INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
+			FROM @{recordIdsToConsiderHandledTable} rtc
+			INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
+                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+		    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+		        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+			WHERE
+                 h1.[{Tables.Handling.Id.Name}] IS NULL
+              AND
+              (   h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}'
+               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}'
+               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
 
 			-- See if any new records
 			IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
@@ -365,34 +462,14 @@ BEGIN
 			END
 			ELSE
 			BEGIN
-				INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-				FROM [{streamName}].[{Tables.Record.Table.Name}] r
+				INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
+				FROM @{recordIdsToConsiderUnhandledTable} rtc
 				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-				ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-				WHERE h.[{Tables.Handling.Id.Name}] IS NULL
-			    AND (
-			            -- No Type filter at all
-			            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-			            OR
-			            -- Specific Only Id
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-			            OR
-			            -- Specific Only Object
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-			            OR
-			            -- Specific Both
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-			            OR
-			            -- Any Only Id
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-			            OR
-			            -- Any Only Object
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-			            OR
-			            -- Any Both
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-			        )
-				AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
+                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+				WHERE
+                   h.[{Tables.Handling.Id.Name}] IS NULL
+
 				IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 				BEGIN
 					-- Found new records to process
@@ -403,71 +480,36 @@ BEGIN
 		ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdDescending}')
 		BEGIN
 			-- See if any new records
-			INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-			FROM [{streamName}].[{Tables.Record.Table.Name}] r
+			INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
+			FROM @{recordIdsToConsiderUnhandledTable} rtc
 			LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-			ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-			WHERE h.[{Tables.Handling.Id.Name}] IS NULL
-		    AND (
-		            -- No Type filter at all
-		            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-		            OR
-		            -- Specific Only Id
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-		            OR
-		            -- Specific Only Object
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-		            OR
-		            -- Specific Both
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-		            OR
-		            -- Any Only Id
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-		            OR
-		            -- Any Only Object
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-		            OR
-		            -- Any Both
-		            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-		        )
-			AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+            ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
+               AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			WHERE
+               h.[{Tables.Handling.Id.Name}] IS NULL
 
-			-- Check for new records
+			-- See if any reprocessing is needed
 			IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 			BEGIN
 				SET @{isUnhandledRecord} = 1
 			END
 			ELSE
 			BEGIN
-				INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-				FROM [{streamName}].[{Tables.Handling.Table.Name}] h
-				INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
-				WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-		        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
-				AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
-			    AND (
-			            -- No Type filter at all
-			            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-			            OR
-			            -- Specific Only Id
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-			            OR
-			            -- Specific Only Object
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-			            OR
-			            -- Specific Both
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-			            OR
-			            -- Any Only Id
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-			            OR
-			            -- Any Only Object
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-			            OR
-			            -- Any Both
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-			        )
-				AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+				INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
+				FROM @{recordIdsToConsiderHandledTable} rtc
+				INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
+	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+			        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+	                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+				WHERE
+	                 h1.[{Tables.Handling.Id.Name}] IS NULL
+	              AND
+	              (   h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}'
+	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}'
+	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
+
 				IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 				BEGIN
 					SET @{isUnhandledRecord} = 0
@@ -480,71 +522,36 @@ BEGIN
 			IF (RAND() > .5)
 			BEGIN
 				-- See if any new records
-				INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-				FROM [{streamName}].[{Tables.Record.Table.Name}] r
+				INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
+				FROM @{recordIdsToConsiderUnhandledTable} rtc
 				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-				ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-				WHERE h.[{Tables.Handling.Id.Name}] IS NULL
-			    AND (
-			            -- No Type filter at all
-			            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-			            OR
-			            -- Specific Only Id
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-			            OR
-			            -- Specific Only Object
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-			            OR
-			            -- Specific Both
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-			            OR
-			            -- Any Only Id
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-			            OR
-			            -- Any Only Object
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-			            OR
-			            -- Any Both
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-			        )
-				AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+	            ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
+	               AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+				WHERE
+	               h.[{Tables.Handling.Id.Name}] IS NULL
 
-				-- Check for new records
+				-- See if any reprocessing is needed
 				IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 				BEGIN
 					SET @{isUnhandledRecord} = 1
 				END
 				ELSE
 				BEGIN
-					INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-					FROM [{streamName}].[{Tables.Handling.Table.Name}] h
-					INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
-					WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-			        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
-					AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
-				    AND (
-				            -- No Type filter at all
-				            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-				            OR
-				            -- Specific Only Id
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-				            OR
-				            -- Specific Only Object
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-				            OR
-				            -- Specific Both
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-				            OR
-				            -- Any Only Id
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-				            OR
-				            -- Any Only Object
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-				            OR
-				            -- Any Both
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-				        )
-					AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+					INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
+					FROM @{recordIdsToConsiderHandledTable} rtc
+					INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+		                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
+		                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+				    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+				        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+		                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+					WHERE
+		                 h1.[{Tables.Handling.Id.Name}] IS NULL
+		              AND
+		              (   h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}'
+		               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}'
+		               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
+
 					IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 					BEGIN
 						SET @{isUnhandledRecord} = 0
@@ -554,36 +561,20 @@ BEGIN
 			ELSE
 			BEGIN
 				-- See if any reprocessing is needed
-				INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-				FROM [{streamName}].[{Tables.Handling.Table.Name}] h
-				INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] r ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}]
-				WHERE h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-		        AND (h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}' OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
-				AND (SELECT TOP 1 [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}] i WHERE i.{Tables.Handling.RecordId.Name} = h.{Tables.Handling.RecordId.Name} ORDER BY i.{Tables.Handling.Id.Name} DESC) = h.{Tables.Handling.Status.Name}
-			    AND (
-			            -- No Type filter at all
-			            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-			            OR
-			            -- Specific Only Id
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-			            OR
-			            -- Specific Only Object
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-			            OR
-			            -- Specific Both
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-			            OR
-			            -- Any Only Id
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-			            OR
-			            -- Any Only Object
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-			            OR
-			            -- Any Both
-			            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-			        )
-				AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
-				-- Check for re-run scenario
+				INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
+				FROM @{recordIdsToConsiderHandledTable} rtc
+				INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
+	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+			        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+	                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+				WHERE
+	                 h1.[{Tables.Handling.Id.Name}] IS NULL
+	              AND
+	              (   h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}'
+	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}'
+	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
 
 				-- See if any new records
 				IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
@@ -593,34 +584,14 @@ BEGIN
 				END
 				ELSE
 				BEGIN
-					INSERT INTO @{candidateRecordIds} SELECT r.[{Tables.Record.Id.Name}]
-					FROM [{streamName}].[{Tables.Record.Table.Name}] r
+					INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
+					FROM @{recordIdsToConsiderUnhandledTable} rtc
 					LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-					ON r.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-					WHERE h.[{Tables.Handling.Id.Name}] IS NULL
-				    AND (
-				            -- No Type filter at all
-				            (@{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL)
-				            OR
-				            -- Specific Only Id
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery})
-				            OR
-				            -- Specific Only Object
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-				            OR
-				            -- Specific Both
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.IdentifierTypeWithVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithVersionId.Name}] = @{InputParamName.IdentifierTypeWithVersionIdQuery} AND [{Tables.Record.ObjectTypeWithVersionId.Name}] = @{InputParamName.ObjectTypeWithVersionIdQuery})
-				            OR
-				            -- Any Only Id
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery})
-				            OR
-				            -- Any Only Object
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NULL AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-				            OR
-				            -- Any Both
-				            (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}' AND @{InputParamName.IdentifierTypeWithoutVersionIdQuery} IS NOT NULL AND @{InputParamName.ObjectTypeWithoutVersionIdQuery} IS NOT NULL AND [{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = @{InputParamName.IdentifierTypeWithoutVersionIdQuery} AND [{Tables.Record.ObjectTypeWithoutVersionId.Name}] = @{InputParamName.ObjectTypeWithoutVersionIdQuery})
-				        )
-					AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
+	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+					WHERE
+	                   h.[{Tables.Handling.Id.Name}] IS NULL
+
 					IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 					BEGIN
 						-- Found new records to process
