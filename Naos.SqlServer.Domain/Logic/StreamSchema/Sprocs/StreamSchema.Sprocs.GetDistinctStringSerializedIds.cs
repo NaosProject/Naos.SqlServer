@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="StreamSchema.Sprocs.GetDistinctStringSerializedIds.cs" company="Naos Project">
-//    Copyright (c) Naos Project 2019. All rights reserved.
+//     Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -14,8 +14,14 @@ namespace Naos.SqlServer.Domain
     using OBeautifulCode.Type;
     using static System.FormattableString;
 
+    /// <summary>
+    /// Class StreamSchema.
+    /// </summary>
     public static partial class StreamSchema
     {
+        /// <summary>
+        /// Class Sprocs.
+        /// </summary>
         public partial class Sprocs
         {
             /// <summary>
@@ -50,7 +56,7 @@ namespace Naos.SqlServer.Domain
                     ObjectTypeIdsCsv,
 
                     /// <summary>
-                    /// The string identifiers to match as XML (key is string identifier and value is the appropriate type identifier per the <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>).
+                    /// The string identifiers to match as XML (key is string identifier and value is the appropriate type identifier per the <see cref="OBeautifulCode.Type.VersionMatchStrategy" />).
                     /// </summary>
                     StringIdentifiersXml,
 
@@ -60,12 +66,12 @@ namespace Naos.SqlServer.Domain
                     TagsIdsCsv,
 
                     /// <summary>
-                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
+                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy" />.
                     /// </summary>
                     TagMatchStrategy,
 
                     /// <summary>
-                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.
+                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy" />.
                     /// </summary>
                     VersionMatchStrategy,
 
@@ -91,7 +97,7 @@ namespace Naos.SqlServer.Domain
                 /// Builds the execute stored procedure operation.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
-                /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter"/>.</param>
+                /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter" />.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
@@ -189,8 +195,9 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
-    DECLARE @{resultTableName} TABLE ([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NULL)
+    DECLARE @{resultTableName} TABLE ([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 
+    -- START RECORD FILTER QUERYING
     DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
     INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
     SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
@@ -220,7 +227,7 @@ BEGIN
 
     INSERT INTO @{recordIdsToConsiderTable}
     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-	FROM [{streamName}].[{Tables.Record.Table.Name}] (NOLOCK) r
+	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
     LEFT JOIN @{recordIdsToConsiderTable} ir ON
         r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
     LEFT JOIN @{identifierTypesTable} itwith ON
@@ -231,19 +238,56 @@ BEGIN
         r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
     LEFT JOIN @{objectTypesTable} otwithout ON
         r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-    LEFT JOIN [{Tables.Record.Table.Name}] rt (NOLOCK) ON
-        EXISTS (SELECT value FROM STRING_SPLIT(r.[{Tables.Record.TagIdsCsv.Name}], ',') INTERSECT SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
-    LEFT JOIN @{deprecatedTypesTable} dtwith ON
-        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = dtwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-    LEFT JOIN @{deprecatedTypesTable} dtwithout ON
-        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = dtwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
     WHERE
-                  r.[{Tables.Record.Id.Name}] IS NOT NULL
-      AND    dtwith.[{Tables.TypeWithVersion.Id.Name}] IS NULL
-      AND dtwithout.[{Tables.TypeWithVersion.Id.Name}] IS NULL
+        r.[{Tables.Record.Id.Name}] IS NOT NULL
 
-    INSERT INTO @{resultTableName} ([{Tables.Record.StringSerializedId.Name}])
-    SELECT DISTINCT r.{Tables.Record.StringSerializedId.Name}
+	IF ((EXISTS (SELECT TOP 1 [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})) AND @TagMatchStrategy = '{TagMatchStrategy.RecordContainsAllQueryTags}')
+	BEGIN
+        DECLARE @TagCount INT
+        SELECT @TagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{tagIdsTable}
+        INSERT INTO @{recordIdsToConsiderTable}
+        SELECT DISTINCT rt.[{Tables.RecordTag.RecordId.Name}] AS [{Tables.Record.Id.Name}]
+        FROM [{streamName}].[{Tables.RecordTag.Table.Name}] rt WITH (NOLOCK)
+        JOIN @{tagIdsTable} tids ON
+            tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.RecordId.Name}]
+        WHERE rt.[{Tables.RecordTag.RecordId.Name}] NOT IN (SELECT [{Tables.Record.Id.Name}] FROM @{recordIdsToConsiderTable})
+        GROUP BY rt.[{Tables.RecordTag.RecordId.Name}]
+        HAVING COUNT(rt.[{Tables.RecordTag.RecordId.Name}]) = @TagCount
+    END
+
+	IF ((EXISTS (SELECT TOP 1 [{Tables.TypeWithVersion.Id.Name}] FROM @{deprecatedTypesTable})))
+	BEGIN
+        DELETE FROM @{recordIdsToConsiderTable}
+        WHERE [{Tables.Record.Id.Name}] IN
+        (
+            SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+            FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+		    LEFT JOIN [{streamName}].[{Tables.Record.Table.Name}] r1 WITH (NOLOCK) -- the most recent record type is the deprecated
+		        ON r.[{Tables.Record.StringSerializedId.Name}] = r1.[{Tables.Record.StringSerializedId.Name}] AND r.[{Tables.Record.Id.Name}] < r1.[{Tables.Record.Id.Name}]
+            LEFT JOIN @{deprecatedTypesTable} dtwith ON
+                r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = dtwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+            LEFT JOIN @{deprecatedTypesTable} dtwithout ON
+                r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = dtwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+            WHERE
+                    r1.[{Tables.Record.Id.Name}] IS NULL
+                AND (
+                       (dtwith.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
+                       OR
+                       (dtwithout.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+                     )
+        )
+    END
+    -- END RECORD FILTER QUERYING
+
+    INSERT INTO @{resultTableName} ([{Tables.TypeWithVersion.Id.Name}], [{Tables.Record.StringSerializedId.Name}])
+    SELECT DISTINCT 
+          (
+            CASE @VersionMatchStrategy
+                WHEN '{VersionMatchStrategy.Any}' THEN r.[IdentifierTypeWithoutVersionId]
+                WHEN '{VersionMatchStrategy.SpecifiedVersion}' THEN r.[IdentifierTypeWithVersionId]
+                ELSE CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, @{InputParamName.VersionMatchStrategy})
+            END)
+        , r.[{Tables.Record.StringSerializedId.Name}]
 	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
     INNER JOIN @{recordIdsToConsiderTable} rtc ON r.[{Tables.Record.Id.Name}] = rtc.[{Tables.Record.Id.Name}]
     LEFT OUTER JOIN [{streamName}].[{Tables.Record.Table.Name}] r1 WITH (NOLOCK)
@@ -252,11 +296,11 @@ BEGIN
           r1.[{Tables.Record.Id.Name}] IS NULL
       AND rtc.[{Tables.Record.Id.Name}] IS NOT NULL
 
-        SELECT @{OutputParamName.StringIdentifiersOutputXml} = (SELECT
-            ROW_NUMBER() OVER (ORDER BY e.[{Tables.Record.StringSerializedId.Name}], ISNULL(e.[{Tables.Record.StringSerializedId.Name}], '{TagConversionTool.NullCanaryValue}')) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
-	        e.{Tables.Record.StringSerializedId.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
-        FROM @{resultTableName} e
-        FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+    SELECT @{OutputParamName.StringIdentifiersOutputXml} = (SELECT
+          e.[{Tables.TypeWithVersion.Id.Name}] AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+        , ISNULL(e.[{Tables.Record.StringSerializedId.Name}], '{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
+    FROM @{resultTableName} e
+    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
 END
 
 			");
