@@ -81,6 +81,11 @@ namespace Naos.SqlServer.Domain
                     VersionMatchStrategy,
 
                     /// <summary>
+                    /// The deprecated identifier event type identifiers as CSV.
+                    /// </summary>
+                    DeprecatedIdEventTypeIdsCsv,
+
+                    /// <summary>
                     /// The order record strategy.
                     /// </summary>
                     OrderRecordsBy,
@@ -229,6 +234,10 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.VersionMatchStrategy),
                                              new StringSqlDataTypeRepresentation(false, 20),
                                              convertedRecordFilter.VersionMatchStrategy.ToString()),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
                                          new InputParameterDefinition<string>(nameof(InputParamName.TagIdsForEntryCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsForEntryCsv),
                                          new InputParameterDefinition<string>(nameof(InputParamName.OrderRecordsBy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsBy.ToString()),
                                          new InputParameterDefinition<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), inheritRecordTags ? 1 : 0),
@@ -265,8 +274,7 @@ namespace Naos.SqlServer.Domain
                     int? maxConcurrentHandlingCount,
                     bool asAlter = false)
                 {
-                    const string recordIdsToConsiderHandledTable = "RecordIdsToConsiderHandledTable";
-                    const string recordIdsToConsiderUnhandledTable = "RecordIdsToConsiderUnhandledTable";
+                    const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
                     const string identifierTypesTable = "IdTypeIdentifiersTable";
                     const string objectTypesTable = "ObjectTypeIdentifiersTable";
                     const string stringSerializedIdsTable = "StringSerializedIdentifiersTable";
@@ -277,6 +285,8 @@ namespace Naos.SqlServer.Domain
                     const string currentRunningCount = "CurrentRunningCount";
                     const string isUnhandledRecord = "IsUnhandledRecord";
                     const string unionedIfNecessaryTagIdsCsv = "UnionedIfNecessaryTagIdsCsv";
+                    const string deprecatedTypesTable = "DeprecatedIdEventIdsTable";
+
                     var acceptableStatusesCsv =
                         new[]
                         {
@@ -318,6 +328,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.TagsIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
 , @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
 , @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
+, @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
 , @{InputParamName.OrderRecordsBy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
 , @{InputParamName.TagIdsForEntryCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
@@ -358,7 +369,11 @@ BEGIN
 
 	IF (@{shouldAttemptHandling} = 1)
 	BEGIN
-        -- Shared join tables for record filtering
+	    -- START RECORD FILTER QUERYING
+	    DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+	    INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+	    SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+
 	    DECLARE @{identifierTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 	    INSERT INTO @{identifierTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
 	    SELECT value FROM STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',')
@@ -369,28 +384,23 @@ BEGIN
 
 	    DECLARE @{stringSerializedIdsTable} TABLE([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NOT NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 	    INSERT INTO @{stringSerializedIdsTable} ([{Tables.Record.StringSerializedId.Name}], [{Tables.TypeWithVersion.Id.Name}])
-	    SELECT
-             [{Tables.Tag.TagKey.Name}]
-     	   , [{Tables.Tag.TagValue.Name}]
+	    SELECT 
+	         [{Tables.Tag.TagKey.Name}]
+		   , [{Tables.Tag.TagValue.Name}]
 	    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) 
 
 	    DECLARE @{tagIdsTable} TABLE([{Tables.Tag.Id.Name}] {Tables.Tag.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 	    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
 	    SELECT value FROM STRING_SPLIT(@{InputParamName.TagsIdsCsv}, ',')
 
-        -- Record Ids to consider that have an existing handling status
-	    DECLARE @{recordIdsToConsiderHandledTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-	    INSERT INTO @{recordIdsToConsiderHandledTable} ([{Tables.Record.Id.Name}])
-	    SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+	    DECLARE @{deprecatedTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+	    INSERT INTO @{deprecatedTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
+	    SELECT value FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ',')
 
-	    INSERT INTO @{recordIdsToConsiderHandledTable}
+	    INSERT INTO @{recordIdsToConsiderTable}
 	    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-		FROM [{streamName}].[{Tables.Handling.Table.Name}] (NOLOCK) h
-		LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-		    ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
-        INNER JOIN [{streamName}].[{Tables.Record.Table.Name}] (NOLOCK) r
-            ON h.[{Tables.Handling.Id.Name}] = r.[{Tables.Record.Id.Name}]
-	    LEFT JOIN @{recordIdsToConsiderHandledTable} ir ON
+		FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+	    LEFT JOIN @{recordIdsToConsiderTable} ir ON
 	        r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
 	    LEFT JOIN @{identifierTypesTable} itwith ON
 	        r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = itwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
@@ -400,39 +410,46 @@ BEGIN
 	        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
 	    LEFT JOIN @{objectTypesTable} otwithout ON
 	        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-	    --LEFT JOIN [{Tables.Record.Table.Name}] rt (NOLOCK) ON
-	    --    EXISTS (SELECT value FROM STRING_SPLIT(r.[{Tables.Record.TagIdsCsv.Name}], ',') INTERSECT SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
 	    WHERE
-	            r.[{Tables.Record.Id.Name}] IS NOT NULL
-	        AND h1.[{Tables.Handling.Id.Name}] IS NULL
-            AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-			AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+	        r.[{Tables.Record.Id.Name}] IS NOT NULL
 
-        -- Record Ids to consider that do NOT have an existing handling status
-	    DECLARE @{recordIdsToConsiderUnhandledTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-	    INSERT INTO @{recordIdsToConsiderUnhandledTable} ([{Tables.Record.Id.Name}])
-	    SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+		IF ((EXISTS (SELECT TOP 1 [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})) AND @TagMatchStrategy = '{TagMatchStrategy.RecordContainsAllQueryTags}')
+		BEGIN
+	        DECLARE @TagCount INT
+	        SELECT @TagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{tagIdsTable}
+	        INSERT INTO @{recordIdsToConsiderTable}
+	        SELECT DISTINCT rt.[{Tables.RecordTag.RecordId.Name}] AS [{Tables.Record.Id.Name}]
+	        FROM [{streamName}].[{Tables.RecordTag.Table.Name}] rt WITH (NOLOCK)
+	        JOIN @{tagIdsTable} tids ON
+	            tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.RecordId.Name}]
+	        WHERE rt.[{Tables.RecordTag.RecordId.Name}] NOT IN (SELECT [{Tables.Record.Id.Name}] FROM @{recordIdsToConsiderTable})
+	        GROUP BY rt.[{Tables.RecordTag.RecordId.Name}]
+	        HAVING COUNT(rt.[{Tables.RecordTag.RecordId.Name}]) = @TagCount
+	    END
 
-	    INSERT INTO @{recordIdsToConsiderUnhandledTable}
-	    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-		FROM [{streamName}].[{Tables.Record.Table.Name}] (NOLOCK) r
-        LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] (NOLOCK) h
-            ON h.[{Tables.Handling.RecordId.Name}] = r.[{Tables.Record.Id.Name}]
-	    LEFT JOIN @{recordIdsToConsiderUnhandledTable} ir ON
-	        r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
-	    LEFT JOIN @{identifierTypesTable} itwith ON
-	        r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = itwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-	    LEFT JOIN @{identifierTypesTable} itwithout ON
-	        r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = itwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-	    LEFT JOIN @{objectTypesTable} otwith ON
-	        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-	    LEFT JOIN @{objectTypesTable} otwithout ON
-	        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-	    --LEFT JOIN [{Tables.Record.Table.Name}] rt (NOLOCK) ON
-	    --    EXISTS (SELECT value FROM STRING_SPLIT(r.[{Tables.Record.TagIdsCsv.Name}], ',') INTERSECT SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
-	    WHERE
-	            h.[{Tables.Handling.Id.Name}] IS NULL
-			AND (@{InputParamName.MinimumInternalRecordId} IS NULL OR r.[{Tables.Record.Id.Name}] >= @{InputParamName.MinimumInternalRecordId})
+		IF ((EXISTS (SELECT TOP 1 [{Tables.TypeWithVersion.Id.Name}] FROM @{deprecatedTypesTable})))
+		BEGIN
+	        DELETE FROM @{recordIdsToConsiderTable}
+	        WHERE [{Tables.Record.Id.Name}] IN
+	        (
+	            SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+	            FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+			    LEFT JOIN [{streamName}].[{Tables.Record.Table.Name}] r1 WITH (NOLOCK) -- the most recent record type is the deprecated
+			        ON r.[{Tables.Record.StringSerializedId.Name}] = r1.[{Tables.Record.StringSerializedId.Name}] AND r.[{Tables.Record.Id.Name}] < r1.[{Tables.Record.Id.Name}]
+	            LEFT JOIN @{deprecatedTypesTable} dtwith ON
+	                r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = dtwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+	            LEFT JOIN @{deprecatedTypesTable} dtwithout ON
+	                r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = dtwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+	            WHERE
+	                    r1.[{Tables.Record.Id.Name}] IS NULL
+	                AND (
+	                       (dtwith.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
+	                       OR
+	                       (dtwithout.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+	                     )
+	        )
+	    END
+	    -- END RECORD FILTER QUERYING
 
         DECLARE @{candidateRecordIds} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 		DECLARE @{isUnhandledRecord} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
@@ -440,13 +457,14 @@ BEGIN
 		BEGIN
 			-- See if any reprocessing is needed
 			INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
-			FROM @{recordIdsToConsiderHandledTable} rtc
-			INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+			FROM @{recordIdsToConsiderTable} rtc
+			INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
                 ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
                    AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-		    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+		    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 		        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
                    AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+                   AND h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 			WHERE
                  h1.[{Tables.Handling.Id.Name}] IS NULL
               AND
@@ -463,8 +481,8 @@ BEGIN
 			ELSE
 			BEGIN
 				INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
-				FROM @{recordIdsToConsiderUnhandledTable} rtc
-				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+				FROM @{recordIdsToConsiderTable} rtc
+				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
                 ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
                    AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 				WHERE
@@ -481,8 +499,8 @@ BEGIN
 		BEGIN
 			-- See if any new records
 			INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
-			FROM @{recordIdsToConsiderUnhandledTable} rtc
-			LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+			FROM @{recordIdsToConsiderTable} rtc
+			LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
             ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
                AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 			WHERE
@@ -496,11 +514,11 @@ BEGIN
 			ELSE
 			BEGIN
 				INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
-				FROM @{recordIdsToConsiderHandledTable} rtc
-				INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+				FROM @{recordIdsToConsiderTable} rtc
+				INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
 	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 			        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
 	                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 				WHERE
@@ -523,8 +541,8 @@ BEGIN
 			BEGIN
 				-- See if any new records
 				INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
-				FROM @{recordIdsToConsiderUnhandledTable} rtc
-				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+				FROM @{recordIdsToConsiderTable} rtc
+				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 	            ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
 	               AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 				WHERE
@@ -538,11 +556,11 @@ BEGIN
 				ELSE
 				BEGIN
 					INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
-					FROM @{recordIdsToConsiderHandledTable} rtc
-					INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+					FROM @{recordIdsToConsiderTable} rtc
+					INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 		                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
 		                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-				    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+				    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 				        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
 		                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 					WHERE
@@ -562,11 +580,11 @@ BEGIN
 			BEGIN
 				-- See if any reprocessing is needed
 				INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
-				FROM @{recordIdsToConsiderHandledTable} rtc
-				INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+				FROM @{recordIdsToConsiderTable} rtc
+				INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
 	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
-			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 			        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
 	                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 				WHERE
@@ -585,8 +603,8 @@ BEGIN
 				ELSE
 				BEGIN
 					INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
-					FROM @{recordIdsToConsiderUnhandledTable} rtc
-					LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+					FROM @{recordIdsToConsiderTable} rtc
+					LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
 	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 					WHERE
@@ -609,7 +627,7 @@ BEGIN
 		IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 		BEGIN
 			DECLARE @{recordIdToAttemptToClaim} {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
-			-- TODO: loop through candidates until we have one or out of options...
+			-- TODO: add logic here, loop through candidates until we have one or out of options...
 			IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
 			BEGIN
 				SELECT TOP 1 @{recordIdToAttemptToClaim} = [{Tables.Record.Id.Name}] FROM @{candidateRecordIds} ORDER BY [{Tables.Record.Id.Name}] ASC
