@@ -227,8 +227,9 @@ namespace Naos.SqlServer.Domain
             /// <summary>
             /// Gets or sets the tags.
             /// </summary>
+            [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's what the XML serializer plays nice with.")]
             [XmlElement("Tag")] // Do NOT use XmlArray/XmlArrayItem attributes as it double nests...
-            public IReadOnlyCollection<SerializableTagSetItem> Tags { get; set; }
+            public SerializableTagSetItem[] Tags { get; set; }
         }
 
         /// <summary>
