@@ -11,6 +11,7 @@ namespace Naos.SqlServer.Protocol.Client
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.ComTypes;
@@ -38,10 +39,15 @@ namespace Naos.SqlServer.Protocol.Client
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = NaosSuppressBecause.CA1711_IdentifiersShouldNotHaveIncorrectSuffix_TypeNameAddedAsSuffixForTestsWhereTypeIsPrimaryConcern)]
     public partial class SqlStream
     {
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = NaosSuppressBecause.CA1502_AvoidExcessiveComplexity_DisagreeWithAssessment)]
         private RecordFilterConvertedForStoredProcedure ConvertRecordFilter(
             RecordFilter recordFilter,
             SqlServerLocator sqlServerLocator)
         {
+            recordFilter.TagMatchStrategy
+                     .MustForArg(Invariant($"{nameof(recordFilter)}.{nameof(recordFilter.TagMatchStrategy)}"))
+                     .BeEqualTo(TagMatchStrategy.RecordContainsAllQueryTags, "Currently only supported tag strategy.");
+
             var internalRecordIdsCsv = (recordFilter.InternalRecordIds ?? new List<long>())
                                       .Select(_ => _.ToStringInvariantPreferred())
                                       .ToCsv();

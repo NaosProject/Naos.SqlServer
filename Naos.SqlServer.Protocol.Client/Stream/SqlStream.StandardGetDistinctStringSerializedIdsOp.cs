@@ -30,9 +30,6 @@ namespace Naos.SqlServer.Protocol.Client
             StandardGetDistinctStringSerializedIdsOp operation)
         {
             operation.MustForArg(nameof(operation)).NotBeNull();
-            operation.RecordFilter.TagMatchStrategy
-                     .MustForArg(Invariant($"{nameof(operation)}.{nameof(operation.RecordFilter)}.{nameof(operation.RecordFilter.TagMatchStrategy)}"))
-                     .BeEqualTo(TagMatchStrategy.RecordContainsAllQueryTags, "Currently only supported tag strategy.");
 
             var sqlServerLocator = this.TryGetLocator(operation);
 

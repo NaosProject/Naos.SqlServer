@@ -6,6 +6,8 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using System.Diagnostics.CodeAnalysis;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using OBeautifulCode.Type;
 
@@ -22,9 +24,10 @@ namespace Naos.SqlServer.Domain
         /// <param name="objectTypeIdsCsv">The object type identifiers as CSV.</param>
         /// <param name="stringIdsToMatchXml">The string identifiers to match as XML (key is string identifier and value is the appropriate type identifier per the <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>).</param>
         /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
-        /// <param name="tagMatchStrategy">The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.</param>
+        /// <param name="tagMatchStrategy">The <see cref="Database.Domain.TagMatchStrategy"/>.</param>
         /// <param name="versionMatchStrategy">The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.</param>
         /// <param name="deprecatedIdEventTypeIdsCsv">The deprecated identifier event type identifiers as CSV.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "string", Justification = NaosSuppressBecause.CA1720_IdentifiersShouldNotContainTypeNames_TypeNameAddsClarityToIdentifierAndAlternativesDegradeClarity)]
         public RecordFilterConvertedForStoredProcedure(
             string internalRecordIdsCsv,
             string identifierTypeIdsCsv,
