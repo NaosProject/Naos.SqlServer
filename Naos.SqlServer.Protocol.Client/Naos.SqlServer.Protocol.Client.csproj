@@ -163,9 +163,8 @@
     <Compile Include="Stream\SqlStream.StandardUpdateHandlingStatusForStreamOp.cs" />
     <Compile Include="Stream\SqlStream.StandardGetHandlingHistoryOp.cs" />
     <Compile Include="Stream\SqlStream.StandardDoesAnyExistByIdOp.cs" />
-    <Compile Include="Stream\SqlStream.StandardGetAllRecordsByIdOp.cs" />
+    <Compile Include="Stream\SqlStream.StandardGetInternalRecordIdsOp.cs" />
     <Compile Include="Stream\SqlStream.StandardDeleteStreamOp.cs" />
-    <Compile Include="Stream\SqlStream.StandardGetAllRecordsMetadataByIdOp.cs" />
     <Compile Include="Stream\SqlStream.CreateStreamUserOp.cs" />
     <Compile Include="Stream\SqlStream.StandardPruneStreamOp.cs" />
     <Compile Include="Stream\SqlStream.StandardGetNextUniqueLongOp.cs" />

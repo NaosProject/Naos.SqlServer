@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SqlStreamTest.cs" company="Naos Project">
-//    Copyright (c) Naos Project 2019. All rights reserved.
+//     Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -17,6 +17,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using Naos.SqlServer.Serialization.Json;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
@@ -26,17 +27,42 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using Xunit.Abstractions;
     using static System.FormattableString;
 
+    /// <summary>
+    /// Class SqlStreamTest.
+    /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream065";
+        private readonly string streamName = "Stream134";
         private readonly ITestOutputHelper testOutputHelper;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlStreamTest"/> class.
+        /// </summary>
+        /// <param name="testOutputHelper">The test output helper.</param>
         public SqlStreamTest(
             ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
         }
 
+        /// <summary>
+        /// Defines the test method GetSprocCreationScript.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "Might use testHelper.")]
+        [Fact ]
+        public void GetSprocCreationScript()
+        {
+            var script = StreamSchema.Sprocs.GetDistinctStringSerializedIds.BuildCreationScript(this.streamName);
+            this.testOutputHelper.WriteLine(script);
+        }
+
+        /// <summary>
+        /// Defines the test method TestBinary.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestBinary()
@@ -45,6 +71,10 @@ namespace Naos.SqlServer.Protocol.Client.Test
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Defines the test method TestRandom.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestRandom()
@@ -53,6 +83,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Defines the test method CreateStreamsTestingDatabase.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void CreateStreamsTestingDatabase()
@@ -64,6 +97,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             protocol.Execute(createDatabaseOp);
         }
 
+        /// <summary>
+        /// Defines the test method TestConcurrent.
+        /// </summary>
         [Fact]
         public void TestConcurrent()
         {
@@ -120,6 +156,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             }
         }
 
+        /// <summary>
+        /// Defines the test method ExistingRecordStrategyTestForPutRecord.
+        /// </summary>
         [Fact(Skip = "Local testing only.")]
         public void ExistingRecordStrategyTestForPutRecord()
         {
@@ -178,6 +217,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             result.TypeRepresentationOfObject.WithVersion.MustForTest().BeEqualTo(typeof(string).ToRepresentation());
         }
 
+        /// <summary>
+        /// Defines the test method UpdateSprocs.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sprocs", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
         [Fact(Skip = "Local testing only.")]
         public void UpdateSprocs()
@@ -191,6 +233,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             this.testOutputHelper.WriteLine("Version: " + (result.PriorVersion ?? "<null>"));
         }
 
+        /// <summary>
+        /// Defines the test method TagCachingTests.
+        /// </summary>
         [Fact(Skip = "Local testing only.")]
         public void TagCachingTests()
         {
@@ -229,6 +274,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             tagsBackTwo.MustForTest().NotBeNullNorEmptyEnumerable();
         }
 
+        /// <summary>
+        /// Defines the test method PutGetTests.
+        /// </summary>
         [Fact(Skip = "Local testing only.")]
         public void PutGetTests()
         {
@@ -257,7 +305,10 @@ namespace Naos.SqlServer.Protocol.Client.Test
             item.Field.MustForTest().BeEqualTo(firstValue);
         }
 
-        [Fact(Skip = "Local testing only.")]
+        /// <summary>
+        /// Defines the test method HandlingTests.
+        /// </summary>
+        [Fact ]
         public void HandlingTests()
         {
             var stream = this.GetCreatedSqlStream();
@@ -290,14 +341,27 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 stream.PutWithId(firstObject.Id, firstObject, firstTags);
                 var metadata = stream.GetLatestRecordMetadataById("monkeyAintThere");
                 metadata.MustForTest().BeNull();
-                var first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                var first = stream.Execute(
+                    new StandardTryHandleRecordOp(
+                        firstConcern,
+                        new RecordFilter(
+                            idTypes: new[]
+                                     {
+                                         typeof(string).ToRepresentation(),
+                                     },
+                            objectTypes: new[]
+                                         {
+                                             typeof(MyObject).ToRepresentation(),
+                                         }),
+                        inheritRecordTags: true,
+                        tags: handleTags));
                 first.RecordToHandle.MustForTest().NotBeNull();
 
                 var getFirstStatusByTagsOp = new StandardGetHandlingStatusOp(
                     firstConcern,
-                    tagsToMatch: firstTags);
+                    new RecordFilter(tags: firstTags));
 
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Running);
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 var firstInternalRecordId = first.RecordToHandle.InternalRecordId;
                 stream.Execute(
@@ -306,21 +370,45 @@ namespace Naos.SqlServer.Protocol.Client.Test
                         firstConcern,
                         "Resources unavailable; node out of disk space.",
                         tags: firstRecordAndHandleTags).Standardize());
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterExternalCancellation);
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterExternalCancellation);
 
                 stream.Execute(new DisableHandlingForStreamOp("Stop processing, fixing resource issue.").Standardize());
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
-                first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: firstTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                first = stream.Execute(new StandardTryHandleRecordOp(
+                    firstConcern,
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(MyObject).ToRepresentation(),
+                                     }),
+                    inheritRecordTags: true,
+                    tags: firstTags));
                 first.RecordToHandle.MustForTest().BeNull();
                 first.IsBlocked.MustForTest().BeTrue();
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
 
                 stream.Execute(new EnableHandlingForStreamOp("Resume processing, fixed resource issue.").Standardize());
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterExternalCancellation);
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterExternalCancellation);
 
-                first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                first = stream.Execute(new StandardTryHandleRecordOp(
+                    firstConcern,
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(MyObject).ToRepresentation(),
+                                     }),
+                    inheritRecordTags: true,
+                    tags: handleTags));
                 first.RecordToHandle.MustForTest().NotBeNull();
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Running);
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 stream.Execute(
                     new SelfCancelRunningHandleRecordOp(
@@ -328,10 +416,22 @@ namespace Naos.SqlServer.Protocol.Client.Test
                         firstConcern,
                         "Processing not finished, check later.",
                         tags: firstRecordAndHandleTags).Standardize());
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterSelfCancellation);
-                first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterSelfCancellation);
+                first = stream.Execute(new StandardTryHandleRecordOp(
+                    firstConcern,
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(MyObject).ToRepresentation(),
+                                     }),
+                    inheritRecordTags: true,
+                    tags: handleTags));
                 first.RecordToHandle.MustForTest().NotBeNull();
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Running);
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 stream.Execute(
                     new CompleteRunningHandleRecordOp(
@@ -339,10 +439,22 @@ namespace Naos.SqlServer.Protocol.Client.Test
                         firstConcern,
                         "Processing not finished, check later.",
                         tags: firstRecordAndHandleTags).Standardize());
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Completed);
-                first = stream.Execute(new StandardTryHandleRecordOp(firstConcern, tags: handleTags, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), inheritRecordTags: true));
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Completed);
+                first = stream.Execute(new StandardTryHandleRecordOp(
+                    firstConcern,
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(MyObject).ToRepresentation(),
+                                     }),
+                    inheritRecordTags: true,
+                    tags: handleTags));
                 first.RecordToHandle.MustForTest().BeNull();
-                stream.Execute(getFirstStatusByTagsOp).MustForTest().BeEqualTo(HandlingStatus.Completed);
+                stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Completed);
 
                 //var firstHistory = stream.Execute(new StandardGetHandlingHistoryOp(firstInternalRecordId, firstConcern));
                 //firstHistory.MustForTest().HaveCount(7);
@@ -354,17 +466,34 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 //}
 
                 var secondConcern = "FailedRetriedScenario";
-                var second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
+                var second = stream.Execute(
+                    new StandardTryHandleRecordOp(
+                        secondConcern,
+                        new RecordFilter(
+                            idTypes: new[]
+                                     {
+                                         typeof(string).ToRepresentation(),
+                                     },
+                            objectTypes: new[]
+                                         {
+                                             typeof(MyObject).ToRepresentation(),
+                                         }),
+                        inheritRecordTags: true,
+                        tags: handleTags));
                 second.RecordToHandle.MustForTest().NotBeNull();
                 var secondInternalRecordId = second.RecordToHandle.InternalRecordId;
-                //var getSecondStatusByIdOp = new GetHandlingStatusOfRecordsByIdOp(
-                    //secondConcern,
-                    //new[]
-                    //{
-                    //    new StringSerializedIdentifier(second.Metadata.StringSerializedId, second.Metadata.TypeRepresentationOfId.WithVersion),
-                    //});
+                var getSecondStatusByIdOp = new StandardGetHandlingStatusOp(
+                    secondConcern,
+                    new RecordFilter(
+                        ids:
+                        new[]
+                        {
+                            new StringSerializedIdentifier(
+                                second.RecordToHandle.Metadata.StringSerializedId,
+                                second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion),
+                        }));
 
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Running);
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 stream.Execute(
                     new FailRunningHandleRecordOp(
@@ -373,28 +502,52 @@ namespace Naos.SqlServer.Protocol.Client.Test
                         "NullReferenceException: Bot v1.0.1 doesn't work.",
                         tags: firstRecordAndHandleTags).Standardize());
 
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Failed);
-                second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Failed);
+                second = stream.Execute(new StandardTryHandleRecordOp(
+                    secondConcern,
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(MyObject).ToRepresentation(),
+                                     }),
+                    inheritRecordTags: true,
+                    tags: handleTags));
                 second.RecordToHandle.MustForTest().BeNull();
-               // stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Failed);
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Failed);
 
                 stream.Execute(
                     new ResetFailedHandleRecordOp(secondInternalRecordId, secondConcern, "Redeployed Bot v1.0.1-hotfix, re-run.", tags: firstRecordAndHandleTags).Standardize());
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
 
                 //stream.Execute(new BlockRecordHandlingOp("Stop processing, need to confirm deployment."));
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
                 //second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation()));
                 //second.RecordToHandle.MustForTest().BeNull();
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
 
                 //stream.Execute(new CancelBlockedRecordHandlingOp("Resume processing, confirmed deployment."));
                 //second.MustForTest().BeNull();
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
+                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
 
-                second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
+                second = stream.Execute(new StandardTryHandleRecordOp(
+                    secondConcern,
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(MyObject).ToRepresentation(),
+                                     }),
+                    inheritRecordTags: true,
+                    tags: handleTags));
                 second.RecordToHandle.MustForTest().NotBeNull();
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Running);
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 
                 stream.Execute(
                     new FailRunningHandleRecordOp(
@@ -402,14 +555,26 @@ namespace Naos.SqlServer.Protocol.Client.Test
                         secondConcern,
                         "NullReferenceException: Bot v1.0.1-hotfix doesn't work.",
                         tags: firstRecordAndHandleTags).Standardize());
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Failed);
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Failed);
 
-                stream.Execute(new DisableHandlingForRecordOp(firstInternalRecordId, "Giving up.", tags: firstRecordAndHandleTags).Standardize());
+                //stream.Execute(new DisableHandlingForRecordOp(firstInternalRecordId, "Giving up.", tags: firstRecordAndHandleTags).Standardize());
 
-                //stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Canceled);
-                second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation(), tags: handleTags, inheritRecordTags: true));
-               // stream.Execute(getSecondStatusByIdOp).MustForTest().BeEqualTo(HandlingStatus.Canceled);
-                second.RecordToHandle.MustForTest().BeNull();
+                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForRecord);
+                //second = stream.Execute(new StandardTryHandleRecordOp(
+                //    secondConcern,
+                //    new RecordFilter(
+                //        idTypes: new[]
+                //                 {
+                //                     typeof(string).ToRepresentation(),
+                //                 },
+                //        objectTypes: new[]
+                //                     {
+                //                         typeof(MyObject).ToRepresentation(),
+                //                     }),
+                //    inheritRecordTags: true, 
+                //    tags: handleTags));
+                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForRecord);
+                //second.RecordToHandle.MustForTest().BeNull();
 
                 //var secondHistory = stream.Execute(new StandardGetHandlingHistoryOp(secondInternalRecordId, secondConcern));
                 //secondHistory.MustForTest().HaveCount(7);
@@ -442,6 +607,47 @@ namespace Naos.SqlServer.Protocol.Client.Test
             */
         }
 
+        /// <summary>
+        /// Defines the test method GetDistinctStringSerializedIds.
+        /// </summary>
+        [Fact]
+        public void GetDistinctStringSerializedIds()
+        {
+            var stream = this.GetCreatedSqlStream();
+
+            var firstId = Guid.NewGuid().ToString().Replace("-", ",");
+            var secondId = Guid.NewGuid().ToString().Replace("-", ",");
+
+            var putOpOne = new PutWithIdAndReturnInternalRecordIdOp<string, string>(firstId, A.Dummy<string>());
+            var internalRecordIdOne = stream.GetStreamWritingWithIdProtocols<string, string>().Execute(putOpOne);
+
+            var putOpOneAgain = new PutWithIdAndReturnInternalRecordIdOp<string, string>(firstId, A.Dummy<string>());
+            var internalRecordIdOneAgain = stream.GetStreamWritingWithIdProtocols<string, string>().Execute(putOpOneAgain);
+
+            var putOpTwo = new PutWithIdAndReturnInternalRecordIdOp<string, string>(secondId, A.Dummy<string>());
+            var internalRecordIdTwo = stream.GetStreamWritingWithIdProtocols<string, string>().Execute(putOpTwo);
+
+            var putOpTwoAgain = new PutWithIdAndReturnInternalRecordIdOp<string, IdDeprecatedEvent>(secondId, new IdDeprecatedEvent(DateTime.UtcNow));
+            var internalRecordIdThree = stream.GetStreamWritingWithIdProtocols<string, IdDeprecatedEvent>().Execute(putOpTwoAgain);
+
+            var distinct = stream.Execute(
+                new StandardGetDistinctStringSerializedIdsOp(
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        deprecatedIdTypes: new[]
+                                           {
+                                               typeof(IdDeprecatedEvent).ToRepresentation(),
+                                           })));
+            distinct.MustForTest().NotBeNull();
+            distinct.Single().StringSerializedId.MustForTest().BeEqualTo(Invariant($"\"{firstId}\""));
+        }
+
+        /// <summary>
+        /// Defines the test method TagsCanBeNullTest.
+        /// </summary>
         [Fact]
         public void TagsCanBeNullTest()
         {
@@ -495,8 +701,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         {
             SerializerRepresentation defaultSerializerRepresentation;
             var configurationTypeRepresentation =
-                typeof(DependencyOnlyJsonSerializationConfiguration<
-                    TypesToRegisterJsonSerializationConfiguration<MyObject>>).ToRepresentation();
+                typeof(DependencyOnlyJsonSerializationConfiguration<SqlServerJsonSerializationConfiguration, TypesToRegisterJsonSerializationConfiguration<MyObject>>).ToRepresentation();
 
             defaultSerializerRepresentation = new SerializerRepresentation(
                 SerializationKind.Json,
@@ -505,8 +710,18 @@ namespace Naos.SqlServer.Protocol.Client.Test
         }
     }
 
+    /// <summary>
+    /// Class MyObject.
+    /// Implements the <see cref="OBeautifulCode.Type.IHaveId{System.String}" />
+    /// </summary>
+    /// <seealso cref="OBeautifulCode.Type.IHaveId{System.String}" />
     public class MyObject : IHaveId<string>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MyObject"/> class.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="field">The field.</param>
         public MyObject(
             string id,
             string field)
@@ -515,10 +730,21 @@ namespace Naos.SqlServer.Protocol.Client.Test
             this.Field = field;
         }
 
+        /// <summary>
+        /// Gets the unique identifier.
+        /// </summary>
         public string Id { get; private set; }
 
+        /// <summary>
+        /// Gets the field.
+        /// </summary>
         public string Field { get; private set; }
 
+        /// <summary>
+        /// Deeps the clone with new field.
+        /// </summary>
+        /// <param name="field">The field.</param>
+        /// <returns>MyObject.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
         public MyObject DeepCloneWithNewField(string field)
         {
