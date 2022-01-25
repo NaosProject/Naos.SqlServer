@@ -8,11 +8,16 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Xml;
     using System.Xml.Linq;
+    using System.Xml.Serialization;
     using Naos.CodeAnalysis.Recipes;
+    using OBeautifulCode.String.Recipes;
     using OBeautifulCode.Type;
     using static System.FormattableString;
 
@@ -21,6 +26,20 @@ namespace Naos.SqlServer.Domain
     /// </summary>
     public static class TagConversionTool
     {
+        private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(SerializableTagSet));
+
+        private static readonly XmlSerializerNamespaces XmlSerializerNamespaces = new XmlSerializerNamespaces(
+            new[]
+            {
+                new XmlQualifiedName(string.Empty, string.Empty),
+            });
+
+        private static readonly XmlWriterSettings XmlWriterSettings = new XmlWriterSettings
+                                                                      {
+                                                                          Indent = true,
+                                                                          OmitXmlDeclaration = true,
+                                                                      };
+
         /// <summary>
         /// Root element name of the tag set.
         /// </summary>
@@ -131,6 +150,7 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <param name="tags">The tags.</param>
         /// <returns>The converted XML.</returns>
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = NaosSuppressBecause.CA2202_DoNotDisposeObjectsMultipleTimes_AnalyzerIsIncorrectlyFlaggingObjectAsBeingDisposedMultipleTimes)]
         public static string GetTagsXmlString(
             this IReadOnlyCollection<NamedValue<int>> tags)
         {
@@ -144,20 +164,30 @@ namespace Naos.SqlServer.Domain
                 return EmptyTagSetXml;
             }
 
-            var tagsXmlBuilder = new StringBuilder();
-            tagsXmlBuilder.Append(Invariant($"<{TagSetElementName}>"));
-            foreach (var tag in tags ?? new List<NamedValue<int>>())
+            string result = null;
+            var stringBuilder = new StringBuilder();
+            using (var stringWriter = new StringWriter(stringBuilder, CultureInfo.InvariantCulture))
+            using (var writer = XmlWriter.Create(stringWriter, XmlWriterSettings))
             {
-                var escapedKey = new XElement("ForEscapingOnly", tag.Name).LastNode.ToString();
-                var escapedValue = new XElement("ForEscapingOnly", tag.Value).LastNode.ToString();
-                tagsXmlBuilder.Append(Invariant($"<{TagEntryElementName} "));
-                tagsXmlBuilder.Append(FormattableString.Invariant($"{TagEntryKeyAttributeName}=\"{escapedKey}\" {TagEntryValueAttributeName}={escapedValue}"));
+                var serializableTagSetItems = new SerializableTagSet
+                                              {
+                                                  Tags = tags.Select(
+                                                                  _ => new SerializableTagSetItem
+                                                                       {
+                                                                           Key = _.Name,
+                                                                           Value = _.Value.ToStringInvariantPreferred(),
+                                                                       })
+                                                             .ToArray(),
+                                              };
 
-                tagsXmlBuilder.Append("/>");
+                XmlSerializer.Serialize(
+                    writer,
+                    serializableTagSetItems,
+                    XmlSerializerNamespaces);
+
+                result = stringBuilder.ToString();
             }
 
-            tagsXmlBuilder.Append(Invariant($"</{TagSetElementName}>"));
-            var result = tagsXmlBuilder.ToString();
             return result;
         }
 
@@ -185,6 +215,40 @@ namespace Naos.SqlServer.Domain
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Model object that is only used for the <see cref="XmlSerializer"/> to store a set of tags to send in XML to SQL Server.
+        /// </summary>
+        [Serializable]
+        [XmlRoot("Tags")]
+        public class SerializableTagSet
+        {
+            /// <summary>
+            /// Gets or sets the tags.
+            /// </summary>
+            [XmlElement("Tag")] // Do NOT use XmlArray/XmlArrayItem attributes as it double nests...
+            public IReadOnlyCollection<SerializableTagSetItem> Tags { get; set; }
+        }
+
+        /// <summary>
+        /// Model object that is only used for the <see cref="XmlSerializer"/> to store a single tag entry in <see cref="SerializableTagSet"/>.
+        /// </summary>
+        [Serializable]
+        [XmlRoot("Tag")]
+        public class SerializableTagSetItem
+        {
+            /// <summary>
+            /// Gets or sets the key.
+            /// </summary>
+            [XmlAttribute(TagEntryKeyAttributeName)]
+            public string Key { get; set; }
+
+            /// <summary>
+            /// Gets or sets the value.
+            /// </summary>
+            [XmlAttribute(TagEntryValueAttributeName)]
+            public string Value { get; set; }
         }
     }
 }
