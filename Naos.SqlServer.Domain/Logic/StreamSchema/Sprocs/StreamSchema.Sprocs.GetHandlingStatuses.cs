@@ -69,6 +69,11 @@ namespace Naos.SqlServer.Domain
                     /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.
                     /// </summary>
                     VersionMatchStrategy,
+
+                    /// <summary>
+                    /// The deprecated identifier event type identifiers as CSV.
+                    /// </summary>
+                    DeprecatedIdEventTypeIdsCsv,
                 }
 
                 /// <summary>
@@ -129,6 +134,10 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.VersionMatchStrategy),
                                              new StringSqlDataTypeRepresentation(false, 20),
                                              convertedRecordFilter.VersionMatchStrategy.ToString()),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
                                          new OutputParameterDefinition<string>(
                                              nameof(OutputParamName.RecordIdHandlingStatusXml),
                                              new XmlSqlDataTypeRepresentation()),
@@ -149,28 +158,33 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     bool asAlter = false)
                 {
+                    const string streamBlockedStatus = "StreamBlockedStatus";
+
                     const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
                     const string identifierTypesTable = "IdTypeIdentifiersTable";
                     const string objectTypesTable = "ObjectTypeIdentifiersTable";
                     const string stringSerializedIdsTable = "StringSerializedIdentifiersTable";
                     const string tagIdsTable = "TagIdsTable";
+                    const string deprecatedTypesTable = "DeprecatedIdEventIdsTable";
 
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{Name}](
-    @{nameof(InputParamName.Concern)} {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}
- ,  @{nameof(InputParamName.InternalRecordIdsCsv)} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
- ,  @{nameof(InputParamName.IdentifierTypeIdsCsv)} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
- ,  @{nameof(InputParamName.ObjectTypeIdsCsv)} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
- ,  @{nameof(InputParamName.StringIdentifiersXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
- ,  @{nameof(InputParamName.TagsIdsCsv)} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
- ,  @{nameof(InputParamName.TagMatchStrategy)} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
- ,  @{nameof(InputParamName.VersionMatchStrategy)} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
- ,  @{nameof(OutputParamName.RecordIdHandlingStatusXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+    @{InputParamName.Concern} {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+ ,  @{InputParamName.TagsIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
+ ,  @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
+ ,  @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{OutputParamName.RecordIdHandlingStatusXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
   )
 AS
 BEGIN
+    -- START RECORD FILTER QUERYING
     DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
     INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
     SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
@@ -185,7 +199,7 @@ BEGIN
 
     DECLARE @{stringSerializedIdsTable} TABLE([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NOT NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
     INSERT INTO @{stringSerializedIdsTable} ([{Tables.Record.StringSerializedId.Name}], [{Tables.TypeWithVersion.Id.Name}])
-    SELECT
+    SELECT 
          [{Tables.Tag.TagKey.Name}]
 	   , [{Tables.Tag.TagValue.Name}]
     FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) 
@@ -194,9 +208,13 @@ BEGIN
     INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
     SELECT value FROM STRING_SPLIT(@{InputParamName.TagsIdsCsv}, ',')
 
+    DECLARE @{deprecatedTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+    INSERT INTO @{deprecatedTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
+    SELECT value FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ',')
+
     INSERT INTO @{recordIdsToConsiderTable}
     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-	FROM [{streamName}].[{Tables.Record.Table.Name}] (NOLOCK) r
+	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
     LEFT JOIN @{recordIdsToConsiderTable} ir ON
         r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
     LEFT JOIN @{identifierTypesTable} itwith ON
@@ -207,21 +225,78 @@ BEGIN
         r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
     LEFT JOIN @{objectTypesTable} otwithout ON
         r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-    LEFT JOIN [{Tables.Record.Table.Name}] rt (NOLOCK) ON
-        EXISTS (SELECT value FROM STRING_SPLIT(r.[{Tables.Record.TagIdsCsv.Name}], ',') INTERSECT SELECT [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})
     WHERE
         r.[{Tables.Record.Id.Name}] IS NOT NULL
 
-    SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
-        SELECT
-              h.[{Tables.Handling.RecordId.Name}] AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-            , h.[{Tables.Handling.Status.Name}] AS [@{TagConversionTool.TagEntryValueAttributeName}]
-        FROM [{streamName}].[{Tables.Handling.Table.Name}] h
-	    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-	        ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
-        ORDER BY h.[{Tables.Handling.Id.Name}]
-        FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}')
-    )
+	IF ((EXISTS (SELECT TOP 1 [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})) AND @TagMatchStrategy = '{TagMatchStrategy.RecordContainsAllQueryTags}')
+	BEGIN
+        DECLARE @TagCount INT
+        SELECT @TagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{tagIdsTable}
+        INSERT INTO @{recordIdsToConsiderTable}
+        SELECT DISTINCT rt.[{Tables.RecordTag.RecordId.Name}] AS [{Tables.Record.Id.Name}]
+        FROM [{streamName}].[{Tables.RecordTag.Table.Name}] rt WITH (NOLOCK)
+        JOIN @{tagIdsTable} tids ON
+            tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.RecordId.Name}]
+        WHERE rt.[{Tables.RecordTag.RecordId.Name}] NOT IN (SELECT [{Tables.Record.Id.Name}] FROM @{recordIdsToConsiderTable})
+        GROUP BY rt.[{Tables.RecordTag.RecordId.Name}]
+        HAVING COUNT(rt.[{Tables.RecordTag.RecordId.Name}]) = @TagCount
+    END
+
+	IF ((EXISTS (SELECT TOP 1 [{Tables.TypeWithVersion.Id.Name}] FROM @{deprecatedTypesTable})))
+	BEGIN
+        DELETE FROM @{recordIdsToConsiderTable}
+        WHERE [{Tables.Record.Id.Name}] IN
+        (
+            SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+            FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+		    LEFT JOIN [{streamName}].[{Tables.Record.Table.Name}] r1 WITH (NOLOCK) -- the most recent record type is the deprecated
+		        ON r.[{Tables.Record.StringSerializedId.Name}] = r1.[{Tables.Record.StringSerializedId.Name}] AND r.[{Tables.Record.Id.Name}] < r1.[{Tables.Record.Id.Name}]
+            LEFT JOIN @{deprecatedTypesTable} dtwith ON
+                r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = dtwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
+            LEFT JOIN @{deprecatedTypesTable} dtwithout ON
+                r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = dtwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
+            WHERE
+                    r1.[{Tables.Record.Id.Name}] IS NULL
+                AND (
+                       (dtwith.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
+                       OR
+                       (dtwithout.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+                     )
+        )
+    END
+    -- END RECORD FILTER QUERYING
+
+    DECLARE @{streamBlockedStatus} {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
+	SELECT TOP 1 @{streamBlockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
+	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.StreamHandlingDisabledConcern}'
+
+	IF(@{streamBlockedStatus} = '{HandlingStatus.DisabledForStream}')
+	BEGIN
+        SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
+            SELECT
+                  rids.[{Tables.Record.Id.Name}] AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+                , '{HandlingStatus.DisabledForStream}' AS [@{TagConversionTool.TagEntryValueAttributeName}]
+            FROM @{recordIdsToConsiderTable} rids
+            ORDER BY rids.[{Tables.Record.Id.Name}]
+            FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}')
+        )
+    END
+	ELSE
+	BEGIN
+        SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
+            SELECT
+                  rids.[{Tables.Record.Id.Name}] AS [@{TagConversionTool.TagEntryKeyAttributeName}]
+                , ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
+            FROM @{recordIdsToConsiderTable} rids
+            LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+                ON rids.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+	        LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+	            ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+            WHERE h1.[{Tables.Handling.Id.Name}] IS NULL
+            ORDER BY h.[{Tables.Handling.Id.Name}]
+            FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}')
+        )
+	END
 END");
 
                     return result;

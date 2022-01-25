@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Protocol.Client
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
@@ -32,6 +33,10 @@ namespace Naos.SqlServer.Protocol.Client
             StandardGetHandlingStatusOp operation)
         {
             operation.MustForArg(nameof(operation)).NotBeNull();
+            operation.RecordFilter.TagMatchStrategy
+                     .MustForArg(Invariant($"{nameof(operation)}.{nameof(operation.RecordFilter)}.{nameof(operation.RecordFilter.TagMatchStrategy)}"))
+                     .BeEqualTo(TagMatchStrategy.RecordContainsAllQueryTags, "Currently only supported tag strategy.");
+
             var sqlServerLocator = this.TryGetLocator(operation);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
@@ -51,8 +56,8 @@ namespace Naos.SqlServer.Protocol.Client
             var tags = recordIdStatusXml.GetTagsFromXmlString();
             var result = tags
                .ToDictionary(
-                    k => long.Parse(k.Name),
-                    v => v.Value.ToEnum<HandlingStatus>());
+                    k => long.Parse(k.Name, CultureInfo.InvariantCulture),
+                    v => v.Value?.ToEnum<HandlingStatus>() ?? HandlingStatus.AvailableByDefault);
 
             return result;
         }
