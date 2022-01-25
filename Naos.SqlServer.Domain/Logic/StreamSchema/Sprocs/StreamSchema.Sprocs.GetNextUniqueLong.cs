@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
+    using Naos.Database.Domain;
     using static System.FormattableString;
 
     public static partial class StreamSchema
@@ -24,6 +25,17 @@ namespace Naos.SqlServer.Domain
                 public static string Name => nameof(GetNextUniqueLong);
 
                 /// <summary>
+                /// Input parameter names.
+                /// </summary>
+                public enum InputParamName
+                {
+                    /// <summary>
+                    /// The details about the long request.
+                    /// </summary>
+                    Details,
+                }
+
+                /// <summary>
                 /// Output parameter names.
                 /// </summary>
                 public enum OutputParamName
@@ -38,14 +50,17 @@ namespace Naos.SqlServer.Domain
                 /// Builds the execute stored procedure operation.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="operation">The operation to use as inputs.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
-                    string streamName)
+                    string streamName,
+                    StandardGetNextUniqueLongOp operation)
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetNextUniqueLong)}]");
 
                     var parameters = new List<ParameterDefinitionBase>()
                                      {
+                                         new InputParameterDefinition<string>(nameof(InputParamName.Details), Tables.NextUniqueLong.Details.SqlDataType, operation.Details),
                                          new OutputParameterDefinition<long>(nameof(OutputParamName.Value), Tables.NextUniqueLong.Id.SqlDataType),
                                      };
 
@@ -70,7 +85,8 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetNextUniqueLong.Name}](
-  @{OutputParamName.Value} {Tables.NextUniqueLong.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+  @{InputParamName.Details} {Tables.NextUniqueLong.Details.SqlDataType.DeclarationInSqlSyntax}
+, @{OutputParamName.Value} {Tables.NextUniqueLong.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -79,9 +95,11 @@ BEGIN TRANSACTION [{transaction}]
   BEGIN TRY
 	  BEGIN
 	      INSERT INTO [{streamName}].[{Tables.NextUniqueLong.Table.Name}] WITH (TABLOCKX) (
-		    [{Tables.NextUniqueLong.RecordCreatedUtc.Name}]
+		      [{Tables.NextUniqueLong.Details.Name}]
+		    , [{Tables.NextUniqueLong.RecordCreatedUtc.Name}]
 		  ) VALUES (
-		    GETUTCDATE()
+              @{InputParamName.Details}
+		    , GETUTCDATE()
 		  )
 
 	      SET @{OutputParamName.Value} = SCOPE_IDENTITY()

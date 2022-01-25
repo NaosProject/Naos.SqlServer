@@ -32,7 +32,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream134";
+        private readonly string streamName = "Stream135";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -660,6 +660,17 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var latestTwo = stream.Execute(new StandardGetLatestRecordByIdOp("\"" + id + "\""));
             latestTwo.InternalRecordId.MustForTest().BeEqualTo((long)internalRecordIdTwo);
             latestTwo.Metadata.Tags.MustForTest().BeNull();
+        }
+
+        [Fact]
+        public void TestUniqueLong()
+        {
+            var stream = this.GetCreatedSqlStream();
+
+            var nextNoDetails = stream.Execute(new StandardGetNextUniqueLongOp());
+            var nextDetails = stream.Execute(new StandardGetNextUniqueLongOp("Monkey."));
+
+            nextDetails.MustForTest().BeGreaterThan(nextNoDetails);
         }
 
         private static SqlServerLocator GetSqlServerLocator()

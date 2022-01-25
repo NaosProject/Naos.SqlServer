@@ -23,6 +23,11 @@ namespace Naos.SqlServer.Domain
                 public static ColumnDefinition Id => new ColumnDefinition(nameof(Id), new BigIntSqlDataTypeRepresentation());
 
                 /// <summary>
+                /// Gets the details.
+                /// </summary>
+                public static ColumnDefinition Details => new ColumnDefinition(nameof(Details), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant));
+
+                /// <summary>
                 /// Gets the record created UTC.
                 /// </summary>
                 public static ColumnDefinition RecordCreatedUtc => new ColumnDefinition(
@@ -37,6 +42,7 @@ namespace Naos.SqlServer.Domain
                     new[]
                     {
                         Id,
+                        Details,
                         RecordCreatedUtc,
                     });
 
@@ -58,6 +64,7 @@ SET QUOTED_IDENTIFIER ON
 
 CREATE TABLE [{streamName}].[{nameof(NextUniqueLong)}](
 	[{nameof(Id)}] {Id.SqlDataType.DeclarationInSqlSyntax} IDENTITY(1,1) NOT NULL,
+	[{nameof(Details)}] {Details.SqlDataType.DeclarationInSqlSyntax} NULL,
 	[{nameof(RecordCreatedUtc)}] {RecordCreatedUtc.SqlDataType.DeclarationInSqlSyntax} NOT NULL,
  CONSTRAINT [PK_{nameof(NextUniqueLong)}] PRIMARY KEY CLUSTERED
 (
