@@ -59,7 +59,12 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The tag identifiers as CSV.
                     /// </summary>
-                    TagIdsCsv,
+                    TagIdsForEntryCsv,
+
+                    /// <summary>
+                    /// Inherit the record's tags in handling.
+                    /// </summary>
+                    InheritRecordTags,
 
                     /// <summary>
                     /// Whether or not the record is unhandled.
@@ -92,7 +97,8 @@ namespace Naos.SqlServer.Domain
                 /// <param name="recordId">The record identifier.</param>
                 /// <param name="newStatus">The new status.</param>
                 /// <param name="acceptableCurrentStatuses">The acceptable current statuses.</param>
-                /// <param name="tagIdsCsv">The tag identifiers as CSV.</param>
+                /// <param name="tagIdsForEntryCsv">The tag identifiers as CSV.</param>
+                /// <param name="inheritRecordTags">The tags on the record should also be on the handling entry.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
@@ -101,7 +107,8 @@ namespace Naos.SqlServer.Domain
                     long recordId,
                     HandlingStatus newStatus,
                     IReadOnlyCollection<HandlingStatus> acceptableCurrentStatuses,
-                    string tagIdsCsv)
+                    string tagIdsForEntryCsv,
+                    bool inheritRecordTags)
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(PutHandling)}");
 
@@ -114,7 +121,8 @@ namespace Naos.SqlServer.Domain
                                          new InputParameterDefinition<long>(nameof(InputParamName.RecordId), Tables.Handling.RecordId.SqlDataType, recordId),
                                          new InputParameterDefinition<string>(nameof(InputParamName.NewStatus), Tables.Handling.Status.SqlDataType, newStatus.ToString()),
                                          new InputParameterDefinition<string>(nameof(InputParamName.AcceptableCurrentStatusesCsv), new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant), acceptableCurrentStatusesCsv),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsCsv),
+                                         new InputParameterDefinition<string>(nameof(InputParamName.TagIdsForEntryCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsForEntryCsv),
+                                         new InputParameterDefinition<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), inheritRecordTags ? 1 : 0),
                                          new InputParameterDefinition<int>(nameof(InputParamName.IsUnHandledRecord), new IntSqlDataTypeRepresentation(), 0),
                                          new InputParameterDefinition<int>(nameof(InputParamName.IsClaimingRecordId), new IntSqlDataTypeRepresentation(), 0),
                                          new OutputParameterDefinition<long>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
@@ -136,6 +144,7 @@ namespace Naos.SqlServer.Domain
                     bool asAlter = false)
                 {
                     var recordCreatedUtc = "RecordCreatedUtc";
+                    var unionedIfNecessaryTagIdsCsv = "UnionedIfNecessaryTagIdsCsv";
                     var transaction = Invariant($"{nameof(PutHandling)}Transaction");
                     var currentStatus = "CurrentStatus";
                     var currentStatusAccepted = "CurrentStatusAccepted";
@@ -147,7 +156,8 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.RecordId} AS {Tables.Handling.RecordId.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.NewStatus} AS {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.AcceptableCurrentStatusesCsv} AS {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
+, @{InputParamName.TagIdsForEntryCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
+, @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.IsUnHandledRecord} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.IsClaimingRecordId} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Handling.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
@@ -282,6 +292,26 @@ BEGIN TRANSACTION [{transaction}]
 		  BEGIN
 		      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
 
+		      DECLARE @{unionedIfNecessaryTagIdsCsv} {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
+              
+	          SELECT @{unionedIfNecessaryTagIdsCsv} = STRING_AGG([{Tables.Tag.Id.Name}], ',')
+	          FROM
+		      	(
+	                  SELECT DISTINCT [{Tables.Tag.Id.Name}] FROM
+		      		(
+		      			SELECT value AS [{Tables.Tag.Id.Name}]
+		      		    FROM STRING_SPLIT(@{InputParamName.TagIdsForEntryCsv}, ',')
+		      	        UNION ALL
+		      			SELECT value AS [{Tables.Tag.Id.Name}]
+                        FROM STRING_SPLIT(
+                        (
+                          SELECT [{Tables.Record.TagIdsCsv.Name}]
+	                      FROM [{streamName}].[{Tables.Record.Table.Name}]
+		      			  WHERE @{InputParamName.InheritRecordTags} = 1 AND [{Tables.Record.Id.Name}] = @{InputParamName.RecordId}
+                       ), ',')
+		      		) AS u
+		      	) AS d
+
 		      INSERT INTO [{streamName}].[{Tables.HandlingTag.Table.Name}] (
 			    [{Tables.HandlingTag.HandlingId.Name}]
 			  , [{Tables.HandlingTag.TagId.Name}]
@@ -291,7 +321,7 @@ BEGIN TRANSACTION [{transaction}]
   			    @{OutputParamName.Id}
 			  , value AS [{Tables.Tag.Id.Name}]
 			  , @{recordCreatedUtc}
-	         FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ',')
+	         FROM STRING_SPLIT(@{unionedIfNecessaryTagIdsCsv}, ',')
 		  END
 
       COMMIT TRANSACTION [{transaction}]

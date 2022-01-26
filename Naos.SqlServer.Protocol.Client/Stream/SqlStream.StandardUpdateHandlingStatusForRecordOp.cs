@@ -40,7 +40,8 @@ namespace Naos.SqlServer.Protocol.Client
                 operation.InternalRecordId,
                 operation.NewStatus,
                 operation.AcceptableCurrentStatuses,
-                tagIdsCsv);
+                tagIdsCsv,
+                operation.InheritRecordTags);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
 

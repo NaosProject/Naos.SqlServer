@@ -61,7 +61,8 @@ namespace Naos.SqlServer.Protocol.Client
                     operation.NewStatus == HandlingStatus.DisabledForStream
                         ? AllHandlingStatusesExceptDisabledForStream
                         : new[] { HandlingStatus.DisabledForStream },
-                    tagIdsCsv);
+                    tagIdsCsv,
+                    false);
 
                 var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
                 var sprocResult = sqlProtocol.Execute(storedProcOp);

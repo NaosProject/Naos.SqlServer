@@ -284,7 +284,6 @@ namespace Naos.SqlServer.Domain
                     const string streamBlockedStatus = "StreamBlockedStatus";
                     const string currentRunningCount = "CurrentRunningCount";
                     const string isUnhandledRecord = "IsUnhandledRecord";
-                    const string unionedIfNecessaryTagIdsCsv = "UnionedIfNecessaryTagIdsCsv";
                     const string deprecatedTypesTable = "DeprecatedIdEventIdsTable";
 
                     var acceptableStatusesCsv =
@@ -659,29 +658,14 @@ BEGIN
 				THROW 60000, @NotValidStrategyClaimErrorMessage, 1
 			END
 
-			DECLARE @{unionedIfNecessaryTagIdsCsv} {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
-
-	        SELECT @{unionedIfNecessaryTagIdsCsv} = STRING_AGG([{Tables.Tag.Id.Name}], ',')
-	        FROM
-				(
-	                SELECT DISTINCT [{Tables.Tag.Id.Name}] FROM
-					(
-						SELECT value AS [{Tables.Tag.Id.Name}]
-					    FROM STRING_SPLIT(@{InputParamName.TagIdsForEntryCsv}, ',')
-				        UNION ALL
-						SELECT [{Tables.RecordTag.TagId.Name}] AS [{Tables.Tag.Id.Name}]
-	                    FROM [{streamName}].[{Tables.RecordTag.Table.Name}]
-						WHERE @{InputParamName.InheritRecordTags} = 1 AND [{Tables.RecordTag.RecordId.Name}] = @{recordIdToAttemptToClaim}
-					) AS u
-				) AS d
-
 			EXEC [{streamName}].[{PutHandling.Name}]
 			@{PutHandling.InputParamName.Concern} = @{InputParamName.Concern},
 			@{PutHandling.InputParamName.Details} = @{InputParamName.Details},
 			@{PutHandling.InputParamName.RecordId} = @{recordIdToAttemptToClaim},
 			@{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}',
 			@{PutHandling.InputParamName.AcceptableCurrentStatusesCsv} = '{acceptableStatusesCsv}',
-			@{PutHandling.InputParamName.TagIdsCsv} = @{unionedIfNecessaryTagIdsCsv},
+			@{PutHandling.InputParamName.TagIdsForEntryCsv} = @{InputParamName.TagIdsForEntryCsv},
+			@{PutHandling.InputParamName.InheritRecordTags} = @{InputParamName.InheritRecordTags},
 			@{PutHandling.InputParamName.IsUnHandledRecord} = @{isUnhandledRecord},
 			@{PutHandling.InputParamName.IsClaimingRecordId} = 1,
 			@{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
