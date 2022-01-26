@@ -32,7 +32,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream145";
+        private readonly string streamName = "Stream147";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -695,14 +695,13 @@ namespace Naos.SqlServer.Protocol.Client.Test
         private SqlStream GetCreatedSqlStream(
             TimeSpan? commandTimeout = null,
             RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy = RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
-            int? maxConcurrentHandlingCount = null)
+            int? maxConcurrentHandlingCount = null,
+            SerializationFormat defaultSerializationFormat = SerializationFormat.Binary)
         {
             var sqlServerLocator = GetSqlServerLocator();
             var resourceLocatorProtocol = new SingleResourceLocatorProtocols(sqlServerLocator);
 
             var defaultSerializerRepresentation = GetSerializerRepresentation();
-
-            var defaultSerializationFormat = SerializationFormat.Binary;
 
             var stream = new SqlStream(
                 this.streamName,
