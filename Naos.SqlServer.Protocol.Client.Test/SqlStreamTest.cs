@@ -684,6 +684,20 @@ namespace Naos.SqlServer.Protocol.Client.Test
             nextDetails.MustForTest().BeGreaterThan(nextNoDetails);
         }
 
+        [Fact]
+        public void TestLatestStringSerializedObject()
+        {
+            var stream = this.GetCreatedSqlStream(defaultSerializationFormat: SerializationFormat.String);
+
+            var latestObject = A.Dummy<MyObject>();
+            stream.PutWithId(latestObject.Id, latestObject);
+            var latestStringSerializedObject = stream.GetStreamReadingWithIdProtocols<string>()
+                                      .Execute(new GetLatestStringSerializedObjectByIdOp<string>(latestObject.Id));
+            latestStringSerializedObject.MustForTest().StartWith("{");
+            latestStringSerializedObject.MustForTest().ContainString(Invariant($"\"id\": \"{latestObject.Id}\""));
+            latestStringSerializedObject.MustForTest().ContainString(Invariant($"\"field\": \"{latestObject.Field}\""));
+        }
+
         private static SqlServerLocator GetSqlServerLocator()
         {
             //var sqlServerLocator = new SqlServerLocator("localhost", "Streams", Invariant($"[{streamName}-read-only]"), "ReadMe", "SQLDEV2017");

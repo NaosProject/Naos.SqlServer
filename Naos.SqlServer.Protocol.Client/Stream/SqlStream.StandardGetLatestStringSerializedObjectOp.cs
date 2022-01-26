@@ -24,11 +24,26 @@ namespace Naos.SqlServer.Protocol.Client
     {
         /// <inheritdoc />
         public override string Execute(
-            StandardGetLatestStringSerializedObjectByIdOp operation)
+            StandardGetLatestStringSerializedObjectOp operation)
         {
             operation.MustForArg(nameof(operation)).NotBeNull();
 
-            throw new NotImplementedException();
+            var sqlServerLocator = this.TryGetLocator(operation);
+
+            var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
+
+            var storedProcOp = StreamSchema.Sprocs.GetLatestStringSerializedObject.BuildExecuteStoredProcedureOp(
+                this.Name,
+                convertedRecordFilter);
+
+            var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
+            var sprocResult = sqlProtocol.Execute(storedProcOp);
+
+            var result = sprocResult
+                              .OutputParameters[nameof(StreamSchema.Sprocs.GetLatestStringSerializedObject.OutputParamName.StringSerializedObject)]
+                              .GetValueOfType<string>();
+
+            return result;
         }
     }
 }

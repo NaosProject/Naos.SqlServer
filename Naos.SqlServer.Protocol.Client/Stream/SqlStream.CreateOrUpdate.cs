@@ -81,6 +81,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Sprocs.GetInternalRecordIds.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.GetLatestStringSerializedObject.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetSerializerRepresentationFromId.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(this.Name, RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction, null),
@@ -143,6 +144,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                StreamSchema.Sprocs.GetInternalRecordIds.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetLatestRecordMetadataById.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetLatestRecordById.BuildCreationScript(this.Name, true),
+                                               StreamSchema.Sprocs.GetLatestStringSerializedObject.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetNextUniqueLong.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetSerializerRepresentationFromId.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(

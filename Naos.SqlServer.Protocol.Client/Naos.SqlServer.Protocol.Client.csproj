@@ -168,7 +168,7 @@
     <Compile Include="Stream\SqlStream.CreateStreamUserOp.cs" />
     <Compile Include="Stream\SqlStream.StandardPruneStreamOp.cs" />
     <Compile Include="Stream\SqlStream.StandardGetNextUniqueLongOp.cs" />
-    <Compile Include="Stream\SqlStream.StandardGetLatestStringSerializedObjectByIdOp.cs" />
+    <Compile Include="Stream\SqlStream.StandardGetLatestStringSerializedObjectOp.cs" />
     <Compile Include="Stream\SqlStream.StandardGetLatestRecordOp.cs" />
     <Compile Include="Stream\SqlStream.StandardGetLatestRecordByTagsOp.cs" />
     <Compile Include="Stream\SqlStream.StandardGetDistinctStringSerializedIdsOp.cs" />
