@@ -290,7 +290,6 @@ namespace Naos.SqlServer.Domain
                     var acceptableStatusesCsv =
                         new[]
                         {
-                            HandlingStatus.Unknown.ToString(),
                             HandlingStatus.AvailableByDefault.ToString(),
                             HandlingStatus.AvailableAfterSelfCancellation.ToString(),
                             HandlingStatus.AvailableAfterExternalCancellation.ToString(),
@@ -450,6 +449,19 @@ BEGIN
 	        )
 	    END
 	    -- END RECORD FILTER QUERYING
+
+        DELETE FROM @{recordIdsToConsiderTable}
+	        WHERE [{Tables.Record.Id.Name}] IN
+	        (
+	            SELECT DISTINCT h.[{Tables.Handling.RecordId.Name}]
+	            FROM [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
+			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK) -- the most recent handling status is disabled
+			        ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+	            WHERE
+	                    h1.[{Tables.Handling.Id.Name}] IS NULL
+	                AND h.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}'
+	                AND h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.DisabledForRecord}'
+	        )
 
         DECLARE @{candidateRecordIds} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 		DECLARE @{isUnhandledRecord} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}

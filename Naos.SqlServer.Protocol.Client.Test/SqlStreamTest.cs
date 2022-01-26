@@ -32,7 +32,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream135";
+        private readonly string streamName = "Stream141";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -523,15 +523,26 @@ namespace Naos.SqlServer.Protocol.Client.Test
                     new ResetFailedHandleRecordOp(secondInternalRecordId, secondConcern, "Redeployed Bot v1.0.1-hotfix, re-run.", tags: firstRecordAndHandleTags).Standardize());
                 stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
 
-                //stream.Execute(new BlockRecordHandlingOp("Stop processing, need to confirm deployment."));
-                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
-                //second = stream.Execute(new StandardTryHandleRecordOp(secondConcern, identifierType: typeof(string).ToRepresentation(), objectType: typeof(MyObject).ToRepresentation()));
-                //second.RecordToHandle.MustForTest().BeNull();
-                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                stream.GetStreamRecordHandlingProtocols().Execute(new DisableHandlingForStreamOp("Stop processing, need to confirm deployment."));
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                second = stream.Execute(
+                    new StandardTryHandleRecordOp(
+                        secondConcern,
+                        new RecordFilter(
+                            idTypes: new[]
+                                     {
+                                         typeof(string).ToRepresentation(),
+                                     },
+                            objectTypes: new[]
+                                         {
+                                             typeof(MyObject).ToRepresentation(),
+                                         })));
+                second.RecordToHandle.MustForTest().BeNull();
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
 
-                //stream.Execute(new CancelBlockedRecordHandlingOp("Resume processing, confirmed deployment."));
-                //second.MustForTest().BeNull();
-                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
+                stream.GetStreamRecordHandlingProtocols().Execute(new EnableHandlingForStreamOp("Resume processing, confirmed deployment."));
+
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
 
                 second = stream.Execute(new StandardTryHandleRecordOp(
                     secondConcern,
@@ -557,24 +568,24 @@ namespace Naos.SqlServer.Protocol.Client.Test
                         tags: firstRecordAndHandleTags).Standardize());
                 stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Failed);
 
-                //stream.Execute(new DisableHandlingForRecordOp(firstInternalRecordId, "Giving up.", tags: firstRecordAndHandleTags).Standardize());
+                stream.Execute(new DisableHandlingForRecordOp(firstInternalRecordId, "Giving up.", tags: firstRecordAndHandleTags).Standardize());
 
-                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForRecord);
-                //second = stream.Execute(new StandardTryHandleRecordOp(
-                //    secondConcern,
-                //    new RecordFilter(
-                //        idTypes: new[]
-                //                 {
-                //                     typeof(string).ToRepresentation(),
-                //                 },
-                //        objectTypes: new[]
-                //                     {
-                //                         typeof(MyObject).ToRepresentation(),
-                //                     }),
-                //    inheritRecordTags: true, 
-                //    tags: handleTags));
-                //stream.Execute(getSecondStatusByIdOp).Single().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForRecord);
-                //second.RecordToHandle.MustForTest().BeNull();
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForRecord);
+                second = stream.Execute(new StandardTryHandleRecordOp(
+                    secondConcern,
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(MyObject).ToRepresentation(),
+                                     }),
+                    inheritRecordTags: true,
+                    tags: handleTags));
+                stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForRecord);
+                second.RecordToHandle.MustForTest().BeNull();
 
                 //var secondHistory = stream.Execute(new StandardGetHandlingHistoryOp(secondInternalRecordId, secondConcern));
                 //secondHistory.MustForTest().HaveCount(7);

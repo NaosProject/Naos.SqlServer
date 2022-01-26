@@ -163,7 +163,7 @@ SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
 
 IF @{currentStatus} IS NULL
 BEGIN
-    SET @{currentStatus} = '{HandlingStatus.Unknown}'
+    SET @{currentStatus} = '{HandlingStatus.AvailableByDefault}'
 END
 --TODO: should we guard against this changing while inserting? (exclusive table lock for a time to live, et al)
 DECLARE @{currentStatusAccepted} BIT

@@ -289,9 +289,9 @@ BEGIN
                 , ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
             FROM @{recordIdsToConsiderTable} rids
             LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-                ON rids.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+                ON rids.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND (h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
 	        LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-	            ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+	            ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND (h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h1.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
             WHERE h1.[{Tables.Handling.Id.Name}] IS NULL
             ORDER BY h.[{Tables.Handling.Id.Name}]
             FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}')
