@@ -103,9 +103,10 @@ namespace Naos.SqlServer.Domain
 
             if (protocolTypeWithoutId == typeof(IStreamReadProtocols).ToRepresentation().RemoveAssemblyVersions())
             {
-                result.AppendLine(BuildGrant(Sprocs.GetLatestRecordMetadataById.Name, execute));
-                result.AppendLine(BuildGrant(Sprocs.GetLatestRecordById.Name, execute));
+                result.AppendLine(BuildGrant(Sprocs.GetLatestRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.GetDistinctStringSerializedIds.Name, execute));
+                result.AppendLine(BuildGrant(Sprocs.GetLatestStringSerializedObject.Name, execute));
+                result.AppendLine(BuildGrant(Sprocs.GetInternalRecordIds.Name, execute));
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
             }

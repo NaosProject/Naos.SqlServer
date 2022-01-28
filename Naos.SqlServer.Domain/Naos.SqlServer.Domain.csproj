@@ -110,6 +110,7 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.RecordFilterLogic.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetDistinctStringSerializedIds.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetHandlingStatuses.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetLatestStringSerializedObject.cs" />
@@ -272,12 +273,11 @@
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.CreateStreamUser.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.TryHandleRecord.cs" />
-    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetLatestRecordMetadataById.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetNextUniqueLong.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetIdAddIfNecessarySerializerRepresentation.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithVersion.cs" />
-    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetLatestRecordById.cs" />
+    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetLatestRecord.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.PutRecord.cs" />
     <Compile Include="Logic\StreamSchema\Tables\StreamSchema.Tables.Record.cs" />
     <Compile Include="Logic\StreamSchema\Tables\StreamSchema.Tables.NextUniqueLong.cs" />
