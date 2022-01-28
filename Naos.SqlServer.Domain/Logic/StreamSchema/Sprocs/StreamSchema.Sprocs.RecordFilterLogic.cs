@@ -55,7 +55,7 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The tag identifiers as CSV.
                     /// </summary>
-                    TagsIdsCsv,
+                    TagIdsToMatchCsv,
 
                     /// <summary>
                     /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
@@ -113,7 +113,7 @@ namespace Naos.SqlServer.Domain
 
     DECLARE @{tagIdsTable} TABLE([{Tables.Tag.Id.Name}] {Tables.Tag.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
     INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-    SELECT value FROM STRING_SPLIT(@{InputParamName.TagsIdsCsv}, ',')
+    SELECT value FROM STRING_SPLIT(@{InputParamName.TagIdsToMatchCsv}, ',')
 
     DECLARE @{deprecatedTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
     INSERT INTO @{deprecatedTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
