@@ -1192,6 +1192,58 @@ namespace OBeautifulCode.Assertion.Recipes
             }
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1307:SpecifyStringComparison", MessageId = "System.String.EndsWith(System.String)", Justification = "User can specify whether to verify with comparisonType or not.")]
+        private static void EndWithInternal(
+            AssertionTracker assertionTracker,
+            Verification verification,
+            VerifiableItem verifiableItem)
+        {
+            NotBeNullInternal(assertionTracker, verification, verifiableItem);
+
+            var subjectValue = (string)verifiableItem.ItemValue;
+            var comparisonValue = (string)verification.VerificationParameters[0].Value;
+            var comparisonType = (StringComparison?)verification.VerificationParameters[1].Value;
+
+            var shouldThrow = comparisonType == null
+                ? !subjectValue.EndsWith(comparisonValue)
+                : !subjectValue.EndsWith(comparisonValue, (StringComparison)comparisonType);
+
+            if (shouldThrow)
+            {
+                var exceptionMessage = BuildVerificationFailedExceptionMessage(assertionTracker, verification, verifiableItem, EndWithExceptionMessageSuffix, Include.FailingValue);
+
+                var exception = BuildException(assertionTracker, verification, exceptionMessage, ArgumentExceptionKind.ArgumentException);
+
+                throw exception;
+            }
+        }
+
+        [SuppressMessage("Microsoft.Globalization", "CA1307:SpecifyStringComparison", MessageId = "System.String.EndsWith(System.String)", Justification = "User can specify whether to verify with comparisonType or not.")]
+        private static void NotEndWithInternal(
+            AssertionTracker assertionTracker,
+            Verification verification,
+            VerifiableItem verifiableItem)
+        {
+            NotBeNullInternal(assertionTracker, verification, verifiableItem);
+
+            var subjectValue = (string)verifiableItem.ItemValue;
+            var comparisonValue = (string)verification.VerificationParameters[0].Value;
+            var comparisonType = (StringComparison?)verification.VerificationParameters[1].Value;
+
+            var shouldThrow = comparisonType == null
+                ? subjectValue.EndsWith(comparisonValue)
+                : subjectValue.EndsWith(comparisonValue, (StringComparison)comparisonType);
+
+            if (shouldThrow)
+            {
+                var exceptionMessage = BuildVerificationFailedExceptionMessage(assertionTracker, verification, verifiableItem, NotEndWithExceptionMessageSuffix, Include.FailingValue);
+
+                var exception = BuildException(assertionTracker, verification, exceptionMessage, ArgumentExceptionKind.ArgumentException);
+
+                throw exception;
+            }
+        }
+
         private static void BeSameReferenceAsInternal(
             AssertionTracker assertionTracker,
             Verification verification,

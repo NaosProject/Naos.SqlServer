@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.StandardGetLatestStringSerializedObjectByIdOp.cs" company="Naos Project">
+// <copyright file="SqlStream.StandardGetLatestStringSerializedObjectOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------

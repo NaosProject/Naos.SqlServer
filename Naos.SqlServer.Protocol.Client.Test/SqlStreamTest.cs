@@ -62,7 +62,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method TestBinary.
         /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestBinary()
@@ -74,7 +73,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method TestRandom.
         /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestRandom()
@@ -308,7 +306,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method HandlingTests.
         /// </summary>
-        [Fact ]
+        [Fact]
         public void HandlingTests()
         {
             var stream = this.GetCreatedSqlStream();
@@ -696,6 +694,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             latestStringSerializedObject.MustForTest().StartWith("{");
             latestStringSerializedObject.MustForTest().ContainString(Invariant($"\"id\": \"{latestObject.Id}\""));
             latestStringSerializedObject.MustForTest().ContainString(Invariant($"\"field\": \"{latestObject.Field}\""));
+            latestStringSerializedObject.MustForTest().EndWith("}");
         }
 
         private static SqlServerLocator GetSqlServerLocator()
@@ -746,10 +745,8 @@ namespace Naos.SqlServer.Protocol.Client.Test
     }
 
     /// <summary>
-    /// Class MyObject.
-    /// Implements the <see cref="OBeautifulCode.Type.IHaveId{System.String}" />
+    /// Test object.
     /// </summary>
-    /// <seealso cref="OBeautifulCode.Type.IHaveId{System.String}" />
     public class MyObject : IHaveId<string>
     {
         /// <summary>

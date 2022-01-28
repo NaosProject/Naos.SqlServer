@@ -227,6 +227,10 @@ namespace OBeautifulCode.Assertion.Recipes
 
         public const string NotStartWithExceptionMessageSuffix = "starts with the specified comparison value";
 
+        public const string EndWithExceptionMessageSuffix = "does not end with the specified comparison value";
+
+        public const string NotEndWithExceptionMessageSuffix = "ends with the specified comparison value";
+
         public const string BeSameReferenceAsExceptionMessageSuffix = "is not the same reference as the comparison value";
 
         public const string NotBeSameReferenceAsExceptionMessageSuffix = "is the same reference as the comparison value";
