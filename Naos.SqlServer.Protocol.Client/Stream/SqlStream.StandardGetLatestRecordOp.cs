@@ -34,7 +34,6 @@ namespace Naos.SqlServer.Protocol.Client
             var storedProcOp = StreamSchema.Sprocs.GetLatestRecord.BuildExecuteStoredProcedureOp(
                 this.Name,
                 convertedRecordFilter,
-                operation.RecordNotFoundStrategy,
                 operation.StreamRecordItemsToInclude);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);

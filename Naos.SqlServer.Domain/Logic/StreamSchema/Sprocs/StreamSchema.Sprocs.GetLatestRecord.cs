@@ -58,7 +58,7 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The tag identifiers as CSV.
                     /// </summary>
-                    TagsIdsCsv,
+                    TagIdsToMatchCsv,
 
                     /// <summary>
                     /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
@@ -143,13 +143,11 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter"/>.</param>
-                /// <param name="recordNotFoundStrategy">The existing record not encountered strategy.</param>
                 /// <param name="streamRecordItemsToInclude">The items to include.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     RecordFilterConvertedForStoredProcedure convertedRecordFilter,
-                    RecordNotFoundStrategy recordNotFoundStrategy,
                     StreamRecordItemsToInclude streamRecordItemsToInclude)
                 {
                     streamRecordItemsToInclude
@@ -182,7 +180,7 @@ namespace Naos.SqlServer.Domain
                                              new XmlSqlDataTypeRepresentation(),
                                              convertedRecordFilter.StringIdsToMatchXml),
                                          new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagsIdsCsv),
+                                             nameof(InputParamName.TagIdsToMatchCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
                                              convertedRecordFilter.TagIdsCsv),
                                          new InputParameterDefinition<string>(
@@ -268,7 +266,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
 , @{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
 , @{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{InputParamName.TagsIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
 , @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
 , @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
 , @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
