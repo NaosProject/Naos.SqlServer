@@ -52,7 +52,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             "Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
             Justification = "Might use testHelper.")]
-        [Fact ]
+        [Fact]
         public void GetSprocCreationScript()
         {
             var script = StreamSchema.Sprocs.GetDistinctStringSerializedIds.BuildCreationScript(this.streamName);
@@ -666,7 +666,13 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             var putOpTwo = new PutWithIdAndReturnInternalRecordIdOp<string, string>(id, A.Dummy<string>());
             var internalRecordIdTwo = stream.GetStreamWritingWithIdProtocols<string, string>().Execute(putOpTwo);
-            var latestTwo = stream.Execute(new StandardGetLatestRecordByIdOp("\"" + id + "\""));
+            var latestTwo = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        new[]
+                        {
+                            (long)internalRecordIdTwo,
+                        })));
             latestTwo.InternalRecordId.MustForTest().BeEqualTo((long)internalRecordIdTwo);
             latestTwo.Metadata.Tags.MustForTest().BeNull();
         }
