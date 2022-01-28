@@ -197,9 +197,9 @@ BEGIN
     INSERT INTO @{resultTableName} ([{Tables.TypeWithVersion.Id.Name}], [{Tables.Record.StringSerializedId.Name}])
     SELECT DISTINCT 
           (
-            CASE @VersionMatchStrategy
-                WHEN '{VersionMatchStrategy.Any}' THEN r.[IdentifierTypeWithoutVersionId]
-                WHEN '{VersionMatchStrategy.SpecifiedVersion}' THEN r.[IdentifierTypeWithVersionId]
+            CASE @{InputParamName.VersionMatchStrategy}
+                WHEN '{VersionMatchStrategy.Any}' THEN r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
+                WHEN '{VersionMatchStrategy.SpecifiedVersion}' THEN r.[{Tables.Record.IdentifierTypeWithVersionId.Name}]
                 ELSE CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, @{InputParamName.VersionMatchStrategy})
             END)
         , r.[{Tables.Record.StringSerializedId.Name}]
