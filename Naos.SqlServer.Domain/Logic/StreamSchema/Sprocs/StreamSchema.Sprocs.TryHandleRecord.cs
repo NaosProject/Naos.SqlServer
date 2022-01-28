@@ -11,6 +11,7 @@ namespace Naos.SqlServer.Domain
     using System.Diagnostics.CodeAnalysis;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Type;
     using static System.FormattableString;
@@ -104,6 +105,11 @@ namespace Naos.SqlServer.Domain
                     /// The minimum internal record identifier.
                     /// </summary>
                     MinimumInternalRecordId,
+
+                    /// <summary>
+                    /// Should include the payload.
+                    /// </summary>
+                    IncludePayload,
                 }
 
                 /// <summary>
@@ -189,6 +195,7 @@ namespace Naos.SqlServer.Domain
                 /// <param name="orderRecordsBy">The order records strategy.</param>
                 /// <param name="minimumInternalRecordId">The optional minimum internal record identifier, null for default.</param>
                 /// <param name="inheritRecordTags">The tags on the record should also be on the handling entry.</param>
+                /// <param name="streamRecordItemsToInclude">The items to include.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
@@ -198,14 +205,30 @@ namespace Naos.SqlServer.Domain
                     string tagIdsForEntryCsv,
                     OrderRecordsBy orderRecordsBy,
                     long? minimumInternalRecordId,
-                    bool inheritRecordTags)
+                    bool inheritRecordTags,
+                    StreamRecordItemsToInclude streamRecordItemsToInclude)
                 {
+                    streamRecordItemsToInclude
+                       .MustForArg(nameof(streamRecordItemsToInclude))
+                       .BeElementIn(
+                            new[]
+                            {
+                                StreamRecordItemsToInclude.MetadataAndPayload,
+                                StreamRecordItemsToInclude.MetadataOnly,
+                            });
+
                     var sprocName = Invariant($"[{streamName}].{nameof(TryHandleRecord)}");
 
                     var parameters = new List<ParameterDefinitionBase>()
                                      {
-                                         new InputParameterDefinition<string>(nameof(InputParamName.Concern), Tables.Handling.Concern.SqlDataType, concern),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.Details), Tables.Handling.Details.SqlDataType, details),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.Concern),
+                                             Tables.Handling.Concern.SqlDataType,
+                                             concern),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.Details),
+                                             Tables.Handling.Details.SqlDataType,
+                                             details),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.InternalRecordIdsCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
@@ -238,23 +261,57 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
                                              convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.TagIdsForEntryCsv), Tables.Record.TagIdsCsv.SqlDataType, tagIdsForEntryCsv),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.OrderRecordsBy), new StringSqlDataTypeRepresentation(false, 50), orderRecordsBy.ToString()),
-                                         new InputParameterDefinition<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), inheritRecordTags ? 1 : 0),
-                                         new InputParameterDefinition<long?>(nameof(InputParamName.MinimumInternalRecordId), Tables.Record.Id.SqlDataType, minimumInternalRecordId),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.TagIdsForEntryCsv),
+                                             Tables.Record.TagIdsCsv.SqlDataType,
+                                             tagIdsForEntryCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.OrderRecordsBy),
+                                             new StringSqlDataTypeRepresentation(false, 50),
+                                             orderRecordsBy.ToString()),
+                                         new InputParameterDefinition<int>(
+                                             nameof(InputParamName.InheritRecordTags),
+                                             new IntSqlDataTypeRepresentation(),
+                                             inheritRecordTags ? 1 : 0),
+                                         new InputParameterDefinition<long?>(
+                                             nameof(InputParamName.MinimumInternalRecordId),
+                                             Tables.Record.Id.SqlDataType,
+                                             minimumInternalRecordId),
+                                         new InputParameterDefinition<int>(
+                                             nameof(InputParamName.IncludePayload),
+                                             new IntSqlDataTypeRepresentation(),
+                                             streamRecordItemsToInclude == StreamRecordItemsToInclude.MetadataAndPayload ? 1 : 0),
                                          new OutputParameterDefinition<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
                                          new OutputParameterDefinition<int>(nameof(OutputParamName.IsBlocked), new IntSqlDataTypeRepresentation()),
                                          new OutputParameterDefinition<long>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
                                          new OutputParameterDefinition<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.SqlDataType),
-                                         new OutputParameterDefinition<int>(nameof(OutputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.SqlDataType),
-                                         new OutputParameterDefinition<int>(nameof(OutputParamName.IdentifierTypeWithVersionId), Tables.TypeWithVersion.Id.SqlDataType),
-                                         new OutputParameterDefinition<int>(nameof(OutputParamName.ObjectTypeWithVersionId), Tables.TypeWithVersion.Id.SqlDataType),
-                                         new OutputParameterDefinition<string>(nameof(OutputParamName.StringSerializedId), Tables.Record.StringSerializedId.SqlDataType),
-                                         new OutputParameterDefinition<string>(nameof(OutputParamName.StringSerializedObject), Tables.Record.StringSerializedObject.SqlDataType),
-                                         new OutputParameterDefinition<byte[]>(nameof(OutputParamName.BinarySerializedObject), Tables.Record.BinarySerializedObject.SqlDataType),
-                                         new OutputParameterDefinition<DateTime>(nameof(OutputParamName.RecordDateTime), Tables.Record.RecordCreatedUtc.SqlDataType),
-                                         new OutputParameterDefinition<DateTime?>(nameof(OutputParamName.ObjectDateTime), Tables.Record.ObjectDateTimeUtc.SqlDataType),
-                                         new OutputParameterDefinition<string>(nameof(OutputParamName.TagIdsCsv), Tables.Record.TagIdsCsv.SqlDataType),
+                                         new OutputParameterDefinition<int>(
+                                             nameof(OutputParamName.SerializerRepresentationId),
+                                             Tables.SerializerRepresentation.Id.SqlDataType),
+                                         new OutputParameterDefinition<int>(
+                                             nameof(OutputParamName.IdentifierTypeWithVersionId),
+                                             Tables.TypeWithVersion.Id.SqlDataType),
+                                         new OutputParameterDefinition<int>(
+                                             nameof(OutputParamName.ObjectTypeWithVersionId),
+                                             Tables.TypeWithVersion.Id.SqlDataType),
+                                         new OutputParameterDefinition<string>(
+                                             nameof(OutputParamName.StringSerializedId),
+                                             Tables.Record.StringSerializedId.SqlDataType),
+                                         new OutputParameterDefinition<string>(
+                                             nameof(OutputParamName.StringSerializedObject),
+                                             Tables.Record.StringSerializedObject.SqlDataType),
+                                         new OutputParameterDefinition<byte[]>(
+                                             nameof(OutputParamName.BinarySerializedObject),
+                                             Tables.Record.BinarySerializedObject.SqlDataType),
+                                         new OutputParameterDefinition<DateTime>(
+                                             nameof(OutputParamName.RecordDateTime),
+                                             Tables.Record.RecordCreatedUtc.SqlDataType),
+                                         new OutputParameterDefinition<DateTime?>(
+                                             nameof(OutputParamName.ObjectDateTime),
+                                             Tables.Record.ObjectDateTimeUtc.SqlDataType),
+                                         new OutputParameterDefinition<string>(
+                                             nameof(OutputParamName.TagIdsCsv),
+                                             Tables.Record.TagIdsCsv.SqlDataType),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
@@ -326,6 +383,7 @@ namespace Naos.SqlServer.Domain
 , @{InputParamName.TagIdsForEntryCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
 , @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{InputParamName.MinimumInternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
+, @{InputParamName.IncludePayload} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 , @{OutputParamName.Id} AS {Tables.Handling.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
 , @{OutputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
@@ -604,8 +662,18 @@ BEGIN
 		 , @{OutputParamName.IdentifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
 		 , @{OutputParamName.ObjectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
 		 , @{OutputParamName.StringSerializedId} = [{Tables.Record.StringSerializedId.Name}]
-		 , @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
-		 , @{OutputParamName.BinarySerializedObject} = [{Tables.Record.BinarySerializedObject.Name}]
+		 , @{OutputParamName.StringSerializedObject} = (
+            CASE @{InputParamName.IncludePayload}
+                WHEN 1 THEN [{Tables.Record.StringSerializedObject.Name}]
+                WHEN 0 THEN NULL
+                ELSE CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.')
+            END)
+		 , @{OutputParamName.BinarySerializedObject} = (
+            CASE @{InputParamName.IncludePayload}
+                WHEN 1 THEN [{Tables.Record.BinarySerializedObject.Name}]
+                WHEN 0 THEN NULL
+                ELSE CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.')
+            END)
 		 , @{OutputParamName.TagIdsCsv} = [{Tables.Record.TagIdsCsv.Name}]
 		 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]
 		 , @{OutputParamName.ObjectDateTime} = [{Tables.Record.ObjectDateTimeUtc.Name}]

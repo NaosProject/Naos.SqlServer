@@ -46,7 +46,8 @@ namespace Naos.SqlServer.Protocol.Client
                                                 tagIdsForEntryCsv,
                                                 operation.OrderRecordsBy,
                                                 operation.MinimumInternalRecordId,
-                                                operation.InheritRecordTags);
+                                                operation.InheritRecordTags,
+                                                operation.StreamRecordItemsToInclude);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);
@@ -89,16 +90,30 @@ namespace Naos.SqlServer.Protocol.Client
                 objectTimestamp);
 
             DescribedSerializationBase payload;
-            switch (identifiedSerializerRepresentation.SerializationFormat)
+            if (operation.StreamRecordItemsToInclude == StreamRecordItemsToInclude.MetadataAndPayload)
             {
-                case SerializationFormat.Binary:
-                    payload = new BinaryDescribedSerialization(objectType.WithVersion, identifiedSerializerRepresentation.SerializerRepresentation, binarySerializedObject);
-                    break;
-                case SerializationFormat.String:
-                    payload = new StringDescribedSerialization(objectType.WithVersion, identifiedSerializerRepresentation.SerializerRepresentation, stringSerializedObject);
-                    break;
-                default:
-                    throw new NotSupportedException(Invariant($"{nameof(SerializationFormat)} {identifiedSerializerRepresentation.SerializationFormat} is not supported."));
+                switch (identifiedSerializerRepresentation.SerializationFormat)
+                {
+                    case SerializationFormat.Binary:
+                        payload = new BinaryDescribedSerialization(
+                            objectType.WithVersion,
+                            identifiedSerializerRepresentation.SerializerRepresentation,
+                            binarySerializedObject);
+                        break;
+                    case SerializationFormat.String:
+                        payload = new StringDescribedSerialization(
+                            objectType.WithVersion,
+                            identifiedSerializerRepresentation.SerializerRepresentation,
+                            stringSerializedObject);
+                        break;
+                    default:
+                        throw new NotSupportedException(
+                            Invariant($"{nameof(SerializationFormat)} {identifiedSerializerRepresentation.SerializationFormat} is not supported."));
+                }
+            }
+            else
+            {
+                payload = new NullDescribedSerialization(metadata.TypeRepresentationOfObject.WithVersion, metadata.SerializerRepresentation);
             }
 
             var record = new StreamRecord(internalRecordId, metadata, payload);
