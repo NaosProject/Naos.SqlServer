@@ -275,16 +275,11 @@ namespace Naos.SqlServer.Domain
                     bool asAlter = false)
                 {
                     const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
-                    const string identifierTypesTable = "IdTypeIdentifiersTable";
-                    const string objectTypesTable = "ObjectTypeIdentifiersTable";
-                    const string stringSerializedIdsTable = "StringSerializedIdentifiersTable";
-                    const string tagIdsTable = "TagIdsTable";
                     const string recordIdToAttemptToClaim = "RecordIdToAttemptToClaim";
                     const string candidateRecordIds = "CandidateRecordIds";
                     const string streamBlockedStatus = "StreamBlockedStatus";
                     const string currentRunningCount = "CurrentRunningCount";
                     const string isUnhandledRecord = "IsUnhandledRecord";
-                    const string deprecatedTypesTable = "DeprecatedIdEventIdsTable";
 
                     var acceptableStatusesCsv =
                         new[]
@@ -367,87 +362,7 @@ BEGIN
 
 	IF (@{shouldAttemptHandling} = 1)
 	BEGIN
-	    -- START RECORD FILTER QUERYING
-	    DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-	    INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
-	    SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
-
-	    DECLARE @{identifierTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-	    INSERT INTO @{identifierTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
-	    SELECT value FROM STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',')
-
-	    DECLARE @{objectTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-	    INSERT INTO @{objectTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
-	    SELECT value FROM STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',')
-
-	    DECLARE @{stringSerializedIdsTable} TABLE([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NOT NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-	    INSERT INTO @{stringSerializedIdsTable} ([{Tables.Record.StringSerializedId.Name}], [{Tables.TypeWithVersion.Id.Name}])
-	    SELECT 
-	         [{Tables.Tag.TagKey.Name}]
-		   , [{Tables.Tag.TagValue.Name}]
-	    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) 
-
-	    DECLARE @{tagIdsTable} TABLE([{Tables.Tag.Id.Name}] {Tables.Tag.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-	    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-	    SELECT value FROM STRING_SPLIT(@{InputParamName.TagsIdsCsv}, ',')
-
-	    DECLARE @{deprecatedTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-	    INSERT INTO @{deprecatedTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
-	    SELECT value FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ',')
-
-	    INSERT INTO @{recordIdsToConsiderTable}
-	    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-		FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-	    LEFT JOIN @{recordIdsToConsiderTable} ir ON
-	        r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
-	    LEFT JOIN @{identifierTypesTable} itwith ON
-	        r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = itwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-	    LEFT JOIN @{identifierTypesTable} itwithout ON
-	        r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = itwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-	    LEFT JOIN @{objectTypesTable} otwith ON
-	        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-	    LEFT JOIN @{objectTypesTable} otwithout ON
-	        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-	    WHERE
-	        r.[{Tables.Record.Id.Name}] IS NOT NULL
-
-		IF ((EXISTS (SELECT TOP 1 [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})) AND @TagMatchStrategy = '{TagMatchStrategy.RecordContainsAllQueryTags}')
-		BEGIN
-	        DECLARE @TagCount INT
-	        SELECT @TagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{tagIdsTable}
-	        INSERT INTO @{recordIdsToConsiderTable}
-	        SELECT DISTINCT rt.[{Tables.RecordTag.RecordId.Name}] AS [{Tables.Record.Id.Name}]
-	        FROM [{streamName}].[{Tables.RecordTag.Table.Name}] rt WITH (NOLOCK)
-	        JOIN @{tagIdsTable} tids ON
-	            tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.RecordId.Name}]
-	        WHERE rt.[{Tables.RecordTag.RecordId.Name}] NOT IN (SELECT [{Tables.Record.Id.Name}] FROM @{recordIdsToConsiderTable})
-	        GROUP BY rt.[{Tables.RecordTag.RecordId.Name}]
-	        HAVING COUNT(rt.[{Tables.RecordTag.RecordId.Name}]) = @TagCount
-	    END
-
-		IF ((EXISTS (SELECT TOP 1 [{Tables.TypeWithVersion.Id.Name}] FROM @{deprecatedTypesTable})))
-		BEGIN
-	        DELETE FROM @{recordIdsToConsiderTable}
-	        WHERE [{Tables.Record.Id.Name}] IN
-	        (
-	            SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-	            FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-			    LEFT JOIN [{streamName}].[{Tables.Record.Table.Name}] r1 WITH (NOLOCK) -- the most recent record type is the deprecated
-			        ON r.[{Tables.Record.StringSerializedId.Name}] = r1.[{Tables.Record.StringSerializedId.Name}] AND r.[{Tables.Record.Id.Name}] < r1.[{Tables.Record.Id.Name}]
-	            LEFT JOIN @{deprecatedTypesTable} dtwith ON
-	                r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = dtwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-	            LEFT JOIN @{deprecatedTypesTable} dtwithout ON
-	                r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = dtwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-	            WHERE
-	                    r1.[{Tables.Record.Id.Name}] IS NULL
-	                AND (
-	                       (dtwith.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
-	                       OR
-	                       (dtwithout.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
-	                     )
-	        )
-	    END
-	    -- END RECORD FILTER QUERYING
+		{RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
 
         DELETE FROM @{recordIdsToConsiderTable}
 	        WHERE [{Tables.Record.Id.Name}] IN
