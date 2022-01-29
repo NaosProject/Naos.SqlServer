@@ -133,7 +133,12 @@ namespace Naos.SqlServer.Domain
     LEFT JOIN @{objectTypesTable} otwithout ON
         r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
     WHERE
-        r.[{Tables.Record.Id.Name}] IS NOT NULL
+        r.[{Tables.Record.Id.Name}] IS NOT NULL AND
+        (
+			(itwith.[{Tables.TypeWithVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
+        OR
+			(itwithout.[{Tables.TypeWithoutVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+        )
 
 	IF ((EXISTS (SELECT TOP 1 [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})) AND @TagMatchStrategy = '{TagMatchStrategy.RecordContainsAllQueryTags}')
 	BEGIN
@@ -143,11 +148,25 @@ namespace Naos.SqlServer.Domain
         SELECT DISTINCT rt.[{Tables.RecordTag.RecordId.Name}] AS [{Tables.Record.Id.Name}]
         FROM [{streamName}].[{Tables.RecordTag.Table.Name}] rt WITH (NOLOCK)
         JOIN @{tagIdsTable} tids ON
-            tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.RecordId.Name}]
+            tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.TagId.Name}]
         WHERE rt.[{Tables.RecordTag.RecordId.Name}] NOT IN (SELECT [{Tables.Record.Id.Name}] FROM @{recordIdsToConsiderTable})
         GROUP BY rt.[{Tables.RecordTag.RecordId.Name}]
         HAVING COUNT(rt.[{Tables.RecordTag.RecordId.Name}]) = @TagCount
     END
+
+	IF (EXISTS (SELECT TOP 1 [{Tables.Record.StringSerializedId.Name}] FROM @{stringSerializedIdsTable}))
+	BEGIN
+		INSERT INTO @{recordIdsToConsiderTable}
+		SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+		FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+		INNER JOIN @{stringSerializedIdsTable} ssid ON
+			r.[{Tables.Record.StringSerializedId.Name}] = ssid.[{Tables.Record.StringSerializedId.Name}] AND 
+			      (
+			        (r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = ssid.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
+					OR
+			        (r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = ssid.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+				  )
+	END
 
 	IF ((EXISTS (SELECT TOP 1 [{Tables.TypeWithVersion.Id.Name}] FROM @{deprecatedTypesTable})))
 	BEGIN
