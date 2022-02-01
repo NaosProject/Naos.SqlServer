@@ -18,6 +18,8 @@ namespace Naos.SqlServer.Domain.Test
 
     using global::FakeItEasy;
 
+    using global::Naos.Database.Domain;
+
     using global::OBeautifulCode.Assertion.Recipes;
     using global::OBeautifulCode.AutoFakeItEasy;
     using global::OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -33,190 +35,771 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class SqlServerConnectionDefinitionTest
+    public static partial class RecordFilterConvertedForStoredProcedureTest
     {
-        private static readonly StringRepresentationTestScenarios<SqlServerConnectionDefinition> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SqlServerConnectionDefinition>()
+        private static readonly StringRepresentationTestScenarios<RecordFilterConvertedForStoredProcedure> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<RecordFilterConvertedForStoredProcedure>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<SqlServerConnectionDefinition>
+                new StringRepresentationTestScenario<RecordFilterConvertedForStoredProcedure>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SqlServerConnectionDefinition>();
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<SqlServerConnectionDefinition>
+                        var result = new SystemUnderTestExpectedStringRepresentation<RecordFilterConvertedForStoredProcedure>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlServerConnectionDefinition: Server = {systemUnderTest.Server?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, InstanceName = {systemUnderTest.InstanceName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseName = {systemUnderTest.DatabaseName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {systemUnderTest.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Password = {systemUnderTest.Password?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.RecordFilterConvertedForStoredProcedure: InternalRecordIdsCsv = {systemUnderTest.InternalRecordIdsCsv?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, IdentifierTypeIdsCsv = {systemUnderTest.IdentifierTypeIdsCsv?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ObjectTypeIdsCsv = {systemUnderTest.ObjectTypeIdsCsv?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, StringIdsToMatchXml = {systemUnderTest.StringIdsToMatchXml?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, TagIdsCsv = {systemUnderTest.TagIdsCsv?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, TagMatchStrategy = {systemUnderTest.TagMatchStrategy.ToString() ?? "<null>"}, VersionMatchStrategy = {systemUnderTest.VersionMatchStrategy.ToString() ?? "<null>"}, DeprecatedIdEventTypeIdsCsv = {systemUnderTest.DeprecatedIdEventTypeIdsCsv?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly DeepCloneWithTestScenarios<SqlServerConnectionDefinition> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SqlServerConnectionDefinition>()
+        private static readonly ConstructorArgumentValidationTestScenarios<RecordFilterConvertedForStoredProcedure> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<RecordFilterConvertedForStoredProcedure>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlServerConnectionDefinition>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
                 {
-                    Name = "DeepCloneWithServer should deep clone object and replace Server with the provided server",
-                    WithPropertyName = "Server",
+                    Name = "constructor should throw ArgumentNullException when parameter 'internalRecordIdsCsv' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             null,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             referenceObject.StringIdsToMatchXml,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "internalRecordIdsCsv", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'internalRecordIdsCsv' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             Invariant($"  {Environment.NewLine}  "),
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             referenceObject.StringIdsToMatchXml,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "internalRecordIdsCsv", "white space", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'identifierTypeIdsCsv' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             null,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             referenceObject.StringIdsToMatchXml,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "identifierTypeIdsCsv", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'identifierTypeIdsCsv' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             Invariant($"  {Environment.NewLine}  "),
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             referenceObject.StringIdsToMatchXml,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "identifierTypeIdsCsv", "white space", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'objectTypeIdsCsv' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             null,
+                                             referenceObject.StringIdsToMatchXml,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "objectTypeIdsCsv", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'objectTypeIdsCsv' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             Invariant($"  {Environment.NewLine}  "),
+                                             referenceObject.StringIdsToMatchXml,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "objectTypeIdsCsv", "white space", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'stringIdsToMatchXml' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             null,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "stringIdsToMatchXml", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'stringIdsToMatchXml' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             Invariant($"  {Environment.NewLine}  "),
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "stringIdsToMatchXml", "white space", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'tagIdsCsv' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             referenceObject.StringIdsToMatchXml,
+                                             null,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "tagIdsCsv", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'tagIdsCsv' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             referenceObject.StringIdsToMatchXml,
+                                             Invariant($"  {Environment.NewLine}  "),
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             referenceObject.DeprecatedIdEventTypeIdsCsv);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "tagIdsCsv", "white space", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'deprecatedIdEventTypeIdsCsv' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             referenceObject.StringIdsToMatchXml,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             null);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "deprecatedIdEventTypeIdsCsv", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'deprecatedIdEventTypeIdsCsv' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new RecordFilterConvertedForStoredProcedure(
+                                             referenceObject.InternalRecordIdsCsv,
+                                             referenceObject.IdentifierTypeIdsCsv,
+                                             referenceObject.ObjectTypeIdsCsv,
+                                             referenceObject.StringIdsToMatchXml,
+                                             referenceObject.TagIdsCsv,
+                                             referenceObject.TagMatchStrategy,
+                                             referenceObject.VersionMatchStrategy,
+                                             Invariant($"  {Environment.NewLine}  "));
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "deprecatedIdEventTypeIdsCsv", "white space", },
+                });
+
+        private static readonly ConstructorPropertyAssignmentTestScenarios<RecordFilterConvertedForStoredProcedure> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<RecordFilterConvertedForStoredProcedure>()
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "InternalRecordIdsCsv should return same 'internalRecordIdsCsv' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = new RecordFilterConvertedForStoredProcedure(
+                                                      referenceObject.InternalRecordIdsCsv,
+                                                      referenceObject.IdentifierTypeIdsCsv,
+                                                      referenceObject.ObjectTypeIdsCsv,
+                                                      referenceObject.StringIdsToMatchXml,
+                                                      referenceObject.TagIdsCsv,
+                                                      referenceObject.TagMatchStrategy,
+                                                      referenceObject.VersionMatchStrategy,
+                                                      referenceObject.DeprecatedIdEventTypeIdsCsv),
+                            ExpectedPropertyValue = referenceObject.InternalRecordIdsCsv,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "InternalRecordIdsCsv",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "IdentifierTypeIdsCsv should return same 'identifierTypeIdsCsv' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = new RecordFilterConvertedForStoredProcedure(
+                                                      referenceObject.InternalRecordIdsCsv,
+                                                      referenceObject.IdentifierTypeIdsCsv,
+                                                      referenceObject.ObjectTypeIdsCsv,
+                                                      referenceObject.StringIdsToMatchXml,
+                                                      referenceObject.TagIdsCsv,
+                                                      referenceObject.TagMatchStrategy,
+                                                      referenceObject.VersionMatchStrategy,
+                                                      referenceObject.DeprecatedIdEventTypeIdsCsv),
+                            ExpectedPropertyValue = referenceObject.IdentifierTypeIdsCsv,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "IdentifierTypeIdsCsv",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "ObjectTypeIdsCsv should return same 'objectTypeIdsCsv' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = new RecordFilterConvertedForStoredProcedure(
+                                                      referenceObject.InternalRecordIdsCsv,
+                                                      referenceObject.IdentifierTypeIdsCsv,
+                                                      referenceObject.ObjectTypeIdsCsv,
+                                                      referenceObject.StringIdsToMatchXml,
+                                                      referenceObject.TagIdsCsv,
+                                                      referenceObject.TagMatchStrategy,
+                                                      referenceObject.VersionMatchStrategy,
+                                                      referenceObject.DeprecatedIdEventTypeIdsCsv),
+                            ExpectedPropertyValue = referenceObject.ObjectTypeIdsCsv,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "ObjectTypeIdsCsv",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "StringIdsToMatchXml should return same 'stringIdsToMatchXml' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = new RecordFilterConvertedForStoredProcedure(
+                                                      referenceObject.InternalRecordIdsCsv,
+                                                      referenceObject.IdentifierTypeIdsCsv,
+                                                      referenceObject.ObjectTypeIdsCsv,
+                                                      referenceObject.StringIdsToMatchXml,
+                                                      referenceObject.TagIdsCsv,
+                                                      referenceObject.TagMatchStrategy,
+                                                      referenceObject.VersionMatchStrategy,
+                                                      referenceObject.DeprecatedIdEventTypeIdsCsv),
+                            ExpectedPropertyValue = referenceObject.StringIdsToMatchXml,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "StringIdsToMatchXml",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "TagIdsCsv should return same 'tagIdsCsv' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = new RecordFilterConvertedForStoredProcedure(
+                                                      referenceObject.InternalRecordIdsCsv,
+                                                      referenceObject.IdentifierTypeIdsCsv,
+                                                      referenceObject.ObjectTypeIdsCsv,
+                                                      referenceObject.StringIdsToMatchXml,
+                                                      referenceObject.TagIdsCsv,
+                                                      referenceObject.TagMatchStrategy,
+                                                      referenceObject.VersionMatchStrategy,
+                                                      referenceObject.DeprecatedIdEventTypeIdsCsv),
+                            ExpectedPropertyValue = referenceObject.TagIdsCsv,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "TagIdsCsv",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "TagMatchStrategy should return same 'tagMatchStrategy' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = new RecordFilterConvertedForStoredProcedure(
+                                                      referenceObject.InternalRecordIdsCsv,
+                                                      referenceObject.IdentifierTypeIdsCsv,
+                                                      referenceObject.ObjectTypeIdsCsv,
+                                                      referenceObject.StringIdsToMatchXml,
+                                                      referenceObject.TagIdsCsv,
+                                                      referenceObject.TagMatchStrategy,
+                                                      referenceObject.VersionMatchStrategy,
+                                                      referenceObject.DeprecatedIdEventTypeIdsCsv),
+                            ExpectedPropertyValue = referenceObject.TagMatchStrategy,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "TagMatchStrategy",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "VersionMatchStrategy should return same 'versionMatchStrategy' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = new RecordFilterConvertedForStoredProcedure(
+                                                      referenceObject.InternalRecordIdsCsv,
+                                                      referenceObject.IdentifierTypeIdsCsv,
+                                                      referenceObject.ObjectTypeIdsCsv,
+                                                      referenceObject.StringIdsToMatchXml,
+                                                      referenceObject.TagIdsCsv,
+                                                      referenceObject.TagMatchStrategy,
+                                                      referenceObject.VersionMatchStrategy,
+                                                      referenceObject.DeprecatedIdEventTypeIdsCsv),
+                            ExpectedPropertyValue = referenceObject.VersionMatchStrategy,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "VersionMatchStrategy",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "DeprecatedIdEventTypeIdsCsv should return same 'deprecatedIdEventTypeIdsCsv' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = new RecordFilterConvertedForStoredProcedure(
+                                                      referenceObject.InternalRecordIdsCsv,
+                                                      referenceObject.IdentifierTypeIdsCsv,
+                                                      referenceObject.ObjectTypeIdsCsv,
+                                                      referenceObject.StringIdsToMatchXml,
+                                                      referenceObject.TagIdsCsv,
+                                                      referenceObject.TagMatchStrategy,
+                                                      referenceObject.VersionMatchStrategy,
+                                                      referenceObject.DeprecatedIdEventTypeIdsCsv),
+                            ExpectedPropertyValue = referenceObject.DeprecatedIdEventTypeIdsCsv,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "DeprecatedIdEventTypeIdsCsv",
+                });
+
+        private static readonly DeepCloneWithTestScenarios<RecordFilterConvertedForStoredProcedure> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<RecordFilterConvertedForStoredProcedure>()
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "DeepCloneWithInternalRecordIdsCsv should deep clone object and replace InternalRecordIdsCsv with the provided internalRecordIdsCsv",
+                    WithPropertyName = "InternalRecordIdsCsv",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SqlServerConnectionDefinition>();
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
-                        var referenceObject = A.Dummy<SqlServerConnectionDefinition>().ThatIs(_ => !systemUnderTest.Server.IsEqualTo(_.Server));
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>().ThatIs(_ => !systemUnderTest.InternalRecordIdsCsv.IsEqualTo(_.InternalRecordIdsCsv));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerConnectionDefinition>
+                        var result = new SystemUnderTestDeepCloneWithValue<RecordFilterConvertedForStoredProcedure>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Server,
+                            DeepCloneWithValue = referenceObject.InternalRecordIdsCsv,
                         };
 
                         return result;
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlServerConnectionDefinition>
+                new DeepCloneWithTestScenario<RecordFilterConvertedForStoredProcedure>
                 {
-                    Name = "DeepCloneWithInstanceName should deep clone object and replace InstanceName with the provided instanceName",
-                    WithPropertyName = "InstanceName",
+                    Name = "DeepCloneWithIdentifierTypeIdsCsv should deep clone object and replace IdentifierTypeIdsCsv with the provided identifierTypeIdsCsv",
+                    WithPropertyName = "IdentifierTypeIdsCsv",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SqlServerConnectionDefinition>();
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
-                        var referenceObject = A.Dummy<SqlServerConnectionDefinition>().ThatIs(_ => !systemUnderTest.InstanceName.IsEqualTo(_.InstanceName));
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>().ThatIs(_ => !systemUnderTest.IdentifierTypeIdsCsv.IsEqualTo(_.IdentifierTypeIdsCsv));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerConnectionDefinition>
+                        var result = new SystemUnderTestDeepCloneWithValue<RecordFilterConvertedForStoredProcedure>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.InstanceName,
+                            DeepCloneWithValue = referenceObject.IdentifierTypeIdsCsv,
                         };
 
                         return result;
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlServerConnectionDefinition>
+                new DeepCloneWithTestScenario<RecordFilterConvertedForStoredProcedure>
                 {
-                    Name = "DeepCloneWithDatabaseName should deep clone object and replace DatabaseName with the provided databaseName",
-                    WithPropertyName = "DatabaseName",
+                    Name = "DeepCloneWithObjectTypeIdsCsv should deep clone object and replace ObjectTypeIdsCsv with the provided objectTypeIdsCsv",
+                    WithPropertyName = "ObjectTypeIdsCsv",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SqlServerConnectionDefinition>();
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
-                        var referenceObject = A.Dummy<SqlServerConnectionDefinition>().ThatIs(_ => !systemUnderTest.DatabaseName.IsEqualTo(_.DatabaseName));
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>().ThatIs(_ => !systemUnderTest.ObjectTypeIdsCsv.IsEqualTo(_.ObjectTypeIdsCsv));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerConnectionDefinition>
+                        var result = new SystemUnderTestDeepCloneWithValue<RecordFilterConvertedForStoredProcedure>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.DatabaseName,
+                            DeepCloneWithValue = referenceObject.ObjectTypeIdsCsv,
                         };
 
                         return result;
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlServerConnectionDefinition>
+                new DeepCloneWithTestScenario<RecordFilterConvertedForStoredProcedure>
                 {
-                    Name = "DeepCloneWithUserName should deep clone object and replace UserName with the provided userName",
-                    WithPropertyName = "UserName",
+                    Name = "DeepCloneWithStringIdsToMatchXml should deep clone object and replace StringIdsToMatchXml with the provided stringIdsToMatchXml",
+                    WithPropertyName = "StringIdsToMatchXml",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SqlServerConnectionDefinition>();
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
-                        var referenceObject = A.Dummy<SqlServerConnectionDefinition>().ThatIs(_ => !systemUnderTest.UserName.IsEqualTo(_.UserName));
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>().ThatIs(_ => !systemUnderTest.StringIdsToMatchXml.IsEqualTo(_.StringIdsToMatchXml));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerConnectionDefinition>
+                        var result = new SystemUnderTestDeepCloneWithValue<RecordFilterConvertedForStoredProcedure>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.UserName,
+                            DeepCloneWithValue = referenceObject.StringIdsToMatchXml,
                         };
 
                         return result;
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlServerConnectionDefinition>
+                new DeepCloneWithTestScenario<RecordFilterConvertedForStoredProcedure>
                 {
-                    Name = "DeepCloneWithPassword should deep clone object and replace Password with the provided password",
-                    WithPropertyName = "Password",
+                    Name = "DeepCloneWithTagIdsCsv should deep clone object and replace TagIdsCsv with the provided tagIdsCsv",
+                    WithPropertyName = "TagIdsCsv",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SqlServerConnectionDefinition>();
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
-                        var referenceObject = A.Dummy<SqlServerConnectionDefinition>().ThatIs(_ => !systemUnderTest.Password.IsEqualTo(_.Password));
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>().ThatIs(_ => !systemUnderTest.TagIdsCsv.IsEqualTo(_.TagIdsCsv));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerConnectionDefinition>
+                        var result = new SystemUnderTestDeepCloneWithValue<RecordFilterConvertedForStoredProcedure>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Password,
+                            DeepCloneWithValue = referenceObject.TagIdsCsv,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "DeepCloneWithTagMatchStrategy should deep clone object and replace TagMatchStrategy with the provided tagMatchStrategy",
+                    WithPropertyName = "TagMatchStrategy",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>().ThatIs(_ => !systemUnderTest.TagMatchStrategy.IsEqualTo(_.TagMatchStrategy));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.TagMatchStrategy,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "DeepCloneWithVersionMatchStrategy should deep clone object and replace VersionMatchStrategy with the provided versionMatchStrategy",
+                    WithPropertyName = "VersionMatchStrategy",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>().ThatIs(_ => !systemUnderTest.VersionMatchStrategy.IsEqualTo(_.VersionMatchStrategy));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.VersionMatchStrategy,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<RecordFilterConvertedForStoredProcedure>
+                {
+                    Name = "DeepCloneWithDeprecatedIdEventTypeIdsCsv should deep clone object and replace DeprecatedIdEventTypeIdsCsv with the provided deprecatedIdEventTypeIdsCsv",
+                    WithPropertyName = "DeprecatedIdEventTypeIdsCsv",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
+
+                        var referenceObject = A.Dummy<RecordFilterConvertedForStoredProcedure>().ThatIs(_ => !systemUnderTest.DeprecatedIdEventTypeIdsCsv.IsEqualTo(_.DeprecatedIdEventTypeIdsCsv));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<RecordFilterConvertedForStoredProcedure>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.DeprecatedIdEventTypeIdsCsv,
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly SqlServerConnectionDefinition ReferenceObjectForEquatableTestScenarios = A.Dummy<SqlServerConnectionDefinition>();
+        private static readonly RecordFilterConvertedForStoredProcedure ReferenceObjectForEquatableTestScenarios = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
-        private static readonly EquatableTestScenarios<SqlServerConnectionDefinition> EquatableTestScenarios = new EquatableTestScenarios<SqlServerConnectionDefinition>()
+        private static readonly EquatableTestScenarios<RecordFilterConvertedForStoredProcedure> EquatableTestScenarios = new EquatableTestScenarios<RecordFilterConvertedForStoredProcedure>()
             .AddScenario(() =>
-                new EquatableTestScenario<SqlServerConnectionDefinition>
+                new EquatableTestScenario<RecordFilterConvertedForStoredProcedure>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SqlServerConnectionDefinition[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new RecordFilterConvertedForStoredProcedure[]
                     {
-                        new SqlServerConnectionDefinition
-                            {
-                                Server       = ReferenceObjectForEquatableTestScenarios.Server,
-                                InstanceName = ReferenceObjectForEquatableTestScenarios.InstanceName,
-                                DatabaseName = ReferenceObjectForEquatableTestScenarios.DatabaseName,
-                                UserName     = ReferenceObjectForEquatableTestScenarios.UserName,
-                                Password     = ReferenceObjectForEquatableTestScenarios.Password,
-                            },
+                        new RecordFilterConvertedForStoredProcedure(
+                                ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml,
+                                ReferenceObjectForEquatableTestScenarios.TagIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.TagMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new SqlServerConnectionDefinition[]
+                    ObjectsThatAreNotEqualToReferenceObject = new RecordFilterConvertedForStoredProcedure[]
                     {
-                        new SqlServerConnectionDefinition
-                            {
-                                Server       = A.Dummy<SqlServerConnectionDefinition>().Whose(_ => !_.Server.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Server)).Server,
-                                InstanceName = ReferenceObjectForEquatableTestScenarios.InstanceName,
-                                DatabaseName = ReferenceObjectForEquatableTestScenarios.DatabaseName,
-                                UserName     = ReferenceObjectForEquatableTestScenarios.UserName,
-                                Password     = ReferenceObjectForEquatableTestScenarios.Password,
-                            },
-                        new SqlServerConnectionDefinition
-                            {
-                                Server       = ReferenceObjectForEquatableTestScenarios.Server,
-                                InstanceName = A.Dummy<SqlServerConnectionDefinition>().Whose(_ => !_.InstanceName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.InstanceName)).InstanceName,
-                                DatabaseName = ReferenceObjectForEquatableTestScenarios.DatabaseName,
-                                UserName     = ReferenceObjectForEquatableTestScenarios.UserName,
-                                Password     = ReferenceObjectForEquatableTestScenarios.Password,
-                            },
-                        new SqlServerConnectionDefinition
-                            {
-                                Server       = ReferenceObjectForEquatableTestScenarios.Server,
-                                InstanceName = ReferenceObjectForEquatableTestScenarios.InstanceName,
-                                DatabaseName = A.Dummy<SqlServerConnectionDefinition>().Whose(_ => !_.DatabaseName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DatabaseName)).DatabaseName,
-                                UserName     = ReferenceObjectForEquatableTestScenarios.UserName,
-                                Password     = ReferenceObjectForEquatableTestScenarios.Password,
-                            },
-                        new SqlServerConnectionDefinition
-                            {
-                                Server       = ReferenceObjectForEquatableTestScenarios.Server,
-                                InstanceName = ReferenceObjectForEquatableTestScenarios.InstanceName,
-                                DatabaseName = ReferenceObjectForEquatableTestScenarios.DatabaseName,
-                                UserName     = A.Dummy<SqlServerConnectionDefinition>().Whose(_ => !_.UserName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.UserName)).UserName,
-                                Password     = ReferenceObjectForEquatableTestScenarios.Password,
-                            },
-                        new SqlServerConnectionDefinition
-                            {
-                                Server       = ReferenceObjectForEquatableTestScenarios.Server,
-                                InstanceName = ReferenceObjectForEquatableTestScenarios.InstanceName,
-                                DatabaseName = ReferenceObjectForEquatableTestScenarios.DatabaseName,
-                                UserName     = ReferenceObjectForEquatableTestScenarios.UserName,
-                                Password     = A.Dummy<SqlServerConnectionDefinition>().Whose(_ => !_.Password.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Password)).Password,
-                            },
+                        new RecordFilterConvertedForStoredProcedure(
+                                A.Dummy<RecordFilterConvertedForStoredProcedure>().Whose(_ => !_.InternalRecordIdsCsv.IsEqualTo(ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv)).InternalRecordIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml,
+                                ReferenceObjectForEquatableTestScenarios.TagIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.TagMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv),
+                        new RecordFilterConvertedForStoredProcedure(
+                                ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv,
+                                A.Dummy<RecordFilterConvertedForStoredProcedure>().Whose(_ => !_.IdentifierTypeIdsCsv.IsEqualTo(ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv)).IdentifierTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml,
+                                ReferenceObjectForEquatableTestScenarios.TagIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.TagMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv),
+                        new RecordFilterConvertedForStoredProcedure(
+                                ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv,
+                                A.Dummy<RecordFilterConvertedForStoredProcedure>().Whose(_ => !_.ObjectTypeIdsCsv.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv)).ObjectTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml,
+                                ReferenceObjectForEquatableTestScenarios.TagIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.TagMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv),
+                        new RecordFilterConvertedForStoredProcedure(
+                                ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv,
+                                A.Dummy<RecordFilterConvertedForStoredProcedure>().Whose(_ => !_.StringIdsToMatchXml.IsEqualTo(ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml)).StringIdsToMatchXml,
+                                ReferenceObjectForEquatableTestScenarios.TagIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.TagMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv),
+                        new RecordFilterConvertedForStoredProcedure(
+                                ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml,
+                                A.Dummy<RecordFilterConvertedForStoredProcedure>().Whose(_ => !_.TagIdsCsv.IsEqualTo(ReferenceObjectForEquatableTestScenarios.TagIdsCsv)).TagIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.TagMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv),
+                        new RecordFilterConvertedForStoredProcedure(
+                                ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml,
+                                ReferenceObjectForEquatableTestScenarios.TagIdsCsv,
+                                A.Dummy<RecordFilterConvertedForStoredProcedure>().Whose(_ => !_.TagMatchStrategy.IsEqualTo(ReferenceObjectForEquatableTestScenarios.TagMatchStrategy)).TagMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv),
+                        new RecordFilterConvertedForStoredProcedure(
+                                ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml,
+                                ReferenceObjectForEquatableTestScenarios.TagIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.TagMatchStrategy,
+                                A.Dummy<RecordFilterConvertedForStoredProcedure>().Whose(_ => !_.VersionMatchStrategy.IsEqualTo(ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy)).VersionMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv),
+                        new RecordFilterConvertedForStoredProcedure(
+                                ReferenceObjectForEquatableTestScenarios.InternalRecordIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.IdentifierTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.ObjectTypeIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.StringIdsToMatchXml,
+                                ReferenceObjectForEquatableTestScenarios.TagIdsCsv,
+                                ReferenceObjectForEquatableTestScenarios.TagMatchStrategy,
+                                ReferenceObjectForEquatableTestScenarios.VersionMatchStrategy,
+                                A.Dummy<RecordFilterConvertedForStoredProcedure>().Whose(_ => !_.DeprecatedIdEventTypeIdsCsv.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DeprecatedIdEventTypeIdsCsv)).DeprecatedIdEventTypeIdsCsv),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -246,12 +829,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SqlServerConnectionDefinition___Should_implement_IModel_of_SqlServerConnectionDefinition___When_reflecting()
+            public static void RecordFilterConvertedForStoredProcedure___Should_implement_IModel_of_RecordFilterConvertedForStoredProcedure___When_reflecting()
             {
                 // Arrange
-                var type = typeof(SqlServerConnectionDefinition);
+                var type = typeof(RecordFilterConvertedForStoredProcedure);
 
-                var expectedModelMethods = typeof(IModel<SqlServerConnectionDefinition>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<RecordFilterConvertedForStoredProcedure>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -261,7 +844,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SqlServerConnectionDefinition>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<RecordFilterConvertedForStoredProcedure>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -279,10 +862,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SqlServerConnectionDefinition___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void RecordFilterConvertedForStoredProcedure___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(SqlServerConnectionDefinition);
+                var type = typeof(RecordFilterConvertedForStoredProcedure);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -327,6 +910,122 @@ namespace Naos.SqlServer.Domain.Test
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
+        public static class Constructing
+        {
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Constructor___Should_throw___When_parameters_are_not_valid()
+            {
+                var scenarios = ConstructorArgumentValidationTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actual = Record.Exception(scenario.ConstructionFunc);
+
+                    // Assert
+                    actual.AsTest().Must().BeOfType(scenario.ExpectedExceptionType, because: scenario.Id);
+
+                    foreach(var expected in scenario.ExpectedExceptionMessageContains ?? new List<string>())
+                    {
+                        actual.Message.AsTest().Must().ContainString(expected, because: scenario.Id);
+                    }
+
+                    if (scenario.ExpectedExceptionMessageEquals != null)
+                    {
+                        actual.Message.AsTest().Must().BeEqualTo(scenario.ExpectedExceptionMessageEquals, because: scenario.Id);
+                    }
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "referenceObject")]
+            public static void Properties___Should_be_assigned_by_constructor_to_expected_value___When_getting()
+            {
+                var scenarios = ConstructorPropertyAssignmentTestScenarios.ValidateAndPrepareForTesting();
+
+                var asTestMethodInfo = typeof(WorkflowExtensions).GetMethodFiltered(nameof(WorkflowExtensions.AsTest));
+
+                var beEqualToMethodInfo = typeof(Verifications).GetMethodFiltered(nameof(Verifications.BeEqualTo));
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange
+                    if ((scenario.PropertyName == ConstructorPropertyAssignmentTestScenario.NoPropertiesAssignedInConstructorScenarioPropertyName) || (scenario.PropertyName == ConstructorPropertyAssignmentTestScenario.ForceGeneratedTestsToPassAndWriteMyOwnScenarioPropertyName))
+                    {
+                        continue;
+                    }
+
+                    // Act
+                    var actual = scenario.Property.GetValue(scenario.SystemUnderTest);
+
+                    // Assert
+                    // When the scenario specifies CompareActualToExpectedUsing.DefaultStrategy, ValidateAndPrepareForTesting()
+                    // will check if ExpectedPropertyValue == null.  If so, it sets CompareActualToExpectedUsing = ReferenceEquality.
+                    // If not, then it checks the runtime type of ExpectedPropertyValue and if it's a value type,
+                    // then it sets CompareActualToExpectedUsing = ValueEquality, otherwise it uses ValueEquality.
+                    // So a boxed value type is handled properly (using ValueEquality instead of ReferenceEquality).
+                    if (scenario.CompareActualToExpectedUsing == CompareActualToExpectedUsing.ValueEquality)
+                    {
+                        // The below reflection code is used in lieu of the following single line of code
+                        // so that equality is determined based on the property type instead of using
+                        // OBeautifulCode.Equality.Recipes.ObjectEqualityComparer, which will return false
+                        // when the objects being compared have different runtime types.  For example, if
+                        // the property type is IReadOnlyCollection<string> and we are comparing an empty array
+                        // an empty List, the assertion below would fail inappropriately.
+                        // actual.AsTest().Must().BeEqualTo(scenario.ExpectedPropertyValue, because: scenario.Id);
+
+                        var propertyType = scenario.Property.PropertyType;
+
+                        var asTestMethodInfoToInvoke = asTestMethodInfo.MakeGenericMethod(propertyType);
+
+                        var assertionTracker = asTestMethodInfoToInvoke.Invoke(null, new[] { actual, Type.Missing });
+
+                        assertionTracker.Must();
+
+                        var mustBeEqualToMethodInfoToInvoke = beEqualToMethodInfo.MakeGenericMethod(propertyType);
+
+                        mustBeEqualToMethodInfoToInvoke.Invoke(null, new[]{ assertionTracker, scenario.ExpectedPropertyValue, scenario.Id, Type.Missing, Type.Missing });
+                    }
+                    else if (scenario.CompareActualToExpectedUsing == CompareActualToExpectedUsing.ReferenceEquality)
+                    {
+                        actual.AsTest().Must().BeSameReferenceAs(scenario.ExpectedPropertyValue, because: scenario.Id);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("This CompareActualToExpectedUsing is not supported: " + scenario.CompareActualToExpectedUsing);
+                    }
+                }
+            }
+        }
+
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+        [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
         public static class Cloning
         {
             [Fact]
@@ -346,10 +1045,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SqlServerConnectionDefinition>();
+                var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
                 // Act
-                var actual = (SqlServerConnectionDefinition)systemUnderTest.Clone();
+                var actual = (RecordFilterConvertedForStoredProcedure)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -373,7 +1072,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SqlServerConnectionDefinition>();
+                var systemUnderTest = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -399,7 +1098,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Server", "InstanceName", "DatabaseName", "UserName", "Password" };
+                var propertyNames = new string[] { "InternalRecordIdsCsv", "IdentifierTypeIdsCsv", "ObjectTypeIdsCsv", "StringIdsToMatchXml", "TagIdsCsv", "TagMatchStrategy", "VersionMatchStrategy", "DeprecatedIdEventTypeIdsCsv" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -412,12 +1111,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (SqlServerConnectionDefinition)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (RecordFilterConvertedForStoredProcedure)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach(var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(SqlServerConnectionDefinition).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(RecordFilterConvertedForStoredProcedure).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -479,7 +1178,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlServerConnectionDefinition>();
+                var expected = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -508,7 +1207,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlServerConnectionDefinition>();
+                var expected = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -537,7 +1236,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlServerConnectionDefinition>();
+                var expected = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -566,7 +1265,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SqlServerConnectionDefinition>();
+                var expected = A.Dummy<RecordFilterConvertedForStoredProcedure>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -600,8 +1299,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SqlServerConnectionDefinition systemUnderTest1 = null;
-                SqlServerConnectionDefinition systemUnderTest2 = null;
+                RecordFilterConvertedForStoredProcedure systemUnderTest1 = null;
+                RecordFilterConvertedForStoredProcedure systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -631,7 +1330,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlServerConnectionDefinition systemUnderTest = null;
+                    RecordFilterConvertedForStoredProcedure systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -780,8 +1479,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SqlServerConnectionDefinition systemUnderTest1 = null;
-                SqlServerConnectionDefinition systemUnderTest2 = null;
+                RecordFilterConvertedForStoredProcedure systemUnderTest1 = null;
+                RecordFilterConvertedForStoredProcedure systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -811,7 +1510,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlServerConnectionDefinition systemUnderTest = null;
+                    RecordFilterConvertedForStoredProcedure systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -957,14 +1656,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlServerConnectionDefinition___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_RecordFilterConvertedForStoredProcedure___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlServerConnectionDefinition systemUnderTest = null;
+                    RecordFilterConvertedForStoredProcedure systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -988,7 +1687,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlServerConnectionDefinition___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_RecordFilterConvertedForStoredProcedure___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1016,7 +1715,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlServerConnectionDefinition___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_RecordFilterConvertedForStoredProcedure___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1044,7 +1743,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlServerConnectionDefinition___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_RecordFilterConvertedForStoredProcedure___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1072,7 +1771,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlServerConnectionDefinition___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_RecordFilterConvertedForStoredProcedure___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

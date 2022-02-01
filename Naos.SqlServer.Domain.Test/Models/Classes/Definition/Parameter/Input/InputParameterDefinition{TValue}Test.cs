@@ -33,14 +33,14 @@ namespace Naos.SqlServer.Domain.Test
             ConstructorArgumentValidationTestScenarios
                 .RemoveAllScenarios()
                 .AddScenario(() =>
-                    new ConstructorArgumentValidationTestScenario<InputParameterDefinition<int?>>
+                    new ConstructorArgumentValidationTestScenario<InputParameterDefinition<Version>>
                     {
                         Name = "constructor should throw ArgumentNullException when parameter 'name' is null scenario",
                         ConstructionFunc = () =>
                         {
-                            var referenceObject = A.Dummy<InputParameterDefinition<int?>>();
+                            var referenceObject = A.Dummy<InputParameterDefinition<Version>>();
 
-                            var result = new InputParameterDefinition<int?>(
+                            var result = new InputParameterDefinition<Version>(
                                                  null,
                                                  referenceObject.SqlDataType,
                                                  referenceObject.Value);
@@ -51,14 +51,14 @@ namespace Naos.SqlServer.Domain.Test
                         ExpectedExceptionMessageContains = new[] { "name", },
                     })
                 .AddScenario(() =>
-                    new ConstructorArgumentValidationTestScenario<InputParameterDefinition<int?>>
+                    new ConstructorArgumentValidationTestScenario<InputParameterDefinition<Version>>
                     {
                         Name = "constructor should throw ArgumentException when parameter 'name' is white space scenario",
                         ConstructionFunc = () =>
                         {
-                            var referenceObject = A.Dummy<InputParameterDefinition<int?>>();
+                            var referenceObject = A.Dummy<InputParameterDefinition<Version>>();
 
-                            var result = new InputParameterDefinition<int?>(
+                            var result = new InputParameterDefinition<Version>(
                                                  Invariant($"  {Environment.NewLine}  "),
                                                  referenceObject.SqlDataType,
                                                  referenceObject.Value);
@@ -69,14 +69,14 @@ namespace Naos.SqlServer.Domain.Test
                         ExpectedExceptionMessageContains = new[] { "name", "white space", },
                     })
                 .AddScenario(() =>
-                    new ConstructorArgumentValidationTestScenario<InputParameterDefinition<int?>>
+                    new ConstructorArgumentValidationTestScenario<InputParameterDefinition<Version>>
                     {
                         Name = "constructor should throw ArgumentException when parameter 'name' is not alphanumeric nor @ nor _",
                         ConstructionFunc = () =>
                         {
-                            var referenceObject = A.Dummy<InputParameterDefinition<int?>>();
+                            var referenceObject = A.Dummy<InputParameterDefinition<Version>>();
 
-                            var result = new InputParameterDefinition<int?>(
+                            var result = new InputParameterDefinition<Version>(
                                 referenceObject.Name + "^",
                                 referenceObject.SqlDataType,
                                 referenceObject.Value);
@@ -87,14 +87,14 @@ namespace Naos.SqlServer.Domain.Test
                         ExpectedExceptionMessageContains = new[] { "name", "alphanumeric", },
                     })
                 .AddScenario(() =>
-                    new ConstructorArgumentValidationTestScenario<InputParameterDefinition<int?>>
+                    new ConstructorArgumentValidationTestScenario<InputParameterDefinition<Version>>
                     {
                         Name = "constructor should throw ArgumentNullException when parameter 'sqlDataType' is null scenario",
                         ConstructionFunc = () =>
                         {
-                            var referenceObject = A.Dummy<InputParameterDefinition<int?>>();
+                            var referenceObject = A.Dummy<InputParameterDefinition<Version>>();
 
-                            var result = new InputParameterDefinition<int?>(
+                            var result = new InputParameterDefinition<Version>(
                                                  referenceObject.Name,
                                                  null,
                                                  referenceObject.Value);
@@ -108,36 +108,36 @@ namespace Naos.SqlServer.Domain.Test
             EquatableTestScenarios
                 .RemoveAllScenarios()
                 .AddScenario(() =>
-                    new EquatableTestScenario<InputParameterDefinition<int?>>
+                    new EquatableTestScenario<InputParameterDefinition<Version>>
                     {
                         Name = "Default Code Generated Scenario",
                         ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                        ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new InputParameterDefinition<int?>[]
+                        ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new InputParameterDefinition<Version>[]
                         {
-                            new InputParameterDefinition<int?>(
+                            new InputParameterDefinition<Version>(
                                     ReferenceObjectForEquatableTestScenarios.Name,
                                     ReferenceObjectForEquatableTestScenarios.SqlDataType,
                                     ReferenceObjectForEquatableTestScenarios.Value),
                         },
-                        ObjectsThatAreNotEqualToReferenceObject = new InputParameterDefinition<int?>[]
+                        ObjectsThatAreNotEqualToReferenceObject = new InputParameterDefinition<Version>[]
                         {
-                            new InputParameterDefinition<int?>(
-                                    A.Dummy<InputParameterDefinition<int?>>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
+                            new InputParameterDefinition<Version>(
+                                    A.Dummy<InputParameterDefinition<Version>>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
                                     ReferenceObjectForEquatableTestScenarios.SqlDataType,
                                     ReferenceObjectForEquatableTestScenarios.Value),
-                            new InputParameterDefinition<int?>(
+                            new InputParameterDefinition<Version>(
                                     ReferenceObjectForEquatableTestScenarios.Name,
                                     ReferenceObjectForEquatableTestScenarios.SqlDataType,
-                                    A.Dummy<InputParameterDefinition<int?>>().Whose(_ => !_.Value.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Value)).Value),
+                                    A.Dummy<InputParameterDefinition<Version>>().Whose(_ => !_.Value.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Value)).Value),
                         },
                         ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                         {
                             A.Dummy<object>(),
                             A.Dummy<string>(),
                             A.Dummy<int>(),
-                            A.Dummy<int?>(),
+                            A.Dummy<Version>(),
                             A.Dummy<Guid>(),
-                            A.Dummy<OutputParameterDefinition<int?>>(),
+                            A.Dummy<OutputParameterDefinition<Version>>(),
                         },
                     });
         }
@@ -146,10 +146,10 @@ namespace Naos.SqlServer.Domain.Test
         public static void Constructor___Should_throw_ArgumentException___When_sqlDataType_is_not_compatible_with_TValue()
         {
             // Arrange
-            var referenceObject = A.Dummy<InputParameterDefinition<int?>>();
+            var referenceObject = A.Dummy<InputParameterDefinition<Version>>();
 
             // Act
-            var actual = Record.Exception(() => new InputParameterDefinition<int?>(
+            var actual = Record.Exception(() => new InputParameterDefinition<Version>(
                 referenceObject.Name,
                 A.Dummy<SqlDataTypeRepresentationBase>().Whose(_ => _.GetType() != typeof(IntSqlDataTypeRepresentation)),
                 referenceObject.Value));
@@ -164,10 +164,10 @@ namespace Naos.SqlServer.Domain.Test
         public static void Constructor___Should_not_throw___When_parameter_name_contains_at_character_or_underscore_character()
         {
             // Arrange
-            var referenceObject = A.Dummy<InputParameterDefinition<int?>>();
+            var referenceObject = A.Dummy<InputParameterDefinition<Version>>();
 
             // Act
-            var actual = Record.Exception(() => new InputParameterDefinition<int?>(
+            var actual = Record.Exception(() => new InputParameterDefinition<Version>(
                 "@" + referenceObject.Name + "_",
                 referenceObject.SqlDataType,
                 referenceObject.Value));

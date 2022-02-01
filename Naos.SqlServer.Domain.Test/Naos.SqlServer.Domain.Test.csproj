@@ -362,6 +362,10 @@
       <DependentUpon>ScriptedObjectTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\ProjectInfo.cs" />
+    <Compile Include="RecordFilterConvertedForStoredProcedureTest.cs" />
+    <Compile Include="RecordFilterConvertedForStoredProcedureTest.designer.cs">
+      <DependentUpon>RecordFilterConvertedForStoredProcedureTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="SerializationConfigurationTypes.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\SqlDataTypeRepresentationBaseTest.cs" />
