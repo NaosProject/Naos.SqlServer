@@ -28,7 +28,7 @@ namespace Naos.SqlServer.Domain
             string tableName,
             IReadOnlyCollection<ColumnDescription> columns)
         {
-            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
             tableSchema.MustForArg(nameof(tableSchema)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(TableDefinition.TableSchemaNameAlphanumericOtherAllowedCharacters);
             tableName.MustForArg(nameof(tableName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(TableDefinition.TableNameAlphanumericOtherAllowedCharacters);
             columns.MustForArg(nameof(columns)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();

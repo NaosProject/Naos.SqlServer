@@ -43,6 +43,9 @@ namespace Naos.SqlServer.Domain.Test
             AutoFixtureBackedDummyFactory.AddDummyCreator(() =>
                 (IResourceLocator)A.Dummy<SqlServerLocator>());
 
+            AutoFixtureBackedDummyFactory.AddDummyCreator(() =>
+                (IDatabaseDefinition)A.Dummy<SqlServerDatabaseDefinition>());
+
             // --------------------------- Data Type Representation -----------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () =>
@@ -109,7 +112,7 @@ namespace Naos.SqlServer.Domain.Test
                     A.Dummy<SqlDataTypeRepresentationBase>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new DatabaseDefinition(
+                () => new SqlServerDatabaseDefinition(
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<DatabaseType>(),
                     A.Dummy<RecoveryMode>(),

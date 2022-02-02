@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DatabaseDefinitionTest.cs" company="Naos Project">
+// <copyright file="SqlServerDatabaseDefinitionTest.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -23,24 +23,24 @@ namespace Naos.SqlServer.Domain.Test
     using static System.FormattableString;
 
     [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = ObcSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
-    public static partial class DatabaseDefinitionTest
+    public static partial class SqlServerDatabaseDefinitionTest
     {
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = ObcSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
-        static DatabaseDefinitionTest()
+        static SqlServerDatabaseDefinitionTest()
         {
             ConstructorArgumentValidationTestScenarios
             .RemoveAllScenarios()
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name = "constructor should throw ArgumentNullException when parameter 'databaseName' is null scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     null,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -65,14 +65,14 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name = "constructor should throw ArgumentException when parameter 'databaseName' is white space scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     Invariant($"  {Environment.NewLine}  "),
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -98,14 +98,14 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name = "constructor should throw ArgumentException when parameter 'databaseName' is 'invalid' scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     "not-valid",
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -131,14 +131,14 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name = "constructor should throw ArgumentException when parameter 'dataFileLogicalName' is 'invalid' scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -164,15 +164,15 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name =
                                 "constructor should throw ArgumentException when parameter 'dataFilePath' is 'invalid for FileInfo' when specified scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -197,15 +197,15 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name =
                                 "constructor should throw ArgumentException when parameter 'dataFilePath' is 'invalid with single quote' when specified scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -230,15 +230,15 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name =
                                 "constructor should throw ArgumentException when parameter 'dataFilePath' is 'invalid with double quote' when specified scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -263,15 +263,15 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name =
                                 "constructor should throw ArgumentException when parameter 'dataFilePath' is 'invalid with semicolon' when specified scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -296,14 +296,14 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name = "constructor should throw ArgumentException when parameter 'logFileLogicalName' is 'invalid' scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -328,15 +328,15 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name =
                                 "constructor should throw ArgumentException when parameter 'logFilePath' is 'invalid with FileInfo' when specified scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -361,15 +361,15 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name =
                                 "constructor should throw ArgumentException when parameter 'logFilePath' is 'invalid with single quote' when specified scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -394,15 +394,15 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name =
                                 "constructor should throw ArgumentException when parameter 'logFilePath' is 'invalid with double quote' when specified scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -427,15 +427,15 @@ namespace Naos.SqlServer.Domain.Test
                         })
                .AddScenario(
                     () =>
-                        new ConstructorArgumentValidationTestScenario<DatabaseDefinition>
+                        new ConstructorArgumentValidationTestScenario<SqlServerDatabaseDefinition>
                         {
                             Name =
                                 "constructor should throw ArgumentException when parameter 'logFilePath' is 'invalid with semicolon' when specified scenario",
                             ConstructionFunc = () =>
                             {
-                                var referenceObject = A.Dummy<DatabaseDefinition>();
+                                var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
-                                var result = new DatabaseDefinition(
+                                var result = new SqlServerDatabaseDefinition(
                                     referenceObject.DatabaseName,
                                     referenceObject.DatabaseType,
                                     referenceObject.RecoveryMode,
@@ -464,10 +464,10 @@ namespace Naos.SqlServer.Domain.Test
         public static void Constructor___Should_not_throw___When_names_contain_allowed_non_alphanumeric_characters()
         {
             // Arrange
-            var referenceObject = A.Dummy<DatabaseDefinition>();
+            var referenceObject = A.Dummy<SqlServerDatabaseDefinition>();
 
             // Act
-            var actual = Record.Exception(() => new DatabaseDefinition(
+            var actual = Record.Exception(() => new SqlServerDatabaseDefinition(
                 referenceObject.DatabaseName + " _",
                 referenceObject.DatabaseType,
                 referenceObject.RecoveryMode,

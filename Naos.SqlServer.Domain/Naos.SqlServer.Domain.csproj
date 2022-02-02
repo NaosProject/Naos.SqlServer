@@ -39,8 +39,8 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Naos.Database.Domain, Version=1.1.351.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Naos.Database.Domain.1.1.351\lib\net462\Naos.Database.Domain.dll</HintPath>
+    <Reference Include="Naos.Database.Domain, Version=1.1.353.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Naos.Database.Domain.1.1.353\lib\net462\Naos.Database.Domain.dll</HintPath>
     </Reference>
     <Reference Include="OBeautifulCode.Compression, Version=1.0.24.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OBeautifulCode.Compression.1.0.24\lib\net462\OBeautifulCode.Compression.dll</HintPath>
@@ -115,6 +115,9 @@
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetHandlingStatuses.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetLatestStringSerializedObject.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetInternalRecordIds.cs" />
+    <Compile Include="Models\Classes\Definition\SqlServerDatabaseDefinition.designer.cs">
+      <DependentUpon>SqlServerDatabaseDefinition.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Definition\TableDefinition.designer.cs">
       <DependentUpon>TableDefinition.cs</DependentUpon>
     </Compile>
@@ -161,9 +164,6 @@
     </Compile>
     <Compile Include="Models\Classes\Management\BackupSqlServerDatabaseDetails.designer.cs">
       <DependentUpon>BackupSqlServerDatabaseDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Classes\Definition\DatabaseDefinition.designer.cs">
-      <DependentUpon>DatabaseDefinition.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Management\RestoreFile.designer.cs">
       <DependentUpon>RestoreFile.cs</DependentUpon>
@@ -241,18 +241,10 @@
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.cs" />
     <Compile Include="Models\Classes\Definition\ColumnDefinition.cs" />
     <Compile Include="Models\Classes\Definition\TableDefinition.cs" />
-    <Compile Include="Operations\CreateDatabaseOp.designer.cs">
-      <DependentUpon>CreateDatabaseOp.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\Classes\Stream\UpdateStreamStoredProceduresResult.cs" />
     <Compile Include="Operations\UpdateStreamStoredProceduresOp.cs" />
     <Compile Include="Operations\CreateStreamUserOp.designer.cs">
       <DependentUpon>CreateStreamUserOp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Operations\DeleteDatabaseOp.cs" />
-    <Compile Include="Operations\CreateDatabaseOp.cs" />
-    <Compile Include="Operations\DeleteDatabaseOp.designer.cs">
-      <DependentUpon>DeleteDatabaseOp.cs</DependentUpon>
     </Compile>
     <Compile Include="Operations\ExecuteStoredProcedureOp.cs" />
     <Compile Include="Operations\CreateStreamUserOp.cs" />
@@ -297,7 +289,7 @@
     <Compile Include="Models\Enums\Management\Cipher.cs" />
     <Compile Include="Models\Classes\Management\ColumnDescription.cs" />
     <Compile Include="Models\Enums\Management\CompressionOption.cs" />
-    <Compile Include="Models\Classes\Definition\DatabaseDefinition.cs" />
+    <Compile Include="Models\Classes\Definition\SqlServerDatabaseDefinition.cs" />
     <Compile Include="Models\Enums\Management\DatabaseType.cs" />
     <Compile Include="Models\Enums\Management\Device.cs" />
     <Compile Include="Models\Enums\Management\EncryptionCipher.cs" />

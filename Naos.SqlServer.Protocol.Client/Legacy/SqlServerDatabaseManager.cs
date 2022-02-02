@@ -163,7 +163,7 @@ namespace Naos.SqlServer.Protocol.Client
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -189,7 +189,7 @@ namespace Naos.SqlServer.Protocol.Client
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -211,7 +211,8 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         public static void Create(
             string connectionString,
-            DatabaseDefinition definition,
+            SqlServerDatabaseDefinition definition,
+            exists
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -220,8 +221,8 @@ namespace Naos.SqlServer.Protocol.Client
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             ThrowIfBadOnCreateOrModify(definition);
-            var databaseFileMaxSize = definition.DataFileMaxSizeInKb == DatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.DataFileMaxSizeInKb}KB");
-            var logFileMaxSize = definition.LogFileMaxSizeInKb == DatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.LogFileMaxSizeInKb}KB");
+            var databaseFileMaxSize = definition.DataFileMaxSizeInKb == SqlServerDatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.DataFileMaxSizeInKb}KB");
+            var logFileMaxSize = definition.LogFileMaxSizeInKb == SqlServerDatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.LogFileMaxSizeInKb}KB");
             var commandText =
                 Invariant($@"CREATE DATABASE {definition.DatabaseName}
                         ON
@@ -297,7 +298,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="connectionString">Connection string to the intended database server.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         /// <returns>All databases from server.</returns>
-        public static DatabaseDefinition[] Retrieve(
+        public static SqlServerDatabaseDefinition[] Retrieve(
             string connectionString,
             TimeSpan timeout = default)
         {
@@ -330,7 +331,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             var propertyBagSerializer = new ObcPropertyBagSerializer();
 
-            var result = new DatabaseDefinition[0];
+            var result = new SqlServerDatabaseDefinition[0];
 
             void Logic(SqlConnection connection)
             {
@@ -353,7 +354,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                         }
                                                     });
 
-                                            return propertyBagSerializer.Deserialize<DatabaseDefinition>(enumConvertedDictionary);
+                                            return propertyBagSerializer.Deserialize<SqlServerDatabaseDefinition>(enumConvertedDictionary);
                                         })
                                 .ToArray();
             }
@@ -372,8 +373,8 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         public static void Update(
             string connectionString,
-            DatabaseDefinition currentDefinition,
-            DatabaseDefinition newDefinition,
+            SqlServerDatabaseDefinition currentDefinition,
+            SqlServerDatabaseDefinition newDefinition,
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -427,7 +428,7 @@ namespace Naos.SqlServer.Protocol.Client
 
                     if (newDefinition.DataFileMaxSizeInKb != currentDefinition.DataFileMaxSizeInKb)
                     {
-                        var maxSize = newDefinition.DataFileMaxSizeInKb == DatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.DataFileMaxSizeInKb}KB");
+                        var maxSize = newDefinition.DataFileMaxSizeInKb == SqlServerDatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.DataFileMaxSizeInKb}KB");
                         var updateDataFileMaxSizeText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.DataFileLogicalName}', MAXSIZE = {maxSize})");
                         connection.ExecuteNonQuery(updateDataFileMaxSizeText, (int)timeout.TotalSeconds);
                     }
@@ -446,7 +447,7 @@ namespace Naos.SqlServer.Protocol.Client
 
                     if (newDefinition.LogFileMaxSizeInKb != currentDefinition.LogFileMaxSizeInKb)
                     {
-                        var maxSize = newDefinition.LogFileMaxSizeInKb == DatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.LogFileMaxSizeInKb}KB");
+                        var maxSize = newDefinition.LogFileMaxSizeInKb == SqlServerDatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{newDefinition.LogFileMaxSizeInKb}KB");
                         var updateLogFileMaxSizeText = Invariant($@"ALTER DATABASE {newDefinition.DatabaseName} MODIFY FILE (NAME = '{newDefinition.LogFileLogicalName}', MAXSIZE = {maxSize})");
                         connection.ExecuteNonQuery(updateLogFileMaxSizeText, (int)timeout.TotalSeconds);
                     }
@@ -486,7 +487,7 @@ namespace Naos.SqlServer.Protocol.Client
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -1061,7 +1062,7 @@ namespace Naos.SqlServer.Protocol.Client
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             var commandText = $"SELECT recovery_model_desc FROM sys.databases WHERE name = '{databaseName}'";
 
@@ -1100,7 +1101,7 @@ namespace Naos.SqlServer.Protocol.Client
             string tableSchema = "dbo",
             TimeSpan timeout = default)
         {
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
             new { tableName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(TableDefinition.TableNameAlphanumericOtherAllowedCharacters);
             new { tableSchema }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(TableDefinition.TableSchemaNameAlphanumericOtherAllowedCharacters);
 
@@ -1155,7 +1156,7 @@ namespace Naos.SqlServer.Protocol.Client
             RecoveryMode recoveryMode,
             TimeSpan timeout)
         {
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             string modeMixIn;
 
@@ -1180,18 +1181,18 @@ namespace Naos.SqlServer.Protocol.Client
         }
 
         private static void ThrowIfBad(
-            DatabaseDefinition definition)
+            SqlServerDatabaseDefinition definition)
         {
-            new { definition.DatabaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
-            new { definition.DataFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseLogicalFileNameAlphanumericOtherAllowedCharacters);
-            new { definition.LogFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseLogicalFileNameAlphanumericOtherAllowedCharacters);
+            new { definition.DatabaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { definition.DataFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseLogicalFileNameAlphanumericOtherAllowedCharacters);
+            new { definition.LogFileLogicalName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseLogicalFileNameAlphanumericOtherAllowedCharacters);
 
             SqlInjectorChecker.ThrowIfNotValidPath(definition.DataFilePath);
             SqlInjectorChecker.ThrowIfNotValidPath(definition.LogFilePath);
         }
 
         private static void ThrowIfBadOnCreateOrModify(
-            DatabaseDefinition definition)
+            SqlServerDatabaseDefinition definition)
         {
             ThrowIfBad(definition);
             if (definition.DatabaseType == DatabaseType.System)
@@ -1205,7 +1206,7 @@ namespace Naos.SqlServer.Protocol.Client
             string databaseName,
             TimeSpan timeout = default)
         {
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
@@ -1219,7 +1220,7 @@ namespace Naos.SqlServer.Protocol.Client
             string databaseName,
             TimeSpan timeout = default)
         {
-            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(DatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
+            new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 

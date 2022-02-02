@@ -75,7 +75,7 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateDatabaseOp(
-                                 A.Dummy<DatabaseDefinition>()));
+                                 A.Dummy<SqlServerDatabaseDefinition>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateStreamUserOp(
@@ -84,7 +84,7 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<IReadOnlyCollection<TypeRepresentation>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new DatabaseDefinition(
+                () => new SqlServerDatabaseDefinition(
                                  A.Dummy<string>(),
                                  A.Dummy<DatabaseType>(),
                                  A.Dummy<RecoveryMode>(),

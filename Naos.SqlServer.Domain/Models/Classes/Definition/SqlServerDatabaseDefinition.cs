@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DatabaseDefinition.cs" company="Naos Project">
+// <copyright file="SqlServerDatabaseDefinition.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,6 +10,7 @@ namespace Naos.SqlServer.Domain
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using Naos.CodeAnalysis.Recipes;
+    using Naos.Database.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
     using static System.FormattableString;
@@ -17,7 +18,7 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Detailed information about the database's configuration (file size and name type stuff).
     /// </summary>
-    public partial class DatabaseDefinition : IModelViaCodeGen
+    public partial class SqlServerDatabaseDefinition : IDatabaseDefinition, IModelViaCodeGen
     {
         /// <summary>
         /// The extension (WITHOUT the PERIOD) of an MS SQL Server Data File.
@@ -59,7 +60,7 @@ namespace Naos.SqlServer.Domain
         public static readonly IReadOnlyCollection<char> DatabaseLogicalFileNameAlphanumericOtherAllowedCharacters = new[] { ' ', '_' };
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseDefinition"/> class.
+        /// Initializes a new instance of the <see cref="SqlServerDatabaseDefinition"/> class.
         /// </summary>
         /// <param name="databaseName">Name of the database.</param>
         /// <param name="databaseType">Type of the database.</param>
@@ -75,7 +76,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="logFileMaxSizeInKb">The log file maximum size in kilobytes.</param>
         /// <param name="logFileGrowthSizeInKb">The log file growth size in kilobytes.</param>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = NaosSuppressBecause.CA1709_IdentifiersShouldBeCasedCorrectly_CasingIsAsPreferred)]
-        public DatabaseDefinition(
+        public SqlServerDatabaseDefinition(
             string databaseName,
             DatabaseType databaseType,
             RecoveryMode recoveryMode,
@@ -127,9 +128,7 @@ namespace Naos.SqlServer.Domain
             this.LogFileGrowthSizeInKb = logFileGrowthSizeInKb;
         }
 
-        /// <summary>
-        /// Gets the name of database.
-        /// </summary>
+        /// <inheritdoc />
         public string DatabaseName { get; private set; }
 
         /// <summary>
@@ -218,7 +217,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="logFileGrowthSizeInKb">The log file growth size in kb.</param>
         /// <returns>DatabaseConfiguration.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Kb", Justification = NaosSuppressBecause.CA1709_IdentifiersShouldBeCasedCorrectly_CasingIsAsPreferred)]
-        public static DatabaseDefinition BuildDatabaseConfigurationUsingDefaultsAsNecessary(
+        public static SqlServerDatabaseDefinition BuildDatabaseConfigurationUsingDefaultsAsNecessary(
             string databaseName,
             string dataDirectory,
             DatabaseType databaseType = DatabaseType.User,
@@ -237,7 +236,7 @@ namespace Naos.SqlServer.Domain
         {
             databaseName.MustForArg(nameof(databaseName)).NotBeNullNorWhiteSpace();
 
-            var databaseConfiguration = new DatabaseDefinition(
+            var databaseConfiguration = new SqlServerDatabaseDefinition(
                 databaseName,
                 databaseType,
                 recoveryMode,

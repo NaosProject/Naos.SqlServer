@@ -6,6 +6,7 @@
 
 namespace Naos.SqlServer.Domain
 {
+    using Naos.Database.Domain;
     using OBeautifulCode.Type;
 
     /// <summary>
