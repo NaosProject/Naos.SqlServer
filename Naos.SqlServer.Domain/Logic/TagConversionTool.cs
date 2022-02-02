@@ -80,7 +80,7 @@ namespace Naos.SqlServer.Domain
         {
             if (tagsAsXml == null)
             {
-                return null;
+                return new List<NamedValue<string>>();
             }
 
             var result = new List<NamedValue<string>>();

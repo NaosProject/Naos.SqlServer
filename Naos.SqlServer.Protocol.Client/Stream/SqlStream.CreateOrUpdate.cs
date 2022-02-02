@@ -164,7 +164,7 @@ namespace Naos.SqlServer.Protocol.Client
                         var protocol = this.BuildSqlOperationsProtocol(sqlLocator);
                         var sprocResult = protocol.Execute(detailsOperation);
                         var detailsXml = sprocResult.OutputParameters[StreamSchema.Sprocs.GetStreamDetails.OutputParamName.DetailsXml.ToString()].GetValueOfType<string>();
-                        var detailsMap = TagConversionTool.GetTagsFromXmlString(detailsXml);
+                        var detailsMap = detailsXml.GetTagsFromXmlString();
                         var version = detailsMap?.FirstOrDefault(_ => _.Name == StreamSchema.Sprocs.GetStreamDetails.VersionKey)?.Value;
                         priorVersions.Add(version);
 

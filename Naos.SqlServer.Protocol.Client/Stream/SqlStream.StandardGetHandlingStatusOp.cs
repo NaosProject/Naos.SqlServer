@@ -51,9 +51,7 @@ namespace Naos.SqlServer.Protocol.Client
             var recordIdStatusXml = outputParameter.GetValueOfType<string>();
 
             var tags = recordIdStatusXml.GetTagsFromXmlString();
-            var result = tags == null
-                ? new Dictionary<long, HandlingStatus>()
-                : tags.ToDictionary(
+            var result = tags.ToDictionary(
                     k => long.Parse(k.Name, CultureInfo.InvariantCulture),
                     v => v.Value?.ToEnum<HandlingStatus>() ?? HandlingStatus.AvailableByDefault);
 

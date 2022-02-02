@@ -75,7 +75,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var tagIdsXml = sprocResultWithVersion
                                .OutputParameters[nameof(StreamSchema.Sprocs.GetIdsAddIfNecessaryTagSet.OutputParamName.TagIdsXml)]
                                .GetValueOfType<string>();
-                var tagIds = TagConversionTool.GetTagsFromXmlString(tagIdsXml) ?? new List<NamedValue<string>>();
+                var tagIds = tagIdsXml.GetTagsFromXmlString();
                 var additional = tagIds.Select(_ => long.Parse(_.Value, CultureInfo.InvariantCulture)).ToList();
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 
