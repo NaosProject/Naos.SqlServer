@@ -32,7 +32,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream156";
+        private readonly string streamName = "Stream158";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -89,10 +89,26 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void CreateStreamsTestingDatabase()
         {
             var sqlServerLocator = GetSqlServerLocator();
-            var configuration = DatabaseDefinition.BuildDatabaseConfigurationUsingDefaultsAsNecessary("Streams", @"D:\SQL\");
-            var createDatabaseOp = new CreateDatabaseOp(configuration);
+            var configuration = SqlServerDatabaseDefinition.BuildDatabaseConfigurationUsingDefaultsAsNecessary("Streams", @"D:\SQL\");
+            var createDatabaseOp = new CreateDatabaseOp(configuration, ExistingDatabaseStrategy.Throw);
             var protocol = new SqlOperationsProtocol(sqlServerLocator);
             protocol.Execute(createDatabaseOp);
+        }
+
+        [Fact]
+        public void CreateDatabase_ExistingDatabaseTest()
+        {
+            var sqlServerLocatorCopy = GetSqlServerLocator();
+            var sqlServerLocator = sqlServerLocatorCopy.DeepCloneWithDatabaseName("Monkey");
+            var protocol = new SqlOperationsProtocol(sqlServerLocator);
+            var configuration = SqlServerDatabaseDefinition.BuildDatabaseConfigurationUsingDefaultsAsNecessary(sqlServerLocator.DatabaseName, @"D:\SQL\");
+            
+            var createDatabaseOpThrow = new CreateDatabaseOp(configuration, ExistingDatabaseStrategy.Throw);
+            var createDatabaseOpSkip = new CreateDatabaseOp(configuration, ExistingDatabaseStrategy.Skip);
+
+            protocol.Execute(createDatabaseOpThrow);
+            protocol.Execute(createDatabaseOpSkip);
+            var ex = Record.Exception(() => protocol.Execute(createDatabaseOpThrow));
         }
 
         /// <summary>
@@ -686,6 +702,15 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var nextDetails = stream.Execute(new StandardGetNextUniqueLongOp("Monkey."));
 
             nextDetails.MustForTest().BeGreaterThan(nextNoDetails);
+        }
+
+        [Fact]
+        public void TestGetDistinctEmptyStream()
+        {
+            var stream = this.GetCreatedSqlStream();
+
+            var ids = stream.Execute(new StandardGetDistinctStringSerializedIdsOp(new RecordFilter()));
+            ids.MustForTest().BeEmptyEnumerable();
         }
 
         [Fact]

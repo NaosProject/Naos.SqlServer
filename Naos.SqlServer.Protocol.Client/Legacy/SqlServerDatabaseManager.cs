@@ -208,23 +208,34 @@ namespace Naos.SqlServer.Protocol.Client
         /// </summary>
         /// <param name="connectionString">Connection string to the intended database server.</param>
         /// <param name="definition">Detailed information about the database.</param>
+        /// <param name="existingDatabaseStrategy">Strategy to use when encountering an existing database.</param>
         /// <param name="timeout">The command timeout (default is 30 seconds).</param>
         public static void Create(
             string connectionString,
             SqlServerDatabaseDefinition definition,
-            exists
+            ExistingDatabaseStrategy existingDatabaseStrategy,
             TimeSpan timeout = default)
         {
             new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { definition }.AsArg().Must().NotBeNull();
+            existingDatabaseStrategy.MustForArg(nameof(existingDatabaseStrategy))
+                                    .BeElementIn(
+                                         new[]
+                                         {
+                                             ExistingDatabaseStrategy.Skip,
+                                             ExistingDatabaseStrategy.Throw,
+                                         });
 
             timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
 
             ThrowIfBadOnCreateOrModify(definition);
             var databaseFileMaxSize = definition.DataFileMaxSizeInKb == SqlServerDatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.DataFileMaxSizeInKb}KB");
             var logFileMaxSize = definition.LogFileMaxSizeInKb == SqlServerDatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.LogFileMaxSizeInKb}KB");
+
             var commandText =
-                Invariant($@"CREATE DATABASE {definition.DatabaseName}
+                    Invariant(
+                        $@"
+                        CREATE DATABASE {definition.DatabaseName}
                         ON
                         ( NAME = '{definition.DataFileLogicalName}',
                         FILENAME = '{definition.DataFilePath}',
@@ -240,6 +251,22 @@ namespace Naos.SqlServer.Protocol.Client
 
             void Logic(SqlConnection connection)
             {
+                var checkExistsText = $"SELECT DB_ID('{definition.DatabaseName}')";
+                var existingDatabaseNameId = connection.ReadSingleValue(checkExistsText);
+                if (existingDatabaseNameId != null)
+                {
+                    switch (existingDatabaseStrategy)
+                    {
+                        case ExistingDatabaseStrategy.Throw:
+                            throw new InvalidOperationException(Invariant($"Server '{connectionString.ObfuscateCredentialsInConnectionString()}' already has a database '{definition.DatabaseName}', {nameof(existingDatabaseStrategy)} was set to {ExistingStreamStrategy.Throw}."));
+                        case ExistingDatabaseStrategy.Skip:
+                            return;
+                        default:
+                            throw new NotSupportedException(
+                                Invariant($"{nameof(existingDatabaseStrategy)} '{existingDatabaseStrategy}' is not supported."));
+                    }
+                }
+
                 connection.ExecuteNonQuery(commandText, (int)timeout.TotalSeconds);
 
                 if (definition.RecoveryMode != RecoveryMode.Unspecified)

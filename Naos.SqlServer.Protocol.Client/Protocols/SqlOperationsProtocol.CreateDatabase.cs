@@ -7,8 +7,11 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System.Threading.Tasks;
+    using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type.Recipes;
+    using static System.FormattableString;
 
     /// <summary>
     /// Sql Operation Protocol.
@@ -26,7 +29,11 @@ namespace Naos.SqlServer.Protocol.Client
                                        .DeepCloneWithDatabaseName(SqlServerDatabaseManager.MasterDatabaseName)
                                        .BuildConnectionString(this.defaultConnectionTimeout);
 
-            SqlServerDatabaseManager.Create(connectionString, operation.Definition, this.defaultCommandTimeout);
+            var sqlServerDatabaseDefinition = operation.Definition as SqlServerDatabaseDefinition;
+            sqlServerDatabaseDefinition
+               .MustForArg(Invariant($"{nameof(operation)}.{nameof(operation.Definition)}"))
+               .NotBeNull(Invariant($"Only supporting: {typeof(SqlServerDatabaseDefinition).ToStringReadable()}."));
+            SqlServerDatabaseManager.Create(connectionString, sqlServerDatabaseDefinition, operation.ExistingDatabaseStrategy, this.defaultCommandTimeout);
         }
 
         /// <inheritdoc />

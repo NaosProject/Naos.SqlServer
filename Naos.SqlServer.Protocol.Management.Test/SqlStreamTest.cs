@@ -40,8 +40,8 @@ namespace Naos.SqlServer.Protocol.Management.Test
         public void CreateStreamExampleDatabaseAndScripts()
         {
             var sqlServerLocator = new SqlServerLocator("localhost", "StreamExample3", "sa", "<password>", "SQLDEV2017");
-            var configuration = DatabaseDefinition.BuildDatabaseConfigurationUsingDefaultsAsNecessary(sqlServerLocator.DatabaseName, @"D:\SQL\");
-            var createDatabaseOp = new CreateDatabaseOp(configuration);
+            var configuration = SqlServerDatabaseDefinition.BuildDatabaseConfigurationUsingDefaultsAsNecessary(sqlServerLocator.DatabaseName, @"D:\SQL\");
+            var createDatabaseOp = new CreateDatabaseOp(configuration, ExistingDatabaseStrategy.Throw);
             var protocol = new SqlOperationsProtocol(sqlServerLocator);
             protocol.Execute(createDatabaseOp);
 

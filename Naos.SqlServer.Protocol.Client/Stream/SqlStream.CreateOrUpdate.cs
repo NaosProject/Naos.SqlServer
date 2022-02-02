@@ -50,7 +50,7 @@ namespace Naos.SqlServer.Protocol.Client
                                     throw new NotSupportedException(FormattableString.Invariant(
                                         $"Overwriting streams is not currently supported; stream '{this.Name}' already exists, {nameof(operation)}.{nameof(operation.ExistingStreamStrategy)} was set to {ExistingStreamStrategy.Overwrite}."));
                                 case ExistingStreamStrategy.Throw:
-                                    throw new InvalidDataException(FormattableString.Invariant($"Stream '{this.Name}' already exists, {nameof(operation)}.{nameof(operation.ExistingStreamStrategy)} was set to {ExistingStreamStrategy.Throw}."));
+                                    throw new InvalidOperationException(FormattableString.Invariant($"Stream '{this.Name}' already exists, {nameof(operation)}.{nameof(operation.ExistingStreamStrategy)} was set to {ExistingStreamStrategy.Throw}."));
                                 case ExistingStreamStrategy.Skip:
                                     wasCreated = false;
                                     break;

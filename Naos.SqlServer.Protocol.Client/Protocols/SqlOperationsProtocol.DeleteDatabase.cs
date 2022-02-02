@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System.Threading.Tasks;
+    using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
 
