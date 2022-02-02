@@ -45,13 +45,15 @@ namespace Naos.SqlServer.Protocol.Client
             var resultXml = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.GetDistinctStringSerializedIds.OutputParamName.StringIdentifiersOutputXml)].GetValueOfType<string>();
             var resultList = resultXml.GetTagsFromXmlString();
             var typeIdToTypeRepMap = resultList
-               .ToDictionary(
-                    k => k.Name,
-                    v => this.GetTypeById(
-                                  sqlServerLocator,
-                                  int.Parse(v.Name, CultureInfo.InvariantCulture),
-                                  true)
-                             .WithVersion);
+                                    .Select(_ => _.Name)
+                                    .Distinct()
+                                    .ToDictionary(
+                                         k => k,
+                                         v => this.GetTypeById(
+                                                       sqlServerLocator,
+                                                       int.Parse(v, CultureInfo.InvariantCulture),
+                                                       true)
+                                                  .WithVersion);
 
             var result = resultList
                         .Select(
