@@ -32,7 +32,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream158";
+        private readonly string streamName = "Stream162";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -654,6 +654,23 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             var putOpTwoAgain = new PutWithIdAndReturnInternalRecordIdOp<string, IdDeprecatedEvent>(secondId, new IdDeprecatedEvent(DateTime.UtcNow));
             var internalRecordIdThree = stream.GetStreamWritingWithIdProtocols<string, IdDeprecatedEvent>().Execute(putOpTwoAgain);
+
+            var distinctWrongType = stream.Execute(
+                new StandardGetDistinctStringSerializedIdsOp(
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(long).ToRepresentation(),
+                                     },
+                        deprecatedIdTypes: new[]
+                                           {
+                                               typeof(IdDeprecatedEvent).ToRepresentation(),
+                                           })));
+            distinctWrongType.MustForTest().BeEmptyEnumerable();
 
             var distinct = stream.Execute(
                 new StandardGetDistinctStringSerializedIdsOp(

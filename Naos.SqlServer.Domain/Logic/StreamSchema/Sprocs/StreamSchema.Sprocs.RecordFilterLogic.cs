@@ -133,12 +133,27 @@ namespace Naos.SqlServer.Domain
     LEFT JOIN @{objectTypesTable} otwithout ON
         r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
     WHERE
-        r.[{Tables.Record.Id.Name}] IS NOT NULL AND
-        (
-			(itwith.[{Tables.TypeWithVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
-        OR
-			(itwithout.[{Tables.TypeWithoutVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
-        )
+        r.[{Tables.Record.Id.Name}] IS NOT NULL
+        AND
+            (
+                (@{InputParamName.IdentifierTypeIdsCsv} IS NULL)
+                OR
+                (
+			        (itwith.[{Tables.TypeWithVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
+                    OR
+			        (itwithout.[{Tables.TypeWithoutVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+                )
+            )
+        AND 
+            (
+                (@{InputParamName.ObjectTypeIdsCsv} IS NULL)
+                OR
+                (
+			        (otwith.[{Tables.TypeWithVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
+                    OR
+			        (otwithout.[{Tables.TypeWithoutVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+                )
+            )
 
 	IF ((EXISTS (SELECT TOP 1 [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})) AND @TagMatchStrategy = '{TagMatchStrategy.RecordContainsAllQueryTags}')
 	BEGIN
