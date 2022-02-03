@@ -206,7 +206,7 @@ BEGIN
 	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
     INNER JOIN @{recordIdsToConsiderTable} rtc ON r.[{Tables.Record.Id.Name}] = rtc.[{Tables.Record.Id.Name}]
     LEFT OUTER JOIN [{streamName}].[{Tables.Record.Table.Name}] r1 WITH (NOLOCK)
-        ON r.[{Tables.Record.StringSerializedId.Name}] = r1.[{Tables.Record.StringSerializedId.Name}] AND r.[{Tables.Record.Id.Name}] < r1.[{Tables.Record.Id.Name}]
+        ON r.[{Tables.Record.StringSerializedId.Name}] = r1.[{Tables.Record.StringSerializedId.Name}] AND r.[{Tables.Record.Id.Name}] < r1.[{Tables.Record.Id.Name}] AND r1.[{Tables.Record.Id.Name}] = rtc.[{Tables.Record.Id.Name}]
 	WHERE
           r1.[{Tables.Record.Id.Name}] IS NULL
       AND rtc.[{Tables.Record.Id.Name}] IS NOT NULL
