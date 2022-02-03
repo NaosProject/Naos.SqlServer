@@ -300,13 +300,13 @@ BEGIN
             CASE @{InputParamName.IncludePayload}
                 WHEN 1 THEN [{Tables.Record.StringSerializedObject.Name}]
                 WHEN 0 THEN NULL
-                ELSE CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.')
+                ELSE CONVERT({new StringSqlDataTypeRepresentation(false, 1).DeclarationInSqlSyntax}, CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.'))
             END)
 	 , @{OutputParamName.BinarySerializedObject} = (
             CASE @{InputParamName.IncludePayload}
                 WHEN 1 THEN [{Tables.Record.BinarySerializedObject.Name}]
                 WHEN 0 THEN NULL
-                ELSE CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.')
+                ELSE CONVERT({new BinarySqlDataTypeRepresentation(1).DeclarationInSqlSyntax}, CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.'))
             END)
 	 , @{OutputParamName.InternalRecordId} = [{Tables.Record.Id.Name}]
 	 , @{OutputParamName.TagIdsCsv} = [{Tables.Record.TagIdsCsv.Name}]

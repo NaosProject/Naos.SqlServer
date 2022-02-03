@@ -200,7 +200,7 @@ BEGIN
             CASE @{InputParamName.VersionMatchStrategy}
                 WHEN '{VersionMatchStrategy.Any}' THEN r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
                 WHEN '{VersionMatchStrategy.SpecifiedVersion}' THEN r.[{Tables.Record.IdentifierTypeWithVersionId.Name}]
-                ELSE CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, @{InputParamName.VersionMatchStrategy})
+                ELSE CONVERT({new StringSqlDataTypeRepresentation(false, 1).DeclarationInSqlSyntax}, CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.VersionMatchStrategy} is not a supported {nameof(VersionMatchStrategy)}.'))
             END)
         , r.[{Tables.Record.StringSerializedId.Name}]
 	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
