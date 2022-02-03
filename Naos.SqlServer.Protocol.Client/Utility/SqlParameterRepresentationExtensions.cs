@@ -510,7 +510,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var enumType = genericArguments.Single();
                 var enumValue = Enum.Parse(enumType, rawValue.ToString());
                 var resultType = typeof(SqlOutputParameterResult<>).MakeGenericType(enumType);
-                var rawResult = resultType.Construct(outputParameterDefinition.Name, outputParameterDefinition.SqlDataType, enumValue);
+                var rawResult = resultType.Construct(outputParameterDefinition, enumValue);
                 result = (ISqlOutputParameterResult)rawResult;
             }
             else
