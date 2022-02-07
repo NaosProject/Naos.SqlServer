@@ -96,7 +96,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         }
 
         [Fact]
-        public void CreateDatabase_ExistingDatabaseTest()
+        public static void CreateDatabase_ExistingDatabaseTest()
         {
             var sqlServerLocatorCopy = GetSqlServerLocator();
             var sqlServerLocator = sqlServerLocatorCopy.DeepCloneWithDatabaseName("Monkey");
@@ -291,7 +291,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method PutGetTests.
         /// </summary>
-        [Fact(Skip = "Local testing only.")]
+        [Fact]
         public void PutGetTests()
         {
             var stream = this.GetCreatedSqlStream();
@@ -649,6 +649,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var putOpOneAgain = new PutWithIdAndReturnInternalRecordIdOp<string, string>(firstId, A.Dummy<string>());
             var internalRecordIdOneAgain = stream.GetStreamWritingWithIdProtocols<string, string>().Execute(putOpOneAgain);
 
+            var putOpOneOtherType = new PutWithIdAndReturnInternalRecordIdOp<string, short>(secondId, A.Dummy<short>());
+            var internalRecordIdOneOtherType = stream.GetStreamWritingWithIdProtocols<string, short>().Execute(putOpOneOtherType);
+
             var putOpTwo = new PutWithIdAndReturnInternalRecordIdOp<string, string>(secondId, A.Dummy<string>());
             var internalRecordIdTwo = stream.GetStreamWritingWithIdProtocols<string, string>().Execute(putOpTwo);
 
@@ -685,6 +688,64 @@ namespace Naos.SqlServer.Protocol.Client.Test
                                            })));
             distinct.MustForTest().NotBeNull();
             distinct.Single().StringSerializedId.MustForTest().BeEqualTo(Invariant($"\"{firstId}\""));
+        }
+
+        /// <summary>
+        /// Defines the test method GetDistinctStringSerializedIds.
+        /// </summary>
+        [Fact]
+        public void GetDistinctStringSerializedIds___SamedId___WithDifferentTypes()
+        {
+            var stream = this.GetCreatedSqlStream();
+
+            var firstId = Guid.NewGuid().ToString().Replace("-", ",");
+            var secondId = Guid.NewGuid().ToString().Replace("-", ",");
+            var thirdId = Guid.NewGuid().ToString().Replace("-", ",");
+
+            var putOneShortOp = new PutWithIdAndReturnInternalRecordIdOp<string, short>(firstId, A.Dummy<short>());
+            var internalRecordIdOneShort = stream.GetStreamWritingWithIdProtocols<string, short>().Execute(putOneShortOp);
+
+            var putTwoShortOp = new PutWithIdAndReturnInternalRecordIdOp<string, short>(secondId, A.Dummy<short>());
+            var internalRecordIdTwoShort = stream.GetStreamWritingWithIdProtocols<string, short>().Execute(putTwoShortOp);
+
+            var putThreeShortOp = new PutWithIdAndReturnInternalRecordIdOp<string, short>(thirdId, A.Dummy<short>());
+            var internalRecordIdThreeShort = stream.GetStreamWritingWithIdProtocols<string, short>().Execute(putThreeShortOp);
+
+            var putOneLongOp = new PutWithIdAndReturnInternalRecordIdOp<string, long>(firstId, A.Dummy<long>());
+            var internalRecordIdOneLong = stream.GetStreamWritingWithIdProtocols<string, long>().Execute(putOneLongOp);
+
+            var putTwoLongOp = new PutWithIdAndReturnInternalRecordIdOp<string, long>(secondId, A.Dummy<long>());
+            var internalRecordIdTwoLong = stream.GetStreamWritingWithIdProtocols<string, long>().Execute(putTwoLongOp);
+
+            var putThreeLongOp = new PutWithIdAndReturnInternalRecordIdOp<string, long>(thirdId, A.Dummy<long>());
+            var internalRecordIdThreeLong = stream.GetStreamWritingWithIdProtocols<string, long>().Execute(putThreeLongOp);
+
+            var distinct = stream.Execute(
+                new StandardGetDistinctStringSerializedIdsOp(
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                        typeof(short).ToRepresentation(),
+                                     },
+                        deprecatedIdTypes: new[]
+                                           {
+                                               typeof(IdDeprecatedEvent).ToRepresentation(),
+                                           })));
+            distinct.MustForTest().NotBeNull();
+            distinct.Select(_ => _.StringSerializedId)
+                    .ToList()
+                    .MustForTest()
+                    .BeEqualTo(
+                         new[]
+                         {
+                             Invariant($"\"{firstId}\""),
+                             Invariant($"\"{secondId}\""),
+                             Invariant($"\"{thirdId}\""),
+                         }.ToList());
         }
 
         /// <summary>
