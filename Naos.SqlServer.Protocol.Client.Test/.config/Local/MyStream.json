@@ -1,0 +1,32 @@
+{
+    "name": "MyStream",
+    "defaultConnectionTimeout": "00:00:30",
+    "defaultCommandTimeout": "00:00:30",
+    "defaultSerializerRepresentation": {
+        "serializationKind": "bson",
+        "serializationConfigType": {
+            "namespace": "Naos.SqlServer.Serialization.Bson",
+            "name": "SqlServerBsonSerializationConfiguration",
+            "assemblyName": "Naos.SqlServer.Serialization.Bson",
+            "assemblyVersion": null,
+            "genericArguments": null,
+            "$concreteType": "OBeautifulCode.Representation.System.TypeRepresentation, OBeautifulCode.Representation.System"
+        },
+        "compressionKind": "none",
+        "metadata": {},
+        "$concreteType": "OBeautifulCode.Serialization.SerializerRepresentation, OBeautifulCode.Serialization"
+    },
+    "defaultSerializationFormat": "string",
+    "allLocators": [
+        {
+            "serverName": "localhost",
+            "databaseName": "MyDatabase",
+            "userName": "user",
+            "password": "password",
+            "instanceName": null,
+            "port": null,
+            "$concreteType": "Naos.SqlServer.Domain.SqlServerLocator, Naos.SqlServer.Domain"
+        }
+    ],
+    "$concreteType": "Naos.SqlServer.Domain.SqlStreamConfigObject, Naos.SqlServer.Domain"
+}

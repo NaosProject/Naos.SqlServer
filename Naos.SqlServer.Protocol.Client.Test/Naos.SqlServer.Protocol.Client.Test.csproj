@@ -274,6 +274,10 @@
       <Project>{F42D44C9-14CB-4081-A727-116494CEB531}</Project>
       <Name>Naos.SqlServer.Protocol.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Naos.SqlServer.Serialization.Bson\Naos.SqlServer.Serialization.Bson.csproj">
+      <Project>{FD210733-C635-4D95-B5A6-E9AE012B0FB7}</Project>
+      <Name>Naos.SqlServer.Serialization.Bson</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Naos.SqlServer.Serialization.Json\Naos.SqlServer.Serialization.Json.csproj">
       <Project>{D764F723-3EB3-4411-A154-C6547349A7A3}</Project>
       <Name>Naos.SqlServer.Serialization.Json</Name>
@@ -282,6 +286,10 @@
   <ItemGroup>
     <AdditionalFiles Include=".analyzers\stylecop.json" />
     <None Include=".analyzers\test.ruleset" />
+    <None Include=".config\Local\MyStream.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +300,7 @@
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

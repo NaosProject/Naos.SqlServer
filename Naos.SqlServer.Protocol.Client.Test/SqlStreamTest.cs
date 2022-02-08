@@ -15,13 +15,17 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using System.Threading.Tasks;
     using FakeItEasy;
     using Naos.CodeAnalysis.Recipes;
+    using Naos.Configuration.Domain;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
+    using Naos.SqlServer.Serialization.Bson;
     using Naos.SqlServer.Serialization.Json;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
+    using OBeautifulCode.Serialization.Bson;
     using OBeautifulCode.Serialization.Json;
+    using OBeautifulCode.Serialization.Recipes;
     using OBeautifulCode.Type;
     using Xunit;
     using Xunit.Abstractions;
@@ -804,6 +808,36 @@ namespace Naos.SqlServer.Protocol.Client.Test
             latestStringSerializedObject.MustForTest().ContainString(Invariant($"\"id\": \"{latestObject.Id}\""));
             latestStringSerializedObject.MustForTest().ContainString(Invariant($"\"field\": \"{latestObject.Field}\""));
             latestStringSerializedObject.MustForTest().EndWith("}");
+        }
+
+        [Fact]
+        public void TestConfigStreamBuilding()
+        {
+            var localStreamName = "MyStream";
+            var x = new SqlStreamConfigObject(
+                streamName,
+                TimeSpan.FromSeconds(30),
+                TimeSpan.FromSeconds(30),
+                new SerializerRepresentation(
+                    SerializationKind.Bson,
+                    typeof(SqlServerBsonSerializationConfiguration).ToRepresentation().RemoveAssemblyVersions()),
+                SerializationFormat.String,
+                new[]
+                {
+                    new SqlServerLocator("localhost", "MyDatabase", "user", "password"),
+                });
+            var serializer = new ObcJsonSerializer(typeof(SqlServerJsonSerializationConfiguration).ToJsonSerializationConfigurationType());
+            var output = serializer.SerializeToString(x);
+
+            var ninjaStream = Config.GetByName<SqlStreamConfigObject>(
+                                         localStreamName,
+                                         new SerializerRepresentation(
+                                             SerializationKind.Json,
+                                             typeof(SqlServerJsonSerializationConfiguration).ToRepresentation()),
+                                         SerializerFactory.Instance)
+                                    .ToStream(SerializerFactory.Instance);
+
+            ninjaStream.MustForTest().NotBeNull().And().BeOfType<SqlStream>();
         }
 
         private static SqlServerLocator GetSqlServerLocator()
