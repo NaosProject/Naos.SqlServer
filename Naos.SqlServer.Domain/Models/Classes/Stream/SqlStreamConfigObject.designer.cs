@@ -17,7 +17,6 @@ namespace Naos.SqlServer.Domain
 
     using global::OBeautifulCode.Cloning.Recipes;
     using global::OBeautifulCode.Equality.Recipes;
-    using global::OBeautifulCode.Representation.System;
     using global::OBeautifulCode.Serialization;
     using global::OBeautifulCode.Type;
     using global::OBeautifulCode.Type.Recipes;
@@ -72,7 +71,6 @@ namespace Naos.SqlServer.Domain
             }
 
             var result = this.Name.IsEqualTo(other.Name, StringComparer.Ordinal)
-                      && this.SerializerFactoryTypeRepresentation.IsEqualTo(other.SerializerFactoryTypeRepresentation)
                       && this.DefaultConnectionTimeout.IsEqualTo(other.DefaultConnectionTimeout)
                       && this.DefaultCommandTimeout.IsEqualTo(other.DefaultCommandTimeout)
                       && this.DefaultSerializerRepresentation.IsEqualTo(other.DefaultSerializerRepresentation)
@@ -88,7 +86,6 @@ namespace Naos.SqlServer.Domain
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
             .Hash(this.Name)
-            .Hash(this.SerializerFactoryTypeRepresentation)
             .Hash(this.DefaultConnectionTimeout)
             .Hash(this.DefaultCommandTimeout)
             .Hash(this.DefaultSerializerRepresentation)
@@ -104,7 +101,6 @@ namespace Naos.SqlServer.Domain
         {
             var result = new SqlStreamConfigObject(
                                  this.Name?.DeepClone(),
-                                 this.SerializerFactoryTypeRepresentation?.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
                                  this.DefaultCommandTimeout.DeepClone(),
                                  this.DefaultSerializerRepresentation?.DeepClone(),
@@ -140,43 +136,6 @@ namespace Naos.SqlServer.Domain
         {
             var result = new SqlStreamConfigObject(
                                  name,
-                                 this.SerializerFactoryTypeRepresentation?.DeepClone(),
-                                 this.DefaultConnectionTimeout.DeepClone(),
-                                 this.DefaultCommandTimeout.DeepClone(),
-                                 this.DefaultSerializerRepresentation?.DeepClone(),
-                                 this.DefaultSerializationFormat.DeepClone(),
-                                 this.AllLocators?.DeepClone());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="SerializerFactoryTypeRepresentation" />.
-        /// </summary>
-        /// <param name="serializerFactoryTypeRepresentation">The new <see cref="SerializerFactoryTypeRepresentation" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlStreamConfigObject" /> using the specified <paramref name="serializerFactoryTypeRepresentation" /> for <see cref="SerializerFactoryTypeRepresentation" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlStreamConfigObject DeepCloneWithSerializerFactoryTypeRepresentation(TypeRepresentation serializerFactoryTypeRepresentation)
-        {
-            var result = new SqlStreamConfigObject(
-                                 this.Name?.DeepClone(),
-                                 serializerFactoryTypeRepresentation,
                                  this.DefaultConnectionTimeout.DeepClone(),
                                  this.DefaultCommandTimeout.DeepClone(),
                                  this.DefaultSerializerRepresentation?.DeepClone(),
@@ -212,7 +171,6 @@ namespace Naos.SqlServer.Domain
         {
             var result = new SqlStreamConfigObject(
                                  this.Name?.DeepClone(),
-                                 this.SerializerFactoryTypeRepresentation?.DeepClone(),
                                  defaultConnectionTimeout,
                                  this.DefaultCommandTimeout.DeepClone(),
                                  this.DefaultSerializerRepresentation?.DeepClone(),
@@ -248,7 +206,6 @@ namespace Naos.SqlServer.Domain
         {
             var result = new SqlStreamConfigObject(
                                  this.Name?.DeepClone(),
-                                 this.SerializerFactoryTypeRepresentation?.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
                                  defaultCommandTimeout,
                                  this.DefaultSerializerRepresentation?.DeepClone(),
@@ -284,7 +241,6 @@ namespace Naos.SqlServer.Domain
         {
             var result = new SqlStreamConfigObject(
                                  this.Name?.DeepClone(),
-                                 this.SerializerFactoryTypeRepresentation?.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
                                  this.DefaultCommandTimeout.DeepClone(),
                                  defaultSerializerRepresentation,
@@ -320,7 +276,6 @@ namespace Naos.SqlServer.Domain
         {
             var result = new SqlStreamConfigObject(
                                  this.Name?.DeepClone(),
-                                 this.SerializerFactoryTypeRepresentation?.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
                                  this.DefaultCommandTimeout.DeepClone(),
                                  this.DefaultSerializerRepresentation?.DeepClone(),
@@ -356,7 +311,6 @@ namespace Naos.SqlServer.Domain
         {
             var result = new SqlStreamConfigObject(
                                  this.Name?.DeepClone(),
-                                 this.SerializerFactoryTypeRepresentation?.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
                                  this.DefaultCommandTimeout.DeepClone(),
                                  this.DefaultSerializerRepresentation?.DeepClone(),
@@ -370,7 +324,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.SqlStreamConfigObject: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, SerializerFactoryTypeRepresentation = {this.SerializerFactoryTypeRepresentation?.ToString() ?? "<null>"}, DefaultConnectionTimeout = {this.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {this.DefaultCommandTimeout.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {this.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {this.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {this.AllLocators?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.SqlStreamConfigObject: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DefaultConnectionTimeout = {this.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {this.DefaultCommandTimeout.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {this.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {this.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {this.AllLocators?.ToString() ?? "<null>"}.");
 
             return result;
         }

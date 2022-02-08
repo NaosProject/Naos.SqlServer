@@ -24,7 +24,6 @@ namespace Naos.SqlServer.Domain
         /// Initializes a new instance of the <see cref="SqlStreamConfigObject"/> class.
         /// </summary>
         /// <param name="name">Name of the stream.</param>
-        /// <param name="serializerFactoryTypeRepresentation">Serializer factory type representation.</param>
         /// <param name="defaultConnectionTimeout">Default timeout to use when connecting to SQL Server.</param>
         /// <param name="defaultCommandTimeout">Default timeout to use when running a command on SQL Server.</param>
         /// <param name="defaultSerializerRepresentation">Default <see cref="SerializerRepresentation"/> to use (used for identifier serialization).</param>
@@ -32,7 +31,6 @@ namespace Naos.SqlServer.Domain
         /// <param name="allLocators">All <see cref="ISqlServerLocator"/>'s.</param>
         public SqlStreamConfigObject(
             string name,
-            TypeRepresentation serializerFactoryTypeRepresentation,
             TimeSpan defaultConnectionTimeout,
             TimeSpan defaultCommandTimeout,
             SerializerRepresentation defaultSerializerRepresentation,
@@ -40,7 +38,6 @@ namespace Naos.SqlServer.Domain
             IReadOnlyCollection<ISqlServerLocator> allLocators)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
-            serializerFactoryTypeRepresentation.MustForArg(nameof(serializerFactoryTypeRepresentation)).NotBeNull();
             defaultConnectionTimeout.TotalMilliseconds.MustForArg(Invariant($"{nameof(defaultConnectionTimeout)}.{nameof(TimeSpan.TotalMilliseconds)}")).BeGreaterThanOrEqualTo(0d);
             defaultCommandTimeout.TotalMilliseconds.MustForArg(Invariant($"{nameof(defaultCommandTimeout)}.{nameof(TimeSpan.TotalMilliseconds)}")).BeGreaterThanOrEqualTo(0d);
             defaultSerializerRepresentation.MustForArg(nameof(defaultSerializerRepresentation)).NotBeNull();
@@ -48,7 +45,6 @@ namespace Naos.SqlServer.Domain
             allLocators.MustForArg(nameof(allLocators)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
 
             this.Name = name;
-            this.SerializerFactoryTypeRepresentation = serializerFactoryTypeRepresentation;
             this.DefaultConnectionTimeout = defaultConnectionTimeout;
             this.DefaultCommandTimeout = defaultCommandTimeout;
             this.DefaultSerializerRepresentation = defaultSerializerRepresentation;
@@ -60,11 +56,6 @@ namespace Naos.SqlServer.Domain
         /// Gets the name.
         /// </summary>
         public string Name { get; private set; }
-
-        /// <summary>
-        /// Gets the serializer factory type representation.
-        /// </summary>
-        public TypeRepresentation SerializerFactoryTypeRepresentation { get; private set; }
 
         /// <summary>
         /// Gets the default connection timeout.

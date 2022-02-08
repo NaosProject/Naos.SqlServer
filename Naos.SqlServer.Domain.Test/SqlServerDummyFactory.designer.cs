@@ -275,7 +275,6 @@ namespace Naos.SqlServer.Domain.Test
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlStreamConfigObject(
                                  A.Dummy<string>(),
-                                 A.Dummy<TypeRepresentation>(),
                                  A.Dummy<TimeSpan>(),
                                  A.Dummy<TimeSpan>(),
                                  A.Dummy<SerializerRepresentation>(),

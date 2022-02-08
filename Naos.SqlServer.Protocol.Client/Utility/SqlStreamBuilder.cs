@@ -29,12 +29,10 @@ namespace Naos.SqlServer.Protocol.Client
         /// </summary>
         /// <param name="streamConfigObject">The stream configuration object.</param>
         /// <param name="serializerFactory">The serializer factory.</param>
-        /// <param name="configSerializerFactoryVersionMatchStrategy">Optional type version match strategy to use to confirm the <paramref name="serializerFactory"/>'s type matches the one specified <paramref name="streamConfigObject"/>; DEFAULT is Any.</param>
         /// <returns>A <see cref="SqlStream"/>.</returns>
         public static SqlStream ToStream(
             this SqlStreamConfigObject streamConfigObject,
-            ISerializerFactory serializerFactory,
-            VersionMatchStrategy configSerializerFactoryVersionMatchStrategy = VersionMatchStrategy.Any)
+            ISerializerFactory serializerFactory)
         {
             streamConfigObject.MustForArg(nameof(streamConfigObject)).NotBeNull();
             serializerFactory.MustForArg(nameof(serializerFactory)).NotBeNull();
@@ -42,13 +40,6 @@ namespace Naos.SqlServer.Protocol.Client
             if (streamConfigObject.AllLocators.Count != 1)
             {
                 throw new NotSupportedException(Invariant($"One single resource locators are currently supported and '{streamConfigObject.AllLocators.Count}' were provided."));
-            }
-
-            var serializerFactoryTypeRepresentation = serializerFactory.GetType().ToRepresentation();
-            if (!serializerFactoryTypeRepresentation
-                                  .EqualsAccordingToStrategy(streamConfigObject.SerializerFactoryTypeRepresentation, configSerializerFactoryVersionMatchStrategy))
-            {
-                throw new ArgumentException(Invariant($"The provided {nameof(serializerFactory)} ({serializerFactoryTypeRepresentation}) is not the same type as specified in the {nameof(streamConfigObject)} ({streamConfigObject.SerializerFactoryTypeRepresentation})."));
             }
 
             var resourceLocatorProtocol = new SingleResourceLocatorProtocols(streamConfigObject.AllLocators.Single());

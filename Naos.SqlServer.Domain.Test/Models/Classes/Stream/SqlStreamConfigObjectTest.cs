@@ -40,7 +40,6 @@ namespace Naos.SqlServer.Domain.Test
 
                             var result = new SqlStreamConfigObject(
                                 referenceObject.Name,
-                                referenceObject.SerializerFactoryTypeRepresentation,
                                 referenceObject.DefaultConnectionTimeout.Negate(),
                                 referenceObject.DefaultCommandTimeout,
                                 referenceObject.DefaultSerializerRepresentation,
@@ -62,7 +61,6 @@ namespace Naos.SqlServer.Domain.Test
 
                             var result = new SqlStreamConfigObject(
                                 referenceObject.Name,
-                                referenceObject.SerializerFactoryTypeRepresentation,
                                 referenceObject.DefaultConnectionTimeout,
                                 referenceObject.DefaultCommandTimeout.Negate(),
                                 referenceObject.DefaultSerializerRepresentation,
@@ -84,7 +82,6 @@ namespace Naos.SqlServer.Domain.Test
 
                             var result = new SqlStreamConfigObject(
                                 referenceObject.Name,
-                                referenceObject.SerializerFactoryTypeRepresentation,
                                 referenceObject.DefaultConnectionTimeout,
                                 referenceObject.DefaultCommandTimeout,
                                 referenceObject.DefaultSerializerRepresentation,
