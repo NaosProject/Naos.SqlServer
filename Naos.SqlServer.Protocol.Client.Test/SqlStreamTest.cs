@@ -814,8 +814,8 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void TestConfigStreamBuilding()
         {
             var localStreamName = "MyStream";
-            var x = new SqlStreamConfigObject(
-                streamName,
+            var x = new SqlStreamConfig(
+                localStreamName,
                 TimeSpan.FromSeconds(30),
                 TimeSpan.FromSeconds(30),
                 new SerializerRepresentation(
@@ -829,7 +829,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var serializer = new ObcJsonSerializer(typeof(SqlServerJsonSerializationConfiguration).ToJsonSerializationConfigurationType());
             var output = serializer.SerializeToString(x);
 
-            var ninjaStream = Config.GetByName<SqlStreamConfigObject>(
+            var stream = Config.GetByName<SqlStreamConfig>(
                                          localStreamName,
                                          new SerializerRepresentation(
                                              SerializationKind.Json,
@@ -837,7 +837,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                                          SerializerFactory.Instance)
                                     .ToStream(SerializerFactory.Instance);
 
-            ninjaStream.MustForTest().NotBeNull().And().BeOfType<SqlStream>();
+            stream.MustForTest().NotBeNull().And().BeOfType<SqlStream>();
         }
 
         private static SqlServerLocator GetSqlServerLocator()

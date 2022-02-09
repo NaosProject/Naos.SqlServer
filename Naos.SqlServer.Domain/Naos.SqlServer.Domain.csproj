@@ -128,8 +128,8 @@
     <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}.designer.cs">
       <DependentUpon>SqlOutputParameterResult{TValue}.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Stream\SqlStreamConfigObject.designer.cs">
-      <DependentUpon>SqlStreamConfigObject.cs</DependentUpon>
+    <Compile Include="Models\Classes\Stream\SqlStreamConfig.designer.cs">
+      <DependentUpon>SqlStreamConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
@@ -148,7 +148,7 @@
     <Compile Include="Models\Classes\ResourceLocation\Legacy\SqlServerConnectionDefinition.designer.cs">
       <DependentUpon>SqlServerConnectionDefinition.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Stream\SqlStreamConfigObject.cs" />
+    <Compile Include="Models\Classes\Stream\SqlStreamConfig.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\XmlSqlDataTypeRepresentation.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\XmlSqlDataTypeRepresentation.designer.cs">
       <DependentUpon>XmlSqlDataTypeRepresentation.cs</DependentUpon>

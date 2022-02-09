@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStreamConfigObject.cs" company="Naos Project">
+// <copyright file="SqlStreamConfig.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -18,10 +18,10 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Existing serializer with database ID.
     /// </summary>
-    public partial class SqlStreamConfigObject : IModelViaCodeGen
+    public partial class SqlStreamConfig : IModelViaCodeGen
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlStreamConfigObject"/> class.
+        /// Initializes a new instance of the <see cref="SqlStreamConfig"/> class.
         /// </summary>
         /// <param name="name">Name of the stream.</param>
         /// <param name="defaultConnectionTimeout">Default timeout to use when connecting to SQL Server.</param>
@@ -29,7 +29,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="defaultSerializerRepresentation">Default <see cref="SerializerRepresentation"/> to use (used for identifier serialization).</param>
         /// <param name="defaultSerializationFormat">Default <see cref="SerializationFormat"/> to use.</param>
         /// <param name="allLocators">All <see cref="ISqlServerLocator"/>'s.</param>
-        public SqlStreamConfigObject(
+        public SqlStreamConfig(
             string name,
             TimeSpan defaultConnectionTimeout,
             TimeSpan defaultCommandTimeout,

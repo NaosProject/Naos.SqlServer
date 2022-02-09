@@ -25,31 +25,31 @@ namespace Naos.SqlServer.Protocol.Client
     public static class SqlStreamBuilder
     {
         /// <summary>
-        /// Extension on <see cref="SqlStreamConfigObject"/> to build a <see cref="SqlStream"/>.
+        /// Extension on <see cref="SqlStreamConfig"/> to build a <see cref="SqlStream"/>.
         /// </summary>
-        /// <param name="streamConfigObject">The stream configuration object.</param>
+        /// <param name="streamConfig">The stream configuration object.</param>
         /// <param name="serializerFactory">The serializer factory.</param>
         /// <returns>A <see cref="SqlStream"/>.</returns>
         public static SqlStream ToStream(
-            this SqlStreamConfigObject streamConfigObject,
+            this SqlStreamConfig streamConfig,
             ISerializerFactory serializerFactory)
         {
-            streamConfigObject.MustForArg(nameof(streamConfigObject)).NotBeNull();
+            streamConfig.MustForArg(nameof(streamConfig)).NotBeNull();
             serializerFactory.MustForArg(nameof(serializerFactory)).NotBeNull();
 
-            if (streamConfigObject.AllLocators.Count != 1)
+            if (streamConfig.AllLocators.Count != 1)
             {
-                throw new NotSupportedException(Invariant($"One single resource locators are currently supported and '{streamConfigObject.AllLocators.Count}' were provided."));
+                throw new NotSupportedException(Invariant($"One single resource locators are currently supported and '{streamConfig.AllLocators.Count}' were provided."));
             }
 
-            var resourceLocatorProtocol = new SingleResourceLocatorProtocols(streamConfigObject.AllLocators.Single());
+            var resourceLocatorProtocol = new SingleResourceLocatorProtocols(streamConfig.AllLocators.Single());
 
             var result = new SqlStream(
-                streamConfigObject.Name,
-                streamConfigObject.DefaultConnectionTimeout,
-                streamConfigObject.DefaultCommandTimeout,
-                streamConfigObject.DefaultSerializerRepresentation,
-                streamConfigObject.DefaultSerializationFormat,
+                streamConfig.Name,
+                streamConfig.DefaultConnectionTimeout,
+                streamConfig.DefaultCommandTimeout,
+                streamConfig.DefaultSerializerRepresentation,
+                streamConfig.DefaultSerializationFormat,
                 serializerFactory,
                 resourceLocatorProtocol);
 
