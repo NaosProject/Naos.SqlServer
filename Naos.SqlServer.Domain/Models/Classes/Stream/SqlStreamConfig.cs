@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using Naos.Database.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
@@ -24,6 +25,7 @@ namespace Naos.SqlServer.Domain
         /// Initializes a new instance of the <see cref="SqlStreamConfig"/> class.
         /// </summary>
         /// <param name="name">Name of the stream.</param>
+        /// <param name="accessKinds">Access the stream has.</param>
         /// <param name="defaultConnectionTimeout">Default timeout to use when connecting to SQL Server.</param>
         /// <param name="defaultCommandTimeout">Default timeout to use when running a command on SQL Server.</param>
         /// <param name="defaultSerializerRepresentation">Default <see cref="SerializerRepresentation"/> to use (used for identifier serialization).</param>
@@ -31,6 +33,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="allLocators">All <see cref="ISqlServerLocator"/>'s.</param>
         public SqlStreamConfig(
             string name,
+            StreamAccessKinds accessKinds,
             TimeSpan defaultConnectionTimeout,
             TimeSpan defaultCommandTimeout,
             SerializerRepresentation defaultSerializerRepresentation,
@@ -38,6 +41,7 @@ namespace Naos.SqlServer.Domain
             IReadOnlyCollection<ISqlServerLocator> allLocators)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
+            accessKinds.MustForArg(nameof(accessKinds)).NotBeEqualTo(StreamAccessKinds.None);
             defaultConnectionTimeout.TotalMilliseconds.MustForArg(Invariant($"{nameof(defaultConnectionTimeout)}.{nameof(TimeSpan.TotalMilliseconds)}")).BeGreaterThanOrEqualTo(0d);
             defaultCommandTimeout.TotalMilliseconds.MustForArg(Invariant($"{nameof(defaultCommandTimeout)}.{nameof(TimeSpan.TotalMilliseconds)}")).BeGreaterThanOrEqualTo(0d);
             defaultSerializerRepresentation.MustForArg(nameof(defaultSerializerRepresentation)).NotBeNull();
@@ -45,6 +49,7 @@ namespace Naos.SqlServer.Domain
             allLocators.MustForArg(nameof(allLocators)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
 
             this.Name = name;
+            this.AccessKinds = accessKinds;
             this.DefaultConnectionTimeout = defaultConnectionTimeout;
             this.DefaultCommandTimeout = defaultCommandTimeout;
             this.DefaultSerializerRepresentation = defaultSerializerRepresentation;
@@ -56,6 +61,11 @@ namespace Naos.SqlServer.Domain
         /// Gets the name.
         /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// Gets the access the stream has.
+        /// </summary>
+        public StreamAccessKinds AccessKinds { get; private set; }
 
         /// <summary>
         /// Gets the default connection timeout.

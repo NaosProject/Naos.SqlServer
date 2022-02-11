@@ -18,6 +18,8 @@ namespace Naos.SqlServer.Domain.Test
 
     using global::FakeItEasy;
 
+    using global::Naos.Database.Domain;
+
     using global::OBeautifulCode.Assertion.Recipes;
     using global::OBeautifulCode.AutoFakeItEasy;
     using global::OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -47,7 +49,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<SqlStreamConfig>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlStreamConfig: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DefaultConnectionTimeout = {systemUnderTest.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {systemUnderTest.DefaultCommandTimeout.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {systemUnderTest.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {systemUnderTest.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {systemUnderTest.AllLocators?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlStreamConfig: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, AccessKinds = {systemUnderTest.AccessKinds.ToString() ?? "<null>"}, DefaultConnectionTimeout = {systemUnderTest.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {systemUnderTest.DefaultCommandTimeout.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {systemUnderTest.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {systemUnderTest.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {systemUnderTest.AllLocators?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
@@ -65,6 +67,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SqlStreamConfig(
                                              null,
+                                             referenceObject.AccessKinds,
                                              referenceObject.DefaultConnectionTimeout,
                                              referenceObject.DefaultCommandTimeout,
                                              referenceObject.DefaultSerializerRepresentation,
@@ -86,6 +89,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SqlStreamConfig(
                                              Invariant($"  {Environment.NewLine}  "),
+                                             referenceObject.AccessKinds,
                                              referenceObject.DefaultConnectionTimeout,
                                              referenceObject.DefaultCommandTimeout,
                                              referenceObject.DefaultSerializerRepresentation,
@@ -107,6 +111,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SqlStreamConfig(
                                              referenceObject.Name,
+                                             referenceObject.AccessKinds,
                                              referenceObject.DefaultConnectionTimeout,
                                              referenceObject.DefaultCommandTimeout,
                                              null,
@@ -128,6 +133,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SqlStreamConfig(
                                              referenceObject.Name,
+                                             referenceObject.AccessKinds,
                                              referenceObject.DefaultConnectionTimeout,
                                              referenceObject.DefaultCommandTimeout,
                                              referenceObject.DefaultSerializerRepresentation,
@@ -149,6 +155,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SqlStreamConfig(
                                              referenceObject.Name,
+                                             referenceObject.AccessKinds,
                                              referenceObject.DefaultConnectionTimeout,
                                              referenceObject.DefaultCommandTimeout,
                                              referenceObject.DefaultSerializerRepresentation,
@@ -170,6 +177,7 @@ namespace Naos.SqlServer.Domain.Test
 
                         var result = new SqlStreamConfig(
                                              referenceObject.Name,
+                                             referenceObject.AccessKinds,
                                              referenceObject.DefaultConnectionTimeout,
                                              referenceObject.DefaultCommandTimeout,
                                              referenceObject.DefaultSerializerRepresentation,
@@ -195,6 +203,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new SqlStreamConfig(
                                                       referenceObject.Name,
+                                                      referenceObject.AccessKinds,
                                                       referenceObject.DefaultConnectionTimeout,
                                                       referenceObject.DefaultCommandTimeout,
                                                       referenceObject.DefaultSerializerRepresentation,
@@ -210,6 +219,31 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<SqlStreamConfig>
                 {
+                    Name = "AccessKinds should return same 'accessKinds' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SqlStreamConfig>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<SqlStreamConfig>
+                        {
+                            SystemUnderTest = new SqlStreamConfig(
+                                                      referenceObject.Name,
+                                                      referenceObject.AccessKinds,
+                                                      referenceObject.DefaultConnectionTimeout,
+                                                      referenceObject.DefaultCommandTimeout,
+                                                      referenceObject.DefaultSerializerRepresentation,
+                                                      referenceObject.DefaultSerializationFormat,
+                                                      referenceObject.AllLocators),
+                            ExpectedPropertyValue = referenceObject.AccessKinds,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "AccessKinds",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<SqlStreamConfig>
+                {
                     Name = "DefaultConnectionTimeout should return same 'defaultConnectionTimeout' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
@@ -219,6 +253,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new SqlStreamConfig(
                                                       referenceObject.Name,
+                                                      referenceObject.AccessKinds,
                                                       referenceObject.DefaultConnectionTimeout,
                                                       referenceObject.DefaultCommandTimeout,
                                                       referenceObject.DefaultSerializerRepresentation,
@@ -243,6 +278,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new SqlStreamConfig(
                                                       referenceObject.Name,
+                                                      referenceObject.AccessKinds,
                                                       referenceObject.DefaultConnectionTimeout,
                                                       referenceObject.DefaultCommandTimeout,
                                                       referenceObject.DefaultSerializerRepresentation,
@@ -267,6 +303,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new SqlStreamConfig(
                                                       referenceObject.Name,
+                                                      referenceObject.AccessKinds,
                                                       referenceObject.DefaultConnectionTimeout,
                                                       referenceObject.DefaultCommandTimeout,
                                                       referenceObject.DefaultSerializerRepresentation,
@@ -291,6 +328,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new SqlStreamConfig(
                                                       referenceObject.Name,
+                                                      referenceObject.AccessKinds,
                                                       referenceObject.DefaultConnectionTimeout,
                                                       referenceObject.DefaultCommandTimeout,
                                                       referenceObject.DefaultSerializerRepresentation,
@@ -315,6 +353,7 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = new SqlStreamConfig(
                                                       referenceObject.Name,
+                                                      referenceObject.AccessKinds,
                                                       referenceObject.DefaultConnectionTimeout,
                                                       referenceObject.DefaultCommandTimeout,
                                                       referenceObject.DefaultSerializerRepresentation,
@@ -344,6 +383,26 @@ namespace Naos.SqlServer.Domain.Test
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.Name,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<SqlStreamConfig>
+                {
+                    Name = "DeepCloneWithAccessKinds should deep clone object and replace AccessKinds with the provided accessKinds",
+                    WithPropertyName = "AccessKinds",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<SqlStreamConfig>();
+
+                        var referenceObject = A.Dummy<SqlStreamConfig>().ThatIs(_ => !systemUnderTest.AccessKinds.IsEqualTo(_.AccessKinds));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<SqlStreamConfig>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.AccessKinds,
                         };
 
                         return result;
@@ -462,6 +521,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         new SqlStreamConfig(
                                 ReferenceObjectForEquatableTestScenarios.Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
                                 ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
@@ -472,6 +532,7 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         new SqlStreamConfig(
                                 A.Dummy<SqlStreamConfig>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
                                 ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
@@ -479,6 +540,15 @@ namespace Naos.SqlServer.Domain.Test
                                 ReferenceObjectForEquatableTestScenarios.AllLocators),
                         new SqlStreamConfig(
                                 ReferenceObjectForEquatableTestScenarios.Name,
+                                A.Dummy<SqlStreamConfig>().Whose(_ => !_.AccessKinds.IsEqualTo(ReferenceObjectForEquatableTestScenarios.AccessKinds)).AccessKinds,
+                                ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
+                                ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
+                                ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
+                                ReferenceObjectForEquatableTestScenarios.DefaultSerializationFormat,
+                                ReferenceObjectForEquatableTestScenarios.AllLocators),
+                        new SqlStreamConfig(
+                                ReferenceObjectForEquatableTestScenarios.Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
                                 A.Dummy<SqlStreamConfig>().Whose(_ => !_.DefaultConnectionTimeout.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout)).DefaultConnectionTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
@@ -486,6 +556,7 @@ namespace Naos.SqlServer.Domain.Test
                                 ReferenceObjectForEquatableTestScenarios.AllLocators),
                         new SqlStreamConfig(
                                 ReferenceObjectForEquatableTestScenarios.Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
                                 ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
                                 A.Dummy<SqlStreamConfig>().Whose(_ => !_.DefaultCommandTimeout.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout)).DefaultCommandTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
@@ -493,6 +564,7 @@ namespace Naos.SqlServer.Domain.Test
                                 ReferenceObjectForEquatableTestScenarios.AllLocators),
                         new SqlStreamConfig(
                                 ReferenceObjectForEquatableTestScenarios.Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
                                 ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
                                 A.Dummy<SqlStreamConfig>().Whose(_ => !_.DefaultSerializerRepresentation.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation)).DefaultSerializerRepresentation,
@@ -500,6 +572,7 @@ namespace Naos.SqlServer.Domain.Test
                                 ReferenceObjectForEquatableTestScenarios.AllLocators),
                         new SqlStreamConfig(
                                 ReferenceObjectForEquatableTestScenarios.Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
                                 ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
@@ -507,6 +580,7 @@ namespace Naos.SqlServer.Domain.Test
                                 ReferenceObjectForEquatableTestScenarios.AllLocators),
                         new SqlStreamConfig(
                                 ReferenceObjectForEquatableTestScenarios.Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
                                 ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
@@ -834,7 +908,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Name", "DefaultConnectionTimeout", "DefaultCommandTimeout", "DefaultSerializerRepresentation", "DefaultSerializationFormat", "AllLocators" };
+                var propertyNames = new string[] { "Name", "AccessKinds", "DefaultConnectionTimeout", "DefaultCommandTimeout", "DefaultSerializerRepresentation", "DefaultSerializationFormat", "AllLocators" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 

@@ -185,11 +185,13 @@ namespace Naos.SqlServer.Protocol.Client.Test
             stream.Execute(
                 new CreateStreamUserOp(
                     "read-only",
+                    "read-only",
                     "ReadMe",
                     new[]
                     {
                         typeof(IStreamReadProtocols).ToRepresentation(),
-                    }));
+                    },
+                    true));
 
             var key = Guid.NewGuid().ToString().ToUpperInvariant();
             var firstValue = "Testing again.";
@@ -816,6 +818,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var localStreamName = "MyStream";
             var x = new SqlStreamConfig(
                 localStreamName,
+                StreamAccessKinds.Read,
                 TimeSpan.FromSeconds(30),
                 TimeSpan.FromSeconds(30),
                 new SerializerRepresentation(
