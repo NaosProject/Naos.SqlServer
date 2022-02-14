@@ -20,7 +20,6 @@ namespace Naos.SqlServer.Domain.Test
 
     using global::OBeautifulCode.AutoFakeItEasy;
     using global::OBeautifulCode.Math.Recipes;
-    using global::OBeautifulCode.Representation.System;
     using global::OBeautifulCode.Serialization;
     using global::OBeautifulCode.Type;
 
@@ -77,7 +76,9 @@ namespace Naos.SqlServer.Domain.Test
                 () => new CreateStreamUserOp(
                                  A.Dummy<string>(),
                                  A.Dummy<string>(),
-                                 A.Dummy<IReadOnlyCollection<TypeRepresentation>>()));
+                                 A.Dummy<string>(),
+                                 A.Dummy<StreamAccessKinds>(),
+                                 A.Dummy<bool>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new DecimalSqlDataTypeRepresentation(

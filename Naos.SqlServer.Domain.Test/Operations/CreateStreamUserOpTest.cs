@@ -29,25 +29,6 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static CreateStreamUserOpTest()
         {
-            ConstructorArgumentValidationTestScenarios
-                .AddScenario(() =>
-                    new ConstructorArgumentValidationTestScenario<CreateStreamUserOp>
-                    {
-                        Name = "constructor should throw ArgumentException when parameter 'protocolsToGrantAccessFor' contains unsupported protocols",
-                        ConstructionFunc = () =>
-                        {
-                            var referenceObject = A.Dummy<CreateStreamUserOp>();
-
-                            var result = new CreateStreamUserOp(
-                                                 referenceObject.UserName,
-                                                 referenceObject.ClearTextPassword,
-                                                 Some.ReadOnlyDummies<TypeRepresentation>().ToList());
-
-                            return result;
-                        },
-                        ExpectedExceptionType = typeof(ArgumentException),
-                        ExpectedExceptionMessageContains = new[] { "Unsupported access type provided; supported:", },
-                    });
         }
 
         [Fact]
@@ -57,10 +38,13 @@ namespace Naos.SqlServer.Domain.Test
             var referenceObject = A.Dummy<CreateStreamUserOp>();
 
             // Act
-            var actual = Record.Exception(() => new CreateStreamUserOp(
-                referenceObject.UserName + "-",
-                referenceObject.ClearTextPassword,
-                referenceObject.ProtocolsToGrantAccessFor));
+            var actual = Record.Exception(
+                () => new CreateStreamUserOp(
+                    referenceObject.LoginName,
+                    referenceObject.UserName + "-",
+                    referenceObject.ClearTextPassword,
+                    referenceObject.StreamAccessKinds,
+                    referenceObject.ShouldCreateLogin));
 
             // Act, Assert
             actual.AsTest().Must().BeNull();

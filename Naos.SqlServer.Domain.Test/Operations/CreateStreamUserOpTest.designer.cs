@@ -18,6 +18,8 @@ namespace Naos.SqlServer.Domain.Test
 
     using global::FakeItEasy;
 
+    using global::Naos.Database.Domain;
+
     using global::OBeautifulCode.Assertion.Recipes;
     using global::OBeautifulCode.AutoFakeItEasy;
     using global::OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -47,7 +49,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<CreateStreamUserOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.CreateStreamUserOp: UserName = {systemUnderTest.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ClearTextPassword = {systemUnderTest.ClearTextPassword?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ProtocolsToGrantAccessFor = {systemUnderTest.ProtocolsToGrantAccessFor?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.CreateStreamUserOp: LoginName = {systemUnderTest.LoginName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {systemUnderTest.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ClearTextPassword = {systemUnderTest.ClearTextPassword?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, StreamAccessKinds = {systemUnderTest.StreamAccessKinds.ToString() ?? "<null>"}, ShouldCreateLogin = {systemUnderTest.ShouldCreateLogin.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
@@ -58,15 +60,57 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorArgumentValidationTestScenario<CreateStreamUserOp>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'userName' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'loginName' is null scenario",
                     ConstructionFunc = () =>
                     {
                         var referenceObject = A.Dummy<CreateStreamUserOp>();
 
                         var result = new CreateStreamUserOp(
                                              null,
+                                             referenceObject.UserName,
                                              referenceObject.ClearTextPassword,
-                                             referenceObject.ProtocolsToGrantAccessFor);
+                                             referenceObject.StreamAccessKinds,
+                                             referenceObject.ShouldCreateLogin);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "loginName", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<CreateStreamUserOp>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'loginName' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<CreateStreamUserOp>();
+
+                        var result = new CreateStreamUserOp(
+                                             Invariant($"  {Environment.NewLine}  "),
+                                             referenceObject.UserName,
+                                             referenceObject.ClearTextPassword,
+                                             referenceObject.StreamAccessKinds,
+                                             referenceObject.ShouldCreateLogin);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "loginName", "white space", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<CreateStreamUserOp>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'userName' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<CreateStreamUserOp>();
+
+                        var result = new CreateStreamUserOp(
+                                             referenceObject.LoginName,
+                                             null,
+                                             referenceObject.ClearTextPassword,
+                                             referenceObject.StreamAccessKinds,
+                                             referenceObject.ShouldCreateLogin);
 
                         return result;
                     },
@@ -82,9 +126,11 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<CreateStreamUserOp>();
 
                         var result = new CreateStreamUserOp(
+                                             referenceObject.LoginName,
                                              Invariant($"  {Environment.NewLine}  "),
                                              referenceObject.ClearTextPassword,
-                                             referenceObject.ProtocolsToGrantAccessFor);
+                                             referenceObject.StreamAccessKinds,
+                                             referenceObject.ShouldCreateLogin);
 
                         return result;
                     },
@@ -100,9 +146,11 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<CreateStreamUserOp>();
 
                         var result = new CreateStreamUserOp(
+                                             referenceObject.LoginName,
                                              referenceObject.UserName,
                                              null,
-                                             referenceObject.ProtocolsToGrantAccessFor);
+                                             referenceObject.StreamAccessKinds,
+                                             referenceObject.ShouldCreateLogin);
 
                         return result;
                     },
@@ -118,71 +166,42 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<CreateStreamUserOp>();
 
                         var result = new CreateStreamUserOp(
+                                             referenceObject.LoginName,
                                              referenceObject.UserName,
                                              Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.ProtocolsToGrantAccessFor);
+                                             referenceObject.StreamAccessKinds,
+                                             referenceObject.ShouldCreateLogin);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
                     ExpectedExceptionMessageContains = new[] { "clearTextPassword", "white space", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<CreateStreamUserOp>
-                {
-                    Name = "constructor should throw ArgumentNullException when parameter 'protocolsToGrantAccessFor' is null scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<CreateStreamUserOp>();
-
-                        var result = new CreateStreamUserOp(
-                                             referenceObject.UserName,
-                                             referenceObject.ClearTextPassword,
-                                             null);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "protocolsToGrantAccessFor", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<CreateStreamUserOp>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'protocolsToGrantAccessFor' is an empty enumerable scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<CreateStreamUserOp>();
-
-                        var result = new CreateStreamUserOp(
-                                             referenceObject.UserName,
-                                             referenceObject.ClearTextPassword,
-                                             new List<TypeRepresentation>());
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "protocolsToGrantAccessFor", "is an empty enumerable", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<CreateStreamUserOp>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'protocolsToGrantAccessFor' contains a null element scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<CreateStreamUserOp>();
-
-                        var result = new CreateStreamUserOp(
-                                             referenceObject.UserName,
-                                             referenceObject.ClearTextPassword,
-                                             new TypeRepresentation[0].Concat(referenceObject.ProtocolsToGrantAccessFor).Concat(new TypeRepresentation[] { null }).Concat(referenceObject.ProtocolsToGrantAccessFor).ToList());
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "protocolsToGrantAccessFor", "contains at least one null element", },
                 });
 
         private static readonly ConstructorPropertyAssignmentTestScenarios<CreateStreamUserOp> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<CreateStreamUserOp>()
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<CreateStreamUserOp>
+                {
+                    Name = "LoginName should return same 'loginName' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<CreateStreamUserOp>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<CreateStreamUserOp>
+                        {
+                            SystemUnderTest = new CreateStreamUserOp(
+                                                      referenceObject.LoginName,
+                                                      referenceObject.UserName,
+                                                      referenceObject.ClearTextPassword,
+                                                      referenceObject.StreamAccessKinds,
+                                                      referenceObject.ShouldCreateLogin),
+                            ExpectedPropertyValue = referenceObject.LoginName,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "LoginName",
+                })
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<CreateStreamUserOp>
                 {
@@ -194,9 +213,11 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<CreateStreamUserOp>
                         {
                             SystemUnderTest = new CreateStreamUserOp(
+                                                      referenceObject.LoginName,
                                                       referenceObject.UserName,
                                                       referenceObject.ClearTextPassword,
-                                                      referenceObject.ProtocolsToGrantAccessFor),
+                                                      referenceObject.StreamAccessKinds,
+                                                      referenceObject.ShouldCreateLogin),
                             ExpectedPropertyValue = referenceObject.UserName,
                         };
 
@@ -215,9 +236,11 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<CreateStreamUserOp>
                         {
                             SystemUnderTest = new CreateStreamUserOp(
+                                                      referenceObject.LoginName,
                                                       referenceObject.UserName,
                                                       referenceObject.ClearTextPassword,
-                                                      referenceObject.ProtocolsToGrantAccessFor),
+                                                      referenceObject.StreamAccessKinds,
+                                                      referenceObject.ShouldCreateLogin),
                             ExpectedPropertyValue = referenceObject.ClearTextPassword,
                         };
 
@@ -228,7 +251,7 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<CreateStreamUserOp>
                 {
-                    Name = "ProtocolsToGrantAccessFor should return same 'protocolsToGrantAccessFor' parameter passed to constructor when getting",
+                    Name = "StreamAccessKinds should return same 'streamAccessKinds' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
                         var referenceObject = A.Dummy<CreateStreamUserOp>();
@@ -236,18 +259,63 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<CreateStreamUserOp>
                         {
                             SystemUnderTest = new CreateStreamUserOp(
+                                                      referenceObject.LoginName,
                                                       referenceObject.UserName,
                                                       referenceObject.ClearTextPassword,
-                                                      referenceObject.ProtocolsToGrantAccessFor),
-                            ExpectedPropertyValue = referenceObject.ProtocolsToGrantAccessFor,
+                                                      referenceObject.StreamAccessKinds,
+                                                      referenceObject.ShouldCreateLogin),
+                            ExpectedPropertyValue = referenceObject.StreamAccessKinds,
                         };
 
                         return result;
                     },
-                    PropertyName = "ProtocolsToGrantAccessFor",
+                    PropertyName = "StreamAccessKinds",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<CreateStreamUserOp>
+                {
+                    Name = "ShouldCreateLogin should return same 'shouldCreateLogin' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<CreateStreamUserOp>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<CreateStreamUserOp>
+                        {
+                            SystemUnderTest = new CreateStreamUserOp(
+                                                      referenceObject.LoginName,
+                                                      referenceObject.UserName,
+                                                      referenceObject.ClearTextPassword,
+                                                      referenceObject.StreamAccessKinds,
+                                                      referenceObject.ShouldCreateLogin),
+                            ExpectedPropertyValue = referenceObject.ShouldCreateLogin,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "ShouldCreateLogin",
                 });
 
         private static readonly DeepCloneWithTestScenarios<CreateStreamUserOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<CreateStreamUserOp>()
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<CreateStreamUserOp>
+                {
+                    Name = "DeepCloneWithLoginName should deep clone object and replace LoginName with the provided loginName",
+                    WithPropertyName = "LoginName",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<CreateStreamUserOp>();
+
+                        var referenceObject = A.Dummy<CreateStreamUserOp>().ThatIs(_ => !systemUnderTest.LoginName.IsEqualTo(_.LoginName));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<CreateStreamUserOp>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.LoginName,
+                        };
+
+                        return result;
+                    },
+                })
             .AddScenario(() =>
                 new DeepCloneWithTestScenario<CreateStreamUserOp>
                 {
@@ -291,18 +359,38 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new DeepCloneWithTestScenario<CreateStreamUserOp>
                 {
-                    Name = "DeepCloneWithProtocolsToGrantAccessFor should deep clone object and replace ProtocolsToGrantAccessFor with the provided protocolsToGrantAccessFor",
-                    WithPropertyName = "ProtocolsToGrantAccessFor",
+                    Name = "DeepCloneWithStreamAccessKinds should deep clone object and replace StreamAccessKinds with the provided streamAccessKinds",
+                    WithPropertyName = "StreamAccessKinds",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
                         var systemUnderTest = A.Dummy<CreateStreamUserOp>();
 
-                        var referenceObject = A.Dummy<CreateStreamUserOp>().ThatIs(_ => !systemUnderTest.ProtocolsToGrantAccessFor.IsEqualTo(_.ProtocolsToGrantAccessFor));
+                        var referenceObject = A.Dummy<CreateStreamUserOp>().ThatIs(_ => !systemUnderTest.StreamAccessKinds.IsEqualTo(_.StreamAccessKinds));
 
                         var result = new SystemUnderTestDeepCloneWithValue<CreateStreamUserOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.ProtocolsToGrantAccessFor,
+                            DeepCloneWithValue = referenceObject.StreamAccessKinds,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<CreateStreamUserOp>
+                {
+                    Name = "DeepCloneWithShouldCreateLogin should deep clone object and replace ShouldCreateLogin with the provided shouldCreateLogin",
+                    WithPropertyName = "ShouldCreateLogin",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<CreateStreamUserOp>();
+
+                        var referenceObject = A.Dummy<CreateStreamUserOp>().ThatIs(_ => !systemUnderTest.ShouldCreateLogin.IsEqualTo(_.ShouldCreateLogin));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<CreateStreamUserOp>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.ShouldCreateLogin,
                         };
 
                         return result;
@@ -320,24 +408,44 @@ namespace Naos.SqlServer.Domain.Test
                     ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new CreateStreamUserOp[]
                     {
                         new CreateStreamUserOp(
+                                ReferenceObjectForEquatableTestScenarios.LoginName,
                                 ReferenceObjectForEquatableTestScenarios.UserName,
                                 ReferenceObjectForEquatableTestScenarios.ClearTextPassword,
-                                ReferenceObjectForEquatableTestScenarios.ProtocolsToGrantAccessFor),
+                                ReferenceObjectForEquatableTestScenarios.StreamAccessKinds,
+                                ReferenceObjectForEquatableTestScenarios.ShouldCreateLogin),
                     },
                     ObjectsThatAreNotEqualToReferenceObject = new CreateStreamUserOp[]
                     {
                         new CreateStreamUserOp(
+                                A.Dummy<CreateStreamUserOp>().Whose(_ => !_.LoginName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.LoginName)).LoginName,
+                                ReferenceObjectForEquatableTestScenarios.UserName,
+                                ReferenceObjectForEquatableTestScenarios.ClearTextPassword,
+                                ReferenceObjectForEquatableTestScenarios.StreamAccessKinds,
+                                ReferenceObjectForEquatableTestScenarios.ShouldCreateLogin),
+                        new CreateStreamUserOp(
+                                ReferenceObjectForEquatableTestScenarios.LoginName,
                                 A.Dummy<CreateStreamUserOp>().Whose(_ => !_.UserName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.UserName)).UserName,
                                 ReferenceObjectForEquatableTestScenarios.ClearTextPassword,
-                                ReferenceObjectForEquatableTestScenarios.ProtocolsToGrantAccessFor),
+                                ReferenceObjectForEquatableTestScenarios.StreamAccessKinds,
+                                ReferenceObjectForEquatableTestScenarios.ShouldCreateLogin),
                         new CreateStreamUserOp(
+                                ReferenceObjectForEquatableTestScenarios.LoginName,
                                 ReferenceObjectForEquatableTestScenarios.UserName,
                                 A.Dummy<CreateStreamUserOp>().Whose(_ => !_.ClearTextPassword.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ClearTextPassword)).ClearTextPassword,
-                                ReferenceObjectForEquatableTestScenarios.ProtocolsToGrantAccessFor),
+                                ReferenceObjectForEquatableTestScenarios.StreamAccessKinds,
+                                ReferenceObjectForEquatableTestScenarios.ShouldCreateLogin),
                         new CreateStreamUserOp(
+                                ReferenceObjectForEquatableTestScenarios.LoginName,
                                 ReferenceObjectForEquatableTestScenarios.UserName,
                                 ReferenceObjectForEquatableTestScenarios.ClearTextPassword,
-                                A.Dummy<CreateStreamUserOp>().Whose(_ => !_.ProtocolsToGrantAccessFor.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ProtocolsToGrantAccessFor)).ProtocolsToGrantAccessFor),
+                                A.Dummy<CreateStreamUserOp>().Whose(_ => !_.StreamAccessKinds.IsEqualTo(ReferenceObjectForEquatableTestScenarios.StreamAccessKinds)).StreamAccessKinds,
+                                ReferenceObjectForEquatableTestScenarios.ShouldCreateLogin),
+                        new CreateStreamUserOp(
+                                ReferenceObjectForEquatableTestScenarios.LoginName,
+                                ReferenceObjectForEquatableTestScenarios.UserName,
+                                ReferenceObjectForEquatableTestScenarios.ClearTextPassword,
+                                ReferenceObjectForEquatableTestScenarios.StreamAccessKinds,
+                                A.Dummy<CreateStreamUserOp>().Whose(_ => !_.ShouldCreateLogin.IsEqualTo(ReferenceObjectForEquatableTestScenarios.ShouldCreateLogin)).ShouldCreateLogin),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -621,18 +729,6 @@ namespace Naos.SqlServer.Domain.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
-
-                if (systemUnderTest.ProtocolsToGrantAccessFor == null)
-                {
-                    actual.ProtocolsToGrantAccessFor.AsTest().Must().BeNull();
-                }
-                else if (!actual.ProtocolsToGrantAccessFor.GetType().IsValueType)
-                {
-                    // When the declared type is a reference type, we still have to check the runtime type.
-                    // The object could be a boxed value type, which will fail this asseration because
-                    // a deep clone of a value type object is the same object.
-                    actual.ProtocolsToGrantAccessFor.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.ProtocolsToGrantAccessFor);
-                }
             }
 
             [Fact]
@@ -651,7 +747,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "UserName", "ClearTextPassword", "ProtocolsToGrantAccessFor" };
+                var propertyNames = new string[] { "LoginName", "UserName", "ClearTextPassword", "StreamAccessKinds", "ShouldCreateLogin" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1771,7 +1867,7 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
         public static class Hashing
         {
-            [Fact(Skip = "It's possible (and even probable after a few runs of this test) that two dummy, unequal models will have the same hash code.  The model being tested contains at least one property who's type (or a type nested within the generic type, or a property of the IModel type) is a dictionary with keys that are not comparable or an unordered collection with elements that are not comparable.  In these cases the hashing method cannot hash the elements and must resort to hashing the element count.  Two dummies could easily have the same element count for such a type.")]
+            [Fact]
             [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
             [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
             [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]

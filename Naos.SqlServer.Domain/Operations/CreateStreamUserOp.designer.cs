@@ -15,9 +15,10 @@ namespace Naos.SqlServer.Domain
     using global::System.Globalization;
     using global::System.Linq;
 
+    using global::Naos.Database.Domain;
+
     using global::OBeautifulCode.Cloning.Recipes;
     using global::OBeautifulCode.Equality.Recipes;
-    using global::OBeautifulCode.Representation.System;
     using global::OBeautifulCode.Type;
     using global::OBeautifulCode.Type.Recipes;
 
@@ -70,9 +71,11 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.UserName.IsEqualTo(other.UserName, StringComparer.Ordinal)
+            var result = this.LoginName.IsEqualTo(other.LoginName, StringComparer.Ordinal)
+                      && this.UserName.IsEqualTo(other.UserName, StringComparer.Ordinal)
                       && this.ClearTextPassword.IsEqualTo(other.ClearTextPassword, StringComparer.Ordinal)
-                      && this.ProtocolsToGrantAccessFor.IsEqualTo(other.ProtocolsToGrantAccessFor);
+                      && this.StreamAccessKinds.IsEqualTo(other.StreamAccessKinds)
+                      && this.ShouldCreateLogin.IsEqualTo(other.ShouldCreateLogin);
 
             return result;
         }
@@ -82,13 +85,49 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
+            .Hash(this.LoginName)
             .Hash(this.UserName)
             .Hash(this.ClearTextPassword)
-            .Hash(this.ProtocolsToGrantAccessFor)
+            .Hash(this.StreamAccessKinds)
+            .Hash(this.ShouldCreateLogin)
             .Value;
 
         /// <inheritdoc />
         public new CreateStreamUserOp DeepClone() => (CreateStreamUserOp)this.DeepCloneInternal();
+
+        /// <summary>
+        /// Deep clones this object with a new <see cref="LoginName" />.
+        /// </summary>
+        /// <param name="loginName">The new <see cref="LoginName" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="CreateStreamUserOp" /> using the specified <paramref name="loginName" /> for <see cref="LoginName" /> and a deep clone of every other property.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public CreateStreamUserOp DeepCloneWithLoginName(string loginName)
+        {
+            var result = new CreateStreamUserOp(
+                                 loginName,
+                                 this.UserName?.DeepClone(),
+                                 this.ClearTextPassword?.DeepClone(),
+                                 this.StreamAccessKinds.DeepClone(),
+                                 this.ShouldCreateLogin.DeepClone());
+
+            return result;
+        }
 
         /// <summary>
         /// Deep clones this object with a new <see cref="UserName" />.
@@ -115,9 +154,11 @@ namespace Naos.SqlServer.Domain
         public CreateStreamUserOp DeepCloneWithUserName(string userName)
         {
             var result = new CreateStreamUserOp(
+                                 this.LoginName?.DeepClone(),
                                  userName,
                                  this.ClearTextPassword?.DeepClone(),
-                                 this.ProtocolsToGrantAccessFor?.DeepClone());
+                                 this.StreamAccessKinds.DeepClone(),
+                                 this.ShouldCreateLogin.DeepClone());
 
             return result;
         }
@@ -147,18 +188,20 @@ namespace Naos.SqlServer.Domain
         public CreateStreamUserOp DeepCloneWithClearTextPassword(string clearTextPassword)
         {
             var result = new CreateStreamUserOp(
+                                 this.LoginName?.DeepClone(),
                                  this.UserName?.DeepClone(),
                                  clearTextPassword,
-                                 this.ProtocolsToGrantAccessFor?.DeepClone());
+                                 this.StreamAccessKinds.DeepClone(),
+                                 this.ShouldCreateLogin.DeepClone());
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="ProtocolsToGrantAccessFor" />.
+        /// Deep clones this object with a new <see cref="StreamAccessKinds" />.
         /// </summary>
-        /// <param name="protocolsToGrantAccessFor">The new <see cref="ProtocolsToGrantAccessFor" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="CreateStreamUserOp" /> using the specified <paramref name="protocolsToGrantAccessFor" /> for <see cref="ProtocolsToGrantAccessFor" /> and a deep clone of every other property.</returns>
+        /// <param name="streamAccessKinds">The new <see cref="StreamAccessKinds" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="CreateStreamUserOp" /> using the specified <paramref name="streamAccessKinds" /> for <see cref="StreamAccessKinds" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -176,12 +219,48 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public CreateStreamUserOp DeepCloneWithProtocolsToGrantAccessFor(IReadOnlyCollection<TypeRepresentation> protocolsToGrantAccessFor)
+        public CreateStreamUserOp DeepCloneWithStreamAccessKinds(StreamAccessKinds streamAccessKinds)
         {
             var result = new CreateStreamUserOp(
+                                 this.LoginName?.DeepClone(),
                                  this.UserName?.DeepClone(),
                                  this.ClearTextPassword?.DeepClone(),
-                                 protocolsToGrantAccessFor);
+                                 streamAccessKinds,
+                                 this.ShouldCreateLogin.DeepClone());
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <see cref="ShouldCreateLogin" />.
+        /// </summary>
+        /// <param name="shouldCreateLogin">The new <see cref="ShouldCreateLogin" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="CreateStreamUserOp" /> using the specified <paramref name="shouldCreateLogin" /> for <see cref="ShouldCreateLogin" /> and a deep clone of every other property.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public CreateStreamUserOp DeepCloneWithShouldCreateLogin(bool shouldCreateLogin)
+        {
+            var result = new CreateStreamUserOp(
+                                 this.LoginName?.DeepClone(),
+                                 this.UserName?.DeepClone(),
+                                 this.ClearTextPassword?.DeepClone(),
+                                 this.StreamAccessKinds.DeepClone(),
+                                 shouldCreateLogin);
 
             return result;
         }
@@ -191,9 +270,11 @@ namespace Naos.SqlServer.Domain
         protected override OperationBase DeepCloneInternal()
         {
             var result = new CreateStreamUserOp(
+                                 this.LoginName?.DeepClone(),
                                  this.UserName?.DeepClone(),
                                  this.ClearTextPassword?.DeepClone(),
-                                 this.ProtocolsToGrantAccessFor?.DeepClone());
+                                 this.StreamAccessKinds.DeepClone(),
+                                 this.ShouldCreateLogin.DeepClone());
 
             return result;
         }
@@ -202,7 +283,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.CreateStreamUserOp: UserName = {this.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ClearTextPassword = {this.ClearTextPassword?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ProtocolsToGrantAccessFor = {this.ProtocolsToGrantAccessFor?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.CreateStreamUserOp: LoginName = {this.LoginName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {this.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, ClearTextPassword = {this.ClearTextPassword?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, StreamAccessKinds = {this.StreamAccessKinds.ToString() ?? "<null>"}, ShouldCreateLogin = {this.ShouldCreateLogin.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
 
             return result;
         }

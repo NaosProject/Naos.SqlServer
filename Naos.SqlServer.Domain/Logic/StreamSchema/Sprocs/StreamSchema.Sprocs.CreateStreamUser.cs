@@ -29,6 +29,11 @@ namespace Naos.SqlServer.Domain
                 public enum InputParamName
                 {
                     /// <summary>
+                    /// The login name.
+                    /// </summary>
+                    LoginName,
+
+                    /// <summary>
                     /// The username.
                     /// </summary>
                     Username,
@@ -42,29 +47,40 @@ namespace Naos.SqlServer.Domain
                     /// The roles as CSV.
                     /// </summary>
                     RoleCsv,
+
+                    /// <summary>
+                    /// The flag to indicate whether or not to create the login.
+                    /// </summary>
+                    ShouldCreateLogin,
                 }
 
                 /// <summary>
                 /// Builds the execute stored procedure operation.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
+                /// <param name="loginName">The login name.</param>
                 /// <param name="username">The username.</param>
                 /// <param name="clearTextPassword">The password.</param>
                 /// <param name="roles">The roles as CSV.</param>
+                /// <param name="shouldCreateLogin">Indicates whether or not to create the login or look it up (must specify <paramref name="loginName"/> if this is TRUE).</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
+                    string loginName,
                     string username,
                     string clearTextPassword,
-                    string roles)
+                    string roles,
+                    bool shouldCreateLogin)
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(CreateStreamUser)}");
 
                     var parameters = new List<ParameterDefinitionBase>()
                                      {
+                                         new InputParameterDefinition<string>(nameof(InputParamName.LoginName), new StringSqlDataTypeRepresentation(true, 128), loginName ?? username),
                                          new InputParameterDefinition<string>(nameof(InputParamName.Username), new StringSqlDataTypeRepresentation(true, 128), username),
                                          new InputParameterDefinition<string>(nameof(InputParamName.ClearTextPassword), new StringSqlDataTypeRepresentation(true, 128), clearTextPassword),
                                          new InputParameterDefinition<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant), roles),
+                                         new InputParameterDefinition<int>(nameof(InputParamName.ShouldCreateLogin), new IntSqlDataTypeRepresentation(), shouldCreateLogin ? 1 : 0),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
@@ -86,22 +102,28 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{Name}](
-  @{InputParamName.Username} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
+  @{InputParamName.LoginName} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
+, @{InputParamName.Username} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
 , @{InputParamName.ClearTextPassword} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
 , @{InputParamName.RoleCsv} AS {new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}
+, @{InputParamName.ShouldCreateLogin} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 )
 AS
 BEGIN
     DECLARE @quotedLogin {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-	SET @quotedLogin = QUOTENAME('{streamName}-' + @{InputParamName.Username})
+	SET @quotedLogin = QUOTENAME(@{InputParamName.LoginName})
     DECLARE @quotedUsername {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-	SET @quotedUsername = QUOTENAME('{streamName}-' + @{InputParamName.Username})
-    DECLARE @quotedPassword {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-	SET @quotedPassword = QUOTENAME(@{InputParamName.ClearTextPassword}, '''')
+	SET @quotedUsername = QUOTENAME(@{InputParamName.Username})
 	DECLARE @db {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
 	SET @db = QUOTENAME(DB_NAME())
 
-    EXEC('CREATE LOGIN ' + @quotedLogin + ' WITH PASSWORD = ' + @quotedPassword + ', DEFAULT_DATABASE = ' + @db)
+    IF (@{InputParamName.ShouldCreateLogin} = 1)
+    BEGIN
+       DECLARE @quotedPassword {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
+	   SET @quotedPassword = QUOTENAME(@{InputParamName.ClearTextPassword}, '''')
+       EXEC('CREATE LOGIN ' + @quotedLogin + ' WITH PASSWORD = ' + @quotedPassword + ', DEFAULT_DATABASE = ' + @db)
+    END
+
     EXEC('CREATE USER ' + @quotedUsername + ' FOR LOGIN ' + @quotedLogin + ' WITH DEFAULT_SCHEMA=[{streamName}]')
 
     -- Iterate over all roles

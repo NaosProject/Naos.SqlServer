@@ -234,7 +234,10 @@ namespace Naos.SqlServer.Domain.Test
                 () => new CreateStreamUserOp(
                     A.Dummy<string>(),
                     A.Dummy<string>(),
-                    CreateStreamUserOp.VersionlessSupportedProtocolTypeRepresentations.Take(ThreadSafeRandom.Next(1, CreateStreamUserOp.VersionlessSupportedProtocolTypeRepresentations.Count + 1)).ToList()));
+                    A.Dummy<string>(),
+                    CreateStreamUserOp.SupportedStreamAccessKinds.Take(ThreadSafeRandom.Next(1, CreateStreamUserOp.SupportedStreamAccessKinds.Count + 1)).Single(),
+                    A.Dummy<bool>())
+                );
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new DeleteDatabaseOp(

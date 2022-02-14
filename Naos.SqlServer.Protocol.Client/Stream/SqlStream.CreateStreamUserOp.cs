@@ -18,6 +18,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.DateTime.Recipes;
+    using OBeautifulCode.Enum.Recipes;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
@@ -36,13 +37,20 @@ namespace Naos.SqlServer.Protocol.Client
             {
                 var sqlServerLocator = resourceLocator.ConfirmAndConvert<SqlServerLocator>();
 
-                var roles = operation.ProtocolsToGrantAccessFor.Select(_ => StreamSchema.GetRoleNameFromProtocolType(_, this.Name)).ToList();
+                var roles = operation
+                           .StreamAccessKinds
+                           .GetIndividualFlags<StreamAccessKinds>()
+                           .Select(_ => StreamSchema.GetRoleNameFromStreamAccessKind(_, this.Name))
+                           .ToList();
+
                 var rolesCsv = roles.ToCsv();
                 var storedProcOp = StreamSchema.Sprocs.CreateStreamUser.BuildExecuteStoredProcedureOp(
                     this.Name,
+                    operation.LoginName,
                     operation.UserName,
                     operation.ClearTextPassword,
-                    rolesCsv);
+                    rolesCsv,
+                    operation.ShouldCreateLogin);
 
                 var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
                 var sprocResult = sqlProtocol.Execute(storedProcOp);

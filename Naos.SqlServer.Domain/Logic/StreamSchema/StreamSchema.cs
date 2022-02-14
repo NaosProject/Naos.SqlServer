@@ -8,10 +8,12 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Text;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using OBeautifulCode.Representation.System;
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Enum.Recipes;
     using static System.FormattableString;
 
     /// <summary>
@@ -42,37 +44,36 @@ namespace Naos.SqlServer.Domain
         public static string BuildCreationScriptForRoles(
             string streamName)
         {
-            var allRoles = CreateStreamUserOp.VersionlessSupportedProtocolTypeRepresentations;
+            var allRoles = CreateStreamUserOp.SupportedStreamAccessKinds;
 
             var result = new StringBuilder();
 
             foreach (var role in allRoles)
             {
-                var roleName = GetRoleNameFromProtocolType(role, streamName);
+                var roleName = GetRoleNameFromStreamAccessKind(role, streamName);
 
                 result.AppendLine(FormattableString.Invariant($@"CREATE ROLE [{roleName}] AUTHORIZATION db_owner"));
 
-                result.AppendLine(BuildGrantScriptByType(role, streamName));
+                result.AppendLine(BuildGrantScriptByStreamAccessKind(role, streamName));
             }
 
             return result.ToString();
         }
 
         /// <summary>
-        /// Builds the grant script by protocol type.
+        /// Builds the grant script for single <see cref="StreamAccessKinds"/>.
         /// </summary>
-        /// <param name="protocolType">Type of the protocol.</param>
+        /// <param name="singleStreamAccessKind">Single <see cref="StreamAccessKinds"/> to grant.</param>
         /// <param name="streamName">Name of the stream.</param>
         /// <returns>Grant script.</returns>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
-        public static string BuildGrantScriptByType(
-            TypeRepresentation protocolType,
+        public static string BuildGrantScriptByStreamAccessKind(
+            StreamAccessKinds singleStreamAccessKind,
             string streamName)
         {
             var result = new StringBuilder();
 
-            var protocolTypeWithoutId = protocolType.RemoveAssemblyVersions();
-            var roleName = GetRoleNameFromProtocolType(protocolTypeWithoutId, streamName);
+            var roleName = GetRoleNameFromStreamAccessKind(singleStreamAccessKind, streamName);
 
             string BuildGrant(string resourceName, string permission)
             {
@@ -101,7 +102,7 @@ namespace Naos.SqlServer.Domain
             result.AppendLine(BuildGrant(Tables.TypeWithVersion.Table.Name, readWrite));
             result.AppendLine(BuildGrant(Tables.Tag.Table.Name, readWrite));
 
-            if (protocolTypeWithoutId == typeof(IStreamReadProtocols).ToRepresentation().RemoveAssemblyVersions())
+            if (singleStreamAccessKind == StreamAccessKinds.Read)
             {
                 result.AppendLine(BuildGrant(Sprocs.GetLatestRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.GetDistinctStringSerializedIds.Name, execute));
@@ -110,7 +111,7 @@ namespace Naos.SqlServer.Domain
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
             }
-            else if (protocolTypeWithoutId == typeof(IStreamWriteProtocols).ToRepresentation().RemoveAssemblyVersions())
+            else if (singleStreamAccessKind == StreamAccessKinds.Write)
             {
                 result.AppendLine(BuildGrant(Sprocs.PutRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.GetNextUniqueLong.Name, execute));
@@ -118,7 +119,7 @@ namespace Naos.SqlServer.Domain
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, readWrite));
             }
-            else if (protocolTypeWithoutId == typeof(IStreamRecordHandlingProtocols).ToRepresentation().RemoveAssemblyVersions())
+            else if (singleStreamAccessKind == StreamAccessKinds.Handle)
             {
                 result.AppendLine(BuildGrant(Sprocs.TryHandleRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.PutHandling.Name, execute));
@@ -127,29 +128,31 @@ namespace Naos.SqlServer.Domain
                 result.AppendLine(BuildGrant(Tables.Handling.Table.Name, readWrite));
                 result.AppendLine(BuildGrant(Tables.HandlingTag.Table.Name, readWrite));
             }
-            else if (protocolTypeWithoutId == typeof(IStreamManagementProtocols).ToRepresentation().RemoveAssemblyVersions())
+            else if (singleStreamAccessKind == StreamAccessKinds.Manage)
             {
                 result.AppendLine(BuildGrant(Sprocs.CreateStreamUser.Name, execute));
             }
             else
             {
-                throw new NotSupportedException(Invariant($"Type {protocolTypeWithoutId} is not supported for granting table/sproc/function access."));
+                throw new NotSupportedException(Invariant($"{nameof(StreamAccessKinds)} {singleStreamAccessKind} is not supported for granting table/sproc/function access."));
             }
 
             return result.ToString();
         }
 
         /// <summary>
-        /// Gets the role name from the type and the stream name.
+        /// Gets the role name from the <see cref="StreamAccessKinds"/> and the stream name.
         /// </summary>
-        /// <param name="protocolType">Type of the protocol.</param>
+        /// <param name="singleStreamAccessKind">Single <see cref="StreamAccessKinds"/>.</param>
         /// <param name="streamName">Name of the stream.</param>
         /// <returns>Name of role.</returns>
-        public static string GetRoleNameFromProtocolType(
-            TypeRepresentation protocolType,
+        public static string GetRoleNameFromStreamAccessKind(
+            StreamAccessKinds singleStreamAccessKind,
             string streamName)
         {
-            var roleName = protocolType.Name.Substring(1, protocolType.Name.Length - 1); // strip off I for the interface.
+            var streamAccessKindsIndividualItems = singleStreamAccessKind.GetIndividualFlags();
+            streamAccessKindsIndividualItems.Count.MustForArg(nameof(streamAccessKindsIndividualItems)).BeEqualTo(1, "Can only convert a single flag to a role name.");
+            var roleName = streamAccessKindsIndividualItems.Single().ToString();
 
             var result = Invariant($@"{streamName}-{roleName}");
 

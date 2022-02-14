@@ -8,13 +8,11 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.Representation.System;
+    using OBeautifulCode.Enum.Recipes;
     using OBeautifulCode.Type;
     using static System.FormattableString;
 
@@ -24,46 +22,70 @@ namespace Naos.SqlServer.Domain
     public partial class CreateStreamUserOp : VoidOperationBase
     {
         /// <summary>
-        /// The <see cref="TypeRepresentation"/>'s of the supported protocols sets that stream users can be created with.
+        /// The <see cref="Database.Domain.StreamAccessKinds"/>'s that stream users can be created with access to.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Versionless", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
-        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
-        public static readonly IReadOnlyCollection<TypeRepresentation> VersionlessSupportedProtocolTypeRepresentations = new[]
-        {
-            typeof(IStreamReadProtocols).ToRepresentation().RemoveAssemblyVersions(),
-            typeof(IStreamWriteProtocols).ToRepresentation().RemoveAssemblyVersions(),
-            typeof(IStreamRecordHandlingProtocols).ToRepresentation().RemoveAssemblyVersions(),
-            typeof(IStreamManagementProtocols).ToRepresentation().RemoveAssemblyVersions(),
-        };
+        public static readonly IReadOnlyCollection<StreamAccessKinds> SupportedStreamAccessKinds =
+            new[]
+            {
+                Database.Domain.StreamAccessKinds.Read,
+                Database.Domain.StreamAccessKinds.Write,
+                Database.Domain.StreamAccessKinds.Handle,
+                Database.Domain.StreamAccessKinds.Manage,
+            };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateStreamUserOp"/> class.
         /// </summary>
+        /// <param name="loginName">The login name of the user.</param>
         /// <param name="userName">The username of the user.</param>
         /// <param name="clearTextPassword">The clear text password.</param>
-        /// <param name="protocolsToGrantAccessFor">Support protocols to grant access for.</param>
+        /// <param name="streamAccessKinds"><see cref="Database.Domain.StreamAccessKinds"/> to grant access for.</param>
+        /// <param name="shouldCreateLogin">A value indicating whether or not to create the login or look it up.</param>
         public CreateStreamUserOp(
+            string loginName,
             string userName,
             string clearTextPassword,
-            IReadOnlyCollection<TypeRepresentation> protocolsToGrantAccessFor)
+            StreamAccessKinds streamAccessKinds,
+            bool shouldCreateLogin)
         {
             userName.MustForArg(nameof(userName)).NotBeNullNorWhiteSpace().And().BeAlphanumeric(new[] { '-' });
-            clearTextPassword.MustForArg(nameof(clearTextPassword)).NotBeNullNorWhiteSpace();
-            protocolsToGrantAccessFor.MustForArg(nameof(protocolsToGrantAccessFor)).NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            streamAccessKinds.MustForArg(nameof(streamAccessKinds)).NotBeEqualTo(Database.Domain.StreamAccessKinds.None);
 
-            if (protocolsToGrantAccessFor.Select(_ => _.RemoveAssemblyVersions()).Any(_ => !VersionlessSupportedProtocolTypeRepresentations.Contains(_)))
+            if (shouldCreateLogin)
             {
-                var supportedValuesString = VersionlessSupportedProtocolTypeRepresentations.Select(_ => _.ToString()).ToDelimitedString(",");
-
-                var providedValuesString = protocolsToGrantAccessFor.Select(_ => _.ToString()).ToDelimitedString(",");
-
-                throw new ArgumentException(Invariant($"Unsupported access type provided; supported: '{supportedValuesString}', provided: '{providedValuesString}'."), nameof(protocolsToGrantAccessFor));
+                clearTextPassword.MustForArg(nameof(clearTextPassword)).NotBeNullNorWhiteSpace();
+            }
+            else
+            {
+                loginName.MustForArg(nameof(loginName)).NotBeNullNorWhiteSpace();
             }
 
+            if (!string.IsNullOrWhiteSpace(loginName))
+            {
+                loginName.MustForArg(nameof(loginName)).BeAlphanumeric(new[] { '-' });
+            }
+
+            var individualStreamAccessKinds = streamAccessKinds.GetIndividualFlags<StreamAccessKinds>();
+            if (individualStreamAccessKinds.Except(CreateStreamUserOp.SupportedStreamAccessKinds).Any())
+            {
+                var supportedValuesString = SupportedStreamAccessKinds.Select(_ => _.ToString()).ToDelimitedString(",");
+
+                var providedValuesString = individualStreamAccessKinds.Select(_ => _.ToString()).ToDelimitedString(",");
+
+                throw new ArgumentException(Invariant($"Unsupported access type provided; supported: '{supportedValuesString}', provided: '{providedValuesString}'."), nameof(streamAccessKinds));
+            }
+
+            this.LoginName = loginName;
             this.UserName = userName;
             this.ClearTextPassword = clearTextPassword;
-            this.ProtocolsToGrantAccessFor = protocolsToGrantAccessFor;
+            this.StreamAccessKinds = streamAccessKinds;
+            this.ShouldCreateLogin = shouldCreateLogin;
         }
+
+        /// <summary>
+        /// Gets the name of the login name.
+        /// </summary>
+        public string LoginName { get; private set; }
 
         /// <summary>
         /// Gets the username of the user.
@@ -76,8 +98,13 @@ namespace Naos.SqlServer.Domain
         public string ClearTextPassword { get; private set; }
 
         /// <summary>
-        /// Gets the protocols to grant access for.
+        /// Gets the <see cref="StreamAccessKinds"/> to grant access for.
         /// </summary>
-        public IReadOnlyCollection<TypeRepresentation> ProtocolsToGrantAccessFor { get; private set; }
+        public StreamAccessKinds StreamAccessKinds { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether a login should be created or looked up by name.
+        /// </summary>
+        public bool ShouldCreateLogin { get; private set; }
     }
 }

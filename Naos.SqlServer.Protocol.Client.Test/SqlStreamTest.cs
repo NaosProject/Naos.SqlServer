@@ -36,7 +36,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream180";
+        private readonly string streamName = "Stream188";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -184,13 +184,10 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             stream.Execute(
                 new CreateStreamUserOp(
-                    "read-only",
-                    "read-only",
+                    this.streamName + "ReadOnly",
+                    this.streamName + "ReadOnly",
                     "ReadMe",
-                    new[]
-                    {
-                        typeof(IStreamReadProtocols).ToRepresentation(),
-                    },
+                    StreamAccessKinds.Read,
                     true));
 
             var key = Guid.NewGuid().ToString().ToUpperInvariant();
