@@ -816,7 +816,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void TestConfigStreamBuilding()
         {
             var localStreamName = "MyStream";
-            var x = new SqlStreamConfig(
+            var x = new SqlServerStreamConfig(
                 localStreamName,
                 StreamAccessKinds.Read,
                 TimeSpan.FromSeconds(30),
@@ -832,7 +832,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var serializer = new ObcJsonSerializer(typeof(SqlServerJsonSerializationConfiguration).ToJsonSerializationConfigurationType());
             var output = serializer.SerializeToString(x);
 
-            var stream = Config.GetByName<SqlStreamConfig>(
+            var stream = Config.GetByName<SqlServerStreamConfig>(
                                          localStreamName,
                                          new SerializerRepresentation(
                                              SerializationKind.Json,

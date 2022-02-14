@@ -1,5 +1,6 @@
 {
     "name": "MyStream",
+    "accessKinds": "read",
     "defaultConnectionTimeout": "00:00:30",
     "defaultCommandTimeout": "00:00:30",
     "defaultSerializerRepresentation": {

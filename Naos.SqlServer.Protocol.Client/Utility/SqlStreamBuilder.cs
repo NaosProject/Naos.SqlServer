@@ -25,13 +25,13 @@ namespace Naos.SqlServer.Protocol.Client
     public static class SqlStreamBuilder
     {
         /// <summary>
-        /// Extension on <see cref="SqlStreamConfig"/> to build a <see cref="SqlStream"/>.
+        /// Extension on <see cref="SqlServerStreamConfig"/> to build a <see cref="SqlStream"/>.
         /// </summary>
         /// <param name="streamConfig">The stream configuration object.</param>
         /// <param name="serializerFactory">The serializer factory.</param>
         /// <returns>A <see cref="SqlStream"/>.</returns>
         public static SqlStream ToStream(
-            this SqlStreamConfig streamConfig,
+            this SqlServerStreamConfig streamConfig,
             ISerializerFactory serializerFactory)
         {
             streamConfig.MustForArg(nameof(streamConfig)).NotBeNull();

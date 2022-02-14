@@ -220,7 +220,7 @@ namespace Naos.SqlServer.Domain.Test
                     A.Dummy<int?>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new SqlStreamConfig(
+                () => new SqlServerStreamConfig(
                     A.Dummy<string>(),
                     A.Dummy<StreamAccessKinds>().Whose(_ => _ != StreamAccessKinds.None),
                     TimeSpan.FromSeconds(A.Dummy<PositiveDouble>()),

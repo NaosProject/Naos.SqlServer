@@ -384,9 +384,9 @@
     <Compile Include="Models\Classes\ResourceLocation\SqlServerLocatorTest.designer.cs">
       <DependentUpon>SqlServerLocatorTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Stream\SqlStreamConfigTest.cs" />
-    <Compile Include="Models\Classes\Stream\SqlStreamConfigTest.designer.cs">
-      <DependentUpon>SqlStreamConfigTest.cs</DependentUpon>
+    <Compile Include="Models\Classes\Stream\SqlServerStreamConfigTest.cs" />
+    <Compile Include="Models\Classes\Stream\SqlServerStreamConfigTest.designer.cs">
+      <DependentUpon>SqlServerStreamConfigTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResultTest.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\StringSqlDataTypeRepresentationTest.cs" />
