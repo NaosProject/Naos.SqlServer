@@ -31,6 +31,10 @@ namespace Naos.SqlServer.Protocol.Client
             CreateStreamUserOp operation)
         {
             operation.MustForArg(nameof(operation)).NotBeNull();
+            operation.LoginName.MustForArg(nameof(operation))
+                     .NotBeEqualTo(
+                          operation.UserName,
+                          "Sql Server does not like the loginName and userName being the same and they must be different.");
 
             var allLocators = this.ResourceLocatorProtocols.Execute(new GetAllResourceLocatorsOp());
             foreach (var resourceLocator in allLocators)

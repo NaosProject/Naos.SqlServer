@@ -36,7 +36,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream188";
+        private readonly string streamName = "Stream190";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
