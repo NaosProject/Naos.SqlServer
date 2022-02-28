@@ -1148,7 +1148,7 @@ namespace Naos.SqlServer.Protocol.Client
                         COLUMN_DEFAULT as ColumnDefault,
                         (CASE UPPER(IS_NULLABLE)
 						WHEN 'YES' THEN (cast(1 as bit)) ELSE (cast(0 as bit))  END) as IsNullable,
-                        DATA_TYPE as DataType
+                        DATA_TYPE as SqlDataType
                 FROM INFORMATION_SCHEMA.COLUMNS
                 WHERE
                     TABLE_CATALOG   = @DatabaseName
