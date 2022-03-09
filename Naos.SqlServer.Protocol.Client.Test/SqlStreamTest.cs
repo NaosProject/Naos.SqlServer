@@ -635,6 +635,57 @@ namespace Naos.SqlServer.Protocol.Client.Test
             */
         }
 
+        [Fact]
+        public void HandlingEntryTagsUsedInStatusTests()
+        {
+            var stream = this.GetCreatedSqlStream();
+
+            var start = DateTime.UtcNow;
+
+            var key = Invariant($"{stream.Name}Key");
+
+            var firstValue = "Testing again.";
+            var firstObject = new MyObject(key, firstValue);
+            var firstConcern = "CanceledPickedBackUpScenario";
+            var firstTags = new List<NamedValue<string>>
+                            {
+                                new NamedValue<string>("Record", Guid.NewGuid().ToString().ToUpper(CultureInfo.InvariantCulture)),
+                            };
+
+            var handleTags = new List<NamedValue<string>>
+                            {
+                                new NamedValue<string>("Handle", Guid.NewGuid().ToString().ToUpper(CultureInfo.InvariantCulture)),
+                            };
+
+            stream.PutWithId(firstObject.Id, firstObject, firstTags);
+            var metadata = stream.GetLatestRecordMetadataById("monkeyAintThere");
+            metadata.MustForTest().BeNull();
+            var first = stream.Execute(
+                new StandardTryHandleRecordOp(
+                    firstConcern,
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        objectTypes: new[]
+                                     {
+                                         typeof(MyObject).ToRepresentation(),
+                                     }),
+                    inheritRecordTags: true,
+                    tags: handleTags));
+            first.RecordToHandle.MustForTest().NotBeNull();
+
+            var getFirstStatusByTagsOp = new StandardGetHandlingStatusOp(
+                firstConcern,
+                new RecordFilter(tags: handleTags));
+
+            stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
+
+            var stop = DateTime.UtcNow;
+            this.testOutputHelper.WriteLine(Invariant($"TotalSeconds: {(stop - start).TotalSeconds}."));
+        }
+
         /// <summary>
         /// Defines the test method GetDistinctStringSerializedIds.
         /// </summary>
