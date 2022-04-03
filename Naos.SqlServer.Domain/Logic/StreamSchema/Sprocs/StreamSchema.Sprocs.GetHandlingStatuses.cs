@@ -200,7 +200,7 @@ BEGIN
             SELECT DISTINCT [{Tables.Record.Id.Name}] FROM @{recordIdsToConsiderTable}
         )
         GROUP BY h.[{Tables.Handling.RecordId.Name}]
-        HAVING COUNT(h.[{Tables.Handling.RecordId.Name}]) = @TagCount
+        --HAVING COUNT(h.[{Tables.Handling.RecordId.Name}]) = @TagCount -- This is wrong when you have multiple matching records, disabling for now and it will actually be matching ANY tag matches from query...
     END
 
     DECLARE @{streamBlockedStatus} {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
