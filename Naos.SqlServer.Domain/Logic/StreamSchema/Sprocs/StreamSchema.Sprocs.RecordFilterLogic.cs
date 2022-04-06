@@ -438,7 +438,7 @@ namespace Naos.SqlServer.Domain
     BEGIN
         IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
         BEGIN
-            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] IN
             (
 				SELECT DISTINCT rconsider.[{Tables.Record.Id.Name}] FROM
 					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
@@ -459,7 +459,7 @@ namespace Naos.SqlServer.Domain
         END
         ELSE
         BEGIN
-            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] IN
             (
 				SELECT DISTINCT rconsider.[{Tables.Record.Id.Name}] FROM
 					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithVersionId.Name}]
