@@ -53,9 +53,14 @@ namespace Naos.SqlServer.Domain
                     StringIdentifiersXml,
 
                     /// <summary>
-                    /// The tag identifiers as CSV.
+                    /// The record tag identifiers as CSV.
                     /// </summary>
                     TagIdsToMatchCsv,
+
+                    /// <summary>
+                    /// The handling tag identifiers as CSV.
+                    /// </summary>
+                    HandlingTagIdsToMatchCsv,
 
                     /// <summary>
                     /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
@@ -78,139 +83,406 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="recordIdsToConsiderTable">The record ids to consider table.</param>
-                /// <returns>System.String.</returns>
+                /// <param name="includeHandlingTags">A value indicating whether or not to add hanlding tag logic.</param>
+                /// <returns>Injection SQL for filtering.</returns>
                 public static string BuildRecordFilterToBuildRecordsToConsiderTable(
                     string streamName,
-                    string recordIdsToConsiderTable)
+                    string recordIdsToConsiderTable,
+                    bool includeHandlingTags = false)
                 {
-                    const string identifierTypesTable = "IdTypeIdentifiersTable";
-                    const string objectTypesTable = "ObjectTypeIdentifiersTable";
-                    const string stringSerializedIdsTable = "StringSerializedIdentifiersTable";
-                    const string tagIdsTable = "TagIdsTable";
-                    const string deprecatedTypesTable = "DeprecatedIdEventIdsTable";
+                    const string recordTagIdsTable = "RecordTagIdsTable";
+                    const string handlingTagIdsTable = "HandlingTagIdsTable";
+                    const string filterAppliedBit = "FilterApplied";
+                    var handlingTagMixIn = !includeHandlingTags
+                        ? string.Empty
+                        : Invariant(
+                            $@"
+    -----------------------------------------------------------------
+    -- BEGIN APPLY HANDLING TAG FILTER
+    IF (@{InputParamName.HandlingTagIdsToMatchCsv} IS NOT NULL)
+    BEGIN
+        DECLARE @{handlingTagIdsTable} TABLE([{Tables.Tag.Id.Name}] {new BigIntSqlDataTypeRepresentation().DeclarationInSqlSyntax} NOT NULL)
+        INSERT INTO @{handlingTagIdsTable} ([{Tables.Tag.Id.Name}])
+        SELECT VALUE FROM STRING_SPLIT(@{InputParamName.HandlingTagIdsToMatchCsv}, ',')
+        DECLARE @HandlingTagCount INT
+        SELECT @HandlingTagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{handlingTagIdsTable}
+        IF (@{filterAppliedBit} = 1)
+        BEGIN
+          DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+            (
+                SELECT DISTINCT h.[{Tables.Handling.RecordId.Name}] AS [{Tables.Record.Id.Name}]
+                FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht WITH (NOLOCK)
+                INNER JOIN @{recordTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = ht.[{Tables.HandlingTag.TagId.Name}]
+                INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK) ON h.[{Tables.Handling.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
+                GROUP BY h.[{Tables.Handling.Id.Name}], h.[{Tables.Handling.RecordId.Name}]
+                HAVING COUNT(h.[{Tables.Handling.RecordId.Name}]) = @HandlingTagCount
+            )
+        END
+        ELSE
+        BEGIN
+            SET @{filterAppliedBit} = 1
+            INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+            (
+                SELECT DISTINCT h.[{Tables.Handling.RecordId.Name}] AS [{Tables.Record.Id.Name}]
+                FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht WITH (NOLOCK)
+                INNER JOIN @{recordTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = ht.[{Tables.HandlingTag.TagId.Name}]
+                INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK) ON h.[{Tables.Handling.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
+                GROUP BY h.[{Tables.Handling.Id.Name}], h.[{Tables.Handling.RecordId.Name}]
+                HAVING COUNT(h.[{Tables.Handling.RecordId.Name}]) = @HandlingTagCount
+            )
+        END
+    END
+    -- END APPLY HANDLING TAG FILTER
+    -----------------------------------------------------------------
+");
 
                     var result = Invariant(
                         $@"
-    -- START RECORD FILTER QUERYING
+    --------------------------------------------------------------------------------------
+    -- BEGIN RECORD FILTER INJECTED SQL - CHANGE IN BUILDING CODE AND PATCH SPROCS      --
+    --------------------------------------------------------------------------------------
+    /*
+    TODO: 
+       * Consider branch logic for common combos that could be consolidated
+       * Consider limiting queries when @{filterAppliedBit} to only Ids in @RecordIdsToConsider, how to deal with delete?
+       * Consider copying values of @RecordIdsToConsider to a new table and truncating and overwriting (makes limiting easier), what is perf?
+       * remove distinct where possible
+    */
+    -----------------------------------------------------------------
+
+    -----------------------------------------------------------------
+    -- BEGIN PARAM CHECK
+    -- Skipping these checks for performance purposes
+    -- The .NET client will guarantee non-empty CSV, non-empty XML, and supported Enum values.
+    -- Further, .NET client guarantees that CSVs contain distinct values.
+    --IF (@{InputParamName.InternalRecordIdsCsv} = '')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.InternalRecordIdsCsv}')
+    --END
+    --IF (@{InputParamName.IdentifierTypeIdsCsv} = '')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.IdentifierTypeIdsCsv}')
+    --END
+    --IF (@{InputParamName.ObjectTypeIdsCsv} = '')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.ObjectTypeIdsCsv}')
+    --END
+    -- IF (@{InputParamName.StringIdentifiersXml} IS NOT NULL) and (@{InputParamName.StringIdentifiersXml}.EXISTS('*') = 0) -- DOES EXISTS('*') do slow XML stuff?
+    -- BEGIN
+        -- RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.StringIdentifiersXml}')
+    -- END
+       
+    --IF (@{InputParamName.TagIdsToMatchCsv} = '')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.TagIdsToMatchCsv}')
+    --END
+    --IF (@{InputParamName.HandlingTagIdsToMatchCsv} = '')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.HandlingTagIdsToMatchCsv}')
+    --END
+    --IF (@{InputParamName.TagMatchStrategy} <> '{TagMatchStrategy.RecordContainsAllQueryTags}')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.TagMatchStrategy}')
+    --END
+    --IF (@{InputParamName.VersionMatchStrategy} <> '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.VersionMatchStrategy} <> '{VersionMatchStrategy.Any}')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.VersionMatchStrategy}')
+    --END
+    --IF (@{InputParamName.DeprecatedIdEventTypeIdsCsv} = '')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.DeprecatedIdEventTypeIdsCsv}')
+    --END
+    -- END PARAM CHECK
+    -----------------------------------------------------------------
+
+    -----------------------------------------------------------------
+    -- BEGIN DECLARE ASSETS
     DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
-    SELECT value FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+    DECLARE @{filterAppliedBit} BIT
+    -- END DECLARE ASSETS
+    -----------------------------------------------------------------
 
-    DECLARE @{identifierTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{identifierTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
-    SELECT value FROM STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',')
-
-    DECLARE @{objectTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{objectTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
-    SELECT value FROM STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',')
-
-    DECLARE @{stringSerializedIdsTable} TABLE([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NOT NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{stringSerializedIdsTable} ([{Tables.Record.StringSerializedId.Name}], [{Tables.TypeWithVersion.Id.Name}])
-    SELECT 
-         [{Tables.Tag.TagKey.Name}]
-	   , [{Tables.Tag.TagValue.Name}]
-    FROM [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) 
-
-    DECLARE @{tagIdsTable} TABLE([{Tables.Tag.Id.Name}] {Tables.Tag.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{tagIdsTable} ([{Tables.Tag.Id.Name}])
-    SELECT value FROM STRING_SPLIT(@{InputParamName.TagIdsToMatchCsv}, ',')
-
-    DECLARE @{deprecatedTypesTable} TABLE([{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    INSERT INTO @{deprecatedTypesTable} ([{Tables.TypeWithVersion.Id.Name}])
-    SELECT value FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ',')
-
-    INSERT INTO @{recordIdsToConsiderTable}
-    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-    LEFT JOIN @{recordIdsToConsiderTable} ir ON
-        r.[{Tables.Record.Id.Name}] =  ir.[{Tables.Record.Id.Name}]
-    LEFT JOIN @{identifierTypesTable} itwith ON
-        r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = itwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-    LEFT JOIN @{identifierTypesTable} itwithout ON
-        r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = itwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-    LEFT JOIN @{objectTypesTable} otwith ON
-        r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = otwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-    LEFT JOIN @{objectTypesTable} otwithout ON
-        r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = otwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-    WHERE
-        r.[{Tables.Record.Id.Name}] IS NOT NULL
-        AND
+    -----------------------------------------------------------------
+    -- BEGIN APPLY INTERNAL RECORD ID FILTER
+    IF (@{InputParamName.InternalRecordIdsCsv} IS NOT NULL)
+    BEGIN
+        IF (@{filterAppliedBit} = 1)
+        BEGIN
+            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN 
             (
-                (@{InputParamName.IdentifierTypeIdsCsv} IS NULL)
-                OR
-                (
-			        (itwith.[{Tables.TypeWithVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
-                    OR
-			        (itwithout.[{Tables.TypeWithoutVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
-                )
+                SELECT DISTINCT VALUE FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
             )
-        AND 
+        END
+        ELSE
+        BEGIN
+            SET @{filterAppliedBit} = 1
+            INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
             (
-                (@{InputParamName.ObjectTypeIdsCsv} IS NULL)
-                OR
-                (
-			        (otwith.[{Tables.TypeWithVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
-                    OR
-			        (otwithout.[{Tables.TypeWithoutVersion.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
-                )
+                SELECT DISTINCT VALUE FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
             )
+        END
+    END
+    -- END APPLY INTERNAL RECORD ID FILTER
+    -----------------------------------------------------------------
 
-	IF ((EXISTS (SELECT TOP 1 [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})) AND @TagMatchStrategy = '{TagMatchStrategy.RecordContainsAllQueryTags}')
-	BEGIN
-        DECLARE @TagCount INT
-        SELECT @TagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{tagIdsTable}
-        DELETE FROM @{recordIdsToConsiderTable}
-        WHERE [{Tables.Record.Id.Name}] NOT IN
-        (
-            SELECT DISTINCT rt.[{Tables.RecordTag.RecordId.Name}] AS [{Tables.Record.Id.Name}]
+    -----------------------------------------------------------------
+    -- BEGIN APPLY STRING SERIALIZED ID FILTER
+    IF (@{InputParamName.StringIdentifiersXml} IS NOT NULL)
+    BEGIN
+        IF (@{filterAppliedBit} = 1)
+        BEGIN
+            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            BEGIN
+                DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
+                    ON r.[{Tables.Record.StringSerializedId.Name}] = i.[{Tables.Tag.TagKey.Name}]
+                    AND r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
+                )
+            END
+            ELSE
+            BEGIN
+                DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
+                    ON r.[{Tables.Record.StringSerializedId.Name}] = i.[{Tables.Tag.TagKey.Name}]
+                    AND r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
+                )
+            END
+        END
+        ELSE
+        BEGIN
+            SET @{filterAppliedBit} = 1
+            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            BEGIN
+                INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
+                    ON r.[{Tables.Record.StringSerializedId.Name}] = i.[{Tables.Tag.TagKey.Name}]
+                    AND r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
+                )
+            END
+            ELSE
+            BEGIN
+                INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
+                    ON r.[{Tables.Record.StringSerializedId.Name}] = i.[{Tables.Tag.TagKey.Name}]
+                    AND r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
+                )
+            END
+        END
+    END
+    -- END APPLY STRING SERIALIZED ID FILTER
+    -----------------------------------------------------------------
+
+    -----------------------------------------------------------------
+    -- BEGIN APPLY ID TYPE FILTER
+    IF (@{InputParamName.IdentifierTypeIdsCsv} IS NOT NULL)
+    BEGIN
+        IF (@{filterAppliedBit} = 1)
+        BEGIN
+            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            BEGIN
+                DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.VALUE   
+                )
+            END
+            ELSE
+            BEGIN
+                DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.VALUE
+                )
+            END
+        END
+        ELSE
+        BEGIN
+            SET @{filterAppliedBit} = 1
+            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            BEGIN
+                INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.VALUE       
+                )
+            END
+            ELSE
+            BEGIN
+                INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.VALUE      
+                )
+            END
+        END
+    END
+    -- END APPLY ID TYPE FILTER
+    -----------------------------------------------------------------
+
+    -----------------------------------------------------------------
+    -- BEGIN APPLY OBJECT TYPE FILTER
+    IF (@{InputParamName.ObjectTypeIdsCsv} IS NOT NULL)
+    BEGIN
+        IF (@{filterAppliedBit} = 1)
+        BEGIN
+            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            BEGIN
+                DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = i.VALUE   
+                )
+            END
+            ELSE
+            BEGIN
+                DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = i.VALUE
+                )
+            END
+        END
+        ELSE
+        BEGIN
+            SET @{filterAppliedBit} = 1
+            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            BEGIN
+                INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = i.VALUE       
+                )
+            END
+            ELSE
+            BEGIN
+                INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+                (
+                    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
+                    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                    INNER JOIN STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = i.VALUE      
+                )
+            END
+        END
+    END
+    -- END APPLY OBJECT TYPE FILTER
+    -----------------------------------------------------------------
+    
+    -----------------------------------------------------------------
+    -- BEGIN APPLY RECORD TAG FILTER
+    IF (@{InputParamName.TagIdsToMatchCsv} IS NOT NULL)
+    BEGIN
+        DECLARE @{recordTagIdsTable} TABLE([{Tables.Tag.Id.Name}] {new BigIntSqlDataTypeRepresentation().DeclarationInSqlSyntax} NOT NULL)
+        INSERT INTO @{recordTagIdsTable} ([{Tables.Tag.Id.Name}])
+        SELECT VALUE FROM STRING_SPLIT(@{InputParamName.TagIdsToMatchCsv}, ',')
+        DECLARE @RecordTagCount INT
+        SELECT @RecordTagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{recordTagIdsTable}
+        IF (@{filterAppliedBit} = 1)
+        BEGIN
+          DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+          (
+            SELECT rt.[RecordId] AS [{Tables.Record.Id.Name}]
             FROM [{streamName}].[{Tables.RecordTag.Table.Name}] rt WITH (NOLOCK)
-            JOIN @{tagIdsTable} tids ON
-                tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.TagId.Name}]
+            INNER JOIN @{recordTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.TagId.Name}]
             GROUP BY rt.[{Tables.RecordTag.RecordId.Name}]
-            HAVING COUNT(rt.[{Tables.RecordTag.RecordId.Name}]) = @TagCount
-        )
+            HAVING COUNT(rt.[{Tables.RecordTag.Id.Name}]) = @RecordTagCount
+          )
+        END
+        ELSE
+        BEGIN
+            SET @{filterAppliedBit} = 1
+            INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+            (
+                SELECT rt.[RecordId] AS [{Tables.Record.Id.Name}]
+                FROM [{streamName}].[{Tables.RecordTag.Table.Name}] rt WITH (NOLOCK)
+                INNER JOIN @{recordTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.TagId.Name}]
+                GROUP BY rt.[{Tables.RecordTag.RecordId.Name}]
+                HAVING COUNT(rt.[{Tables.RecordTag.Id.Name}]) = @RecordTagCount
+            )
+        END
     END
-
-	IF (EXISTS (SELECT TOP 1 [{Tables.Record.StringSerializedId.Name}] FROM @{stringSerializedIdsTable}))
-	BEGIN
-		DELETE FROM @{recordIdsToConsiderTable}
-        WHERE [{Tables.Record.Id.Name}] NOT IN
-        (
-		    SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-		    FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-		    INNER JOIN @{stringSerializedIdsTable} ssid ON
-			    r.[{Tables.Record.StringSerializedId.Name}] = ssid.[{Tables.Record.StringSerializedId.Name}] AND 
-			          (
-			            (r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = ssid.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
-					    OR
-			            (r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = ssid.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
-				      )
-        )
-	END
-
-	IF ((EXISTS (SELECT TOP 1 [{Tables.TypeWithVersion.Id.Name}] FROM @{deprecatedTypesTable})))
-	BEGIN
-        DELETE FROM @{recordIdsToConsiderTable}
-        WHERE [{Tables.Record.Id.Name}] IN
-        (
-            SELECT DISTINCT r.[{Tables.Record.Id.Name}]
-            FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-		    LEFT JOIN [{streamName}].[{Tables.Record.Table.Name}] r1 WITH (NOLOCK) -- the most recent record type is the deprecated
-		        ON r.[{Tables.Record.StringSerializedId.Name}] = r1.[{Tables.Record.StringSerializedId.Name}] AND r.[{Tables.Record.Id.Name}] < r1.[{Tables.Record.Id.Name}]
-            LEFT JOIN @{deprecatedTypesTable} dtwith ON
-                r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = dtwith.[{Tables.TypeWithVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}'
-            LEFT JOIN @{deprecatedTypesTable} dtwithout ON
-                r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = dtwithout.[{Tables.TypeWithoutVersion.Id.Name}] AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}'
-            WHERE
-                    r1.[{Tables.Record.Id.Name}] IS NULL
-                AND (
-                       (dtwith.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.SpecifiedVersion}')
-                       OR
-                       (dtwithout.[{Tables.Record.Id.Name}] IS NOT NULL AND @{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
-                     )
-        )
+    -- END APPLY RECORD TAG FILTER
+    -----------------------------------------------------------------
+    {handlingTagMixIn}
+    -----------------------------------------------------------------
+    -- BEGIN REMOVE DEPRECATED IDS FILTER
+    IF (@{InputParamName.DeprecatedIdEventTypeIdsCsv} IS NOT NULL)
+    BEGIN
+        IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+        BEGIN
+            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+            (
+				SELECT DISTINCT rconsider.[{Tables.Record.Id.Name}] FROM
+					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
+					FROM [{streamName}].[{Tables.Record.Table.Name}]
+					WHERE [{Tables.Record.Id.Name}] IN (SELECT [{Tables.Record.Id.Name}] From @{recordIdsToConsiderTable})
+					) rconsider
+				LEFT JOIN
+					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
+					FROM [{streamName}].[{Tables.Record.Table.Name}]
+					WHERE [{Tables.Record.ObjectTypeWithoutVersionId.Name}] IN (SELECT VALUE FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ','))) rdeprecated
+				ON 
+					rconsider.[{Tables.Record.StringSerializedId.Name}] = rdeprecated.[{Tables.Record.StringSerializedId.Name}]
+			    	AND rconsider.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = rdeprecated.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
+					AND rconsider.[{Tables.Record.Id.Name}] < rdeprecated.[{Tables.Record.Id.Name}]
+			    WHERE
+  			        rdeprecated.[{Tables.Record.Id.Name}] IS NOT NULL
+            )
+        END
+        ELSE
+        BEGIN
+            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
+            (
+				SELECT DISTINCT rconsider.[{Tables.Record.Id.Name}] FROM
+					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithVersionId.Name}]
+					FROM [{streamName}].[{Tables.Record.Table.Name}]
+					WHERE [{Tables.Record.Id.Name}] IN (SELECT [{Tables.Record.Id.Name}] From @{recordIdsToConsiderTable})
+					) rconsider
+				LEFT JOIN
+					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithVersionId.Name}]
+					FROM [{streamName}].[{Tables.Record.Table.Name}]
+					WHERE [{Tables.Record.ObjectTypeWithVersionId.Name}] IN (SELECT VALUE FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ','))) rdeprecated
+				ON 
+					rconsider.[{Tables.Record.StringSerializedId.Name}] = rdeprecated.[{Tables.Record.StringSerializedId.Name}]
+			    	AND rconsider.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = rdeprecated.[{Tables.Record.IdentifierTypeWithVersionId.Name}]
+					AND rconsider.[{Tables.Record.Id.Name}] < rdeprecated.[{Tables.Record.Id.Name}]
+			    WHERE
+  			        rdeprecated.[{Tables.Record.Id.Name}] IS NOT NULL
+            )
+        END
     END
-    -- END RECORD FILTER QUERYING
+    -- END REMOVE DEPRECATED IDS FILTER
+    -----------------------------------------------------------------
+
+    --------------------------------------------------------------------------------------
+    -- END RECORD FILTER INJECTED SQL - CHANGE IN BUILDING CODE AND PATCH SPROCS        --
+    --------------------------------------------------------------------------------------
 ");
                     return result;
                 }

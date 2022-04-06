@@ -56,9 +56,14 @@ namespace Naos.SqlServer.Domain
                     StringIdentifiersXml,
 
                     /// <summary>
-                    /// The tag identifiers as CSV.
+                    /// The record tag identifiers as CSV.
                     /// </summary>
                     TagIdsToMatchCsv,
+
+                    /// <summary>
+                    /// The handling tag identifiers as CSV.
+                    /// </summary>
+                    HandlingTagIdsToMatchCsv,
 
                     /// <summary>
                     /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
@@ -93,11 +98,13 @@ namespace Naos.SqlServer.Domain
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">Handling concern.</param>
                 /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter"/>.</param>
+                /// <param name="handlingTagIdsCsv">Handling tag identifiers to filter on in CSV format.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,
-                    RecordFilterConvertedForStoredProcedure convertedRecordFilter)
+                    RecordFilterConvertedForStoredProcedure convertedRecordFilter,
+                    string handlingTagIdsCsv)
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetHandlingStatuses)}]");
                     var parameters = new List<ParameterDefinitionBase>()
@@ -126,6 +133,10 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.TagIdsToMatchCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
                                              convertedRecordFilter.TagIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.HandlingTagIdsToMatchCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             handlingTagIdsCsv),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.TagMatchStrategy),
                                              new StringSqlDataTypeRepresentation(false, 40),
@@ -162,8 +173,6 @@ namespace Naos.SqlServer.Domain
 
                     const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
 
-                    const string tagIdsTable = "TagIdsTable";
-
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
@@ -174,6 +183,7 @@ namespace Naos.SqlServer.Domain
  ,  @{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
  ,  @{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
  ,  @{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.HandlingTagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
  ,  @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
  ,  @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
  ,  @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
@@ -181,27 +191,7 @@ namespace Naos.SqlServer.Domain
   )
 AS
 BEGIN
-    {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
-
-    -- Check for any handling entries with tags that match to consider
-	IF ((EXISTS (SELECT TOP 1 [{Tables.Tag.Id.Name}] FROM @{tagIdsTable})) AND @TagMatchStrategy = '{TagMatchStrategy.RecordContainsAllQueryTags}')
-	BEGIN
-        DECLARE @HandlingTagCount INT
-        SELECT @HandlingTagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{tagIdsTable}
-        INSERT INTO @{recordIdsToConsiderTable}
-        SELECT DISTINCT h.[{Tables.Handling.RecordId.Name}]
-        FROM [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
-        JOIN [{streamName}].[{Tables.HandlingTag.Table.Name}] ht WITH (NOLOCK) ON
-            h.[{Tables.Handling.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
-        JOIN @{tagIdsTable} tids ON
-            tids.[{Tables.Tag.Id.Name}] = ht.[{Tables.HandlingTag.TagId.Name}]
-        WHERE h.[{Tables.Handling.RecordId.Name}] NOT IN
-        (
-            SELECT DISTINCT [{Tables.Record.Id.Name}] FROM @{recordIdsToConsiderTable}
-        )
-        GROUP BY h.[{Tables.Handling.RecordId.Name}]
-        --HAVING COUNT(h.[{Tables.Handling.RecordId.Name}]) = @TagCount -- This is wrong when you have multiple matching records, disabling for now and it will actually be matching ANY tag matches from query...
-    END
+    {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, true)}
 
     DECLARE @{streamBlockedStatus} {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
 	SELECT TOP 1 @{streamBlockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]

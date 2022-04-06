@@ -177,6 +177,7 @@ namespace Naos.SqlServer.Domain
                                                                            Key = _.Name,
                                                                            Value = _.Value.ToStringInvariantPreferred(),
                                                                        })
+                                                             .Distinct()
                                                              .ToArray(),
                                               };
 

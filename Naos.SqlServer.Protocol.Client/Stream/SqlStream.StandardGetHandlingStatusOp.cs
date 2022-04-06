@@ -39,10 +39,19 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
 
+            var handlingTagsCsv = !operation.HandlingTags?.Any() ?? true
+                ? null
+                : this.GetIdsAddIfNecessaryTag(
+                           sqlServerLocator,
+                           operation.HandlingTags)
+                      .Select(_ => _.ToStringInvariantPreferred())
+                      .Distinct()
+                      .ToCsv();
             var op = StreamSchema.Sprocs.GetHandlingStatuses.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.Concern,
-                convertedRecordFilter);
+                convertedRecordFilter,
+                handlingTagsCsv);
 
             var sprocResult = sqlProtocol.Execute(op);
 
