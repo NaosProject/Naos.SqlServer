@@ -104,15 +104,17 @@ namespace Naos.SqlServer.Domain
         DECLARE @{handlingTagIdsTable} TABLE([{Tables.Tag.Id.Name}] {new BigIntSqlDataTypeRepresentation().DeclarationInSqlSyntax} NOT NULL)
         INSERT INTO @{handlingTagIdsTable} ([{Tables.Tag.Id.Name}])
         SELECT VALUE FROM STRING_SPLIT(@{InputParamName.HandlingTagIdsToMatchCsv}, ',')
+
         DECLARE @HandlingTagCount INT
         SELECT @HandlingTagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{handlingTagIdsTable}
+
         IF (@{filterAppliedBit} = 1)
         BEGIN
           DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
             (
                 SELECT DISTINCT h.[{Tables.Handling.RecordId.Name}] AS [{Tables.Record.Id.Name}]
                 FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht WITH (NOLOCK)
-                INNER JOIN @{recordTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = ht.[{Tables.HandlingTag.TagId.Name}]
+                INNER JOIN @{handlingTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = ht.[{Tables.HandlingTag.TagId.Name}]
                 INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK) ON h.[{Tables.Handling.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
                 GROUP BY h.[{Tables.Handling.Id.Name}], h.[{Tables.Handling.RecordId.Name}]
                 HAVING COUNT(h.[{Tables.Handling.RecordId.Name}]) = @HandlingTagCount
@@ -125,7 +127,7 @@ namespace Naos.SqlServer.Domain
             (
                 SELECT DISTINCT h.[{Tables.Handling.RecordId.Name}] AS [{Tables.Record.Id.Name}]
                 FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] ht WITH (NOLOCK)
-                INNER JOIN @{recordTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = ht.[{Tables.HandlingTag.TagId.Name}]
+                INNER JOIN @{handlingTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = ht.[{Tables.HandlingTag.TagId.Name}]
                 INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK) ON h.[{Tables.Handling.Id.Name}] = ht.[{Tables.HandlingTag.HandlingId.Name}]
                 GROUP BY h.[{Tables.Handling.Id.Name}], h.[{Tables.Handling.RecordId.Name}]
                 HAVING COUNT(h.[{Tables.Handling.RecordId.Name}]) = @HandlingTagCount
