@@ -58,7 +58,7 @@ namespace Naos.SqlServer.Protocol.Client
                      .MustForArg(Invariant($"{nameof(recordFilter)}.{nameof(recordFilter.TagMatchStrategy)}"))
                      .BeEqualTo(TagMatchStrategy.RecordContainsAllQueryTags, "Currently only supported tag strategy.");
 
-            var internalRecordIdsCsv = recordFilter.InternalRecordIds?.Any() ?? true
+            var internalRecordIdsCsv = !recordFilter.InternalRecordIds?.Any() ?? true
                 ? null
                 : recordFilter.InternalRecordIds
                               .Select(_ => _.ToStringInvariantPreferred())
