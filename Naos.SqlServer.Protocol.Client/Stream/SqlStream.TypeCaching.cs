@@ -92,14 +92,16 @@ namespace Naos.SqlServer.Protocol.Client
         /// Gets the type of the ids add if necessary (versionless support only - should ONLY be used for the <see cref="RecordFilterConvertedForStoredProcedure"/>).
         /// </summary>
         /// <param name="locator">The locator.</param>
-        /// <param name="typeRepresentationWithoutVersion">The type representation.</param>
+        /// <param name="typeRepresentation">The type representation.</param>
         /// <returns>IdentifiedType.</returns>
-        public IdentifiedType GetIdsAddIfNecessaryTypeVersionless(SqlServerLocator locator, TypeRepresentation typeRepresentationWithoutVersion)
+        public IdentifiedType GetIdsAddIfNecessaryTypeVersionless(SqlServerLocator locator, TypeRepresentation typeRepresentation)
         {
-            if (typeRepresentationWithoutVersion == null)
+            if (typeRepresentation == null)
             {
                 return null;
             }
+
+            var typeRepresentationWithoutVersion = typeRepresentation.RemoveAssemblyVersions();
 
             var assemblyQualifiedNameWithoutVersion = typeRepresentationWithoutVersion.BuildAssemblyQualifiedName();
             var found = this.assemblyQualifiedNameWithoutVersionToIdentifiedTypeMap.TryGetValue(assemblyQualifiedNameWithoutVersion, out var result);
