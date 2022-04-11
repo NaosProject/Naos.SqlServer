@@ -177,7 +177,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method ExistingRecordStrategyTestForPutRecord.
         /// </summary>
-        [Fact]
+        [Fact(Skip = "Local testing only.")]
         public void TestRecordFilterHonorsBothVersionAndVersionlessTypeRepresentations()
         {
             var stream = this.GetCreatedSqlStream();
@@ -221,7 +221,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var getWithVersionWithDeprecated = stream.Execute(
                 new StandardGetLatestRecordOp(
                     new RecordFilter(
-                        deprecatedIdTypes: new []
+                        deprecatedIdTypes: new[]
                                            {
                                                typeof(MyObject).ToRepresentation(),
                                            },
@@ -273,7 +273,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method ExistingRecordStrategyTestForPutRecord.
         /// </summary>
-        [Fact ]
+        [Fact(Skip = "Local testing only.")]
         public void ExistingRecordStrategyTestForPutRecord()
         {
             var stream = this.GetCreatedSqlStream();
