@@ -36,7 +36,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream190";
+        private readonly string streamName = "Stream207";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -177,7 +177,103 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method ExistingRecordStrategyTestForPutRecord.
         /// </summary>
-        [Fact(Skip = "Local testing only.")]
+        [Fact]
+        public void TestRecordFilterHonorsBothVersionAndVersionlessTypeRepresentations()
+        {
+            var stream = this.GetCreatedSqlStream();
+
+            var key = Guid.NewGuid().ToString().ToUpperInvariant();
+            var serializedKey = stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation).SerializeToString(key);
+            var firstObject = new MyObject("test", "typeless");
+            stream.PutWithId(key, firstObject);
+
+            // With version
+            var getWithVersionByIdType = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation(),
+                                 },
+                        versionMatchStrategy: VersionMatchStrategy.SpecifiedVersion)));
+            getWithVersionByIdType.MustForTest().NotBeNull();
+
+            var getWithVersionByObjectType = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        objectTypes: new[]
+                                 {
+                                     typeof(MyObject).ToRepresentation(),
+                                 },
+                        versionMatchStrategy: VersionMatchStrategy.SpecifiedVersion)));
+            getWithVersionByObjectType.MustForTest().NotBeNull();
+
+            var getWithVersionById = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        ids: new[]
+                             {
+                                 new StringSerializedIdentifier(serializedKey, typeof(string).ToRepresentation()),
+                             },
+                        versionMatchStrategy: VersionMatchStrategy.SpecifiedVersion)));
+            getWithVersionById.MustForTest().NotBeNull();
+
+            var getWithVersionWithDeprecated = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        deprecatedIdTypes: new []
+                                           {
+                                               typeof(MyObject).ToRepresentation(),
+                                           },
+                        versionMatchStrategy: VersionMatchStrategy.SpecifiedVersion)));
+            getWithVersionWithDeprecated.MustForTest().BeNull();
+
+            // Without version
+            var getWithoutVersionByIdType = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        idTypes: new[]
+                                 {
+                                     typeof(string).ToRepresentation().RemoveAssemblyVersions(),
+                                 },
+                        versionMatchStrategy: VersionMatchStrategy.Any)));
+            getWithoutVersionByIdType.MustForTest().NotBeNull();
+
+            var getWithoutVersionByObjectType = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        objectTypes: new[]
+                                 {
+                                     typeof(MyObject).ToRepresentation().RemoveAssemblyVersions(),
+                                 },
+                        versionMatchStrategy: VersionMatchStrategy.Any)));
+            getWithoutVersionByObjectType.MustForTest().NotBeNull();
+
+            var getWithoutVersionById = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        ids: new[]
+                             {
+                                 new StringSerializedIdentifier(serializedKey, typeof(string).ToRepresentation().RemoveAssemblyVersions()),
+                             },
+                        versionMatchStrategy: VersionMatchStrategy.Any)));
+            getWithoutVersionById.MustForTest().NotBeNull();
+
+            var getWithVersionWithoutDeprecated = stream.Execute(
+                new StandardGetLatestRecordOp(
+                    new RecordFilter(
+                        deprecatedIdTypes: new[]
+                                           {
+                                               typeof(MyObject).ToRepresentation().RemoveAssemblyVersions(),
+                                           },
+                        versionMatchStrategy: VersionMatchStrategy.Any)));
+            getWithVersionWithoutDeprecated.MustForTest().BeNull();
+        }
+
+        /// <summary>
+        /// Defines the test method ExistingRecordStrategyTestForPutRecord.
+        /// </summary>
+        [Fact ]
         public void ExistingRecordStrategyTestForPutRecord()
         {
             var stream = this.GetCreatedSqlStream();
@@ -185,7 +281,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             stream.Execute(
                 new CreateStreamUserOp(
                     this.streamName + "ReadOnly",
-                    this.streamName + "ReadOnly",
+                    this.streamName + "ReadOnly-User",
                     "ReadMe",
                     StreamAccessKinds.Read,
                     true));

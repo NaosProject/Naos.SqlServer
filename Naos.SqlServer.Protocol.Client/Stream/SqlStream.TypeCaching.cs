@@ -38,6 +38,7 @@ namespace Naos.SqlServer.Protocol.Client
     {
         private readonly ConcurrentDictionary<int, TypeRepresentationWithAndWithoutVersion> assemblyQualifiedNameWithVersionIdToIdentifiedTypeMap = new ConcurrentDictionary<int, TypeRepresentationWithAndWithoutVersion>();
         private readonly ConcurrentDictionary<string, IdentifiedType> assemblyQualifiedNameWithVersionToIdentifiedTypeMap = new ConcurrentDictionary<string, IdentifiedType>();
+        private readonly ConcurrentDictionary<string, IdentifiedType> assemblyQualifiedNameWithoutVersionToIdentifiedTypeMap = new ConcurrentDictionary<string, IdentifiedType>();
 
         /// <summary>
         /// Gets the type of the ids add if necessary.
@@ -82,6 +83,45 @@ namespace Naos.SqlServer.Protocol.Client
                 var item = new IdentifiedType(withoutVersionId, withVersionId);
                 this.assemblyQualifiedNameWithVersionToIdentifiedTypeMap.TryAdd(assemblyQualifiedNameWithVersion, item);
                 var newFound = this.assemblyQualifiedNameWithVersionToIdentifiedTypeMap.TryGetValue(assemblyQualifiedNameWithVersion, out var newResult);
+                newFound.MustForOp("failedToFindSerializationRepresentationAfterAdding").BeTrue();
+                return newResult;
+            }
+        }
+
+        /// <summary>
+        /// Gets the type of the ids add if necessary (versionless support only - should ONLY be used for the <see cref="RecordFilterConvertedForStoredProcedure"/>).
+        /// </summary>
+        /// <param name="locator">The locator.</param>
+        /// <param name="typeRepresentationWithoutVersion">The type representation.</param>
+        /// <returns>IdentifiedType.</returns>
+        public IdentifiedType GetIdsAddIfNecessaryTypeVersionless(SqlServerLocator locator, TypeRepresentation typeRepresentationWithoutVersion)
+        {
+            if (typeRepresentationWithoutVersion == null)
+            {
+                return null;
+            }
+
+            var assemblyQualifiedNameWithoutVersion = typeRepresentationWithoutVersion.BuildAssemblyQualifiedName();
+            var found = this.assemblyQualifiedNameWithoutVersionToIdentifiedTypeMap.TryGetValue(assemblyQualifiedNameWithoutVersion, out var result);
+            if (found)
+            {
+                return result;
+            }
+            else
+            {
+                var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
+                var storedProcWithoutVersionOp = StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.BuildExecuteStoredProcedureOp(
+                    this.Name,
+                    assemblyQualifiedNameWithoutVersion);
+
+                var sprocResultWithoutVersion = sqlProtocol.Execute(storedProcWithoutVersionOp);
+                var withoutVersionId = sprocResultWithoutVersion
+                                      .OutputParameters[nameof(StreamSchema.Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.OutputParamName.Id)]
+                                      .GetValueOfType<int>();
+
+                var item = new IdentifiedType(withoutVersionId, -1);
+                this.assemblyQualifiedNameWithoutVersionToIdentifiedTypeMap.TryAdd(assemblyQualifiedNameWithoutVersion, item);
+                var newFound = this.assemblyQualifiedNameWithoutVersionToIdentifiedTypeMap.TryGetValue(assemblyQualifiedNameWithoutVersion, out var newResult);
                 newFound.MustForOp("failedToFindSerializationRepresentationAfterAdding").BeTrue();
                 return newResult;
             }

@@ -79,12 +79,20 @@ namespace Naos.SqlServer.Protocol.Client
                                          .Distinct()
                                          .ToList();
 
+            IdentifiedType GetIdentifiedType(
+                TypeRepresentation typeToConvert)
+            {
+                return recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
+                    ? this.GetIdsAddIfNecessaryTypeVersionless(sqlServerLocator, typeToConvert)
+                    : this.GetIdsAddIfNecessaryType(sqlServerLocator, typeToConvert.ToWithAndWithoutVersion());
+            }
+
             var typeToIdMap = distinctIdentifierTypes.ToDictionary(
                 k => k,
-                v => this.GetIdsAddIfNecessaryType(sqlServerLocator, v.ToWithAndWithoutVersion()));
+                GetIdentifiedType);
 
             var identifierTypes = (recordFilter.IdTypes ?? new List<TypeRepresentation>())
-                                               .Select(_ => this.GetIdsAddIfNecessaryType(sqlServerLocator, _.ToWithAndWithoutVersion()))
+                                               .Select(GetIdentifiedType)
                                                .ToList();
             var identifierTypeIdsCsv = !identifierTypes.Any()
                 ? null
@@ -98,7 +106,7 @@ namespace Naos.SqlServer.Protocol.Client
                  .ToCsv();
 
             var objectTypes = (recordFilter.ObjectTypes ?? new List<TypeRepresentation>())
-                                          .Select(_ => this.GetIdsAddIfNecessaryType(sqlServerLocator, _.ToWithAndWithoutVersion()))
+                                          .Select(GetIdentifiedType)
                                           .ToList();
             var objectTypeIdsCsv = !objectTypes.Any()
                 ? null
@@ -112,7 +120,7 @@ namespace Naos.SqlServer.Protocol.Client
                  .ToCsv();
 
             var deprecatedIdTypes = (recordFilter.DeprecatedIdTypes ?? new List<TypeRepresentation>())
-                                                .Select(_ => this.GetIdsAddIfNecessaryType(sqlServerLocator, _.ToWithAndWithoutVersion()))
+                                                .Select(GetIdentifiedType)
                                                 .ToList();
             var deprecatedIdTypeIdsCsv = !deprecatedIdTypes.Any()
                 ? null
