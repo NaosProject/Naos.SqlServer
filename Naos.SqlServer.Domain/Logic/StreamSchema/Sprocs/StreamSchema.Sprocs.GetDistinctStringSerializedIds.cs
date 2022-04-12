@@ -196,12 +196,7 @@ BEGIN
 
     INSERT INTO @{resultTableName} ([{Tables.TypeWithVersion.Id.Name}], [{Tables.Record.StringSerializedId.Name}])
     SELECT DISTINCT 
-          (
-            CASE @{InputParamName.VersionMatchStrategy}
-                WHEN '{VersionMatchStrategy.Any}' THEN r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
-                WHEN '{VersionMatchStrategy.SpecifiedVersion}' THEN r.[{Tables.Record.IdentifierTypeWithVersionId.Name}]
-                ELSE CONVERT({new StringSqlDataTypeRepresentation(false, 1).DeclarationInSqlSyntax}, CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.VersionMatchStrategy} is not a supported {nameof(VersionMatchStrategy)}.'))
-            END)
+          r.[{Tables.Record.IdentifierTypeWithVersionId.Name}]
         , r.[{Tables.Record.StringSerializedId.Name}]
 	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
     INNER JOIN @{recordIdsToConsiderTable} rtc ON r.[{Tables.Record.Id.Name}] = rtc.[{Tables.Record.Id.Name}]
