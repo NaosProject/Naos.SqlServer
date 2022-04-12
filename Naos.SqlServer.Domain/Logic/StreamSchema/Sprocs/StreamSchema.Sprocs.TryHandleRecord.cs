@@ -355,7 +355,8 @@ namespace Naos.SqlServer.Domain
     SELECT @{currentRunningCount} = COUNT(*)
 	FROM [{streamName}].[{Tables.Handling.Table.Name}] h
 	LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-	ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+	ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+    AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 	WHERE
         h1.[{Tables.Handling.Status.Name}] IS NULL
 	AND h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.Running}'
@@ -428,7 +429,8 @@ BEGIN
 	            SELECT DISTINCT h.[{Tables.Handling.RecordId.Name}]
 	            FROM [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK) -- the most recent handling status is disabled
-			        ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+			        ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+                    AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 	            WHERE
 	                    h1.[{Tables.Handling.Id.Name}] IS NULL
 	                AND h.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}'
@@ -447,8 +449,8 @@ BEGIN
                    AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 		    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 		        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+                   AND h.[{Tables.Handling.Concern.Name}] = h1.[{Tables.Handling.Concern.Name}]
                    AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
-                   AND h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 			WHERE
                  h1.[{Tables.Handling.Id.Name}] IS NULL
               AND
@@ -504,6 +506,7 @@ BEGIN
 	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 			        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+	                   AND h.[{Tables.Handling.Concern.Name}] = h1.[{Tables.Handling.Concern.Name}]
 	                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 				WHERE
 	                 h1.[{Tables.Handling.Id.Name}] IS NULL
@@ -546,6 +549,7 @@ BEGIN
 		                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 				    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 				        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+		                   AND h.[{Tables.Handling.Concern.Name}] = h1.[{Tables.Handling.Concern.Name}]
 		                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 					WHERE
 		                 h1.[{Tables.Handling.Id.Name}] IS NULL
@@ -570,6 +574,7 @@ BEGIN
 	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
 			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 			        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+	                   AND h.[{Tables.Handling.Concern.Name}] = h1.[{Tables.Handling.Concern.Name}]
 	                   AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
 				WHERE
 	                 h1.[{Tables.Handling.Id.Name}] IS NULL

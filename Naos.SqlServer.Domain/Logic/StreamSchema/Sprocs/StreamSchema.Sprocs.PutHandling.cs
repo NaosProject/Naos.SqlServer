@@ -168,7 +168,8 @@ BEGIN
 DECLARE @{currentStatus} {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
 SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
     FROM [{streamName}].[{Tables.Handling.Table.Name}]
-    WHERE [{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} AND [{Tables.Handling.RecordId.Name}] = @{InputParamName.RecordId}
+    WHERE [{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+      AND [{Tables.Handling.RecordId.Name}] = @{InputParamName.RecordId}
     ORDER BY [{Tables.Handling.Id.Name}] DESC
 
 IF @{currentStatus} IS NULL
@@ -283,7 +284,9 @@ BEGIN TRANSACTION [{transaction}]
 					  ON n.[{Tables.Handling.RecordId.Name}] = e.[{Tables.Handling.RecordId.Name}]
 					  AND n.[{Tables.Handling.Concern.Name}] = e.[{Tables.Handling.Concern.Name}]
 				  LEFT OUTER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h2
-					ON e.[{Tables.Handling.RecordId.Name}] = h2.[{Tables.Handling.RecordId.Name}] AND e.[{Tables.Handling.Id.Name}] < h2.[{Tables.Handling.Id.Name}]
+					  ON e.[{Tables.Handling.RecordId.Name}] = h2.[{Tables.Handling.RecordId.Name}]
+                      AND e.[{Tables.Handling.Concern.Name}] = h2.[{Tables.Handling.Concern.Name}]
+                      AND e.[{Tables.Handling.Id.Name}] < h2.[{Tables.Handling.Id.Name}]
 			      WHERE h2.[{Tables.Handling.Id.Name}] IS NULL AND e.[{Tables.Handling.Status.Name}] <> '{HandlingStatus.Running}'
 			   END
           END
