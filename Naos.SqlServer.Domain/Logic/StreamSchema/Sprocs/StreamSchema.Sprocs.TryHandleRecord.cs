@@ -423,6 +423,11 @@ BEGIN
 	BEGIN
 		{RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
 
+        -- Remove records under the minimum record id from consideration
+        DELETE FROM @{recordIdsToConsiderTable}
+	        WHERE [{Tables.Record.Id.Name}] < @{InputParamName.MinimumInternalRecordId}
+
+        -- Remove records with disabled handling status from consideration
         DELETE FROM @{recordIdsToConsiderTable}
 	        WHERE [{Tables.Record.Id.Name}] IN
 	        (
