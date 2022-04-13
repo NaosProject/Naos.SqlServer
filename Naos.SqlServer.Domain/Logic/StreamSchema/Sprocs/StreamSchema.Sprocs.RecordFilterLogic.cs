@@ -201,6 +201,7 @@ namespace Naos.SqlServer.Domain
     -- BEGIN DECLARE ASSETS
     DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
     DECLARE @{filterAppliedBit} BIT
+    SET @{filterAppliedBit} = 0
     -- END DECLARE ASSETS
     -----------------------------------------------------------------
 
@@ -421,7 +422,7 @@ namespace Naos.SqlServer.Domain
             SET @{filterAppliedBit} = 1
             INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
             (
-                SELECT rt.[RecordId] AS [{Tables.Record.Id.Name}]
+                SELECT rt.[{Tables.RecordTag.RecordId.Name}] AS [{Tables.Record.Id.Name}]
                 FROM [{streamName}].[{Tables.RecordTag.Table.Name}] rt WITH (NOLOCK)
                 INNER JOIN @{recordTagIdsTable} tids ON tids.[{Tables.Tag.Id.Name}] = rt.[{Tables.RecordTag.TagId.Name}]
                 GROUP BY rt.[{Tables.RecordTag.RecordId.Name}]
@@ -432,6 +433,19 @@ namespace Naos.SqlServer.Domain
     -- END APPLY RECORD TAG FILTER
     -----------------------------------------------------------------
     {handlingTagMixIn}
+    -----------------------------------------------------------------
+    -- BEGIN ADD ALL IDS IF NO FILTER SUPPLIED
+    IF (@{filterAppliedBit} <> 1)
+    BEGIN
+        INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
+        (
+            SELECT r.[{Tables.Record.Id.Name}]
+            FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+        )
+    END
+    -- END ADD ALL IDS IF NO FILTER SUPPLIED
+    -----------------------------------------------------------------
+
     -----------------------------------------------------------------
     -- BEGIN REMOVE DEPRECATED IDS FILTER
     IF (@{InputParamName.DeprecatedIdEventTypeIdsCsv} IS NOT NULL)
