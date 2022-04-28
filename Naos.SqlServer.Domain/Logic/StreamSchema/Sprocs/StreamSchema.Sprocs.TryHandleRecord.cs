@@ -345,6 +345,7 @@ namespace Naos.SqlServer.Domain
                             HandlingStatus.AvailableAfterSelfCancellation.ToString(),
                             HandlingStatus.AvailableAfterExternalCancellation.ToString(),
                             HandlingStatus.AvailableAfterFailure.ToString(),
+                            HandlingStatus.AvailableAfterCompletion.ToString(),
                         }.ToCsv();
 
                     var shouldAttemptHandling = "ShouldAttemptHandling";
@@ -461,7 +462,8 @@ BEGIN
               AND
               (   h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}'
                OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}'
-               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
+               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}'
+               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterCompletion}')
 
 			-- See if any new records
 			IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
@@ -518,7 +520,8 @@ BEGIN
 	              AND
 	              (   h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}'
 	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}'
-	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
+	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}'
+	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterCompletion}')
 
 				IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 				BEGIN
@@ -561,7 +564,8 @@ BEGIN
 		              AND
 		              (   h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}'
 		               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}'
-		               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
+		               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}'
+		               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterCompletion}')
 
 					IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 					BEGIN
@@ -586,7 +590,8 @@ BEGIN
 	              AND
 	              (   h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterFailure}'
 	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterExternalCancellation}'
-	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}')
+	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterSelfCancellation}'
+	               OR h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.AvailableAfterCompletion}')
 
 				-- See if any new records
 				IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
