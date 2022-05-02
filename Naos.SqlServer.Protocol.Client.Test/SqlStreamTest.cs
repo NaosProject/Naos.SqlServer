@@ -388,6 +388,46 @@ namespace Naos.SqlServer.Protocol.Client.Test
         }
 
         /// <summary>
+        /// Defines the test method ExistingRecordStrategyTestForPutRecord.
+        /// </summary>
+        [Fact(Skip = "Local testing only.")]
+        public void GetDistinctIds_With_Depreciated_Types_Test()
+        {
+            // Arrange
+            var stream = this.GetCreatedSqlStream();
+
+            var item1 = new MyObject("1", "my-obj-1");
+            var item2 = new MyObject("2", "my-obj-2");
+            var item3 = new MyObject2("1", "my-obj-2");
+            var item4 = new MyObject2("2", "my-obj-2");
+            var item5 = new MyObject("3", "my-obj-1");
+            var item6 = new MyObject2("4", "my-obj-2");
+
+            var depreciated1 = new IdDeprecatedEvent<MyObject>(DateTime.UtcNow);
+            var depreciated2 = new IdDeprecatedEvent<MyObject2>(DateTime.UtcNow);
+
+            stream.PutWithId(item1.Id, item1);
+            stream.PutWithId(item2.Id, item2);
+            stream.PutWithId(item3.Id, item3);
+            stream.PutWithId(item4.Id, item4);
+            stream.PutWithId(item5.Id, item5);
+            stream.PutWithId(item6.Id, item6);
+            stream.PutWithId(item1.Id, depreciated1);
+            stream.PutWithId(item4.Id, depreciated2);
+            stream.PutWithId(item6.Id, depreciated2);
+            stream.PutWithId(item6.Id, item6);
+
+            // Act
+            var actual1 = stream.GetDistinctIds<string>(new[] { typeof(MyObject).ToRepresentation() }, deprecatedIdTypes: new[] { depreciated1.GetType().ToRepresentation() });
+
+            var actual2 = stream.GetDistinctIds<string>(new[] { typeof(MyObject2).ToRepresentation() }, deprecatedIdTypes: new[] { depreciated2.GetType().ToRepresentation() });
+
+            // Assert
+            actual1.AsTest().Must().BeEqualTo((IReadOnlyCollection<string>)new[] { item2.Id, item5.Id });
+            actual2.AsTest().Must().BeEqualTo((IReadOnlyCollection<string>)new[] { item3.Id, item6.Id });
+        }
+
+        /// <summary>
         /// Defines the test method PutGetTests.
         /// </summary>
         [Fact]
@@ -1025,7 +1065,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         {
             SerializerRepresentation defaultSerializerRepresentation;
             var configurationTypeRepresentation =
-                typeof(DependencyOnlyJsonSerializationConfiguration<SqlServerJsonSerializationConfiguration, TypesToRegisterJsonSerializationConfiguration<MyObject>>).ToRepresentation();
+                typeof(DependencyOnlyJsonSerializationConfiguration<SqlServerJsonSerializationConfiguration, TypesToRegisterJsonSerializationConfiguration<MyObject, MyObject2>>).ToRepresentation();
 
             defaultSerializerRepresentation = new SerializerRepresentation(
                 SerializationKind.Json,
@@ -1071,6 +1111,47 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public MyObject DeepCloneWithNewField(string field)
         {
             var result = new MyObject(this.Id, field);
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// Test object.
+    /// </summary>
+    public class MyObject2 : IHaveId<string>
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MyObject2"/> class.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="field">The field.</param>
+        public MyObject2(
+            string id,
+            string field)
+        {
+            this.Id = id;
+            this.Field = field;
+        }
+
+        /// <summary>
+        /// Gets the unique identifier.
+        /// </summary>
+        public string Id { get; private set; }
+
+        /// <summary>
+        /// Gets the field.
+        /// </summary>
+        public string Field { get; private set; }
+
+        /// <summary>
+        /// Deeps the clone with new field.
+        /// </summary>
+        /// <param name="field">The field.</param>
+        /// <returns>MyObject.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
+        public MyObject2 DeepCloneWithNewField(string field)
+        {
+            var result = new MyObject2(this.Id, field);
             return result;
         }
     }
