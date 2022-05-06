@@ -60,7 +60,7 @@ namespace Naos.SqlServer.Domain
             if (validateValue)
             {
                 var valueAsByteArray = (byte[])value;
-                if (valueAsByteArray.Length > this.SupportedLength)
+                if (valueAsByteArray != null && valueAsByteArray.Length > this.SupportedLength)
                 {
                     throw new ArgumentException(
                         Invariant($"Provided value has length {valueAsByteArray.Length} exceeds maximum allowed value of {this.SupportedLength}."));
