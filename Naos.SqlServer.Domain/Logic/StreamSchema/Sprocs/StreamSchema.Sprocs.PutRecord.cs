@@ -418,9 +418,20 @@ BEGIN
 			)
 	END
 
-	IF EXISTS (SELECT TOP 1 * FROM @{existingIdsTable})
+    DECLARE @{existingIdsCount} {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
+	SELECT @{existingIdsCount} = COUNT(*) FROM @{existingIdsTable}
+    IF (@{existingIdsCount} > 0)
 	BEGIN
-        SELECT @{OutputParamName.ExistingRecordIdsCsv} = STRING_AGG([{Tables.Tag.Id.Name}], ',') FROM @{existingIdsTable}
+        -- STRING_AGG errors (but does not interrupt execution) if the bytes exceed 8000 which can easily happen with less than 1000 ids.
+        --    Instead of switching to an [XML] return type to accomodate all ids, we are capping to the most recent matching record id.
+		SELECT @{OutputParamName.ExistingRecordIdsCsv} = MAX([{Tables.Record.Id.Name}]) FROM @{existingIdsTable}
+	END
+
+    IF (@{existingIdsCount} > 1)
+	BEGIN
+        -- Since we cannot return all records, if there is more than one match then the list is suffixed with '-1' as a continuation token
+        --    indicating there are multiple matches for purposes of debugging unexpected results.
+	    SELECT @{OutputParamName.ExistingRecordIdsCsv} = @{OutputParamName.ExistingRecordIdsCsv} + ',-1'
 	END
 
 	IF (@{OutputParamName.ExistingRecordIdsCsv} IS NULL OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.PruneIfFoundById}' OR @{InputParamName.ExistingRecordStrategy} = '{ExistingRecordStrategy.PruneIfFoundByIdAndType}')
@@ -433,8 +444,6 @@ BEGIN
 	  IF (@{OutputParamName.ExistingRecordIdsCsv} IS NOT NULL)
 	  BEGIN
 		-- must be a prune scenario to get here as this is checked above...
-        DECLARE @{existingIdsCount} {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
-		SELECT @{existingIdsCount} = COUNT(*) FROM @{existingIdsTable}
 		IF (@{existingIdsCount} >= (@{InputParamName.RecordRetentionCount} - 1))
 		BEGIN
 			-- have records to prune
@@ -473,7 +482,7 @@ BEGIN
 		      RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
 		    END CATCH
 
-        SELECT @{OutputParamName.PrunedRecordIdsCsv} = STRING_AGG([{Tables.Tag.Id.Name}], ',') FROM @{prunedIdsTable}
+        SELECT @{OutputParamName.PrunedRecordIdsCsv} = STRING_AGG([{Tables.Record.Id.Name}], ',') FROM @{prunedIdsTable}
 
 		END -- have enough records to delete - the actual prune
 	  END -- have existing records - check for pruning
