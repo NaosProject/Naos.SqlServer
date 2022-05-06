@@ -94,6 +94,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="locator">The locator.</param>
         /// <param name="typeRepresentation">The type representation.</param>
         /// <returns>IdentifiedType.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Versionless", Justification = "Name is preferred in context.")]
         public IdentifiedType GetIdsAddIfNecessaryTypeVersionless(SqlServerLocator locator, TypeRepresentation typeRepresentation)
         {
             if (typeRepresentation == null)

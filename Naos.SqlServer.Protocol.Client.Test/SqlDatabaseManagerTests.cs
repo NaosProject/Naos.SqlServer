@@ -31,7 +31,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         {
             var sqlServerLocator = new SqlServerLocator("localhost", "Streams", "sa", "password", "SQLDEV2017");
             var connectionString = sqlServerLocator.BuildConnectionString(TimeSpan.FromSeconds(100));
-            var output = SqlServerDatabaseManager.GetTableDescription(connectionString, "Streams", "Object", "StreamName1");
+            var output = SqlServerDatabaseManager.GetTableDescription(connectionString, "Streams", "Record", "Stream001");
             output.MustForTest().NotBeNull();
 
             var jsonSerializer = new ObcJsonSerializer();

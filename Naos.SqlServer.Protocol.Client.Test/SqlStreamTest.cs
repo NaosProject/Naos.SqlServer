@@ -10,6 +10,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using OBeautifulCode.Serialization.Bson;
     using OBeautifulCode.Serialization.Json;
     using OBeautifulCode.Serialization.Recipes;
+    using OBeautifulCode.String.Recipes;
     using OBeautifulCode.Type;
     using Xunit;
     using Xunit.Abstractions;
@@ -36,7 +38,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream210";
+        private readonly string streamName = "Stream212";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -52,7 +54,8 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method GetSprocCreationScript.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sproc", Justification = "Name is preferred in context.")]
+        [SuppressMessage(
             "Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
             Justification = "Might use testHelper.")]
@@ -66,7 +69,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method TestBinary.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestBinary()
         {
@@ -77,7 +80,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method TestRandom.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestRandom()
         {
@@ -88,7 +91,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method CreateStreamsTestingDatabase.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void CreateStreamsTestingDatabase()
         {
@@ -99,6 +102,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             protocol.Execute(createDatabaseOp);
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "ex", Justification = "Showing return value.")]
         [Fact]
         public static void CreateDatabase_ExistingDatabaseTest()
         {
@@ -177,6 +181,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method ExistingRecordStrategyTestForPutRecord.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Versionless", Justification = "Name is preferred in context.")]
         [Fact(Skip = "Local testing only.")]
         public void TestRecordFilterHonorsBothVersionAndVersionlessTypeRepresentations()
         {
@@ -333,7 +338,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method UpdateSprocs.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sprocs", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sprocs", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
         [Fact(Skip = "Local testing only.")]
         public void UpdateSprocs()
         {
@@ -825,6 +830,11 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method GetDistinctStringSerializedIds.
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdThree", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdTwo", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdOneOtherType", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdOneAgain", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdOne", Justification = "Showing return value.")]
         [Fact]
         public void GetDistinctStringSerializedIds()
         {
@@ -883,6 +893,13 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method GetDistinctStringSerializedIds.
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdThreeLong", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdTwoLong", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdOneLong", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdThreeShort", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdTwoShort", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdOneShort", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Samed", Justification = "Name is preferred in context.")]
         [Fact]
         public void GetDistinctStringSerializedIds___SamedId___WithDifferentTypes()
         {
@@ -982,6 +999,17 @@ namespace Naos.SqlServer.Protocol.Client.Test
         }
 
         [Fact]
+        public void TestGetDistinctEmptyRecordFilter()
+        {
+            var stream = this.GetCreatedSqlStream();
+
+            var testId = Guid.NewGuid().ToStringInvariantPreferred().ToUpperInvariant();
+            stream.PutWithId(testId, new MyObject("test", "empty-record-filter"));
+            var ids = stream.Execute(new StandardGetDistinctStringSerializedIdsOp(new RecordFilter()));
+            ids.MustForTest().NotBeEmptyEnumerable();
+        }
+
+        [Fact]
         public void TestLatestStringSerializedObject()
         {
             var stream = this.GetCreatedSqlStream(defaultSerializationFormat: SerializationFormat.String);
@@ -996,6 +1024,8 @@ namespace Naos.SqlServer.Protocol.Client.Test
             latestStringSerializedObject.MustForTest().EndWith("}");
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "output", Justification = "Showing return value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Keeping as is in case of future conversion.")]
         [Fact]
         public void TestConfigStreamBuilding()
         {
@@ -1107,7 +1137,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// </summary>
         /// <param name="field">The field.</param>
         /// <returns>MyObject.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
         public MyObject DeepCloneWithNewField(string field)
         {
             var result = new MyObject(this.Id, field);
@@ -1148,7 +1178,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// </summary>
         /// <param name="field">The field.</param>
         /// <returns>MyObject.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
         public MyObject2 DeepCloneWithNewField(string field)
         {
             var result = new MyObject2(this.Id, field);

@@ -8,7 +8,9 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
@@ -24,6 +26,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// The <see cref="Database.Domain.StreamAccessKinds"/>'s that stream users can be created with access to.
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = NaosSuppressBecause.CA2104_DoNotDeclareReadOnlyMutableReferenceTypes_TypeIsImmutable)]
         public static readonly IReadOnlyCollection<StreamAccessKinds> SupportedStreamAccessKinds =
             new[]
             {
@@ -41,6 +44,8 @@ namespace Naos.SqlServer.Domain
         /// <param name="clearTextPassword">The clear text password.</param>
         /// <param name="streamAccessKinds"><see cref="Database.Domain.StreamAccessKinds"/> to grant access for.</param>
         /// <param name="shouldCreateLogin">A value indicating whether or not to create the login or look it up.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "login", Justification = "Name is preferred in context.")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Login", Justification = "Name is preferred in context.")]
         public CreateStreamUserOp(
             string loginName,
             string userName,
@@ -85,6 +90,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the name of the login name.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Login", Justification = "Name is preferred in context.")]
         public string LoginName { get; private set; }
 
         /// <summary>
@@ -105,6 +111,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets a value indicating whether a login should be created or looked up by name.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Login", Justification = "Name is preferred in context.")]
         public bool ShouldCreateLogin { get; private set; }
     }
 }
