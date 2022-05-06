@@ -26,8 +26,11 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override void ValidateObjectTypeIsCompatible(
-            Type objectType)
+            Type objectType,
+            object value,
+            bool validateValue)
         {
+            // no need to validate size as the utilized .NET type restricts this already.
             InternalValidateObjectTypeIsCompatible(objectType, AcceptableTypes);
         }
     }

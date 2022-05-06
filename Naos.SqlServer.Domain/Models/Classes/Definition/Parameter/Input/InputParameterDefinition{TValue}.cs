@@ -30,7 +30,7 @@ namespace Naos.SqlServer.Domain
         {
             sqlDataType.MustForArg(nameof(sqlDataType)).NotBeNull();
 
-            ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(sqlDataType, typeof(TValue));
+            ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(sqlDataType, typeof(TValue), value, true);
 
             this.Value = value;
         }

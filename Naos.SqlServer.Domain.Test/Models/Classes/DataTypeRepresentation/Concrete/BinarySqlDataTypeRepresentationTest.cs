@@ -16,6 +16,8 @@ namespace Naos.SqlServer.Domain.Test
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
     using Xunit;
 
+    using static System.FormattableString;
+
     public static partial class BinarySqlDataTypeRepresentationTest
     {
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = ObcSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
@@ -66,10 +68,22 @@ namespace Naos.SqlServer.Domain.Test
         }
 
         [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_throw_ArgumentException___When_objectValue_is_too_large()
+        {
+            // Arrange, Act
+            var max = 10;
+            var actual = Record.Exception(() => new BinarySqlDataTypeRepresentation(max).ValidateObjectTypeIsCompatible(typeof(byte[]), new byte[max + 1], true));
+
+            // Act, Assert
+            actual.AsTest().Must().BeOfType<ArgumentException>();
+            actual.Message.AsTest().Must().ContainString(Invariant($"Provided value has length {max + 1} exceeds maximum allowed value of {max}."));
+        }
+
+        [Fact]
         public static void ValidateObjectTypeIsCompatible___Should_throw_InvalidOperationException___When_objectType_is_not_compatible()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => A.Dummy<BinarySqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int)));
+            var actual = Record.Exception(() => A.Dummy<BinarySqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int), default(int), false));
 
             // Act, Assert
             actual.AsTest().Must().BeOfType<InvalidOperationException>();
@@ -80,7 +94,7 @@ namespace Naos.SqlServer.Domain.Test
         public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => A.Dummy<BinarySqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(byte[])));
+            var actual = Record.Exception(() => A.Dummy<BinarySqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(byte[]), A.Dummy<byte[]>(), true));
 
             // Act, Assert
             actual.AsTest().Must().BeNull();

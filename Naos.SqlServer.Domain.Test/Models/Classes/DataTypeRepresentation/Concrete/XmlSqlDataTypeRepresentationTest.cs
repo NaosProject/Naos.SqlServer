@@ -35,7 +35,7 @@ namespace Naos.SqlServer.Domain.Test
         public static void ValidateObjectTypeIsCompatible___Should_throw_InvalidOperationException___When_objectType_is_not_compatible()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => A.Dummy<XmlSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(byte[])));
+            var actual = Record.Exception(() => A.Dummy<XmlSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(byte[]), default(byte[]), false));
 
             // Act, Assert
             actual.AsTest().Must().BeOfType<InvalidOperationException>();
@@ -46,7 +46,7 @@ namespace Naos.SqlServer.Domain.Test
         public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => A.Dummy<XmlSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(string)));
+            var actual = Record.Exception(() => A.Dummy<XmlSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(string), A.Dummy<string>(), true));
 
             // Act, Assert
             actual.AsTest().Must().BeNull();

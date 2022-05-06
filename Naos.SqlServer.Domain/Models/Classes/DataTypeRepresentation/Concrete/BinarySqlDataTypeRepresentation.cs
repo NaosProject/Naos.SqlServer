@@ -51,9 +51,21 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override void ValidateObjectTypeIsCompatible(
-            Type objectType)
+            Type objectType,
+            object value,
+            bool validateValue)
         {
             InternalValidateObjectTypeIsCompatible(objectType, AcceptableTypes);
+
+            if (validateValue)
+            {
+                var valueAsByteArray = (byte[])value;
+                if (valueAsByteArray.Length > this.SupportedLength)
+                {
+                    throw new ArgumentException(
+                        Invariant($"Provided value has length {valueAsByteArray.Length} exceeds maximum allowed value of {this.SupportedLength}."));
+                }
+            }
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Naos.SqlServer.Domain.Test
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
     using Xunit;
 
+    using static System.FormattableString;
+
     public static partial class StringSqlDataTypeRepresentationTest
     {
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = ObcSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
@@ -82,10 +84,22 @@ namespace Naos.SqlServer.Domain.Test
         }
 
         [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_throw_ArgumentException___When_objectValue_is_too_large()
+        {
+            // Arrange, Act
+            var max = 10;
+            var actual = Record.Exception(() => new StringSqlDataTypeRepresentation(true, max).ValidateObjectTypeIsCompatible(typeof(string), new string('a', max + 1), true));
+
+            // Act, Assert
+            actual.AsTest().Must().BeOfType<ArgumentException>();
+            actual.Message.AsTest().Must().ContainString(Invariant($"Provided value has length {max + 1} exceeds maximum allowed value of {max}."));
+        }
+
+        [Fact]
         public static void ValidateObjectTypeIsCompatible___Should_throw_InvalidOperationException___When_objectType_is_not_compatible()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => A.Dummy<StringSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int)));
+            var actual = Record.Exception(() => A.Dummy<StringSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int), default(int), false));
 
             // Act, Assert
             actual.AsTest().Must().BeOfType<InvalidOperationException>();
@@ -96,8 +110,8 @@ namespace Naos.SqlServer.Domain.Test
         public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
         {
             // Arrange, Act
-            var actual1 = Record.Exception(() => A.Dummy<StringSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(string)));
-            var actual2 = Record.Exception(() => A.Dummy<StringSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(Cipher)));
+            var actual1 = Record.Exception(() => A.Dummy<StringSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(string), A.Dummy<string>(), true));
+            var actual2 = Record.Exception(() => A.Dummy<StringSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(Cipher), A.Dummy<Cipher>(), true));
 
             // Act, Assert
             actual1.AsTest().Must().BeNull();

@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -26,9 +27,17 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override void ValidateObjectTypeIsCompatible(
-            Type objectType)
+            Type objectType,
+            object value,
+            bool validateValue)
         {
             InternalValidateObjectTypeIsCompatible(objectType, AcceptableTypes);
+
+            if (validateValue)
+            {
+                var valueAsDateTime = (DateTime)value;
+                valueAsDateTime.MustForArg(nameof(value)).BeUtcDateTime();
+            }
         }
     }
 }

@@ -77,13 +77,25 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override void ValidateObjectTypeIsCompatible(
-            Type objectType)
+            Type objectType,
+            object value,
+            bool validateValue)
         {
             objectType.MustForArg(nameof(objectType)).NotBeNull();
 
             if ((objectType != typeof(string)) && (!objectType.IsEnum))
             {
                 throw new InvalidOperationException(Invariant($"String data can only be used for strings and enums, objectType {objectType.ToStringReadable()} is not supported."));
+            }
+
+            if (validateValue)
+            {
+                var valueAsString = value?.ToString();
+                if (valueAsString != null && valueAsString.Length > this.SupportedLength)
+                {
+                    throw new ArgumentException(
+                        Invariant($"Provided value has length {valueAsString.Length} exceeds maximum allowed value of {this.SupportedLength}."));
+                }
             }
         }
     }

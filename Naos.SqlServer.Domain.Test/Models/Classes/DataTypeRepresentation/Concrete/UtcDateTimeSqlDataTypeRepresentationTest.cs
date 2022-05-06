@@ -11,10 +11,10 @@ namespace Naos.SqlServer.Domain.Test
 
     using FakeItEasy;
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
-
     using Xunit;
+
+    using static System.FormattableString;
 
     public static partial class UtcDateTimeSqlDataTypeRepresentationTest
     {
@@ -25,10 +25,23 @@ namespace Naos.SqlServer.Domain.Test
         }
 
         [Fact]
+        public static void ValidateObjectTypeIsCompatible___Should_throw_ArgumentException___When_objectValue_is_not_UTC()
+        {
+            // Arrange, Act
+            var now = DateTime.UtcNow;
+            var nonUtcDateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, DateTimeKind.Local);
+            var actual = Record.Exception(() => new UtcDateTimeSqlDataTypeRepresentation().ValidateObjectTypeIsCompatible(typeof(DateTime), nonUtcDateTime, true));
+
+            // Act, Assert
+            actual.AsTest().Must().BeOfType<ArgumentException>();
+            actual.Message.AsTest().Must().ContainString(Invariant($"Provided value (name: 'value') is of a Kind that is not DateTimeKind.Utc.  Kind is DateTimeKind.Local."));
+        }
+
+        [Fact]
         public static void ValidateObjectTypeIsCompatible___Should_throw_InvalidOperationException___When_objectType_is_not_compatible()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int)));
+            var actual = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int), default(int), false));
 
             // Act, Assert
             actual.AsTest().Must().BeOfType<InvalidOperationException>();
@@ -39,8 +52,8 @@ namespace Naos.SqlServer.Domain.Test
         public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
         {
             // Arrange, Act
-            var actual1 = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(DateTime)));
-            var actual2 = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(DateTime?)));
+            var actual1 = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(DateTime), A.Dummy<DateTime>(), true));
+            var actual2 = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(DateTime?), A.Dummy<DateTime?>(), true));
 
             // Act, Assert
             actual1.AsTest().Must().BeNull();

@@ -56,13 +56,17 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <param name="sqlDataType">The SQL data type.</param>
         /// <param name="dotNetDataType">The .NET data type.</param>
+        /// <param name="value">The value to validate.</param>
+        /// <param name="validateValue">Validate the value (not used for output parameters as there is no value).</param>
         protected static void ThrowArgumentExceptionIfSqlDataTypeIsNotCompatibleWithDotNetDataType(
             SqlDataTypeRepresentationBase sqlDataType,
-            Type dotNetDataType)
+            Type dotNetDataType,
+            object value,
+            bool validateValue)
         {
             try
             {
-                sqlDataType.ValidateObjectTypeIsCompatible(dotNetDataType);
+                sqlDataType.ValidateObjectTypeIsCompatible(dotNetDataType, value, validateValue);
             }
             catch (InvalidOperationException ex)
             {

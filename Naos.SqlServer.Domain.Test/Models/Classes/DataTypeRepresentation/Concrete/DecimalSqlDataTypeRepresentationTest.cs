@@ -71,7 +71,7 @@ namespace Naos.SqlServer.Domain.Test
         public static void ValidateObjectTypeIsCompatible___Should_throw_InvalidOperationException___When_objectType_is_not_compatible()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int)));
+            var actual = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(int), default(int), false));
 
             // Act, Assert
             actual.AsTest().Must().BeOfType<InvalidOperationException>();
@@ -82,8 +82,8 @@ namespace Naos.SqlServer.Domain.Test
         public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
         {
             // Arrange, Act
-            var actual1 = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(decimal)));
-            var actual2 = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(decimal?)));
+            var actual1 = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(decimal), A.Dummy<decimal>(), true));
+            var actual2 = Record.Exception(() => A.Dummy<DecimalSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(decimal?), A.Dummy<decimal?>(), true));
 
             // Act, Assert
             actual1.AsTest().Must().BeNull();

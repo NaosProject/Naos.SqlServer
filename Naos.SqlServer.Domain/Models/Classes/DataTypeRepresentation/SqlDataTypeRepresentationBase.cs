@@ -29,7 +29,9 @@ namespace Naos.SqlServer.Domain
         /// Validates the specified object type is compatible with this SQL data type; throws if not.
         /// </summary>
         /// <param name="objectType">The type of the .NET object.</param>
-        public abstract void ValidateObjectTypeIsCompatible(Type objectType);
+        /// <param name="value">The value to validate.</param>
+        /// <param name="validateValue">Validate the value (not used for output parameters as there is no value).</param>
+        public abstract void ValidateObjectTypeIsCompatible(Type objectType, object value, bool validateValue);
 
         /// <summary>
         /// Validates the specified object type is is within a set of acceptable types; throws if not.
