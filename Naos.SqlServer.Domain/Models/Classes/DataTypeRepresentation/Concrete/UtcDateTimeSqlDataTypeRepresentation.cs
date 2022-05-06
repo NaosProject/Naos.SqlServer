@@ -33,7 +33,8 @@ namespace Naos.SqlServer.Domain
         {
             InternalValidateObjectTypeIsCompatible(objectType, AcceptableTypes);
 
-            if (validateValue)
+            // DateTime? could be null...
+            if (value != null && validateValue)
             {
                 var valueAsDateTime = (DateTime)value;
                 valueAsDateTime.MustForArg(nameof(value)).BeUtcDateTime();
