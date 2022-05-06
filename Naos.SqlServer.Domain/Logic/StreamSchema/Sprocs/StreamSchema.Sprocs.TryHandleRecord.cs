@@ -352,20 +352,24 @@ namespace Naos.SqlServer.Domain
                     var concurrentCheckBlock = maxConcurrentHandlingCount == null
                         ? string.Empty
                         : Invariant($@"
-    DECLARE @{currentRunningCount} INT
-    SELECT @{currentRunningCount} = COUNT(*)
-	FROM [{streamName}].[{Tables.Handling.Table.Name}] h
-	LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-	ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
-    AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
-	WHERE
-        h1.[{Tables.Handling.Status.Name}] IS NULL
-	AND h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.Running}'
-
-	IF (@{currentRunningCount} >= {maxConcurrentHandlingCount})
+    IF (@{shouldAttemptHandling} = 1)
 	BEGIN
-		SET @{shouldAttemptHandling} = 0
-    END
+        -- Can handle but might be at max handling capacity
+	    DECLARE @{currentRunningCount} INT
+	    SELECT @{currentRunningCount} = COUNT(*)
+		FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+		LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+		ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
+	    AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}]
+		WHERE
+	        h1.[{Tables.Handling.Status.Name}] IS NULL
+		AND h.[{Tables.Handling.Status.Name}] = '{HandlingStatus.Running}'
+
+		IF (@{currentRunningCount} >= {maxConcurrentHandlingCount})
+		BEGIN
+			SET @{shouldAttemptHandling} = 0
+	    END
+	END
 ");
 
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
