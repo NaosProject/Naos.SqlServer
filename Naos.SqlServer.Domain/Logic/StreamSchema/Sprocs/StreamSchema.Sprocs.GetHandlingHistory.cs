@@ -115,7 +115,8 @@ BEGIN
               , h.[{Tables.Handling.RecordCreatedUtc.Name}]
               , (SELECT STRING_AGG({Tables.HandlingTag.TagId.Name}, ',') FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] WHERE [{Tables.HandlingTag.HandlingId.Name}] = h.[{Tables.Handling.Id.Name}]) AS [{nameof(XmlConversionTool.SerializableEntrySetItem.TagIdsCsv)}]
         FROM [{streamName}].[{Tables.Handling.Table.Name}] h
-        WHERE h.[{Tables.Handling.RecordId.Name}] = @{InputParamName.InternalRecordId}
+        WHERE  h.[{Tables.Handling.RecordId.Name}] = @{InputParamName.InternalRecordId}
+           AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
         ORDER BY h.[{Tables.Handling.Id.Name}]
         FOR XML PATH ('{XmlConversionTool.EntryElementName}'), ROOT('{XmlConversionTool.EntrySetElementName}')
     )
