@@ -38,7 +38,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream212";
+        private readonly string streamName = "Stream218";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -614,14 +614,14 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 first.RecordToHandle.MustForTest().BeNull();
                 stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Completed);
 
-                //var firstHistory = stream.Execute(new StandardGetHandlingHistoryOp(firstInternalRecordId, firstConcern));
-                //firstHistory.MustForTest().HaveCount(7);
-                //foreach (var history in firstHistory)
-               // {
-               //     this.testOutputHelper.WriteLine(
-               //         Invariant(
-               //             $"{history.Metadata.Concern}: {history.InternalHandlingEntryId}:{history.Metadata.InternalRecordId} - {history.Metadata.Status} - {history.Payload.DeserializePayloadUsingSpecificFactory<IHaveDetails>(stream.SerializerFactory).Details ?? "<no details specified>"}"));
-                //}
+                var firstHistory = stream.Execute(new StandardGetHandlingHistoryOp(firstInternalRecordId, firstConcern));
+                firstHistory.MustForTest().HaveCount(7);
+                foreach (var history in firstHistory)
+                {
+                    this.testOutputHelper.WriteLine(
+                        Invariant(
+                            $"{history.Metadata.Concern}: {history.InternalHandlingEntryId}:{history.Metadata.InternalRecordId} - {history.Metadata.Status} - {history.Payload.DeserializePayloadUsingSpecificFactory<IHaveDetails>(stream.SerializerFactory).Details ?? "<no details specified>"}"));
+                }
 
                 var secondConcern = "FailedRetriedScenario";
                 var second = stream.Execute(
@@ -745,24 +745,24 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForRecord);
                 second.RecordToHandle.MustForTest().BeNull();
 
-                //var secondHistory = stream.Execute(new StandardGetHandlingHistoryOp(secondInternalRecordId, secondConcern));
-                //secondHistory.MustForTest().HaveCount(7);
+                var secondHistory = stream.Execute(new StandardGetHandlingHistoryOp(secondInternalRecordId, secondConcern));
+                secondHistory.MustForTest().HaveCount(7);
 
-                //foreach (var history in secondHistory)
-                //{
-                //    this.testOutputHelper.WriteLine(
-                //        Invariant(
-                //            $"{history.Metadata.Concern}: {history.InternalHandlingEntryId}:{history.Metadata.InternalRecordId} - {history.Metadata.Status} - {history.Payload.DeserializePayloadUsingSpecificFactory<IHaveDetails>(stream.SerializerFactory).Details ?? "<no details specified>"}"));
-                //}
+                foreach (var history in secondHistory)
+                {
+                    this.testOutputHelper.WriteLine(
+                        Invariant(
+                            $"{history.Metadata.Concern}: {history.InternalHandlingEntryId}:{history.Metadata.InternalRecordId} - {history.Metadata.Status} - {history.Payload.DeserializePayloadUsingSpecificFactory<IHaveDetails>(stream.SerializerFactory).Details ?? "<no details specified>"}"));
+                }
 
-                //var blockingHistory = stream.Execute(new StandardGetHandlingHistoryOp(0, Concerns.StreamHandlingDisabledConcern));
+                var blockingHistory = stream.Execute(new StandardGetHandlingHistoryOp(0, Concerns.StreamHandlingDisabledConcern));
 
-                //foreach (var history in blockingHistory)
-                //{
-                //    this.testOutputHelper.WriteLine(
-                //        Invariant(
-                //            $"{history.Metadata.Concern}: {history.InternalHandlingEntryId}:{history.Metadata.InternalRecordId} - {history.Metadata.Status} - {history.Payload.DeserializePayloadUsingSpecificFactory<IHaveDetails>(stream.SerializerFactory).Details ?? "<no details specified>"}"));
-                //}
+                foreach (var history in blockingHistory)
+                {
+                    this.testOutputHelper.WriteLine(
+                        Invariant(
+                            $"{history.Metadata.Concern}: {history.InternalHandlingEntryId}:{history.Metadata.InternalRecordId} - {history.Metadata.Status} - {history.Payload.DeserializePayloadUsingSpecificFactory<IHaveDetails>(stream.SerializerFactory).Details ?? "<no details specified>"}"));
+                }
             }
 
             var stop = DateTime.UtcNow;

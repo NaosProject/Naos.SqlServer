@@ -80,7 +80,7 @@ namespace Naos.SqlServer.Protocol.Client
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 
                 // this is the sort order of the output of the sproc.
-                var orderedRemaining = remaining.OrderBy(_ => _.Name).ThenBy(_ => _.Value ?? TagConversionTool.NullCanaryValue).ToList();
+                var orderedRemaining = remaining.OrderBy(_ => _.Name).ThenBy(_ => _.Value ?? XmlConversionTool.NullCanaryValue).ToList();
                 for (int idx = 0;
                     idx < orderedRemaining.Count;
                     idx++)
@@ -138,7 +138,7 @@ namespace Naos.SqlServer.Protocol.Client
                     remaining.ToList());
                 var sprocResultWithVersion = sqlProtocol.Execute(storedProcWithVersionOp);
                 var tagsXml = sprocResultWithVersion.OutputParameters[nameof(StreamSchema.Sprocs.GetTagSetFromIds.OutputParamName.TagsXml)].GetValueOfType<string>();
-                var additional = TagConversionTool.GetTagsFromXmlString(tagsXml).ToList() ?? new List<NamedValue<string>>();
+                var additional = XmlConversionTool.GetTagsFromXmlString(tagsXml).ToList() ?? new List<NamedValue<string>>();
 
                 additional.Count.MustForOp(Invariant($"{nameof(additional)}-comparedTo-{nameof(remaining)}-Counts")).BeEqualTo(remaining.Count);
 

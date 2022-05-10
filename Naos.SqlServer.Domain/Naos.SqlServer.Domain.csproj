@@ -111,6 +111,7 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetHandlingHistory.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.RecordFilterLogic.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetDistinctStringSerializedIds.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetHandlingStatuses.cs" />
@@ -305,7 +306,7 @@
     <Compile Include="Models\Classes\Management\TableDescription.cs" />
     <Compile Include="Logic\SqlInjectorChecker.cs" />
     <Compile Include="Models\Enums\Stream\RecordTagAssociationManagementStrategy.cs" />
-    <Compile Include="Logic\TagConversionTool.cs" />
+    <Compile Include="Logic\XmlConversionTool.cs" />
     <AdditionalFiles Include=".analyzers\stylecop.json" />
     <None Include=".analyzers\release.ruleset" />
     <None Include="Naos.SqlServer.Domain.override-nuspec" />

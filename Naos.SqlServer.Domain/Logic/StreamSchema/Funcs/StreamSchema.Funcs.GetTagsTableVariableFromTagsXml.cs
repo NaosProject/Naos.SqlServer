@@ -56,13 +56,13 @@ RETURNS TABLE
 AS
 RETURN
 		      SELECT
-		        C.value('(@{TagConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.SqlDataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
-		      , [{Tables.Tag.TagValue.Name}] = CASE C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.SqlDataType.DeclarationInSqlSyntax}')
+		        C.value('(@{XmlConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.SqlDataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
+		      , [{Tables.Tag.TagValue.Name}] = CASE C.value('(@{XmlConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.SqlDataType.DeclarationInSqlSyntax}')
 			     WHEN '---NULL---' THEN NULL
-				 ELSE C.value('(@{TagConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.SqlDataType.DeclarationInSqlSyntax}')
+				 ELSE C.value('(@{XmlConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.SqlDataType.DeclarationInSqlSyntax}')
 				 END
 		      FROM
-			    @{nameof(InputParamName.TagsXml)}.nodes('/{TagConversionTool.TagSetElementName}/{TagConversionTool.TagEntryElementName}') AS T(C)
+			    @{nameof(InputParamName.TagsXml)}.nodes('/{XmlConversionTool.TagSetElementName}/{XmlConversionTool.TagEntryElementName}') AS T(C)
 ");
 
                     return result;

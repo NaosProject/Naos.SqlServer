@@ -207,10 +207,10 @@ BEGIN
       AND rtc.[{Tables.Record.Id.Name}] IS NOT NULL
 
     SELECT @{OutputParamName.StringIdentifiersOutputXml} = (SELECT
-          e.[{Tables.TypeWithVersion.Id.Name}] AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-        , ISNULL(e.[{Tables.Record.StringSerializedId.Name}], '{TagConversionTool.NullCanaryValue}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
+          e.[{Tables.TypeWithVersion.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
+        , ISNULL(e.[{Tables.Record.StringSerializedId.Name}], '{XmlConversionTool.NullCanaryValue}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
     FROM @{resultTableName} e
-    FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+    FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}'))
 END
 
 			");

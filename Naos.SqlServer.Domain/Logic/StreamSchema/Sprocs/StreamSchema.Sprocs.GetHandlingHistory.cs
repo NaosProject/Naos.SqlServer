@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StreamSchema.Sprocs.GetTagSetFromIds.cs" company="Naos Project">
+// <copyright file="StreamSchema.Sprocs.GetHandlingHistory.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,11 +7,8 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using Naos.CodeAnalysis.Recipes;
-    using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.String.Recipes;
+    using Naos.Database.Domain;
+    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     public static partial class StreamSchema
@@ -19,59 +16,67 @@ namespace Naos.SqlServer.Domain
         public static partial class Sprocs
         {
             /// <summary>
-            /// Stored procedure: GetTagSetFromIds.
+            /// Stored procedure: GetHandlingHistory.
             /// </summary>
-            public static class GetTagSetFromIds
+            public static class GetHandlingHistory
             {
                 /// <summary>
                 /// Gets the name of the stored procedure.
                 /// </summary>
-                public static string Name => nameof(GetTagSetFromIds);
+                public static string Name => nameof(GetHandlingHistory);
 
                 /// <summary>
                 /// Input parameter names.
                 /// </summary>
-                [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public enum InputParamName
                 {
                     /// <summary>
-                    /// The tag identifiers as CSV.
+                    /// The concern.
                     /// </summary>
-                    TagIdsCsv,
+                    Concern,
+
+                    /// <summary>
+                    /// The internal record identifier.
+                    /// </summary>
+                    InternalRecordId,
                 }
 
                 /// <summary>
                 /// Output parameter names.
                 /// </summary>
-                [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public enum OutputParamName
                 {
                     /// <summary>
-                    /// The tag set as XML.
+                    /// The handling entries as XML.
                     /// </summary>
-                    TagsXml,
+                    EntriesXml,
                 }
 
                 /// <summary>
                 /// Builds the execute stored procedure operation.
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
-                /// <param name="tagIds">The tag identifier set.</param>
+                /// <param name="concern">Handling concern.</param>
+                /// <param name="internalRecordId">The internal record identifier.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
-                    IReadOnlyList<long> tagIds)
+                    string concern,
+                    long internalRecordId)
                 {
-                    var sprocName = Invariant($"[{streamName}].{Name}");
-                    var tagIdsCsv = tagIds?.Select(_ => _.ToStringInvariantPreferred()).ToCsv();
+                    var sprocName = Invariant($"[{streamName}].[{nameof(GetHandlingHistory)}]");
                     var parameters = new List<ParameterDefinitionBase>()
                                      {
                                          new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagIdsCsv),
-                                             Tables.Record.TagIdsCsv.SqlDataType,
-                                             tagIdsCsv),
+                                             nameof(InputParamName.Concern),
+                                             Tables.Handling.Concern.SqlDataType,
+                                             concern),
+                                         new InputParameterDefinition<long>(
+                                             nameof(InputParamName.InternalRecordId),
+                                             Tables.Record.Id.SqlDataType,
+                                             internalRecordId),
                                          new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.TagsXml),
+                                             nameof(OutputParamName.EntriesXml),
                                              new XmlSqlDataTypeRepresentation()),
                                      };
 
@@ -93,19 +98,27 @@ namespace Naos.SqlServer.Domain
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
-{createOrModify} PROCEDURE [{streamName}].[{GetTagSetFromIds.Name}](
-  @{nameof(InputParamName.TagIdsCsv)} {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax},
-  @{nameof(OutputParamName.TagsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+{createOrModify} PROCEDURE [{streamName}].[{Name}](
+    @{InputParamName.Concern} {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.InternalRecordId} {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{OutputParamName.EntriesXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
   )
 AS
 BEGIN
-    SELECT @{OutputParamName.TagsXml} = (SELECT
-	    {Tables.Tag.TagKey.Name} AS [@{XmlConversionTool.TagEntryKeyAttributeName}],
-	    ISNULL({Tables.Tag.TagValue.Name},'{XmlConversionTool.NullCanaryValue}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
-    FROM [{streamName}].[{Tables.Tag.Table.Name}]
-    WHERE [{Tables.Tag.Id.Name}] IN (SELECT value AS [{Tables.Tag.Id.Name}] FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ','))
-    ORDER BY [{Tables.Tag.Id.Name}]
-    FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}'))
+    SELECT @{OutputParamName.EntriesXml} = (
+        SELECT
+                h.[{Tables.Handling.Id.Name}]
+              , h.[{Tables.Handling.RecordId.Name}]
+              , h.[{Tables.Handling.Concern.Name}]
+              , h.[{Tables.Handling.Status.Name}]
+              , h.[{Tables.Handling.Details.Name}]
+              , h.[{Tables.Handling.RecordCreatedUtc.Name}]
+              , (SELECT STRING_AGG({Tables.HandlingTag.TagId.Name}, ',') FROM [{streamName}].[{Tables.HandlingTag.Table.Name}] WHERE [{Tables.HandlingTag.HandlingId.Name}] = h.[{Tables.Handling.Id.Name}]) AS [{nameof(XmlConversionTool.SerializableEntrySetItem.TagIdsCsv)}]
+        FROM [{streamName}].[{Tables.Handling.Table.Name}] h
+        WHERE h.[{Tables.Handling.RecordId.Name}] = @{InputParamName.InternalRecordId}
+        ORDER BY h.[{Tables.Handling.Id.Name}]
+        FOR XML PATH ('{XmlConversionTool.EntryElementName}'), ROOT('{XmlConversionTool.EntrySetElementName}')
+    )
 END");
 
                     return result;

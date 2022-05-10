@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TagConversionTool.cs" company="Naos Project">
+// <copyright file="XmlConversionTool.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -22,17 +22,24 @@ namespace Naos.SqlServer.Domain
     using static System.FormattableString;
 
     /// <summary>
-    /// Sql Operation Protocol.
+    /// Tools for dealing with XML in SQL.
     /// </summary>
-    public static class TagConversionTool
+    public static class XmlConversionTool
     {
-        private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(SerializableTagSet));
+        private static readonly XmlSerializer EntrySerializer = new XmlSerializer(typeof(SerializableEntrySet));
+
+        private static readonly XmlSerializer TagXmlSerializer = new XmlSerializer(typeof(SerializableTagSet));
 
         private static readonly XmlSerializerNamespaces XmlSerializerNamespaces = new XmlSerializerNamespaces(
             new[]
             {
                 new XmlQualifiedName(string.Empty, string.Empty),
             });
+
+        private static readonly XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
+                                                                      {
+                                                                          IgnoreWhitespace = true,
+                                                                      };
 
         private static readonly XmlWriterSettings XmlWriterSettings = new XmlWriterSettings
                                                                       {
@@ -49,6 +56,16 @@ namespace Naos.SqlServer.Domain
         /// Element name of each entry in the tag set.
         /// </summary>
         public const string TagEntryElementName = "Tag";
+
+        /// <summary>
+        /// Root element name of the entry set.
+        /// </summary>
+        public const string EntrySetElementName = "Entries";
+
+        /// <summary>
+        /// Element name of each entry in the entry set.
+        /// </summary>
+        public const string EntryElementName = "Entry";
 
         /// <summary>
         /// Attribute name of the 'Key' constituent of each entry.
@@ -69,6 +86,22 @@ namespace Naos.SqlServer.Domain
         /// The empty tag set as XML.
         /// </summary>
         public static readonly string EmptyTagSetXml = Invariant($"<{TagSetElementName}></{TagSetElementName}>");
+
+        /// <summary>
+        /// Gets the handling entries from XML string.
+        /// </summary>
+        /// <param name="handlingEntriesAsXml">The handling entries as XML.</param>
+        /// <returns>SerializableEntrySet.</returns>
+        public static SerializableEntrySet GetHandlingEntriesFromXmlString(
+            this string handlingEntriesAsXml)
+        {
+            using (var stringReader = new StringReader(handlingEntriesAsXml))
+            using (var reader = XmlReader.Create(stringReader, XmlReaderSettings))
+            {
+                var result = (SerializableEntrySet)EntrySerializer.Deserialize(reader);
+                return result;
+            }
+        }
 
         /// <summary>
         /// Gets the tag set as a <see cref="IReadOnlyDictionary{TKey,TValue}"/> from the provided XML as a string.
@@ -181,7 +214,7 @@ namespace Naos.SqlServer.Domain
                                                              .ToArray(),
                                               };
 
-                XmlSerializer.Serialize(
+                TagXmlSerializer.Serialize(
                     writer,
                     serializableTagSetItems,
                     XmlSerializerNamespaces);
@@ -222,14 +255,14 @@ namespace Naos.SqlServer.Domain
         /// Model object that is only used for the <see cref="XmlSerializer"/> to store a set of tags to send in XML to SQL Server.
         /// </summary>
         [Serializable]
-        [XmlRoot("Tags")]
+        [XmlRoot(TagSetElementName)]
         public class SerializableTagSet
         {
             /// <summary>
             /// Gets or sets the tags.
             /// </summary>
             [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's what the XML serializer plays nice with.")]
-            [XmlElement("Tag")] // Do NOT use XmlArray/XmlArrayItem attributes as it double nests...
+            [XmlElement(TagEntryElementName)] // Do NOT use XmlArray/XmlArrayItem attributes as it double nests...
             public SerializableTagSetItem[] Tags { get; set; }
         }
 
@@ -237,7 +270,7 @@ namespace Naos.SqlServer.Domain
         /// Model object that is only used for the <see cref="XmlSerializer"/> to store a single tag entry in <see cref="SerializableTagSet"/>.
         /// </summary>
         [Serializable]
-        [XmlRoot("Tag")]
+        [XmlRoot(TagEntryElementName)]
         public class SerializableTagSetItem
         {
             /// <summary>
@@ -251,6 +284,90 @@ namespace Naos.SqlServer.Domain
             /// </summary>
             [XmlAttribute(TagEntryValueAttributeName)]
             public string Value { get; set; }
+        }
+
+        /// <summary>
+        /// Stand in for default implementation of <see cref="IHaveDetails"/>.
+        /// </summary>
+        public class XmlDetails : IHaveDetails
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="XmlDetails"/> class.
+            /// </summary>
+            /// <param name="details">The details.</param>
+            public XmlDetails(
+                string details)
+            {
+                this.Details = details;
+            }
+
+            /// <inheritdoc />
+            public string Details { get; private set; }
+        }
+
+        /// <summary>
+        /// Model object that is only used for the <see cref="XmlSerializer"/> to store a set of entries to send in XML to SQL Server.
+        /// </summary>
+        [Serializable]
+        [XmlRoot(EntrySetElementName)]
+        public class SerializableEntrySet
+        {
+            /// <summary>
+            /// Gets or sets the Entrys.
+            /// </summary>
+            [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's what the XML serializer plays nice with.")]
+            [XmlElement(EntryElementName)] // Do NOT use XmlArray/XmlArrayItem attributes as it double nests...
+            public SerializableEntrySetItem[] Entries { get; set; }
+        }
+
+        /// <summary>
+        /// Model object that is only used for the <see cref="XmlSerializer"/> to store a single entry entry in <see cref="SerializableEntrySet"/>.
+        /// </summary>
+        [Serializable]
+        [XmlRoot(EntryElementName)]
+        public class SerializableEntrySetItem
+        {
+            /// <summary>
+            /// Gets or sets the identifier.
+            /// </summary>
+            [XmlElement(nameof(Id))]
+            public long Id { get; set; }
+
+            /// <summary>
+            /// Gets or sets the internal record identifier.
+            /// </summary>
+            [XmlElement(nameof(RecordId))]
+            public long RecordId { get; set; }
+
+            /// <summary>
+            /// Gets or sets the record handling concern.
+            /// </summary>
+            [XmlElement(nameof(Concern))]
+            public string Concern { get; set; }
+
+            /// <summary>
+            /// Gets or sets the record handling status.
+            /// </summary>
+            [XmlElement(nameof(Status))]
+            public string Status { get; set; }
+
+            /// <summary>
+            /// Gets or sets the record handling details.
+            /// </summary>
+            [XmlElement(nameof(Details))]
+            public string Details { get; set; }
+
+            /// <summary>
+            /// Gets or sets the record handling tag identifiers as CSV.
+            /// </summary>
+            [XmlElement(nameof(TagIdsCsv))]
+            public string TagIdsCsv { get; set; }
+
+            /// <summary>
+            /// Gets or sets the record handling created <see cref="DateTime"/> in UTC format.
+            /// </summary>
+            [XmlElement(nameof(RecordCreatedUtc))]
+            public DateTime RecordCreatedUtc { get; set; }
         }
     }
 }

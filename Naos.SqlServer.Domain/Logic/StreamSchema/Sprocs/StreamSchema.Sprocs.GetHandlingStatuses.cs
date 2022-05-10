@@ -201,19 +201,19 @@ BEGIN
 	BEGIN
         SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
             SELECT
-                  rids.[{Tables.Record.Id.Name}] AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-                , '{HandlingStatus.DisabledForStream}' AS [@{TagConversionTool.TagEntryValueAttributeName}]
+                  rids.[{Tables.Record.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
+                , '{HandlingStatus.DisabledForStream}' AS [@{XmlConversionTool.TagEntryValueAttributeName}]
             FROM @{recordIdsToConsiderTable} rids
             ORDER BY rids.[{Tables.Record.Id.Name}]
-            FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}')
+            FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
         )
     END
 	ELSE
 	BEGIN
         SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
             SELECT
-                  rids.[{Tables.Record.Id.Name}] AS [@{TagConversionTool.TagEntryKeyAttributeName}]
-                , ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') AS [@{TagConversionTool.TagEntryValueAttributeName}]
+                  rids.[{Tables.Record.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
+                , ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
             FROM @{recordIdsToConsiderTable} rids
             LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
                 ON rids.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND (h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
@@ -221,7 +221,7 @@ BEGIN
 	            ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND (h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h1.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
             WHERE h1.[{Tables.Handling.Id.Name}] IS NULL
             ORDER BY h.[{Tables.Handling.Id.Name}]
-            FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}')
+            FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
         )
 	END
 END");

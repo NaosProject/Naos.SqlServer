@@ -57,7 +57,7 @@ namespace Naos.SqlServer.Domain
                     IReadOnlyCollection<NamedValue<string>> tags)
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetIdsAddIfNecessaryTagSet)}]");
-                    var tagsXml = TagConversionTool.GetTagsXmlString(tags);
+                    var tagsXml = XmlConversionTool.GetTagsXmlString(tags);
                     var parameters = new List<ParameterDefinitionBase>()
                                      {
                                          new InputParameterDefinition<string>(
@@ -146,20 +146,20 @@ BEGIN
     IF EXISTS (SELECT TOP 1 * FROM @{tagIdsTable} WHERE [{Tables.Tag.Id.Name}] IS NULL)
     BEGIN
         SELECT @{OutputParamName.TagIdsXml} = (SELECT
-	        ROW_NUMBER() OVER (ORDER BY n.[{Tables.Tag.TagKey.Name}], ISNULL(n.[{Tables.Tag.TagValue.Name}], '{TagConversionTool.NullCanaryValue}')) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
-	        n.{Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
+	        ROW_NUMBER() OVER (ORDER BY n.[{Tables.Tag.TagKey.Name}], ISNULL(n.[{Tables.Tag.TagValue.Name}], '{XmlConversionTool.NullCanaryValue}')) AS [@{XmlConversionTool.TagEntryKeyAttributeName}],
+	        n.{Tables.Tag.Id.Name} AS [@{XmlConversionTool.TagEntryValueAttributeName}]
         FROM @{tagIdsTable} e
         INNER JOIN [{streamName}].[{Tables.Tag.Table.Name}] n ON
                 (n.[{Tables.Tag.TagKey.Name}] =  e.[{Tables.Tag.TagKey.Name}] AND (n.[{Tables.Tag.TagValue.Name}] = e.[{Tables.Tag.TagValue.Name}] OR (n.[{Tables.Tag.TagValue.Name}] is null and e.[{Tables.Tag.TagValue.Name}] is null)))
-        FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+        FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}'))
     END
     ELSE
     BEGIN
         SELECT @{OutputParamName.TagIdsXml} = (SELECT
-            ROW_NUMBER() OVER (ORDER BY e.[{Tables.Tag.TagKey.Name}], ISNULL(e.[{Tables.Tag.TagValue.Name}], '{TagConversionTool.NullCanaryValue}')) AS [@{TagConversionTool.TagEntryKeyAttributeName}],
-	        e.{Tables.Tag.Id.Name} AS [@{TagConversionTool.TagEntryValueAttributeName}]
+            ROW_NUMBER() OVER (ORDER BY e.[{Tables.Tag.TagKey.Name}], ISNULL(e.[{Tables.Tag.TagValue.Name}], '{XmlConversionTool.NullCanaryValue}')) AS [@{XmlConversionTool.TagEntryKeyAttributeName}],
+	        e.{Tables.Tag.Id.Name} AS [@{XmlConversionTool.TagEntryValueAttributeName}]
         FROM @{tagIdsTable} e
-        FOR XML PATH ('{TagConversionTool.TagEntryElementName}'), ROOT('{TagConversionTool.TagSetElementName}'))
+        FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}'))
     END
 END");
 
