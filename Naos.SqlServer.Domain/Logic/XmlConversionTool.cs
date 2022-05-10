@@ -92,6 +92,7 @@ namespace Naos.SqlServer.Domain
         /// </summary>
         /// <param name="handlingEntriesAsXml">The handling entries as XML.</param>
         /// <returns>SerializableEntrySet.</returns>
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = NaosSuppressBecause.CA2202_DoNotDisposeObjectsMultipleTimes_AnalyzerIsIncorrectlyFlaggingObjectAsBeingDisposedMultipleTimes)]
         public static SerializableEntrySet GetHandlingEntriesFromXmlString(
             this string handlingEntriesAsXml)
         {
@@ -284,25 +285,6 @@ namespace Naos.SqlServer.Domain
             /// </summary>
             [XmlAttribute(TagEntryValueAttributeName)]
             public string Value { get; set; }
-        }
-
-        /// <summary>
-        /// Stand in for default implementation of <see cref="IHaveDetails"/>.
-        /// </summary>
-        public class XmlDetails : IHaveDetails
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="XmlDetails"/> class.
-            /// </summary>
-            /// <param name="details">The details.</param>
-            public XmlDetails(
-                string details)
-            {
-                this.Details = details;
-            }
-
-            /// <inheritdoc />
-            public string Details { get; private set; }
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ namespace Naos.SqlServer.Protocol.Client
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
@@ -25,6 +26,7 @@ namespace Naos.SqlServer.Protocol.Client
     public partial class SqlStream
     {
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         public override IReadOnlyList<StreamRecordHandlingEntry> Execute(
             StandardGetHandlingHistoryOp operation)
         {
@@ -67,29 +69,21 @@ namespace Naos.SqlServer.Protocol.Client
                                                        sqlServerLocator,
                                                        v.TagIdsCsv.FromCsv().Select(long.Parse).ToList()));
 
-            var identifierTypeRepresentation = typeof(NullIdentifier).ToRepresentation();
             var result = entriesWithAvailableInitial.Select(
                 _ =>
                 {
                     var tags = handlingEntryIdToTagsMap[_.Id];
                     var handlingStatus = _.Status.ToEnum<HandlingStatus>();
                     var utcTime = _.RecordCreatedUtc.ToUtc();
-                    var metadata = new StreamRecordHandlingEntryMetadata(
+                    var entry = new StreamRecordHandlingEntry(
+                        _.Id,
                         _.RecordId,
                         _.Concern,
                         handlingStatus,
-                        null,
-                        this.DefaultSerializerRepresentation,
-                        identifierTypeRepresentation.ToWithAndWithoutVersion(),
-                        _.Details.GetType().ToRepresentation().ToWithAndWithoutVersion(),
                         tags,
+                        _.Details,
                         utcTime);
-                    var detailsObject = new XmlConversionTool.XmlDetails(_.Details);
-                    var payload = detailsObject.ToDescribedSerializationUsingSpecificFactory(
-                        this.DefaultSerializerRepresentation,
-                        this.SerializerFactory,
-                        this.DefaultSerializationFormat);
-                    return new StreamRecordHandlingEntry(_.Id, metadata, payload);
+                    return entry;
                 }).ToList();
 
             return result;
