@@ -38,7 +38,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream221";
+        private readonly string streamName = "Stream227";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -518,7 +518,8 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
                 var getFirstStatusByTagsOp = new StandardGetHandlingStatusOp(
                     firstConcern,
-                    new RecordFilter(tags: firstTags));
+                    new RecordFilter(tags: firstTags),
+                    new HandlingFilter());
 
                 stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 
@@ -650,7 +651,11 @@ namespace Naos.SqlServer.Protocol.Client.Test
                             new StringSerializedIdentifier(
                                 second.RecordToHandle.Metadata.StringSerializedId,
                                 second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion),
-                        }));
+                        }),
+                    new HandlingFilter());
+                var xx = stream.Execute(new StandardGetHandlingStatusOp(secondConcern, new RecordFilter(ids: new[] { new StringSerializedIdentifier(second.RecordToHandle.Metadata.StringSerializedId, second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion), }), new HandlingFilter(new[] { HandlingStatus.Running })));
+                var yx = stream.Execute(new StandardGetHandlingStatusOp(secondConcern, new RecordFilter(ids: new[] { new StringSerializedIdentifier(second.RecordToHandle.Metadata.StringSerializedId, second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion), }), new HandlingFilter(new[] { HandlingStatus.DisabledForStream })));
+                var zx = stream.Execute(new StandardGetHandlingStatusOp(secondConcern, new RecordFilter(ids: new[] { new StringSerializedIdentifier(second.RecordToHandle.Metadata.StringSerializedId, second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion), }), new HandlingFilter()));
 
                 stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 
@@ -820,7 +825,8 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             var getFirstStatusByTagsOp = new StandardGetHandlingStatusOp(
                 firstConcern,
-                new RecordFilter(tags: handleTags));
+                new RecordFilter(),
+                new HandlingFilter(tags: handleTags));
 
             stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 

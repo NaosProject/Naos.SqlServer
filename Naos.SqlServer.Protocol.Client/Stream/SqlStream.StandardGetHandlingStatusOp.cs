@@ -39,11 +39,11 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
 
-            var handlingTagsCsv = !operation.HandlingTags?.Any() ?? true
+            var handlingTagsCsv = !operation.HandlingFilter.Tags?.Any() ?? true
                 ? null
                 : this.GetIdsAddIfNecessaryTag(
                            sqlServerLocator,
-                           operation.HandlingTags)
+                           operation.HandlingFilter.Tags)
                       .Select(_ => _.ToStringInvariantPreferred())
                       .Distinct()
                       .ToCsv();
@@ -51,6 +51,7 @@ namespace Naos.SqlServer.Protocol.Client
                 this.Name,
                 operation.Concern,
                 convertedRecordFilter,
+                operation.HandlingFilter.CurrentHandlingStatuses,
                 handlingTagsCsv);
 
             var sprocResult = sqlProtocol.Execute(op);
@@ -59,10 +60,18 @@ namespace Naos.SqlServer.Protocol.Client
                .OutputParameters[StreamSchema.Sprocs.GetHandlingStatuses.OutputParamName.RecordIdHandlingStatusXml.ToString()];
             var recordIdStatusXml = outputParameter.GetValueOfType<string>();
 
-            var tags = recordIdStatusXml.GetTagsFromXmlString();
-            var result = tags.ToDictionary(
+            Dictionary<long, HandlingStatus> result;
+            if (string.IsNullOrEmpty(recordIdStatusXml))
+            {
+                result = new Dictionary<long, HandlingStatus>();
+            }
+            else
+            {
+                var tags = recordIdStatusXml.GetTagsFromXmlString();
+                result = tags.ToDictionary(
                     k => long.Parse(k.Name, CultureInfo.InvariantCulture),
                     v => v.Value?.ToEnum<HandlingStatus>() ?? HandlingStatus.AvailableByDefault);
+            }
 
             return result;
         }

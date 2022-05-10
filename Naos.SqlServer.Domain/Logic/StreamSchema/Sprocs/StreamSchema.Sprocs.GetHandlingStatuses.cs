@@ -7,7 +7,9 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Naos.Database.Domain;
+    using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Type;
     using static System.FormattableString;
 
@@ -61,6 +63,11 @@ namespace Naos.SqlServer.Domain
                     TagIdsToMatchCsv,
 
                     /// <summary>
+                    /// The current statuses
+                    /// </summary>
+                    CurrentStatusesCsv,
+
+                    /// <summary>
                     /// The handling tag identifiers as CSV.
                     /// </summary>
                     HandlingTagIdsToMatchCsv,
@@ -98,15 +105,19 @@ namespace Naos.SqlServer.Domain
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="concern">Handling concern.</param>
                 /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter"/>.</param>
+                /// <param name="currentHandlingStatuses">Current handling statuses to match.</param>
                 /// <param name="handlingTagIdsCsv">Handling tag identifiers to filter on in CSV format.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
                     string concern,
                     RecordFilterConvertedForStoredProcedure convertedRecordFilter,
+                    IReadOnlyCollection<HandlingStatus> currentHandlingStatuses,
                     string handlingTagIdsCsv)
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetHandlingStatuses)}]");
+                    var currentStatusesCsv = currentHandlingStatuses?.Select(_ => _.ToString()).ToCsv();
+
                     var parameters = new List<ParameterDefinitionBase>()
                                      {
                                          new InputParameterDefinition<string>(
@@ -133,6 +144,10 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.TagIdsToMatchCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
                                              convertedRecordFilter.TagIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.CurrentStatusesCsv),
+                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                                             currentStatusesCsv),
                                          new InputParameterDefinition<string>(
                                              nameof(InputParamName.HandlingTagIdsToMatchCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
@@ -183,6 +198,7 @@ namespace Naos.SqlServer.Domain
  ,  @{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
  ,  @{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
  ,  @{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.CurrentStatusesCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
  ,  @{InputParamName.HandlingTagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
  ,  @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
  ,  @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
@@ -220,6 +236,7 @@ BEGIN
 	        LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
 	            ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND (h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h1.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
             WHERE h1.[{Tables.Handling.Id.Name}] IS NULL
+            AND ((@{InputParamName.CurrentStatusesCsv} IS NULL) OR (h.[{Tables.Handling.Status.Name}] IN (SELECT value FROM STRING_SPLIT(@{InputParamName.CurrentStatusesCsv}, ','))))
             ORDER BY h.[{Tables.Handling.Id.Name}]
             FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
         )
