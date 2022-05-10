@@ -653,9 +653,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
                                 second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion),
                         }),
                     new HandlingFilter());
-                var xx = stream.Execute(new StandardGetHandlingStatusOp(secondConcern, new RecordFilter(ids: new[] { new StringSerializedIdentifier(second.RecordToHandle.Metadata.StringSerializedId, second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion), }), new HandlingFilter(new[] { HandlingStatus.Running })));
-                var yx = stream.Execute(new StandardGetHandlingStatusOp(secondConcern, new RecordFilter(ids: new[] { new StringSerializedIdentifier(second.RecordToHandle.Metadata.StringSerializedId, second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion), }), new HandlingFilter(new[] { HandlingStatus.DisabledForStream })));
-                var zx = stream.Execute(new StandardGetHandlingStatusOp(secondConcern, new RecordFilter(ids: new[] { new StringSerializedIdentifier(second.RecordToHandle.Metadata.StringSerializedId, second.RecordToHandle.Metadata.TypeRepresentationOfId.WithVersion), }), new HandlingFilter()));
 
                 stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
 
