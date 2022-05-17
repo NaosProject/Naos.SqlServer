@@ -23,6 +23,11 @@ namespace Naos.SqlServer.Domain
                 public const long NullId = -1L;
 
                 /// <summary>
+                /// The token to substitute for a null string serialized identifier.
+                /// </summary>
+                public const string NullStringSerializedId = "<<<NULL>>>";
+
+                /// <summary>
                 /// Gets the identifier column.
                 /// </summary>
                 public static ColumnDefinition Id => new ColumnDefinition(nameof(Id), new BigIntSqlDataTypeRepresentation());

@@ -241,7 +241,7 @@ namespace Naos.SqlServer.Domain
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
                     INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
-                    ON r.[{Tables.Record.StringSerializedId.Name}] = i.[{Tables.Tag.TagKey.Name}]
+                    ON r.[{Tables.Record.StringSerializedId.Name}] = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](i.[{Tables.Tag.TagKey.Name}])
                     AND r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
                 )
             END
@@ -252,7 +252,7 @@ namespace Naos.SqlServer.Domain
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
                     INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
-                    ON r.[{Tables.Record.StringSerializedId.Name}] = i.[{Tables.Tag.TagKey.Name}]
+                    ON r.[{Tables.Record.StringSerializedId.Name}] = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](i.[{Tables.Tag.TagKey.Name}])
                     AND r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
                 )
             END
@@ -267,7 +267,7 @@ namespace Naos.SqlServer.Domain
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
                     INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
-                    ON r.[{Tables.Record.StringSerializedId.Name}] = i.[{Tables.Tag.TagKey.Name}]
+                    ON r.[{Tables.Record.StringSerializedId.Name}] = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](i.[{Tables.Tag.TagKey.Name}])
                     AND r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
                 )
             END
@@ -278,7 +278,7 @@ namespace Naos.SqlServer.Domain
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
                     INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
-                    ON r.[{Tables.Record.StringSerializedId.Name}] = i.[{Tables.Tag.TagKey.Name}]
+                    ON r.[{Tables.Record.StringSerializedId.Name}] = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](i.[{Tables.Tag.TagKey.Name}])
                     AND r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
                 )
             END

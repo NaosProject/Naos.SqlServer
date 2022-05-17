@@ -208,7 +208,7 @@ BEGIN
 
     SELECT @{OutputParamName.StringIdentifiersOutputXml} = (SELECT
           e.[{Tables.TypeWithVersion.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
-        , ISNULL(e.[{Tables.Record.StringSerializedId.Name}], '{XmlConversionTool.NullCanaryValue}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
+        , ISNULL([{streamName}].[{Funcs.AdjustForGetStringSerializedId.Name}](e.[{Tables.Record.StringSerializedId.Name}]), '{XmlConversionTool.NullCanaryValue}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
     FROM @{resultTableName} e
     FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}'))
 END

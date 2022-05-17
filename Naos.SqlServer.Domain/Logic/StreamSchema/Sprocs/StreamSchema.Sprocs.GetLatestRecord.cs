@@ -295,7 +295,7 @@ BEGIN
 	   @{OutputParamName.SerializerRepresentationId} = [{Tables.Record.SerializerRepresentationId.Name}]
 	 , @{OutputParamName.IdentifierTypeWithVersionId} = [{Tables.Record.IdentifierTypeWithVersionId.Name}]
 	 , @{OutputParamName.ObjectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
-     , @{OutputParamName.StringSerializedId} = [{Tables.Record.StringSerializedId.Name}]
+     , @{OutputParamName.StringSerializedId} = [{streamName}].[{Funcs.AdjustForGetStringSerializedId.Name}]([{Tables.Record.StringSerializedId.Name}])
      , @{OutputParamName.StringSerializedObject} = (
             CASE @{InputParamName.IncludePayload}
                 WHEN 1 THEN [{Tables.Record.StringSerializedObject.Name}]

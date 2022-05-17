@@ -361,6 +361,9 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
+    -- Adjust {InputParamName.StringSerializedId} if null since the table cannot hold nulls because of indexing.
+    SET @{InputParamName.StringSerializedId} = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](@{InputParamName.StringSerializedId})
+
     -- If two actors try to both insert for the same ID with the '{nameof(ExistingRecordStrategy)}'
 	--	   set to e.g. {ExistingRecordStrategy.DoNotWriteIfFoundByIdAndTypeAndContent}; they could both
 	--     write the same payload; this does work in a single actor re-entrant scenario and is the expected usage.

@@ -70,6 +70,8 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Tables.RecordTag.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.Handling.BuildCreationScript(this.Name),
                                                       StreamSchema.Tables.HandlingTag.BuildCreationScript(this.Name),
+                                                      StreamSchema.Funcs.AdjustForGetStringSerializedId.BuildCreationScript(this.Name),
+                                                      StreamSchema.Funcs.AdjustForPutStringSerializedId.BuildCreationScript(this.Name),
                                                       StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.CreateStreamUser.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.GetDistinctStringSerializedIds.BuildCreationScript(this.Name),
@@ -133,6 +135,8 @@ namespace Naos.SqlServer.Protocol.Client
 
                         var alterScripts = new[]
                                            {
+                                               StreamSchema.Funcs.AdjustForGetStringSerializedId.BuildCreationScript(this.Name, true),
+                                               StreamSchema.Funcs.AdjustForPutStringSerializedId.BuildCreationScript(this.Name, true),
                                                StreamSchema.Funcs.GetTagsTableVariableFromTagsXml.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.CreateStreamUser.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetDistinctStringSerializedIds.BuildCreationScript(this.Name, true),
