@@ -38,11 +38,11 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream227";
+        private readonly string streamName = "Stream236";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlStreamTest"/> class.
+        /// Initializes a new instance of the <see cref="SqlStreamTest" /> class.
         /// </summary>
         /// <param name="testOutputHelper">The test output helper.</param>
         public SqlStreamTest(
@@ -69,6 +69,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method TestBinary.
         /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestBinary()
@@ -80,6 +81,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         /// <summary>
         /// Defines the test method TestRandom.
         /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestRandom()
@@ -102,6 +104,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             protocol.Execute(createDatabaseOp);
         }
 
+        /// <summary>
+        /// Defines the test method CreateDatabase_ExistingDatabaseTest.
+        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "ex", Justification = "Showing return value.")]
         [Fact]
         public static void CreateDatabase_ExistingDatabaseTest()
@@ -703,6 +708,8 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
                 stream.GetStreamRecordHandlingProtocols().Execute(new EnableHandlingForStreamOp("Resume processing, confirmed deployment."));
 
+                var y = stream.Execute(new StandardGetHandlingStatusOp(secondConcern, new RecordFilter(), new HandlingFilter(), null));
+
                 stream.Execute(getSecondStatusByIdOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterFailure);
 
                 second = stream.Execute(new StandardTryHandleRecordOp(
@@ -779,6 +786,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             */
         }
 
+        /// <summary>
+        /// Defines the test method HandlingEntryTagsUsedInStatusTests.
+        /// </summary>
         [Fact]
         public void HandlingEntryTagsUsedInStatusTests()
         {
@@ -982,6 +992,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             latestTwo.Metadata.Tags.MustForTest().BeNull();
         }
 
+        /// <summary>
+        /// Defines the test method TestUniqueLong.
+        /// </summary>
         [Fact]
         public void TestUniqueLong()
         {
@@ -993,6 +1006,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             nextDetails.MustForTest().BeGreaterThan(nextNoDetails);
         }
 
+        /// <summary>
+        /// Defines the test method TestGetDistinctEmptyStream.
+        /// </summary>
         [Fact]
         public void TestGetDistinctEmptyStream()
         {
@@ -1002,6 +1018,34 @@ namespace Naos.SqlServer.Protocol.Client.Test
             ids.MustForTest().BeEmptyEnumerable();
         }
 
+        /// <summary>
+        /// Defines the test method TestNullStringSerializedId.
+        /// </summary>
+        [Fact]
+        public void TestNullStringSerializedId()
+        {
+            const string id = null;
+
+            var stream = this.GetCreatedSqlStream();
+            var objectToPut = new MyObject("id", "test-null");
+            stream.PutWithId(id, objectToPut);
+            var ids = stream.Execute(new StandardGetDistinctStringSerializedIdsOp(new RecordFilter()));
+            ids.Single().StringSerializedId.MustForTest().BeNull();
+            var latestObjectById = stream.GetLatestObjectById<string, MyObject>(id);
+            latestObjectById.Id.MustForTest().BeEqualTo(objectToPut.Id);
+            latestObjectById.Field.MustForTest().BeEqualTo(objectToPut.Field);
+            var latestObject = stream.GetLatestObject<MyObject>();
+            latestObject.Id.MustForTest().BeEqualTo(objectToPut.Id);
+            latestObject.Field.MustForTest().BeEqualTo(objectToPut.Field);
+            var latestRecord = stream.GetLatestRecord<MyObject>();
+            latestRecord.Metadata.StringSerializedId.MustForTest().BeNull();
+            latestRecord.Payload.Id.MustForTest().BeEqualTo(objectToPut.Id);
+            latestRecord.Payload.Field.MustForTest().BeEqualTo(objectToPut.Field);
+        }
+
+        /// <summary>
+        /// Defines the test method TestGetDistinctEmptyRecordFilter.
+        /// </summary>
         [Fact]
         public void TestGetDistinctEmptyRecordFilter()
         {
@@ -1013,6 +1057,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             ids.MustForTest().NotBeEmptyEnumerable();
         }
 
+        /// <summary>
+        /// Defines the test method TestLatestStringSerializedObject.
+        /// </summary>
         [Fact]
         public void TestLatestStringSerializedObject()
         {
@@ -1028,6 +1075,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             latestStringSerializedObject.MustForTest().EndWith("}");
         }
 
+        /// <summary>
+        /// Defines the test method TestConfigStreamBuilding.
+        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "output", Justification = "Showing return value.")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Keeping as is in case of future conversion.")]
         [Fact]
@@ -1086,7 +1136,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 commandTimeout ?? TimeSpan.FromMinutes(3),
                 defaultSerializerRepresentation,
                 defaultSerializationFormat,
-                new JsonSerializerFactory(),
+                new ObcSimplifyingSerializerFactory(new JsonSerializerFactory()),
                 resourceLocatorProtocol);
 
             stream.Execute(new StandardCreateStreamOp(stream.StreamRepresentation, ExistingStreamStrategy.Skip));
@@ -1110,11 +1160,13 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
     /// <summary>
     /// Test object.
+    /// Implements the <see cref="OBeautifulCode.Type.IHaveId{System.String}" />
     /// </summary>
+    /// <seealso cref="OBeautifulCode.Type.IHaveId{System.String}" />
     public class MyObject : IHaveId<string>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MyObject"/> class.
+        /// Initializes a new instance of the <see cref="MyObject" /> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="field">The field.</param>
@@ -1151,11 +1203,13 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
     /// <summary>
     /// Test object.
+    /// Implements the <see cref="OBeautifulCode.Type.IHaveId{System.String}" />
     /// </summary>
+    /// <seealso cref="OBeautifulCode.Type.IHaveId{System.String}" />
     public class MyObject2 : IHaveId<string>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MyObject2"/> class.
+        /// Initializes a new instance of the <see cref="MyObject2" /> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="field">The field.</param>
