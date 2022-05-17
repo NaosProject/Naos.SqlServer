@@ -186,7 +186,7 @@ namespace Naos.SqlServer.Domain
         /// <returns>The converted XML.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = NaosSuppressBecause.CA2202_DoNotDisposeObjectsMultipleTimes_AnalyzerIsIncorrectlyFlaggingObjectAsBeingDisposedMultipleTimes)]
         public static string GetTagsXmlString(
-            this IReadOnlyCollection<NamedValue<int>> tags)
+            this IReadOnlyCollection<Tuple<string, int>> tags)
         {
             if (tags == null)
             {
@@ -208,8 +208,8 @@ namespace Naos.SqlServer.Domain
                                                   Tags = tags.Select(
                                                                   _ => new SerializableTagSetItem
                                                                        {
-                                                                           Key = _.Name,
-                                                                           Value = _.Value.ToStringInvariantPreferred(),
+                                                                           Key = _.Item1,
+                                                                           Value = _.Item2.ToStringInvariantPreferred(),
                                                                        })
                                                              .Distinct()
                                                              .ToArray(),

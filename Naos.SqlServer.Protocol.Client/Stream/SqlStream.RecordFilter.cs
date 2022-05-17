@@ -137,7 +137,7 @@ namespace Naos.SqlServer.Protocol.Client
                 ? null
                 : recordFilter.Ids
                               .Select(
-                                   _ => new NamedValue<int>(
+                                   _ => new Tuple<string, int>(
                                        _.StringSerializedId,
                                        recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
                                            ? typeToIdMap[_.IdentifierType].IdWithoutVersion
