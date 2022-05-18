@@ -124,6 +124,7 @@ namespace Naos.SqlServer.Domain
                 result.AppendLine(BuildGrant(Sprocs.TryHandleRecord.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.PutHandling.Name, execute));
                 result.AppendLine(BuildGrant(Sprocs.GetHandlingStatuses.Name, execute));
+                result.AppendLine(BuildGrant(Sprocs.GetHandlingHistory.Name, execute));
                 result.AppendLine(BuildGrant(Tables.Record.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.RecordTag.Table.Name, read));
                 result.AppendLine(BuildGrant(Tables.Handling.Table.Name, readWrite));
