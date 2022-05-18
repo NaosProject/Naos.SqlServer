@@ -212,6 +212,7 @@ BEGIN
     DECLARE @{streamBlockedStatus} {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
 	SELECT TOP 1 @{streamBlockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
 	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.StreamHandlingDisabledConcern}'
+    ORDER BY [{Tables.Handling.Id.Name}] DESC
 
 	IF(@{streamBlockedStatus} = '{HandlingStatus.DisabledForStream}')
 	BEGIN
