@@ -89,6 +89,8 @@ namespace Naos.SqlServer.Domain
             var readWrite = "SELECT,INSERT";
 
             // Base permissions for all roles.
+            result.AppendLine(BuildGrant(Funcs.AdjustForGetStringSerializedId.Name, read));
+            result.AppendLine(BuildGrant(Funcs.AdjustForPutStringSerializedId.Name, read));
             result.AppendLine(BuildGrant(Funcs.GetTagsTableVariableFromTagsXml.Name, read));
             result.AppendLine(BuildGrant(Sprocs.GetIdAddIfNecessarySerializerRepresentation.Name, execute));
             result.AppendLine(BuildGrant(Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.Name, execute));
