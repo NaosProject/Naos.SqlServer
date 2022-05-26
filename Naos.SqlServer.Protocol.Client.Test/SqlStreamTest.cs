@@ -38,7 +38,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream236";
+        private readonly string streamName = "Stream243";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -555,6 +555,16 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 first.RecordToHandle.MustForTest().BeNull();
                 first.IsBlocked.MustForTest().BeTrue();
                 stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.DisabledForStream);
+                var runningStatuses = stream.Execute(
+                    new StandardGetHandlingStatusOp(
+                        firstConcern,
+                        getFirstStatusByTagsOp.RecordFilter,
+                        new HandlingFilter(
+                            new[]
+                            {
+                                HandlingStatus.Running,
+                            })));
+                runningStatuses.MustForTest().BeEmptyDictionary();
 
                 stream.Execute(new EnableHandlingForStreamOp("Resume processing, fixed resource issue.").Standardize());
                 stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableAfterExternalCancellation);

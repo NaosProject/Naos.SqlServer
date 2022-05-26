@@ -216,11 +216,18 @@ BEGIN
 
 	IF(@{streamBlockedStatus} = '{HandlingStatus.DisabledForStream}')
 	BEGIN
+        DECLARE @disabledStatusInFilter BIT
+		SET @disabledStatusInFilter = 
+			CASE
+				WHEN (CASE WHEN @{InputParamName.CurrentStatusesCsv} IS NULL THEN 0 ELSE 1 END) = 1 AND 
+						EXISTS (SELECT value FROM STRING_SPLIT(@{InputParamName.CurrentStatusesCsv}, ',') WHERE value = '{HandlingStatus.DisabledForStream}') THEN 1 ELSE 0 END
+
         SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
             SELECT
                   rids.[{Tables.Record.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
                 , '{HandlingStatus.DisabledForStream}' AS [@{XmlConversionTool.TagEntryValueAttributeName}]
             FROM @{recordIdsToConsiderTable} rids
+            WHERE @disabledStatusInFilter = 1 OR @{InputParamName.CurrentStatusesCsv} IS NULL
             ORDER BY rids.[{Tables.Record.Id.Name}]
             FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
         )
