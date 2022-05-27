@@ -244,7 +244,7 @@ BEGIN
 	        LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
 	            ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND (h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h1.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
             WHERE h1.[{Tables.Handling.Id.Name}] IS NULL
-            AND ((@{InputParamName.CurrentStatusesCsv} IS NULL) OR (h.[{Tables.Handling.Status.Name}] IN (SELECT value FROM STRING_SPLIT(@{InputParamName.CurrentStatusesCsv}, ','))))
+            AND ((@{InputParamName.CurrentStatusesCsv} IS NULL) OR (ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') IN (SELECT value FROM STRING_SPLIT(@{InputParamName.CurrentStatusesCsv}, ','))))
             ORDER BY h.[{Tables.Handling.Id.Name}]
             FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
         )

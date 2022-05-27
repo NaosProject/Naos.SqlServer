@@ -38,7 +38,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream243";
+        private readonly string streamName = "Stream244";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -505,6 +505,18 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 stream.PutWithId(firstObject.Id, firstObject, firstTags);
                 var metadata = stream.GetLatestRecordMetadataById("monkeyAintThere");
                 metadata.MustForTest().BeNull();
+
+                var handlingStatusAvailableByDefault = stream.Execute(
+                    new StandardGetHandlingStatusOp(
+                        firstConcern,
+                        new RecordFilter(tags: firstTags),
+                        new HandlingFilter(
+                            new[]
+                            {
+                                HandlingStatus.AvailableByDefault,
+                            })));
+                handlingStatusAvailableByDefault.MustForTest().NotBeEmptyDictionary();
+                handlingStatusAvailableByDefault.Single().Value.MustForTest().BeEqualTo(HandlingStatus.AvailableByDefault);
                 var first = stream.Execute(
                     new StandardTryHandleRecordOp(
                         firstConcern,
