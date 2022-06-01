@@ -164,7 +164,7 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
-
+-- DOES NOT check stream record handling blocked status which allows running records to bleed out and complete/cancel/fail/etc while stopping new handling.
 DECLARE @{currentStatus} {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
 SELECT TOP 1 @{currentStatus} = {Tables.Handling.Status.Name}
     FROM [{streamName}].[{Tables.Handling.Table.Name}]
