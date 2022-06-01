@@ -38,7 +38,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// </summary>
     public partial class SqlStreamTest
     {
-        private readonly string streamName = "Stream244";
+        private readonly string streamName = "Stream248";
         private readonly ITestOutputHelper testOutputHelper;
 
         /// <summary>
@@ -859,6 +859,79 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 new HandlingFilter(tags: handleTags));
 
             stream.Execute(getFirstStatusByTagsOp).OrderByDescending(_ => _.Key).First().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
+
+            var stop = DateTime.UtcNow;
+            this.testOutputHelper.WriteLine(Invariant($"TotalSeconds: {(stop - start).TotalSeconds}."));
+        }
+
+        [Fact]
+        public void HandlingCanBeCompletedWhileBlockedButNotNewHandlingTests()
+        {
+            var stream = this.GetCreatedSqlStream();
+
+            var start = DateTime.UtcNow;
+
+            var concern = Concerns.DefaultExecutionConcern;
+            stream.PutWithId(1, "first");
+            stream.PutWithId(2, "second");
+            var first = stream.Execute(
+                new StandardTryHandleRecordOp(
+                    concern,
+                    new RecordFilter(
+                        objectTypes: new[]
+                                     {
+                                         typeof(string).ToRepresentation(),
+                                     })));
+            first.RecordToHandle.MustForTest().NotBeNull();
+
+            var getHandlingStatusOp = new StandardGetHandlingStatusOp(
+                concern,
+                new RecordFilter(
+                    ids: new[]
+                         {
+                             new StringSerializedIdentifier(
+                                 stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation).SerializeToString(1),
+                                 typeof(int).ToRepresentation()),
+                         }),
+                new HandlingFilter());
+
+            stream.Execute(getHandlingStatusOp).OrderByDescending(_ => _.Key).Single().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
+
+            stream.IsRecordHandlingDisabled().MustForTest().BeFalse();
+
+            stream.GetStreamRecordHandlingProtocols().Execute(new DisableHandlingForStreamOp("Blocking to test completion and status."));
+
+            stream.IsRecordHandlingDisabled().MustForTest().BeTrue();
+
+            var secondAttempted = stream.Execute(
+                new StandardTryHandleRecordOp(
+                    concern,
+                    new RecordFilter(
+                        objectTypes: new[]
+                                     {
+                                         typeof(string).ToRepresentation(),
+                                     })));
+            secondAttempted.RecordToHandle.MustForTest().BeNull();
+
+            stream.Execute(getHandlingStatusOp).OrderByDescending(_ => _.Key).Single().Value.MustForTest().BeEqualTo(HandlingStatus.Running);
+
+            stream.GetStreamRecordHandlingProtocols().Execute(new CompleteRunningHandleRecordOp(first.RecordToHandle.InternalRecordId, concern));
+
+            stream.Execute(getHandlingStatusOp).OrderByDescending(_ => _.Key).Single().Value.MustForTest().BeEqualTo(HandlingStatus.Completed);
+
+            stream.GetStreamRecordHandlingProtocols().Execute(new EnableHandlingForStreamOp("Unblocking to test completion and status."));
+
+            stream.IsRecordHandlingDisabled().MustForTest().BeFalse();
+
+            var second = stream.Execute(
+                new StandardTryHandleRecordOp(
+                    concern,
+                    new RecordFilter(
+                        objectTypes: new[]
+                                     {
+                                         typeof(string).ToRepresentation(),
+                                     })));
+            second.RecordToHandle.MustForTest().NotBeNull();
 
             var stop = DateTime.UtcNow;
             this.testOutputHelper.WriteLine(Invariant($"TotalSeconds: {(stop - start).TotalSeconds}."));

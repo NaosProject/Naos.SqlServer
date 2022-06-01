@@ -209,46 +209,20 @@ AS
 BEGIN
     {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, true)}
 
-    DECLARE @{streamBlockedStatus} {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
-	SELECT TOP 1 @{streamBlockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
-	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.StreamHandlingDisabledConcern}'
-    ORDER BY [{Tables.Handling.Id.Name}] DESC
-
-	IF(@{streamBlockedStatus} = '{HandlingStatus.DisabledForStream}')
-	BEGIN
-        DECLARE @disabledStatusInFilter BIT
-		SET @disabledStatusInFilter = 
-			CASE
-				WHEN (CASE WHEN @{InputParamName.CurrentStatusesCsv} IS NULL THEN 0 ELSE 1 END) = 1 AND 
-						EXISTS (SELECT value FROM STRING_SPLIT(@{InputParamName.CurrentStatusesCsv}, ',') WHERE value = '{HandlingStatus.DisabledForStream}') THEN 1 ELSE 0 END
-
-        SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
-            SELECT
-                  rids.[{Tables.Record.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
-                , '{HandlingStatus.DisabledForStream}' AS [@{XmlConversionTool.TagEntryValueAttributeName}]
-            FROM @{recordIdsToConsiderTable} rids
-            WHERE @disabledStatusInFilter = 1 OR @{InputParamName.CurrentStatusesCsv} IS NULL
-            ORDER BY rids.[{Tables.Record.Id.Name}]
-            FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
-        )
-    END
-	ELSE
-	BEGIN
-        SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
-            SELECT
-                  rids.[{Tables.Record.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
-                , ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
-            FROM @{recordIdsToConsiderTable} rids
-            LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-                ON rids.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND (h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
-	        LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-	            ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND (h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h1.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
-            WHERE h1.[{Tables.Handling.Id.Name}] IS NULL
-            AND ((@{InputParamName.CurrentStatusesCsv} IS NULL) OR (ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') IN (SELECT value FROM STRING_SPLIT(@{InputParamName.CurrentStatusesCsv}, ','))))
-            ORDER BY h.[{Tables.Handling.Id.Name}]
-            FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
-        )
-	END
+    SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
+        SELECT
+              rids.[{Tables.Record.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
+            , ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
+        FROM @{recordIdsToConsiderTable} rids
+        LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
+            ON rids.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND (h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
+	    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
+	        ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND (h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h1.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
+        WHERE h1.[{Tables.Handling.Id.Name}] IS NULL
+        AND ((@{InputParamName.CurrentStatusesCsv} IS NULL) OR (ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') IN (SELECT value FROM STRING_SPLIT(@{InputParamName.CurrentStatusesCsv}, ','))))
+        ORDER BY h.[{Tables.Handling.Id.Name}]
+        FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
+    )
 END");
 
                     return result;
