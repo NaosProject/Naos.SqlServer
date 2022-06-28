@@ -184,8 +184,6 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     bool asAlter = false)
                 {
-                    const string streamBlockedStatus = "StreamBlockedStatus";
-
                     const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
 
                     var createOrModify = asAlter ? "ALTER" : "CREATE";
