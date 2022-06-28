@@ -153,14 +153,14 @@ namespace Naos.SqlServer.Protocol.Client
                                                StreamSchema.Sprocs.GetSerializerRepresentationFromId.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetStreamDetails.BuildCreationScript(
                                                    this.Name,
-                                                   RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
-                                                   null,
+                                                   operation.RecordTagAssociationManagementStrategy,
+                                                   operation.MaxConcurrentHandlingCount,
                                                    true),
                                                StreamSchema.Sprocs.GetTagSetFromIds.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.GetTypeFromId.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.PutRecord.BuildCreationScript(
                                                    this.Name,
-                                                   RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
+                                                   operation.RecordTagAssociationManagementStrategy,
                                                    true),
                                                StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name, null, true),
