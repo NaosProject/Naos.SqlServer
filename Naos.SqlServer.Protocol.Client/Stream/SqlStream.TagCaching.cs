@@ -50,7 +50,7 @@ namespace Naos.SqlServer.Protocol.Client
             }
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
-            var result = new List<long>();
+            var notOrderedResult = new List<long>();
             var remaining = new List<NamedValue<string>>();
 
             foreach (var keyValuePair in tags)
@@ -58,7 +58,7 @@ namespace Naos.SqlServer.Protocol.Client
                 var found = this.tagKeyValueToIdMap.TryGetValue(keyValuePair, out var id);
                 if (found)
                 {
-                    result.Add(id);
+                    notOrderedResult.Add(id);
                 }
                 else
                 {
@@ -89,8 +89,10 @@ namespace Naos.SqlServer.Protocol.Client
                     this.tagIdToKeyValueMap.TryAdd(additional[idx], orderedRemaining[idx]);
                 }
 
-                result.AddRange(additional);
+                notOrderedResult.AddRange(additional);
             }
+
+            var result = notOrderedResult.OrderBy(_ => _).ToList();
 
             return result;
         }
