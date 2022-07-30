@@ -103,7 +103,7 @@ namespace Naos.SqlServer.Domain.Test
 
             // Act, Assert
             actual.AsTest().Must().BeOfType<InvalidOperationException>();
-            actual.Message.AsTest().Must().ContainString("String data can only be used for strings and enums, objectType int is not supported");
+            actual.Message.AsTest().Must().ContainString("String data can only be used for strings, enums, and versions; objectType int is not supported.");
         }
 
         [Fact]
