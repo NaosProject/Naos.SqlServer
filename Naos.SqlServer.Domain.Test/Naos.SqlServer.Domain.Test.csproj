@@ -418,6 +418,10 @@
     <Compile Include="Models\Classes\Definition\TableDefinitionTest.designer.cs">
       <DependentUpon>TableDefinitionTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="VersionSqlDataTypeRepresentationTest.cs" />
+    <Compile Include="VersionSqlDataTypeRepresentationTest.designer.cs">
+      <DependentUpon>VersionSqlDataTypeRepresentationTest.cs</DependentUpon>
+    </Compile>
     <None Include=".analyzers\test.ruleset" />
     <None Include="DummyFactory.recipe-nuspec" />
     <None Include="packages.config" />

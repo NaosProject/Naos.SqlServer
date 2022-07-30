@@ -52,8 +52,8 @@ namespace Naos.SqlServer.Domain.Test
         public static void ValidateObjectTypeIsCompatible___Should_not_throw___When_objectType_is_compatible()
         {
             // Arrange, Act
-            var actual1 = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(DateTime), A.Dummy<DateTime>(), true));
-            var actual2 = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(DateTime?), A.Dummy<DateTime?>(), true));
+            var actual1 = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(DateTime), A.Dummy<DateTime>().ToUniversalTime(), true));
+            var actual2 = Record.Exception(() => A.Dummy<UtcDateTimeSqlDataTypeRepresentation>().ValidateObjectTypeIsCompatible(typeof(DateTime?), A.Dummy<DateTime?>()?.ToUniversalTime(), true));
 
             // Act, Assert
             actual1.AsTest().Must().BeNull();

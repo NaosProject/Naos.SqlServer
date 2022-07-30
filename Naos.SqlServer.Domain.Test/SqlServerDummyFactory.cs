@@ -11,8 +11,10 @@ namespace Naos.SqlServer.Domain.Test
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using FakeItEasy;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Math.Recipes;
@@ -20,17 +22,19 @@ namespace Naos.SqlServer.Domain.Test
     using OBeautifulCode.Serialization;
 
     /// <summary>
-    /// A Dummy Factory for types in <see cref="Naos.SqlServer.Domain"/>.
+    /// A Dummy Factory for types in <see cref="Domain"/>.
     /// </summary>
 #if !NaosSqlServerSolution
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [System.CodeDom.Compiler.GeneratedCode("Naos.SqlServer.Domain.Test", "See package version number")]
     internal
 #else
+    [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = NaosSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
     public
 #endif
     class SqlServerDummyFactory : DefaultSqlServerDummyFactory
     {
+        [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = NaosSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
         public SqlServerDummyFactory()
         {
             // --------------------------- Enums -----------------------------
@@ -100,6 +104,17 @@ namespace Naos.SqlServer.Domain.Test
                     A.Dummy<string>().Replace("-", string.Empty),
                     A.Dummy<IntSqlDataTypeRepresentation>(),
                     A.Dummy<int?>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new InputParameterDefinition<Version>(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<VersionSqlDataTypeRepresentation>(),
+                    A.Dummy<Version>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new OutputParameterDefinition<Version>(
+                    A.Dummy<string>().Replace("-", string.Empty),
+                    A.Dummy<VersionSqlDataTypeRepresentation>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new OutputParameterDefinition<int?>(
@@ -232,12 +247,12 @@ namespace Naos.SqlServer.Domain.Test
             // ------------------------ Operations ---------------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateStreamUserOp(
-                    A.Dummy<string>(),
-                    A.Dummy<string>(),
-                    A.Dummy<string>(),
-                    CreateStreamUserOp.SupportedStreamAccessKinds.Take(ThreadSafeRandom.Next(1, CreateStreamUserOp.SupportedStreamAccessKinds.Count + 1)).Single(),
-                    A.Dummy<bool>())
-                );
+                    A.Dummy<Guid>().ToString(),
+                    A.Dummy<Guid>().ToString(),
+                    A.Dummy<Guid>().ToString(),
+                    CreateStreamUserOp.SupportedStreamAccessKinds.ElementAt(
+                        ThreadSafeRandom.Next(0, CreateStreamUserOp.SupportedStreamAccessKinds.Count - 1)),
+                    A.Dummy<bool>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new DeleteDatabaseOp(

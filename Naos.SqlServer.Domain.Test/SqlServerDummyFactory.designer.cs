@@ -221,6 +221,7 @@ namespace Naos.SqlServer.Domain.Test
                         typeof(IntSqlDataTypeRepresentation),
                         typeof(StringSqlDataTypeRepresentation),
                         typeof(UtcDateTimeSqlDataTypeRepresentation),
+                        typeof(VersionSqlDataTypeRepresentation),
                         typeof(XmlSqlDataTypeRepresentation)
                     };
 
@@ -316,6 +317,9 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new UtcDateTimeSqlDataTypeRepresentation());
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new VersionSqlDataTypeRepresentation());
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new XmlSqlDataTypeRepresentation());

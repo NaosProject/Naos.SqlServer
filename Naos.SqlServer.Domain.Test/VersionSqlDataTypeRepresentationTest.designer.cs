@@ -33,40 +33,40 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class UtcDateTimeSqlDataTypeRepresentationTest
+    public static partial class VersionSqlDataTypeRepresentationTest
     {
-        private static readonly StringRepresentationTestScenarios<UtcDateTimeSqlDataTypeRepresentation> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<UtcDateTimeSqlDataTypeRepresentation>()
+        private static readonly StringRepresentationTestScenarios<VersionSqlDataTypeRepresentation> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<VersionSqlDataTypeRepresentation>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<UtcDateTimeSqlDataTypeRepresentation>
+                new StringRepresentationTestScenario<VersionSqlDataTypeRepresentation>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<UtcDateTimeSqlDataTypeRepresentation>();
+                        var systemUnderTest = A.Dummy<VersionSqlDataTypeRepresentation>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<UtcDateTimeSqlDataTypeRepresentation>
+                        var result = new SystemUnderTestExpectedStringRepresentation<VersionSqlDataTypeRepresentation>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.UtcDateTimeSqlDataTypeRepresentation: <no properties>."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.VersionSqlDataTypeRepresentation: <no properties>."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly UtcDateTimeSqlDataTypeRepresentation ReferenceObjectForEquatableTestScenarios = A.Dummy<UtcDateTimeSqlDataTypeRepresentation>();
+        private static readonly VersionSqlDataTypeRepresentation ReferenceObjectForEquatableTestScenarios = A.Dummy<VersionSqlDataTypeRepresentation>();
 
-        private static readonly EquatableTestScenarios<UtcDateTimeSqlDataTypeRepresentation> EquatableTestScenarios = new EquatableTestScenarios<UtcDateTimeSqlDataTypeRepresentation>()
+        private static readonly EquatableTestScenarios<VersionSqlDataTypeRepresentation> EquatableTestScenarios = new EquatableTestScenarios<VersionSqlDataTypeRepresentation>()
             .AddScenario(() =>
-                new EquatableTestScenario<UtcDateTimeSqlDataTypeRepresentation>
+                new EquatableTestScenario<VersionSqlDataTypeRepresentation>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new UtcDateTimeSqlDataTypeRepresentation[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new VersionSqlDataTypeRepresentation[]
                     {
-                        new UtcDateTimeSqlDataTypeRepresentation(),
+                        new VersionSqlDataTypeRepresentation(),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new UtcDateTimeSqlDataTypeRepresentation[]
+                    ObjectsThatAreNotEqualToReferenceObject = new VersionSqlDataTypeRepresentation[]
                     {
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
@@ -81,7 +81,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<DecimalSqlDataTypeRepresentation>(),
                         A.Dummy<IntSqlDataTypeRepresentation>(),
                         A.Dummy<StringSqlDataTypeRepresentation>(),
-                        A.Dummy<VersionSqlDataTypeRepresentation>(),
+                        A.Dummy<UtcDateTimeSqlDataTypeRepresentation>(),
                         A.Dummy<XmlSqlDataTypeRepresentation>(),
                     },
                 });
@@ -104,12 +104,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void UtcDateTimeSqlDataTypeRepresentation___Should_implement_IModel_of_UtcDateTimeSqlDataTypeRepresentation___When_reflecting()
+            public static void VersionSqlDataTypeRepresentation___Should_implement_IModel_of_VersionSqlDataTypeRepresentation___When_reflecting()
             {
                 // Arrange
-                var type = typeof(UtcDateTimeSqlDataTypeRepresentation);
+                var type = typeof(VersionSqlDataTypeRepresentation);
 
-                var expectedModelMethods = typeof(IModel<UtcDateTimeSqlDataTypeRepresentation>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<VersionSqlDataTypeRepresentation>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -119,7 +119,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<UtcDateTimeSqlDataTypeRepresentation>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<VersionSqlDataTypeRepresentation>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -137,10 +137,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void UtcDateTimeSqlDataTypeRepresentation___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void VersionSqlDataTypeRepresentation___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(UtcDateTimeSqlDataTypeRepresentation);
+                var type = typeof(VersionSqlDataTypeRepresentation);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -204,10 +204,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<UtcDateTimeSqlDataTypeRepresentation>();
+                var systemUnderTest = A.Dummy<VersionSqlDataTypeRepresentation>();
 
                 // Act
-                var actual = (UtcDateTimeSqlDataTypeRepresentation)systemUnderTest.Clone();
+                var actual = (VersionSqlDataTypeRepresentation)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -231,7 +231,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<UtcDateTimeSqlDataTypeRepresentation>();
+                var systemUnderTest = A.Dummy<VersionSqlDataTypeRepresentation>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -263,7 +263,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<UtcDateTimeSqlDataTypeRepresentation>();
+                var expected = A.Dummy<VersionSqlDataTypeRepresentation>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -292,7 +292,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<UtcDateTimeSqlDataTypeRepresentation>();
+                var expected = A.Dummy<VersionSqlDataTypeRepresentation>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -321,7 +321,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<UtcDateTimeSqlDataTypeRepresentation>();
+                var expected = A.Dummy<VersionSqlDataTypeRepresentation>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -350,7 +350,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<UtcDateTimeSqlDataTypeRepresentation>();
+                var expected = A.Dummy<VersionSqlDataTypeRepresentation>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -384,8 +384,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                UtcDateTimeSqlDataTypeRepresentation systemUnderTest1 = null;
-                UtcDateTimeSqlDataTypeRepresentation systemUnderTest2 = null;
+                VersionSqlDataTypeRepresentation systemUnderTest1 = null;
+                VersionSqlDataTypeRepresentation systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -415,7 +415,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    UtcDateTimeSqlDataTypeRepresentation systemUnderTest = null;
+                    VersionSqlDataTypeRepresentation systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -564,8 +564,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                UtcDateTimeSqlDataTypeRepresentation systemUnderTest1 = null;
-                UtcDateTimeSqlDataTypeRepresentation systemUnderTest2 = null;
+                VersionSqlDataTypeRepresentation systemUnderTest1 = null;
+                VersionSqlDataTypeRepresentation systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -595,7 +595,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    UtcDateTimeSqlDataTypeRepresentation systemUnderTest = null;
+                    VersionSqlDataTypeRepresentation systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -884,14 +884,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_UtcDateTimeSqlDataTypeRepresentation___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_VersionSqlDataTypeRepresentation___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    UtcDateTimeSqlDataTypeRepresentation systemUnderTest = null;
+                    VersionSqlDataTypeRepresentation systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -915,7 +915,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_UtcDateTimeSqlDataTypeRepresentation___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_VersionSqlDataTypeRepresentation___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -943,7 +943,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_UtcDateTimeSqlDataTypeRepresentation___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_VersionSqlDataTypeRepresentation___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -971,7 +971,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_UtcDateTimeSqlDataTypeRepresentation___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_VersionSqlDataTypeRepresentation___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -999,7 +999,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_UtcDateTimeSqlDataTypeRepresentation___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_VersionSqlDataTypeRepresentation___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

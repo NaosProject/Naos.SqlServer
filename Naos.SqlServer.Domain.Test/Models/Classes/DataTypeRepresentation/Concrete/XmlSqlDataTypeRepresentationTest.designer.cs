@@ -82,6 +82,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<IntSqlDataTypeRepresentation>(),
                         A.Dummy<StringSqlDataTypeRepresentation>(),
                         A.Dummy<UtcDateTimeSqlDataTypeRepresentation>(),
+                        A.Dummy<VersionSqlDataTypeRepresentation>(),
                     },
                 });
 

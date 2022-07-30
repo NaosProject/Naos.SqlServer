@@ -119,6 +119,10 @@
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetHandlingStatuses.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetLatestStringSerializedObject.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetInternalRecordIds.cs" />
+    <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\VersionSqlDataTypeRepresentation.cs" />
+    <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\VersionSqlDataTypeRepresentation.designer.cs">
+      <DependentUpon>VersionSqlDataTypeRepresentation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Definition\SqlServerDatabaseDefinition.designer.cs">
       <DependentUpon>SqlServerDatabaseDefinition.cs</DependentUpon>
     </Compile>
