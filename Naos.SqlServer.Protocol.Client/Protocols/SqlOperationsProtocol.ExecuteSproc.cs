@@ -35,8 +35,7 @@ namespace Naos.SqlServer.Protocol.Client
                     command.CommandType = CommandType.StoredProcedure;
 
                     var outputParameters = new List<Tuple<SqlParameter, OutputParameterDefinitionBase>>();
-                    var parameterDefinitions = operation.Parameters;
-                    LoadParametersIntoCommand(parameterDefinitions, outputParameters, command);
+                    LoadParametersIntoCommand(operation.Parameters, outputParameters, command);
 
                     command.ExecuteNonQuery();
 
@@ -66,8 +65,7 @@ namespace Naos.SqlServer.Protocol.Client
                     command.CommandType = CommandType.StoredProcedure;
 
                     var outputParameters = new List<Tuple<SqlParameter, OutputParameterDefinitionBase>>();
-                    var parameterDefinitions = operation.Parameters;
-                    LoadParametersIntoCommand(parameterDefinitions, outputParameters, command);
+                    LoadParametersIntoCommand(operation.Parameters, outputParameters, command);
 
                     await command.ExecuteNonQueryAsync();
 
