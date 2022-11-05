@@ -88,7 +88,10 @@ namespace Naos.SqlServer.Protocol.Client
             List<Tuple<SqlParameter, OutputParameterDefinitionBase>> outputParameters,
             SqlCommand command)
         {
-            foreach (var parameterRepresentation in parameterDefinitions)
+            // Ordering parameters by name because this issue was encountered (https://github.com/dotnet/corefx/pull/34709)
+            //            which Microsoft has chosen to not fix after 6 years (at time of commit)
+            //            and this was apparently a workaround to get out of the unlucky byte alignment.
+            foreach (var parameterRepresentation in parameterDefinitions.OrderBy(_ => _.Name))
             {
                 var parameter = parameterRepresentation.ToSqlParameter();
 
