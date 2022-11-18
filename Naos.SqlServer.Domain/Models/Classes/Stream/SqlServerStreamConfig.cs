@@ -8,7 +8,9 @@ namespace Naos.SqlServer.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Naos.Database.Domain;
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Serialization;
     using static System.FormattableString;
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
@@ -38,6 +40,10 @@ namespace Naos.SqlServer.Domain
             IReadOnlyCollection<IResourceLocator> allLocators)
             : base(name, accessKinds, defaultSerializerRepresentation, defaultSerializationFormat, allLocators)
         {
+            defaultConnectionTimeout.TotalMilliseconds.MustForArg(Invariant($"{nameof(defaultConnectionTimeout)}.{nameof(TimeSpan.TotalMilliseconds)}")).BeGreaterThanOrEqualTo(0d);
+            defaultCommandTimeout.TotalMilliseconds.MustForArg(Invariant($"{nameof(defaultCommandTimeout)}.{nameof(TimeSpan.TotalMilliseconds)}")).BeGreaterThanOrEqualTo(0d);
+            allLocators.ToList().ForEach(_ => _.MustForArg(nameof(allLocators) + "-item").BeOfType<SqlServerLocator>());
+
             this.DefaultConnectionTimeout = defaultConnectionTimeout;
             this.DefaultCommandTimeout = defaultCommandTimeout;
         }

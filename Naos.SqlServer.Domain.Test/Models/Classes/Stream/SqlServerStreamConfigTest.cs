@@ -12,7 +12,7 @@ namespace Naos.SqlServer.Domain.Test
     using System.Linq;
 
     using FakeItEasy;
-
+    using Naos.Database.Domain;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
@@ -95,6 +95,33 @@ namespace Naos.SqlServer.Domain.Test
                         },
                         ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
                         ExpectedExceptionMessageContains = new[] { "defaultSerializationFormat", "Invalid", },
+                    })
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<SqlServerStreamConfig>
+                    {
+                        Name = "constructor should throw ArgumentException when parameter 'allLocators' contains non-SqlServerLocator",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<SqlServerStreamConfig>();
+
+                            var result = new SqlServerStreamConfig(
+                                referenceObject.Name,
+                                referenceObject.AccessKinds,
+                                referenceObject.DefaultConnectionTimeout,
+                                referenceObject.DefaultCommandTimeout,
+                                referenceObject.DefaultSerializerRepresentation,
+                                referenceObject.DefaultSerializationFormat,
+                                referenceObject.AllLocators.Concat(
+                                                    new[]
+                                                    {
+                                                        new MemoryDatabaseLocator(Guid.NewGuid().ToString()),
+                                                    })
+                                               .ToList());
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentException),
+                        ExpectedExceptionMessageContains = new[] { "SqlServerLocator", "allLocators", },
                     });
         }
     }
