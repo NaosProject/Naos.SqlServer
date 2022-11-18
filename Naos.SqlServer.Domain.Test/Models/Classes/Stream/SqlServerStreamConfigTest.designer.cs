@@ -49,7 +49,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<SqlServerStreamConfig>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlServerStreamConfig: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, AccessKinds = {systemUnderTest.AccessKinds.ToString() ?? "<null>"}, DefaultConnectionTimeout = {systemUnderTest.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {systemUnderTest.DefaultCommandTimeout.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {systemUnderTest.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {systemUnderTest.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {systemUnderTest.AllLocators?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SqlServerStreamConfig: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, AccessKinds = {systemUnderTest.AccessKinds.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {systemUnderTest.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {systemUnderTest.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {systemUnderTest.AllLocators?.ToString() ?? "<null>"}, DefaultConnectionTimeout = {systemUnderTest.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {systemUnderTest.DefaultCommandTimeout.ToString() ?? "<null>"}."),
                         };
 
                         return result;
@@ -160,7 +160,7 @@ namespace Naos.SqlServer.Domain.Test
                                              referenceObject.DefaultCommandTimeout,
                                              referenceObject.DefaultSerializerRepresentation,
                                              referenceObject.DefaultSerializationFormat,
-                                             new List<ISqlServerLocator>());
+                                             new List<IResourceLocator>());
 
                         return result;
                     },
@@ -182,7 +182,7 @@ namespace Naos.SqlServer.Domain.Test
                                              referenceObject.DefaultCommandTimeout,
                                              referenceObject.DefaultSerializerRepresentation,
                                              referenceObject.DefaultSerializationFormat,
-                                             new ISqlServerLocator[0].Concat(referenceObject.AllLocators).Concat(new ISqlServerLocator[] { null }).Concat(referenceObject.AllLocators).ToList());
+                                             new IResourceLocator[0].Concat(referenceObject.AllLocators).Concat(new IResourceLocator[] { null }).Concat(referenceObject.AllLocators).ToList());
 
                         return result;
                     },
@@ -411,46 +411,6 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new DeepCloneWithTestScenario<SqlServerStreamConfig>
                 {
-                    Name = "DeepCloneWithDefaultConnectionTimeout should deep clone object and replace DefaultConnectionTimeout with the provided defaultConnectionTimeout",
-                    WithPropertyName = "DefaultConnectionTimeout",
-                    SystemUnderTestDeepCloneWithValueFunc = () =>
-                    {
-                        var systemUnderTest = A.Dummy<SqlServerStreamConfig>();
-
-                        var referenceObject = A.Dummy<SqlServerStreamConfig>().ThatIs(_ => !systemUnderTest.DefaultConnectionTimeout.IsEqualTo(_.DefaultConnectionTimeout));
-
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerStreamConfig>
-                        {
-                            SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.DefaultConnectionTimeout,
-                        };
-
-                        return result;
-                    },
-                })
-            .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlServerStreamConfig>
-                {
-                    Name = "DeepCloneWithDefaultCommandTimeout should deep clone object and replace DefaultCommandTimeout with the provided defaultCommandTimeout",
-                    WithPropertyName = "DefaultCommandTimeout",
-                    SystemUnderTestDeepCloneWithValueFunc = () =>
-                    {
-                        var systemUnderTest = A.Dummy<SqlServerStreamConfig>();
-
-                        var referenceObject = A.Dummy<SqlServerStreamConfig>().ThatIs(_ => !systemUnderTest.DefaultCommandTimeout.IsEqualTo(_.DefaultCommandTimeout));
-
-                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerStreamConfig>
-                        {
-                            SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.DefaultCommandTimeout,
-                        };
-
-                        return result;
-                    },
-                })
-            .AddScenario(() =>
-                new DeepCloneWithTestScenario<SqlServerStreamConfig>
-                {
                     Name = "DeepCloneWithDefaultSerializerRepresentation should deep clone object and replace DefaultSerializerRepresentation with the provided defaultSerializerRepresentation",
                     WithPropertyName = "DefaultSerializerRepresentation",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
@@ -507,6 +467,46 @@ namespace Naos.SqlServer.Domain.Test
 
                         return result;
                     },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<SqlServerStreamConfig>
+                {
+                    Name = "DeepCloneWithDefaultConnectionTimeout should deep clone object and replace DefaultConnectionTimeout with the provided defaultConnectionTimeout",
+                    WithPropertyName = "DefaultConnectionTimeout",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<SqlServerStreamConfig>();
+
+                        var referenceObject = A.Dummy<SqlServerStreamConfig>().ThatIs(_ => !systemUnderTest.DefaultConnectionTimeout.IsEqualTo(_.DefaultConnectionTimeout));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerStreamConfig>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.DefaultConnectionTimeout,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<SqlServerStreamConfig>
+                {
+                    Name = "DeepCloneWithDefaultCommandTimeout should deep clone object and replace DefaultCommandTimeout with the provided defaultCommandTimeout",
+                    WithPropertyName = "DefaultCommandTimeout",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<SqlServerStreamConfig>();
+
+                        var referenceObject = A.Dummy<SqlServerStreamConfig>().ThatIs(_ => !systemUnderTest.DefaultCommandTimeout.IsEqualTo(_.DefaultCommandTimeout));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<SqlServerStreamConfig>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.DefaultCommandTimeout,
+                        };
+
+                        return result;
+                    },
                 });
 
         private static readonly SqlServerStreamConfig ReferenceObjectForEquatableTestScenarios = A.Dummy<SqlServerStreamConfig>();
@@ -549,22 +549,6 @@ namespace Naos.SqlServer.Domain.Test
                         new SqlServerStreamConfig(
                                 ReferenceObjectForEquatableTestScenarios.Name,
                                 ReferenceObjectForEquatableTestScenarios.AccessKinds,
-                                A.Dummy<SqlServerStreamConfig>().Whose(_ => !_.DefaultConnectionTimeout.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout)).DefaultConnectionTimeout,
-                                ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
-                                ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
-                                ReferenceObjectForEquatableTestScenarios.DefaultSerializationFormat,
-                                ReferenceObjectForEquatableTestScenarios.AllLocators),
-                        new SqlServerStreamConfig(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
-                                ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
-                                A.Dummy<SqlServerStreamConfig>().Whose(_ => !_.DefaultCommandTimeout.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout)).DefaultCommandTimeout,
-                                ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
-                                ReferenceObjectForEquatableTestScenarios.DefaultSerializationFormat,
-                                ReferenceObjectForEquatableTestScenarios.AllLocators),
-                        new SqlServerStreamConfig(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
                                 ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
                                 ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
                                 A.Dummy<SqlServerStreamConfig>().Whose(_ => !_.DefaultSerializerRepresentation.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation)).DefaultSerializerRepresentation,
@@ -586,6 +570,22 @@ namespace Naos.SqlServer.Domain.Test
                                 ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
                                 ReferenceObjectForEquatableTestScenarios.DefaultSerializationFormat,
                                 A.Dummy<SqlServerStreamConfig>().Whose(_ => !_.AllLocators.IsEqualTo(ReferenceObjectForEquatableTestScenarios.AllLocators)).AllLocators),
+                        new SqlServerStreamConfig(
+                                ReferenceObjectForEquatableTestScenarios.Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
+                                A.Dummy<SqlServerStreamConfig>().Whose(_ => !_.DefaultConnectionTimeout.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout)).DefaultConnectionTimeout,
+                                ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout,
+                                ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
+                                ReferenceObjectForEquatableTestScenarios.DefaultSerializationFormat,
+                                ReferenceObjectForEquatableTestScenarios.AllLocators),
+                        new SqlServerStreamConfig(
+                                ReferenceObjectForEquatableTestScenarios.Name,
+                                ReferenceObjectForEquatableTestScenarios.AccessKinds,
+                                ReferenceObjectForEquatableTestScenarios.DefaultConnectionTimeout,
+                                A.Dummy<SqlServerStreamConfig>().Whose(_ => !_.DefaultCommandTimeout.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DefaultCommandTimeout)).DefaultCommandTimeout,
+                                ReferenceObjectForEquatableTestScenarios.DefaultSerializerRepresentation,
+                                ReferenceObjectForEquatableTestScenarios.DefaultSerializationFormat,
+                                ReferenceObjectForEquatableTestScenarios.AllLocators),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -908,7 +908,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Name", "AccessKinds", "DefaultConnectionTimeout", "DefaultCommandTimeout", "DefaultSerializerRepresentation", "DefaultSerializationFormat", "AllLocators" };
+                var propertyNames = new string[] { "Name", "AccessKinds", "DefaultSerializerRepresentation", "DefaultSerializationFormat", "AllLocators", "DefaultConnectionTimeout", "DefaultCommandTimeout" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1449,6 +1449,149 @@ namespace Naos.SqlServer.Domain.Test
                     // Assert
                     actuals1.AsTest().Must().Each().BeFalse(because: scenario.Id);
                     actuals2.AsTest().Must().Each().BeFalse(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_StreamConfigBase___Should_return_false___When_parameter_other_is_null()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange
+                    StreamConfigBase systemUnderTest = null;
+
+                    // Act
+                    var actual = scenario.ReferenceObject.Equals((StreamConfigBase)systemUnderTest);
+
+                    // Assert
+                    actual.AsTest().Must().BeFalse(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_StreamConfigBase___Should_return_true___When_parameter_other_is_same_object()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actual = scenario.ReferenceObject.Equals((StreamConfigBase)scenario.ReferenceObject);
+
+                    // Assert
+                    actual.AsTest().Must().BeTrue(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_StreamConfigBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((StreamConfigBase)_)).ToList();
+
+                    // Assert
+                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_StreamConfigBase___Should_return_false___When_objects_being_compared_have_different_property_values()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((StreamConfigBase)_)).ToList();
+
+                    // Assert
+                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_StreamConfigBase___Should_return_true___When_objects_being_compared_have_same_property_values()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((StreamConfigBase)_)).ToList();
+
+                    // Assert
+                    actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
                 }
             }
 

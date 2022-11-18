@@ -74,11 +74,11 @@ namespace Naos.SqlServer.Domain
 
             var result = this.Name.IsEqualTo(other.Name, StringComparer.Ordinal)
                       && this.AccessKinds.IsEqualTo(other.AccessKinds)
-                      && this.DefaultConnectionTimeout.IsEqualTo(other.DefaultConnectionTimeout)
-                      && this.DefaultCommandTimeout.IsEqualTo(other.DefaultCommandTimeout)
                       && this.DefaultSerializerRepresentation.IsEqualTo(other.DefaultSerializerRepresentation)
                       && this.DefaultSerializationFormat.IsEqualTo(other.DefaultSerializationFormat)
-                      && this.AllLocators.IsEqualTo(other.AllLocators);
+                      && this.AllLocators.IsEqualTo(other.AllLocators)
+                      && this.DefaultConnectionTimeout.IsEqualTo(other.DefaultConnectionTimeout)
+                      && this.DefaultCommandTimeout.IsEqualTo(other.DefaultCommandTimeout);
 
             return result;
         }
@@ -90,36 +90,17 @@ namespace Naos.SqlServer.Domain
         public override int GetHashCode() => HashCodeHelper.Initialize()
             .Hash(this.Name)
             .Hash(this.AccessKinds)
-            .Hash(this.DefaultConnectionTimeout)
-            .Hash(this.DefaultCommandTimeout)
             .Hash(this.DefaultSerializerRepresentation)
             .Hash(this.DefaultSerializationFormat)
             .Hash(this.AllLocators)
+            .Hash(this.DefaultConnectionTimeout)
+            .Hash(this.DefaultCommandTimeout)
             .Value;
 
         /// <inheritdoc />
-        public object Clone() => this.DeepClone();
+        public new SqlServerStreamConfig DeepClone() => (SqlServerStreamConfig)this.DeepCloneInternal();
 
         /// <inheritdoc />
-        public SqlServerStreamConfig DeepClone()
-        {
-            var result = new SqlServerStreamConfig(
-                                 this.Name?.DeepClone(),
-                                 this.AccessKinds.DeepClone(),
-                                 this.DefaultConnectionTimeout.DeepClone(),
-                                 this.DefaultCommandTimeout.DeepClone(),
-                                 this.DefaultSerializerRepresentation?.DeepClone(),
-                                 this.DefaultSerializationFormat.DeepClone(),
-                                 this.AllLocators?.DeepClone());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="Name" />.
-        /// </summary>
-        /// <param name="name">The new <see cref="Name" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlServerStreamConfig" /> using the specified <paramref name="name" /> for <see cref="Name" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -137,7 +118,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlServerStreamConfig DeepCloneWithName(string name)
+        public override StreamConfigBase DeepCloneWithName(string name)
         {
             var result = new SqlServerStreamConfig(
                                  name,
@@ -151,11 +132,7 @@ namespace Naos.SqlServer.Domain
             return result;
         }
 
-        /// <summary>
-        /// Deep clones this object with a new <see cref="AccessKinds" />.
-        /// </summary>
-        /// <param name="accessKinds">The new <see cref="AccessKinds" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlServerStreamConfig" /> using the specified <paramref name="accessKinds" /> for <see cref="AccessKinds" /> and a deep clone of every other property.</returns>
+        /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -173,7 +150,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlServerStreamConfig DeepCloneWithAccessKinds(StreamAccessKinds accessKinds)
+        public override StreamConfigBase DeepCloneWithAccessKinds(StreamAccessKinds accessKinds)
         {
             var result = new SqlServerStreamConfig(
                                  this.Name?.DeepClone(),
@@ -183,6 +160,102 @@ namespace Naos.SqlServer.Domain
                                  this.DefaultSerializerRepresentation?.DeepClone(),
                                  this.DefaultSerializationFormat.DeepClone(),
                                  this.AllLocators?.DeepClone());
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public override StreamConfigBase DeepCloneWithDefaultSerializerRepresentation(SerializerRepresentation defaultSerializerRepresentation)
+        {
+            var result = new SqlServerStreamConfig(
+                                 this.Name?.DeepClone(),
+                                 this.AccessKinds.DeepClone(),
+                                 this.DefaultConnectionTimeout.DeepClone(),
+                                 this.DefaultCommandTimeout.DeepClone(),
+                                 defaultSerializerRepresentation,
+                                 this.DefaultSerializationFormat.DeepClone(),
+                                 this.AllLocators?.DeepClone());
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public override StreamConfigBase DeepCloneWithDefaultSerializationFormat(SerializationFormat defaultSerializationFormat)
+        {
+            var result = new SqlServerStreamConfig(
+                                 this.Name?.DeepClone(),
+                                 this.AccessKinds.DeepClone(),
+                                 this.DefaultConnectionTimeout.DeepClone(),
+                                 this.DefaultCommandTimeout.DeepClone(),
+                                 this.DefaultSerializerRepresentation?.DeepClone(),
+                                 defaultSerializationFormat,
+                                 this.AllLocators?.DeepClone());
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public override StreamConfigBase DeepCloneWithAllLocators(IReadOnlyCollection<IResourceLocator> allLocators)
+        {
+            var result = new SqlServerStreamConfig(
+                                 this.Name?.DeepClone(),
+                                 this.AccessKinds.DeepClone(),
+                                 this.DefaultConnectionTimeout.DeepClone(),
+                                 this.DefaultCommandTimeout.DeepClone(),
+                                 this.DefaultSerializerRepresentation?.DeepClone(),
+                                 this.DefaultSerializationFormat.DeepClone(),
+                                 allLocators);
 
             return result;
         }
@@ -259,101 +332,9 @@ namespace Naos.SqlServer.Domain
             return result;
         }
 
-        /// <summary>
-        /// Deep clones this object with a new <see cref="DefaultSerializerRepresentation" />.
-        /// </summary>
-        /// <param name="defaultSerializerRepresentation">The new <see cref="DefaultSerializerRepresentation" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlServerStreamConfig" /> using the specified <paramref name="defaultSerializerRepresentation" /> for <see cref="DefaultSerializerRepresentation" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlServerStreamConfig DeepCloneWithDefaultSerializerRepresentation(SerializerRepresentation defaultSerializerRepresentation)
-        {
-            var result = new SqlServerStreamConfig(
-                                 this.Name?.DeepClone(),
-                                 this.AccessKinds.DeepClone(),
-                                 this.DefaultConnectionTimeout.DeepClone(),
-                                 this.DefaultCommandTimeout.DeepClone(),
-                                 defaultSerializerRepresentation,
-                                 this.DefaultSerializationFormat.DeepClone(),
-                                 this.AllLocators?.DeepClone());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="DefaultSerializationFormat" />.
-        /// </summary>
-        /// <param name="defaultSerializationFormat">The new <see cref="DefaultSerializationFormat" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlServerStreamConfig" /> using the specified <paramref name="defaultSerializationFormat" /> for <see cref="DefaultSerializationFormat" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlServerStreamConfig DeepCloneWithDefaultSerializationFormat(SerializationFormat defaultSerializationFormat)
-        {
-            var result = new SqlServerStreamConfig(
-                                 this.Name?.DeepClone(),
-                                 this.AccessKinds.DeepClone(),
-                                 this.DefaultConnectionTimeout.DeepClone(),
-                                 this.DefaultCommandTimeout.DeepClone(),
-                                 this.DefaultSerializerRepresentation?.DeepClone(),
-                                 defaultSerializationFormat,
-                                 this.AllLocators?.DeepClone());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="AllLocators" />.
-        /// </summary>
-        /// <param name="allLocators">The new <see cref="AllLocators" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlServerStreamConfig" /> using the specified <paramref name="allLocators" /> for <see cref="AllLocators" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlServerStreamConfig DeepCloneWithAllLocators(IReadOnlyCollection<ISqlServerLocator> allLocators)
+        protected override StreamConfigBase DeepCloneInternal()
         {
             var result = new SqlServerStreamConfig(
                                  this.Name?.DeepClone(),
@@ -362,7 +343,7 @@ namespace Naos.SqlServer.Domain
                                  this.DefaultCommandTimeout.DeepClone(),
                                  this.DefaultSerializerRepresentation?.DeepClone(),
                                  this.DefaultSerializationFormat.DeepClone(),
-                                 allLocators);
+                                 this.AllLocators?.DeepClone());
 
             return result;
         }
@@ -371,7 +352,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.SqlServerStreamConfig: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, AccessKinds = {this.AccessKinds.ToString() ?? "<null>"}, DefaultConnectionTimeout = {this.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {this.DefaultCommandTimeout.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {this.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {this.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {this.AllLocators?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.SqlServerStreamConfig: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, AccessKinds = {this.AccessKinds.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {this.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {this.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {this.AllLocators?.ToString() ?? "<null>"}, DefaultConnectionTimeout = {this.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {this.DefaultCommandTimeout.ToString() ?? "<null>"}.");
 
             return result;
         }

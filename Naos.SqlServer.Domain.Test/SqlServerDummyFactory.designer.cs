@@ -282,7 +282,7 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<TimeSpan>(),
                                  A.Dummy<SerializerRepresentation>(),
                                  A.Dummy<SerializationFormat>(),
-                                 A.Dummy<IReadOnlyCollection<ISqlServerLocator>>()));
+                                 A.Dummy<IReadOnlyCollection<IResourceLocator>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new StoredProcedureExecutionResult(
