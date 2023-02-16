@@ -87,7 +87,7 @@ namespace Naos.SqlServer.Domain
                     const string tagIdsTable = "TagIdsTable";
                     const string transaction = "GetIdAddIfNecTagSetTrans";
 
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{Name}](

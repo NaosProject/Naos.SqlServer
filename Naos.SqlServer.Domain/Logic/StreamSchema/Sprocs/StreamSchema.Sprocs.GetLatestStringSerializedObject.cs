@@ -154,7 +154,7 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     bool asAlter = false)
                 {
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
 
                     const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
                     const string mostRecentMatchingRecordId = "MostRecentMatchingRecordId";

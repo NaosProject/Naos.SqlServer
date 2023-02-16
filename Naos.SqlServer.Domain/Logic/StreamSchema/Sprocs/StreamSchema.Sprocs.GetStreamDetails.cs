@@ -75,7 +75,7 @@ namespace Naos.SqlServer.Domain
                     int? maxConcurrentHandlingCount,
                     bool asAlter = false)
                 {
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetStreamDetails.Name}](

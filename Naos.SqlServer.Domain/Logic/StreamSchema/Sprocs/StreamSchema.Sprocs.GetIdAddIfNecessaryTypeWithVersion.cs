@@ -82,7 +82,7 @@ namespace Naos.SqlServer.Domain
                     bool asAlter = false)
                 {
                     const string transaction = "GetIdAddIfNecTypeWithVerTrans";
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}](

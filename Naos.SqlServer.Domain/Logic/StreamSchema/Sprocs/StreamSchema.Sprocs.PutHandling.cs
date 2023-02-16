@@ -148,7 +148,7 @@ namespace Naos.SqlServer.Domain
                     var transaction = Invariant($"{nameof(PutHandling)}Transaction");
                     var currentStatus = "CurrentStatus";
                     var currentStatusAccepted = "CurrentStatusAccepted";
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     var result = Invariant($@"
 {createOrModify} PROCEDURE [{streamName}].[{PutHandling.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}

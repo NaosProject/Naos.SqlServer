@@ -186,7 +186,7 @@ namespace Naos.SqlServer.Domain
                 {
                     const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
 
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{Name}](

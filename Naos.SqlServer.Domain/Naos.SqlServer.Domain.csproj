@@ -113,6 +113,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logic\StreamSchema\Funcs\StreamSchema.Funcs.AdjustForGetStringSerializedId.cs" />
     <Compile Include="Logic\StreamSchema\Funcs\StreamSchema.Funcs.AdjustForPutStringSerializedId.cs" />
+    <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.ReorganizeAndRebuildIndexes.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetHandlingHistory.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.RecordFilterLogic.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetDistinctStringSerializedIds.cs" />

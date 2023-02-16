@@ -201,7 +201,7 @@ namespace Naos.SqlServer.Domain
                     const string prunedIdsTable = "PrunedIdsTable";
                     var transaction = Invariant($"{nameof(PutRecord)}Transaction");
                     var pruneTransaction = Invariant($"PruneTransaction");
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     string insertRowsBlock;
                     switch (recordTagAssociationManagementStrategy)
                     {

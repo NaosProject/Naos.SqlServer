@@ -372,7 +372,7 @@ namespace Naos.SqlServer.Domain
 	END
 ");
 
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     var result = Invariant($@"
 {createOrModify} PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
   @{InputParamName.Concern} AS {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}

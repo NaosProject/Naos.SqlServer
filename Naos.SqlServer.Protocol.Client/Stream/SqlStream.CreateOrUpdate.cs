@@ -91,6 +91,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                       StreamSchema.Sprocs.GetTypeFromId.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.PutRecord.BuildCreationScript(this.Name, RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction),
                                                       StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name),
+                                                      StreamSchema.Sprocs.ReorganizeAndRebuildIndexes.BuildCreationScript(this.Name),
                                                       StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name, null),
                                                       StreamSchema.BuildCreationScriptForRoles(this.Name), // must be at end to reference the items.
                                                   };
@@ -163,6 +164,7 @@ namespace Naos.SqlServer.Protocol.Client
                                                    operation.RecordTagAssociationManagementStrategy,
                                                    true),
                                                StreamSchema.Sprocs.PutHandling.BuildCreationScript(this.Name, true),
+                                               StreamSchema.Sprocs.ReorganizeAndRebuildIndexes.BuildCreationScript(this.Name, true),
                                                StreamSchema.Sprocs.TryHandleRecord.BuildCreationScript(this.Name, null, true),
                                            };
 

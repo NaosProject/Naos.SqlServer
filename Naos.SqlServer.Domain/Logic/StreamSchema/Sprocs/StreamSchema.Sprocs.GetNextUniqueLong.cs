@@ -81,7 +81,7 @@ namespace Naos.SqlServer.Domain
                 {
                     var transaction = Invariant($"{nameof(GetNextUniqueLong)}Tran");
 
-                    var createOrModify = asAlter ? "ALTER" : "CREATE";
+                    var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetNextUniqueLong.Name}](
