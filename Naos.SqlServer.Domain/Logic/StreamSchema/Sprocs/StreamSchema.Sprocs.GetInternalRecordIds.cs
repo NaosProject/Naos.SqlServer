@@ -175,7 +175,7 @@ AS
 BEGIN
     {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
 
-    SELECT @{OutputParamName.InternalRecordIdsCsvOutput} = STRING_AGG([{Tables.Record.Id.Name}], ',') FROM @{recordIdsToConsiderTable}
+    SELECT @{OutputParamName.InternalRecordIdsCsvOutput} = STRING_AGG(CONVERT({new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}, [{Tables.Record.Id.Name}]), ',') FROM @{recordIdsToConsiderTable}
 END");
 
                     return result;
