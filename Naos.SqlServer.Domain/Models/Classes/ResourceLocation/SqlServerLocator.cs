@@ -68,7 +68,8 @@ namespace Naos.SqlServer.Domain
         /// <inheritdoc cref="IDeclareToStringMethod" />
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.SqlServerLocator: ServerName = {this.ServerName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseName = {this.DatabaseName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {this.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Password = ***, InstanceName = {this.InstanceName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Port = {this.Port?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
+            var passwordPiece = this.Password != null ? "***" : "<null>";
+            var result = Invariant($"Naos.SqlServer.Domain.SqlServerLocator: ServerName = {this.ServerName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DatabaseName = {this.DatabaseName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, UserName = {this.UserName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Password = {passwordPiece} InstanceName = {this.InstanceName?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Port = {this.Port?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}.");
 
             return result;
         }
