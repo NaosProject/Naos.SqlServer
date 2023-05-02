@@ -125,7 +125,7 @@ namespace Naos.SqlServer.Domain
                                          new InputParameterDefinition<int>(nameof(InputParamName.InheritRecordTags), new IntSqlDataTypeRepresentation(), inheritRecordTags ? 1 : 0),
                                          new InputParameterDefinition<int>(nameof(InputParamName.IsUnHandledRecord), new IntSqlDataTypeRepresentation(), 0),
                                          new InputParameterDefinition<int>(nameof(InputParamName.IsClaimingRecordId), new IntSqlDataTypeRepresentation(), 0),
-                                         new OutputParameterDefinition<long>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
+                                         new OutputParameterDefinition<long?>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
                                      };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);

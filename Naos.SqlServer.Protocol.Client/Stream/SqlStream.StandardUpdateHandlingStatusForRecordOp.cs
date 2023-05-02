@@ -48,6 +48,9 @@ namespace Naos.SqlServer.Protocol.Client
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
             sprocResult.MustForOp(nameof(sprocResult)).NotBeNull();
+
+            var id = sprocResult.OutputParameters[nameof(StreamSchema.Sprocs.PutHandling.OutputParamName.Id)].GetValueOfType<long?>();
+            id.MustForOp(nameof(id)).NotBeNull();
         }
     }
 }
