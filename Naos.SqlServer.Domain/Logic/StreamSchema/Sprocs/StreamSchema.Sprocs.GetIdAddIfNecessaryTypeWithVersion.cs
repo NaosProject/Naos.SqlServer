@@ -127,18 +127,20 @@ BEGIN
         END TRY
         BEGIN CATCH
             SET @{nameof(OutputParamName.Id)} = NULL
-            DECLARE @ErrorMessage nvarchar(max),
-                  @ErrorSeverity int,
-                  @ErrorState int
-
+            DECLARE @ThrowMessage nvarchar(max),
+                    @ErrorMessage nvarchar(max),
+                    @ErrorSeverity int,
+                    @ErrorState int
+           
             SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+            SELECT @ThrowMessage = @ErrorMessage + '; ErrorSeverity=' + cast(@ErrorSeverity as nvarchar(20)) + '; ErrorState=' + cast(@ErrorState as nvarchar(20))
 
             IF (@@trancount > 0)
             BEGIN
                 ROLLBACK TRANSACTION [{transaction}]
-            END
+            END;
 
-            RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+            THROW 60000, @ThrowMessage, 1
         END CATCH
     END
 END

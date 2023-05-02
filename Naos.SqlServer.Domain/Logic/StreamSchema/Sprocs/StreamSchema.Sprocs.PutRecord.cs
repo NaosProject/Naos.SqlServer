@@ -249,17 +249,20 @@ namespace Naos.SqlServer.Domain
 	    COMMIT TRANSACTION [{transaction}]
 	  END TRY
 	  BEGIN CATCH
-	      DECLARE @PruneErrorMessage nvarchar(max),
+	      DECLARE @PruneThrowMessage nvarchar(max),
+                  @PruneErrorMessage nvarchar(max),
 	              @PruneErrorSeverity int,
 	              @PruneErrorState int
 
 	      SELECT @PruneErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @PruneErrorSeverity = ERROR_SEVERITY(), @PruneErrorState = ERROR_STATE()
+          SELECT @PruneThrowMessage = @PruneErrorMessage + '; ErrorSeverity=' + cast(@PruneErrorSeverity as nvarchar(20)) + '; ErrorState=' + cast(@PruneErrorState as nvarchar(20))
 
 	      IF (@@trancount > 0)
 	      BEGIN
 	         ROLLBACK TRANSACTION [{transaction}]
-	      END
-	    RAISERROR (@PruneErrorMessage, @PruneErrorSeverity, @PruneErrorState)
+	      END;
+
+	      THROW 60000, @PruneThrowMessage, 1
 	  END CATCH");
                             break;
                         case RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocOutOfTransaction:
@@ -472,17 +475,20 @@ BEGIN
 				COMMIT TRANSACTION [{pruneTransaction}]
 		    END TRY
 		    BEGIN CATCH
-		        DECLARE @ErrorMessage nvarchar(max),
-		                @ErrorSeverity int,
-		                @ErrorState int
-
-		        SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+                DECLARE @ThrowMessage nvarchar(max),
+                        @ErrorMessage nvarchar(max),
+                        @ErrorSeverity int,
+                        @ErrorState int
+              
+                SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+                SELECT @ThrowMessage = @ErrorMessage + '; ErrorSeverity=' + cast(@ErrorSeverity as nvarchar(20)) + '; ErrorState=' + cast(@ErrorState as nvarchar(20))
 
 		        IF (@@trancount > 0)
 		        BEGIN
 		           ROLLBACK TRANSACTION [{pruneTransaction}]
-		        END
-		      RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+		        END;
+
+		        THROW 60000, @ThrowMessage, 1
 		    END CATCH
 
         SELECT @{OutputParamName.PrunedRecordIdsCsv} = STRING_AGG([{Tables.Record.Id.Name}], ',') FROM @{prunedIdsTable}
