@@ -198,7 +198,7 @@ BEGIN
                 ROLLBACK TRANSACTION [{transaction}]
             END;
 
-            THROW 60000, @ThrowMessage, 1
+            THROW {GeneralPurposeErrorNumberForThrowStatement}, @ThrowMessage, {GeneralPurposeErrorStateForThrowStatement}
         END CATCH
     END
 END

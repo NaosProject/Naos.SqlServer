@@ -626,7 +626,7 @@ BEGIN
 		BEGIN
 				DECLARE @NotValidStrategyErrorMessage varchar(100)
 				SET @NotValidStrategyErrorMessage =  CONCAT('Invalid {InputParamName.OrderRecordsBy}: ', @{InputParamName.OrderRecordsBy}, '.');
-				THROW 60000, @NotValidStrategyErrorMessage, 1
+				THROW {GeneralPurposeErrorNumberForThrowStatement}, @NotValidStrategyErrorMessage, {GeneralPurposeErrorStateForThrowStatement}
 		END
 		IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 		BEGIN
@@ -648,7 +648,7 @@ BEGIN
 			BEGIN
 				DECLARE @NotValidStrategyClaimErrorMessage varchar(100)
 				SET @NotValidStrategyClaimErrorMessage =  CONCAT('Invalid {InputParamName.OrderRecordsBy}: ', @{InputParamName.OrderRecordsBy}, '.');
-				THROW 60000, @NotValidStrategyClaimErrorMessage, 1
+				THROW {GeneralPurposeErrorNumberForThrowStatement}, @NotValidStrategyClaimErrorMessage, {GeneralPurposeErrorStateForThrowStatement}
 			END
 
 			EXEC [{streamName}].[{PutHandling.Name}]

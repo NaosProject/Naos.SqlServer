@@ -262,7 +262,7 @@ namespace Naos.SqlServer.Domain
 	         ROLLBACK TRANSACTION [{transaction}]
 	      END;
 
-	      THROW 60000, @PruneThrowMessage, 1
+	      THROW {GeneralPurposeErrorNumberForThrowStatement}, @PruneThrowMessage, {GeneralPurposeErrorStateForThrowStatement}
 	  END CATCH");
                             break;
                         case RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocOutOfTransaction:
@@ -488,7 +488,7 @@ BEGIN
 		           ROLLBACK TRANSACTION [{pruneTransaction}]
 		        END;
 
-		        THROW 60000, @ThrowMessage, 1
+		        THROW {GeneralPurposeErrorNumberForThrowStatement}, @ThrowMessage, {GeneralPurposeErrorStateForThrowStatement}
 		    END CATCH
 
         SELECT @{OutputParamName.PrunedRecordIdsCsv} = STRING_AGG([{Tables.Record.Id.Name}], ',') FROM @{prunedIdsTable}

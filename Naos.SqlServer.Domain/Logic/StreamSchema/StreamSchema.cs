@@ -22,6 +22,16 @@ namespace Naos.SqlServer.Domain
     public partial class StreamSchema
     {
         /// <summary>
+        /// The 'throw' statement must be within a certain range to bubble the error to ADO.NET, this is a general purpose number used for errors thrown directly from stored procedures in this data layer.
+        /// </summary>
+        public const int GeneralPurposeErrorNumberForThrowStatement = 60000;
+
+        /// <summary>
+        /// The 'throw' statement is not used but generally set to 1.
+        /// </summary>
+        public const int GeneralPurposeErrorStateForThrowStatement = 1;
+
+        /// <summary>
         /// Builds the creation script for object table.
         /// </summary>
         /// <param name="streamName">Name of the stream.</param>

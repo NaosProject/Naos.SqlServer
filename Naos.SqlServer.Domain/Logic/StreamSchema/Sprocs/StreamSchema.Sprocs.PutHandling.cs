@@ -196,7 +196,7 @@ BEGIN
 		-- In the event we are NOT claiming a record then this is being considered an invalid state change...
 		DECLARE @NotValidStatusErrorMessage varchar(100)
 		SET @NotValidStatusErrorMessage =  CONCAT('Invalid current status: ', @{currentStatus}, '.');
-		THROW 60000, @NotValidStatusErrorMessage, 1
+		THROW {GeneralPurposeErrorNumberForThrowStatement}, @NotValidStatusErrorMessage, {GeneralPurposeErrorStateForThrowStatement}
 	END
 END
 
@@ -346,7 +346,7 @@ BEGIN TRANSACTION [{transaction}]
          ROLLBACK TRANSACTION [{transaction}]
       END;
 
-      THROW 60000, @ThrowMessage, 1
+      THROW {GeneralPurposeErrorNumberForThrowStatement}, @ThrowMessage, {GeneralPurposeErrorStateForThrowStatement}
   END CATCH
 END");
 
