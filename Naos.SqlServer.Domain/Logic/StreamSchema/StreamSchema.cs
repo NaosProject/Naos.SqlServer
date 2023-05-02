@@ -92,6 +92,7 @@ namespace Naos.SqlServer.Domain
             result.AppendLine(BuildGrant(Funcs.AdjustForGetStringSerializedId.Name, execute));
             result.AppendLine(BuildGrant(Funcs.AdjustForPutStringSerializedId.Name, execute));
             result.AppendLine(BuildGrant(Funcs.GetTagsTableVariableFromTagsXml.Name, read));
+            result.AppendLine(BuildGrant(Sprocs.GetStreamDetails.Name, execute));
             result.AppendLine(BuildGrant(Sprocs.GetIdAddIfNecessarySerializerRepresentation.Name, execute));
             result.AppendLine(BuildGrant(Sprocs.GetIdAddIfNecessaryTypeWithoutVersion.Name, execute));
             result.AppendLine(BuildGrant(Sprocs.GetIdAddIfNecessaryTypeWithVersion.Name, execute));
