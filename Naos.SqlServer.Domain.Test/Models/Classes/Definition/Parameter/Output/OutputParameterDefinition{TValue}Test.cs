@@ -141,7 +141,7 @@ namespace Naos.SqlServer.Domain.Test
             // Act
             var actual = Record.Exception(() => new OutputParameterDefinition<Version>(
                 referenceObject.Name,
-                A.Dummy<SqlDataTypeRepresentationBase>().Whose(_ => _.GetType() != typeof(VersionSqlDataTypeRepresentation))));
+                A.Dummy<SqlDataTypeRepresentationBase>().Whose(_ => !new[] { typeof(VersionSqlDataTypeRepresentation), typeof(StringSqlDataTypeRepresentation) }.Contains(_.GetType()))));
 
             // Act, Assert
             actual.AsTest().Must().BeOfType<ArgumentException>();
