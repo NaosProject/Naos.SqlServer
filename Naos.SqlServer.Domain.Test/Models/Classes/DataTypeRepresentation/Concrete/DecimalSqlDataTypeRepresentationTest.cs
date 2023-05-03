@@ -75,7 +75,7 @@ namespace Naos.SqlServer.Domain.Test
                         var equalPrecision = ReferenceObjectForEquatableTestScenarios.Precision;
                         var equalScale = ReferenceObjectForEquatableTestScenarios.Scale;
                         var notEqualPrecision = A.Dummy<byte>().ThatIs(_ => (_ >= 1) && (_ <= 38) && (_ != equalPrecision));
-                        var notEqualScale = A.Dummy<byte>().ThatIs(_ => (_ <= notEqualPrecision) && (_ != equalScale) && (_ < equalPrecision) && (_ < notEqualPrecision));
+                        var notEqualScale = A.Dummy<byte>().ThatIs(_ => (_ != equalScale) && (_ < equalPrecision));
                         return new EquatableTestScenario<DecimalSqlDataTypeRepresentation>
                                {
                                    Name = "Default Code Generated Scenario",
