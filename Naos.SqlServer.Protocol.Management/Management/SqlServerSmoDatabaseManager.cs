@@ -38,7 +38,9 @@ namespace Naos.SqlServer.Protocol.Management
                 return Task.Run(() => { });
             }
 
-            RunOperationOnSmoDatabaseAsync(AsyncOperation, connectionString, infoMessageCallback).RunUntilCompletion();
+            Func<Task> runOperationOnSmoDatabaseAsyncFunc = () => RunOperationOnSmoDatabaseAsync(AsyncOperation, connectionString, infoMessageCallback);
+
+            runOperationOnSmoDatabaseAsyncFunc.ExecuteSynchronously();
         }
 
         /// <summary>

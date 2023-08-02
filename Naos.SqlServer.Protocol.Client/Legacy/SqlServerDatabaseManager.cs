@@ -79,7 +79,9 @@ namespace Naos.SqlServer.Protocol.Client
                 return Task.Run(() => { });
             }
 
-            RunOperationOnSqlConnectionAsync(AsyncOperation, connectionString, infoMessageCallback).RunUntilCompletion();
+            Func<Task> runOperationOnSqlConnectionAsyncFunc = () => RunOperationOnSqlConnectionAsync(AsyncOperation, connectionString, infoMessageCallback);
+
+            runOperationOnSqlConnectionAsyncFunc.ExecuteSynchronously();
         }
 
         /// <summary>
