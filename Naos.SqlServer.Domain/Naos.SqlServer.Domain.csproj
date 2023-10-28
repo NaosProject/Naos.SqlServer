@@ -39,8 +39,8 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Naos.Database.Domain, Version=1.1.390.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Naos.Database.Domain.1.1.390\lib\net462\Naos.Database.Domain.dll</HintPath>
+    <Reference Include="Naos.Database.Domain, Version=1.1.391.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Naos.Database.Domain.1.1.391\lib\net462\Naos.Database.Domain.dll</HintPath>
     </Reference>
     <Reference Include="OBeautifulCode.Compression, Version=1.0.26.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OBeautifulCode.Compression.1.0.26\lib\net462\OBeautifulCode.Compression.dll</HintPath>
@@ -131,6 +131,10 @@
     <Compile Include="Models\Classes\Definition\TableDefinition.designer.cs">
       <DependentUpon>TableDefinition.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\SqlServerJobInformation.cs" />
+    <Compile Include="Models\Classes\SqlServerJobInformation.designer.cs">
+      <DependentUpon>SqlServerJobInformation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Stream\RecordFilterConvertedForStoredProcedure.cs" />
     <Compile Include="Models\Classes\Stream\RecordFilterConvertedForStoredProcedure.designer.cs">
       <DependentUpon>RecordFilterConvertedForStoredProcedure.cs</DependentUpon>
@@ -144,6 +148,7 @@
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Enums\Management\JobStatus.cs" />
     <Compile Include="Operations\ExecuteStoredProcedureOp.designer.cs">
       <DependentUpon>ExecuteStoredProcedureOp.cs</DependentUpon>
     </Compile>

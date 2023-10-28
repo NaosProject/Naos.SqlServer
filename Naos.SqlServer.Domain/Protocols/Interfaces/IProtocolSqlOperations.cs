@@ -15,7 +15,9 @@ namespace Naos.SqlServer.Domain
     public interface IProtocolSqlOperations
         : ISyncAndAsyncReturningProtocol<ExecuteStoredProcedureOp, StoredProcedureExecutionResult>,
           ISyncAndAsyncVoidProtocol<CreateDatabaseOp>,
-          ISyncAndAsyncVoidProtocol<DeleteDatabaseOp>
+          ISyncAndAsyncVoidProtocol<DeleteDatabaseOp>,
+          ISyncAndAsyncReturningProtocol<GetLatestJobInformationOp, IJobInformation>
+
     {
     }
 }
