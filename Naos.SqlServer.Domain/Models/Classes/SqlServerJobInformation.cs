@@ -7,6 +7,8 @@
 namespace Naos.SqlServer.Domain
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
@@ -25,6 +27,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="jobStatus">The job status.</param>
         /// <param name="latestStepRunTime">The latest step run time.</param>
         /// <param name="latestStepRunDuration">Duration of the latest step run.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "RunTime", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
         public SqlServerJobInformation(
             string id,
             string jobName,
@@ -64,6 +67,7 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the latest step run time.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "RunTime", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
         public DateTime? LatestStepRunTime { get; private set; }
 
         /// <summary>

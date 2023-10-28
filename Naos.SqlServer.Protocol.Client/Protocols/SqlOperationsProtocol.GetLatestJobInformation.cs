@@ -7,6 +7,7 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using Naos.Database.Domain;
@@ -79,7 +80,7 @@ namespace Naos.SqlServer.Protocol.Client
                 ? (DateTime?)null
                 : DateTime.SpecifyKind((DateTime)latestStepRunTimeRaw, DateTimeKind.Local);
             var latestStepRunDurationRaw = row[nameof(SqlServerJobInformation.LatestStepRunDuration)]?.ToString();
-            var latestStepRunDuration = latestStepRunDurationRaw == null ? (TimeSpan?)null : TimeSpan.Parse(latestStepRunDurationRaw);
+            var latestStepRunDuration = latestStepRunDurationRaw == null ? (TimeSpan?)null : TimeSpan.Parse(latestStepRunDurationRaw, CultureInfo.InvariantCulture);
             var result = new SqlServerJobInformation(
                 id,
                 jobName,

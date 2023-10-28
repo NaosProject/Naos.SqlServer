@@ -111,7 +111,6 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logic\StreamSchema\Funcs\StreamSchema.Funcs.AdjustForGetStringSerializedId.cs" />
     <Compile Include="Logic\StreamSchema\Funcs\StreamSchema.Funcs.AdjustForPutStringSerializedId.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.ReorganizeAndRebuildIndexes.cs" />

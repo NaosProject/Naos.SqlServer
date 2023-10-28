@@ -17,7 +17,6 @@ namespace Naos.SqlServer.Domain
           ISyncAndAsyncVoidProtocol<CreateDatabaseOp>,
           ISyncAndAsyncVoidProtocol<DeleteDatabaseOp>,
           ISyncAndAsyncReturningProtocol<GetLatestJobInformationOp, IJobInformation>
-
     {
     }
 }
