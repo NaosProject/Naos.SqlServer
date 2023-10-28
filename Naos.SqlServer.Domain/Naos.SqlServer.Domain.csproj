@@ -111,6 +111,9 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Logic\ManagementSchema\ManagementSchema.cs" />
+    <Compile Include="Logic\ManagementSchema\ManagementSchema.Sprocs.cs" />
+    <Compile Include="Logic\ManagementSchema\Sprocs\ManagementSchema.Sprocs.DatabaseIntegrityCheck.cs" />
     <Compile Include="Logic\StreamSchema\Funcs\StreamSchema.Funcs.AdjustForGetStringSerializedId.cs" />
     <Compile Include="Logic\StreamSchema\Funcs\StreamSchema.Funcs.AdjustForPutStringSerializedId.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.ReorganizeAndRebuildIndexes.cs" />
