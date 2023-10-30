@@ -45,6 +45,11 @@ namespace Naos.SqlServer.Protocol.Client
             var handlingEntriesAsXml = sprocResultWithVersion
                            .OutputParameters[nameof(StreamSchema.Sprocs.GetHandlingHistory.OutputParamName.EntriesXml)]
                            .GetValueOfType<string>();
+            if (string.IsNullOrWhiteSpace(handlingEntriesAsXml))
+            {
+                return new List<StreamRecordHandlingEntry>();
+            }
+
             var handlingEntries = handlingEntriesAsXml.GetHandlingEntriesFromXmlString();
             var minRecordCreatedUtc = handlingEntries.Entries.Min(_ => _.RecordCreatedUtc);
             var entriesWithAvailableInitial = new[]
