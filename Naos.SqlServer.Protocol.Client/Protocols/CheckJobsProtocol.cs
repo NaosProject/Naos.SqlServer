@@ -9,6 +9,7 @@ namespace Naos.SqlServer.Protocol.Client
     using System;
     using System.Collections.Generic;
     using Naos.Database.Domain;
+    using Naos.Diagnostics.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
@@ -59,7 +60,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             var utcNow = this.GetUtcNow();
             var jobNameToInfoMap = new Dictionary<string, IJobInformation>();
-            var shouldAlert = false;
+            var status = CheckStatus.Success;
             var sqlOperationProtocol = new SqlOperationsProtocol(this.sqlServerLocator, this.connectionTimeout, this.commandTimeout);
             foreach (var jobToCheck in operation.Jobs)
             {
@@ -71,13 +72,13 @@ namespace Naos.SqlServer.Protocol.Client
                  || jobInfo.LatestStepRunTime == null
                  || utcNow                    > ((DateTime)jobInfo.LatestStepRunTime).Add(jobToCheck.Threshold))
                 {
-                    shouldAlert = true;
+                    status = CheckStatus.Failure;
                 }
 
                 jobNameToInfoMap.Add(jobToCheck.Name, jobInfo);
             }
 
-            var result = new CheckJobsReport(shouldAlert, jobNameToInfoMap, utcNow);
+            var result = new CheckJobsReport(status, jobNameToInfoMap, utcNow);
             return result;
         }
     }
