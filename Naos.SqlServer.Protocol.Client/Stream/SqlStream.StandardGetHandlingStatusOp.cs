@@ -47,11 +47,16 @@ namespace Naos.SqlServer.Protocol.Client
                       .Select(_ => _.ToStringInvariantPreferred())
                       .Distinct()
                       .ToCsv();
+
+            var currentHandlingStatuses = !operation.HandlingFilter.CurrentHandlingStatuses?.Any() ?? true
+                ? null
+                : operation.HandlingFilter.CurrentHandlingStatuses;
+
             var op = StreamSchema.Sprocs.GetHandlingStatuses.BuildExecuteStoredProcedureOp(
                 this.Name,
                 operation.Concern,
                 convertedRecordFilter,
-                operation.HandlingFilter.CurrentHandlingStatuses,
+                currentHandlingStatuses,
                 handlingTagsCsv);
 
             var sprocResult = sqlProtocol.Execute(op);
