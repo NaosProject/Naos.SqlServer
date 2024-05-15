@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Naos.SqlServer.sln.DotSettings = Naos.SqlServer.sln.DotSettings
 		README.md = README.md
 		RepoConfig.state = RepoConfig.state
+		WhoIsActive.sql = WhoIsActive.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Naos.SqlServer.Protocol.Client", "Naos.SqlServer.Protocol.Client\Naos.SqlServer.Protocol.Client.csproj", "{F42D44C9-14CB-4081-A727-116494CEB531}"
