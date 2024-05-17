@@ -48,6 +48,22 @@ namespace Naos.SqlServer.Protocol.Client
                         .Select(long.Parse)
                         .ToList();
 
+            if (!result.Any())
+            {
+                switch (operation.RecordNotFoundStrategy)
+                {
+                    case RecordNotFoundStrategy.ReturnDefault:
+                        return Array.Empty<long>();
+                    case RecordNotFoundStrategy.Throw:
+                        throw new InvalidOperationException(
+                            Invariant(
+                                $"Expected stream {this.StreamRepresentation} to contain a matching record for {operation}, none was found and {nameof(operation.RecordNotFoundStrategy)} is '{operation.RecordNotFoundStrategy}'."));
+                    default:
+                        throw new NotSupportedException(
+                            Invariant($"{nameof(RecordNotFoundStrategy)} {operation.RecordNotFoundStrategy} is not supported."));
+                }
+            }
+
             return result;
         }
     }
