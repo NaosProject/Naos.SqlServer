@@ -888,6 +888,48 @@ namespace OBeautifulCode.Assertion.Recipes
             NotBeSequenceEqualToInternalInternal(assertionTracker, verification, verifiableItem, NotBeSequenceEqualToWhenNotNullExceptionMessageSuffix);
         }
 
+        private static void BeUnorderedEqualToInternal(
+            AssertionTracker assertionTracker,
+            Verification verification,
+            VerifiableItem verifiableItem)
+        {
+            BeUnorderedEqualToInternalInternal(assertionTracker, verification, verifiableItem, BeUnorderedEqualToExceptionMessageSuffix);
+        }
+
+        private static void NotBeUnorderedEqualToInternal(
+            AssertionTracker assertionTracker,
+            Verification verification,
+            VerifiableItem verifiableItem)
+        {
+            NotBeUnorderedEqualToInternalInternal(assertionTracker, verification, verifiableItem, NotBeUnorderedEqualToExceptionMessageSuffix);
+        }
+
+        private static void BeUnorderedEqualToWhenNotNullInternal(
+            AssertionTracker assertionTracker,
+            Verification verification,
+            VerifiableItem verifiableItem)
+        {
+            if (ReferenceEquals(verifiableItem.ItemValue, null))
+            {
+                return;
+            }
+
+            BeUnorderedEqualToInternalInternal(assertionTracker, verification, verifiableItem, BeUnorderedEqualToWhenNotNullExceptionMessageSuffix);
+        }
+
+        private static void NotBeUnorderedEqualToWhenNotNullInternal(
+            AssertionTracker assertionTracker,
+            Verification verification,
+            VerifiableItem verifiableItem)
+        {
+            if (ReferenceEquals(verifiableItem.ItemValue, null))
+            {
+                return;
+            }
+
+            NotBeUnorderedEqualToInternalInternal(assertionTracker, verification, verifiableItem, NotBeUnorderedEqualToWhenNotNullExceptionMessageSuffix);
+        }
+
         private static void BeElementInInternal(
             AssertionTracker assertionTracker,
             Verification verification,
@@ -1865,6 +1907,54 @@ namespace OBeautifulCode.Assertion.Recipes
             if (shouldThrow)
             {
                 var methodologyInfo = string.Format(CultureInfo.InvariantCulture, UsingIsSequenceEqualToMethodology, elementType.ToStringReadable());
+
+                var exceptionMessage = BuildVerificationFailedExceptionMessage(assertionTracker, verification, verifiableItem, exceptionMessageSuffix, methodologyInfo: methodologyInfo);
+
+                var argumentExceptionKind = ArgumentExceptionKind.ArgumentException;
+
+                var exception = BuildException(assertionTracker, verification, exceptionMessage, argumentExceptionKind);
+
+                throw exception;
+            }
+        }
+
+        private static void BeUnorderedEqualToInternalInternal(
+            AssertionTracker assertionTracker,
+            Verification verification,
+            VerifiableItem verifiableItem,
+            string exceptionMessageSuffix)
+        {
+            var elementType = verifiableItem.ItemType.GetClosedEnumerableElementType();
+
+            var shouldThrow = !AreUnorderedEqual(elementType, verifiableItem.ItemValue, verification.VerificationParameters[0].Value, verification.VerificationParameters[1].Value);
+
+            if (shouldThrow)
+            {
+                var methodologyInfo = string.Format(CultureInfo.InvariantCulture, UsingIsUnorderedEqualToMethodology, elementType.ToStringReadable());
+
+                var exceptionMessage = BuildVerificationFailedExceptionMessage(assertionTracker, verification, verifiableItem, exceptionMessageSuffix, methodologyInfo: methodologyInfo);
+
+                var argumentExceptionKind = ArgumentExceptionKind.ArgumentException;
+
+                var exception = BuildException(assertionTracker, verification, exceptionMessage, argumentExceptionKind);
+
+                throw exception;
+            }
+        }
+
+        private static void NotBeUnorderedEqualToInternalInternal(
+            AssertionTracker assertionTracker,
+            Verification verification,
+            VerifiableItem verifiableItem,
+            string exceptionMessageSuffix)
+        {
+            var elementType = verifiableItem.ItemType.GetClosedEnumerableElementType();
+
+            var shouldThrow = AreUnorderedEqual(elementType, verifiableItem.ItemValue, verification.VerificationParameters[0].Value, verification.VerificationParameters[1].Value);
+
+            if (shouldThrow)
+            {
+                var methodologyInfo = string.Format(CultureInfo.InvariantCulture, UsingIsUnorderedEqualToMethodology, elementType.ToStringReadable());
 
                 var exceptionMessage = BuildVerificationFailedExceptionMessage(assertionTracker, verification, verifiableItem, exceptionMessageSuffix, methodologyInfo: methodologyInfo);
 
