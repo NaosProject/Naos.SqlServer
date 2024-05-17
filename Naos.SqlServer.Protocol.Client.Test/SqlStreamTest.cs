@@ -450,6 +450,68 @@ namespace Naos.SqlServer.Protocol.Client.Test
             actual2.AsTest().Must().BeEqualTo((IReadOnlyCollection<string>)new[] { item3.Id, item6.Id });
         }
 
+        [Fact]
+        public static void StandardGetInternalRecordIds___Should_return_ids___When_called()
+        {
+            // Arrange
+            var streamName = "StandardGetInternalRecordIdsOp_returns_ids" + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
+            var stream = GetCreatedSqlStream(streamName);
+
+            var item1 = new MyObject("1", "my-obj-1");
+            var item2 = new MyObject("2", "my-obj-2");
+            var item3 = new MyObject2("1", "my-obj-2");
+            var item4 = new MyObject2("2", "my-obj-2");
+            var item5 = new MyObject("3", "my-obj-1");
+            var item6 = new MyObject2("4", "my-obj-2");
+
+            stream.PutWithId(item1.Id, item1);
+            stream.PutWithId(item2.Id, item2);
+            stream.PutWithId(item3.Id, item3);
+            stream.PutWithId(item4.Id, item4);
+            stream.PutWithId(item5.Id, item5);
+            stream.PutWithId(item6.Id, item6);
+
+            var operation = new StandardGetInternalRecordIdsOp(new RecordFilter());
+
+            // Act
+            var actual = stream.Execute(operation);
+
+            // Assert
+            actual.AsTest().Must().BeUnorderedEqualTo(new long[] { 1, 2, 3, 4, 5, 6 });
+        }
+
+        [Fact]
+        public static void StandardGetInternalRecordIds___Should_return_empty_collection___When_no_records_found_and_RecordNotFoundStrategy_is_ReturnDefault()
+        {
+            // Arrange
+            var streamName = "StandardGetInternalRecordIdsOp_returns_empty_set_because_RecordNotFoundStrategy" + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
+            var stream = GetCreatedSqlStream(streamName);
+
+            var operation = new StandardGetInternalRecordIdsOp(new RecordFilter(), RecordNotFoundStrategy.ReturnDefault);
+
+            // Act
+            var actual = stream.Execute(operation);
+
+            // Assert
+            actual.AsTest().Must().BeEmptyEnumerable();
+        }
+
+        [Fact]
+        public static void StandardGetInternalRecordIds___Should_throw_InvalidOperationException___When_no_records_found_and_RecordNotFoundStrategy_is_Throw()
+        {
+            // Arrange
+            var streamName = "StandardGetInternalRecordIdsOp_throws_because_RecordNotFoundStrategy" + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
+            var stream = GetCreatedSqlStream(streamName);
+
+            var operation = new StandardGetInternalRecordIdsOp(new RecordFilter(), RecordNotFoundStrategy.Throw);
+
+            // Act
+            var actual = Record.Exception(() => stream.Execute(operation));
+
+            // Assert
+            actual.AsTest().Must().BeOfType<InvalidOperationException>();
+        }
+
         /// <summary>
         /// Defines the test method PutGetTests.
         /// </summary>
