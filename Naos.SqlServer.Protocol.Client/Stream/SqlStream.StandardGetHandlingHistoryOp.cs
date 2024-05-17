@@ -57,8 +57,8 @@ namespace Naos.SqlServer.Protocol.Client
                                                   new XmlConversionTool.SerializableEntrySetItem
                                                   {
                                                       Concern = operation.Concern,
-                                                      Details = "Available by existence of record.",
-                                                      Id = 0,
+                                                      Details = Concerns.AvailableByDefaultHandlingEntryDetails,
+                                                      Id = Concerns.AvailableByDefaultHandlingEntryId,
                                                       RecordCreatedUtc = minRecordCreatedUtc,
                                                       RecordId = operation.InternalRecordId,
                                                       Status = HandlingStatus.AvailableByDefault.ToString(),
