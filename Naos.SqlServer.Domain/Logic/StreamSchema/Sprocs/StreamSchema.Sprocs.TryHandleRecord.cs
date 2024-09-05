@@ -452,6 +452,8 @@ BEGIN
 		DECLARE @{isUnhandledRecord} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 		IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
 		BEGIN
+            -- In an ascending scenario, we want to check records that have previous handling history first
+            -- because those will have the lowest record ids.
 			-- See if any reprocessing is needed
 			INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
 			FROM @{recordIdsToConsiderTable} rtc
@@ -495,6 +497,8 @@ BEGIN
 		END -- If ascending
 		ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdDescending}')
 		BEGIN
+            -- In a descending scenario, we want to check records that have never been handled first
+            -- because those will have the highest record ids.
 			-- See if any new records
 			INSERT INTO @{candidateRecordIds} SELECT rtc.[{Tables.Record.Id.Name}]
 			FROM @{recordIdsToConsiderTable} rtc
@@ -536,7 +540,9 @@ BEGIN
 		END -- Descending
 		ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.Random}')
 		BEGIN
-			-- Choose to handle old or new first
+            -- In a random scenario, we will randomly choose between ascending and descending
+            -- first (see comments above about the preference for previously handled over never handled
+            -- records and vice-versa) and then choose a random record within that resultant set.
 			IF (RAND() > .5)
 			BEGIN
 				-- See if any new records
