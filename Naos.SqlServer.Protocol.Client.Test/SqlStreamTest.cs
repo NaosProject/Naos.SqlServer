@@ -1214,10 +1214,10 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var streamName = nameof(TestNullStringSerializedId) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
             var stream = GetCreatedSqlStream(streamName);
             var objectToPut = new MyObject("id", "test-null");
-            stream.PutWithId(id, objectToPut);
+            stream.PutWithId(id, objectToPut, typeSelectionStrategy: TypeSelectionStrategy.UseDeclaredType);
             var ids = stream.Execute(new StandardGetDistinctStringSerializedIdsOp(new RecordFilter()));
             ids.Single().StringSerializedId.MustForTest().BeNull();
-            var latestObjectById = stream.GetLatestObjectById<string, MyObject>(id);
+            var latestObjectById = stream.GetLatestObjectById<string, MyObject>(id, typeSelectionStrategy: TypeSelectionStrategy.UseDeclaredType);
             latestObjectById.Id.MustForTest().BeEqualTo(objectToPut.Id);
             latestObjectById.Field.MustForTest().BeEqualTo(objectToPut.Field);
             var latestObject = stream.GetLatestObject<MyObject>();

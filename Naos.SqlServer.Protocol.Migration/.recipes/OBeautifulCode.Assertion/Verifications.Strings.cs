@@ -115,9 +115,13 @@ namespace OBeautifulCode.Assertion.Recipes
 
         public const string NotBeEmptyEnumerableExceptionMessageSuffix = "is an empty enumerable";
 
+        public const string NotBeEmptyEnumerableWhenNotNullExceptionMessageSuffix = "is not null and is an empty enumerable";
+
         public const string BeEmptyDictionaryExceptionMessageSuffix = "is not an empty dictionary";
 
         public const string NotBeEmptyDictionaryExceptionMessageSuffix = "is an empty dictionary";
+
+        public const string NotBeEmptyDictionaryWhenNotNullExceptionMessageSuffix = "is not null and is an empty dictionary";
 
         public const string ContainSomeNullElementsExceptionMessageSuffix = "contains no null elements";
 
@@ -128,6 +132,8 @@ namespace OBeautifulCode.Assertion.Recipes
         public const string ContainSomeKeyValuePairsWithNullValueExceptionMessageSuffix = "contains no key-value pairs with a null value";
 
         public const string NotContainAnyKeyValuePairsWithNullValueExceptionMessageSuffix = "contains at least one key-value pair with a null value";
+
+        public const string NotContainAnyKeyValuePairsWithNullValueWhenNotNullExceptionMessageSuffix = "is not null and contains at least one key-value pair with a null value";
 
         public const string ContainKeyExceptionMessageSuffix = "does not contain the key to search for";
 

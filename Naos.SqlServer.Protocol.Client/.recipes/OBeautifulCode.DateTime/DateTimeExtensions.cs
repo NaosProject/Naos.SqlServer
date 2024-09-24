@@ -9,7 +9,11 @@
 
 namespace OBeautifulCode.DateTime.Recipes
 {
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
+    using System.Text.RegularExpressions;
     using global::System;
+    using OBeautifulCode.CodeAnalysis.Recipes;
     using static global::System.FormattableString;
 
     /// <summary>
@@ -24,6 +28,8 @@ namespace OBeautifulCode.DateTime.Recipes
 #endif
     static class DateTimeExtensions
     {
+        private static readonly Regex SimplifyTimeZoneNameRegex = new Regex(@"\(.*?\)", RegexOptions.Compiled);
+
         /// <summary>
         /// Finds a specified day-of-week after a reference date.
         /// </summary>
@@ -215,6 +221,43 @@ namespace OBeautifulCode.DateTime.Recipes
             }
 
             var result = ((DateTime)value).ToSpecificTimeZone(timeZoneInfo);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Converts the specified time into a friendly string in the specified time zone.
+        /// </summary>
+        /// <param name="utcValue">The UTC time to stringify.</param>
+        /// <param name="timeZoneInfo">OPTIONAL timezone for the string.  DEFAULT is UTC.</param>
+        /// <returns>
+        /// A friendly string representation of the specified time in the specified time zone.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="utcValue"/> is null.</exception>
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Prefer lower case.")]
+        public static string ToStringPretty(
+            this DateTime utcValue,
+            TimeZoneInfo timeZoneInfo = null)
+        {
+            if (utcValue.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException(Invariant($"{utcValue} is not a UTC date/time."));
+            }
+
+            var displayTime = utcValue;
+
+            var timeZoneName = "gmt";
+
+            if (timeZoneInfo != null)
+            {
+                displayTime = displayTime.ToSpecificTimeZone(timeZoneInfo).DateTime;
+
+                timeZoneName = SimplifyTimeZoneNameRegex.Replace(timeZoneInfo.DisplayName, string.Empty).Trim().ToLowerInvariant();
+            }
+
+            var formatString = "dddd, MMMM d, yyyy 'at' h:mm tt";
+
+            var result = Invariant($"{displayTime.ToString(formatString, CultureInfo.InvariantCulture)} ({timeZoneName})");
 
             return result;
         }
