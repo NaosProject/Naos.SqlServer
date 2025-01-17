@@ -75,6 +75,11 @@ namespace Naos.SqlServer.Domain
                     /// The deprecated identifier event type identifiers as CSV.
                     /// </summary>
                     DeprecatedIdEventTypeIdsCsv,
+
+                    /// <summary>
+                    /// The <see cref="Naos.Database.Domain.FilteredRecordsSelectionStrategy"/>.
+                    /// </summary>
+                    FilteredRecordsSelectionStrategy,
                 }
 
                 /// <summary>
@@ -94,10 +99,12 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter"/>.</param>
+                /// <param name="filteredRecordsSelectionStrategy">The strategy for selecting records after applying the record filter.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
-                    RecordFilterConvertedForStoredProcedure convertedRecordFilter)
+                    RecordFilterConvertedForStoredProcedure convertedRecordFilter,
+                    FilteredRecordsSelectionStrategy filteredRecordsSelectionStrategy)
                 {
                     var sprocName = Invariant($"[{streamName}].{Name}");
                     var parameters = new List<ParameterDefinitionBase>()
@@ -134,6 +141,10 @@ namespace Naos.SqlServer.Domain
                                              nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
                                              convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
+                                         new InputParameterDefinition<string>(
+                                             nameof(InputParamName.FilteredRecordsSelectionStrategy),
+                                             new StringSqlDataTypeRepresentation(false, 20),
+                                             filteredRecordsSelectionStrategy.ToString()),
                                          new OutputParameterDefinition<string>(
                                              nameof(OutputParamName.InternalRecordIdsCsvOutput),
                                              new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant)),
@@ -158,6 +169,8 @@ namespace Naos.SqlServer.Domain
 
                     const string recordIdsToConsiderTable = "RecordIdsToConsiderTable";
 
+                    const string selectedRecordIdsTable = "SelectedRecordIdsTable";
+
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetInternalRecordIds.Name}](
@@ -169,13 +182,31 @@ namespace Naos.SqlServer.Domain
  ,  @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
  ,  @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
  ,  @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.FilteredRecordsSelectionStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = '{FilteredRecordsSelectionStrategy.All}' -- This parameter was introduced after the stored procedure shipped, so we are defaulting here for backward compatibility.  Existing clients that have not taken package updates will get the default value for this parameter.
  ,  @{OutputParamName.InternalRecordIdsCsvOutput} AS {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
     {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
 
-    SELECT @{OutputParamName.InternalRecordIdsCsvOutput} = STRING_AGG(CONVERT({new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}, [{Tables.Record.Id.Name}]), ',') FROM @{recordIdsToConsiderTable}
+    IF (@{InputParamName.FilteredRecordsSelectionStrategy} = '{FilteredRecordsSelectionStrategy.All}')
+    BEGIN
+        SELECT @{OutputParamName.InternalRecordIdsCsvOutput} = STRING_AGG(CONVERT({new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}, [{Tables.Record.Id.Name}]), ',') FROM @{recordIdsToConsiderTable}
+    END
+    ELSE
+    BEGIN
+        -- Handling LatestById case here.
+        DECLARE @{selectedRecordIdsTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+
+        INSERT INTO @{selectedRecordIdsTable}
+        SELECT Max(r.[{Tables.Record.Id.Name}])
+        FROM [{streamName}].[{Tables.Record.Table.Name}] r
+        INNER JOIN @{recordIdsToConsiderTable} rtc ON r.[{Tables.Record.Id.Name}] = rtc.[{Tables.Record.Id.Name}]
+        GROUP BY r.[{Tables.Record.StringSerializedId.Name}]
+
+        SELECT @{OutputParamName.InternalRecordIdsCsvOutput} = STRING_AGG(CONVERT({new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}, [{Tables.Record.Id.Name}]), ',') FROM @{selectedRecordIdsTable}        
+    END
+
 END");
 
                     return result;

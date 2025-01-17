@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStreamTest.cs" company="Naos Project">
+// <copyright file="LegacySqlStreamTest.cs" company="Naos Project">
 //     Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -24,7 +24,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
-    using OBeautifulCode.Serialization.Bson;
     using OBeautifulCode.Serialization.Json;
     using OBeautifulCode.Serialization.Recipes;
     using OBeautifulCode.String.Recipes;
@@ -33,33 +32,21 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using Xunit.Abstractions;
     using static System.FormattableString;
 
-    /// <summary>
-    /// Class SqlStreamTest.
-    /// </summary>
-    public partial class SqlStreamTest
+    public class LegacySqlStreamTest
     {
-        private const string DatabaseName = "master";
+        private const string DatabaseName = "master";  // change to locally created database name for local testing
+        private const string InstanceName = "SQL2017"; // set to null for local testing
 
         private readonly ITestOutputHelper testOutputHelper;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SqlStreamTest" /> class.
-        /// </summary>
-        /// <param name="testOutputHelper">The test output helper.</param>
-        public SqlStreamTest(
+        public LegacySqlStreamTest(
             ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
         }
 
-        /// <summary>
-        /// Defines the test method GetSprocCreationScript.
-        /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sproc", Justification = "Name is preferred in context.")]
-        [SuppressMessage(
-            "Microsoft.Performance",
-            "CA1822:MarkMembersAsStatic",
-            Justification = "Might use testHelper.")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact]
         public void GetSprocCreationScript()
         {
@@ -67,9 +54,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             this.testOutputHelper.WriteLine(script);
         }
 
-        /// <summary>
-        /// Defines the test method TestBinary.
-        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestBinary()
@@ -78,9 +62,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Defines the test method TestRandom.
-        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "Local testing only.")]
         public void TestRandom()
@@ -89,23 +70,17 @@ namespace Naos.SqlServer.Protocol.Client.Test
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Defines the test method CreateStreamsTestingDatabase.
-        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Might use testHelper.")]
         [Fact(Skip = "For creating a new test database")]
         public static void CreateStreamsTestingDatabase()
         {
-            var sqlServerLocator = GetSqlServerLocator("master");
+            var sqlServerLocator = GetSqlServerLocator();
             var configuration = SqlServerDatabaseDefinition.BuildDatabaseConfigurationUsingDefaultsAsNecessary("Streams1", @"D:\SQL\");
             var createDatabaseOp = new CreateDatabaseOp(configuration, ExistingDatabaseStrategy.Throw);
             var protocol = new SqlOperationsProtocol(sqlServerLocator);
             protocol.Execute(createDatabaseOp);
         }
 
-        /// <summary>
-        /// Defines the test method CreateDatabase_ExistingDatabaseTest.
-        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "ex", Justification = "Showing return value.")]
         [Fact(Skip = "For testing creating a new database")]
         public static void CreateDatabase_ExistingDatabaseTest()
@@ -114,7 +89,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var sqlServerLocator = sqlServerLocatorCopy.DeepCloneWithDatabaseName("Monkey");
             var protocol = new SqlOperationsProtocol(sqlServerLocator);
             var configuration = SqlServerDatabaseDefinition.BuildDatabaseConfigurationUsingDefaultsAsNecessary(sqlServerLocator.DatabaseName, @"D:\SQL\");
-            
+
             var createDatabaseOpThrow = new CreateDatabaseOp(configuration, ExistingDatabaseStrategy.Throw);
             var createDatabaseOpSkip = new CreateDatabaseOp(configuration, ExistingDatabaseStrategy.Skip);
 
@@ -123,9 +98,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var ex = Record.Exception(() => protocol.Execute(createDatabaseOpThrow));
         }
 
-        /// <summary>
-        /// Defines the test method TestConcurrent.
-        /// </summary>
         [Fact(Skip = "Deadlocks every time.")]
         public void TestConcurrent()
         {
@@ -191,9 +163,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             }
         }
 
-        /// <summary>
-        /// Defines the test method ExistingRecordStrategyTestForPutRecord.
-        /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Versionless", Justification = "Name is preferred in context.")]
         [Fact(Skip = "Local testing only.")]
         public static void TestRecordFilterHonorsBothVersionAndVersionlessTypeRepresentations()
@@ -289,9 +258,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             getWithVersionWithoutDeprecated.MustForTest().BeNull();
         }
 
-        /// <summary>
-        /// Defines the test method ExistingRecordStrategyTestForPutRecord.
-        /// </summary>
         [Fact(Skip = "Local testing only.")]
         public static void ExistingRecordStrategyTestForPutRecord()
         {
@@ -350,9 +316,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             result.TypeRepresentationOfObject.WithVersion.MustForTest().BeEqualTo(typeof(string).ToRepresentation());
         }
 
-        /// <summary>
-        /// Defines the test method UpdateSprocs.
-        /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sprocs", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
         [Fact(Skip = "Local testing only.")]
         public void UpdateSprocs()
@@ -367,9 +330,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             this.testOutputHelper.WriteLine("Version: " + (result.PriorVersion ?? "<null>"));
         }
 
-        /// <summary>
-        /// Defines the test method TagCachingTests.
-        /// </summary>
         [Fact(Skip = "Local testing only.")]
         public static void TagCachingTests()
         {
@@ -409,112 +369,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             tagsBackTwo.MustForTest().NotBeNullNorEmptyEnumerable();
         }
 
-        /// <summary>
-        /// Defines the test method ExistingRecordStrategyTestForPutRecord.
-        /// </summary>
-        [Fact(Skip = "Local testing only.")]
-        public static void GetDistinctIds_With_Depreciated_Types_Test()
-        {
-            // Arrange
-            var streamName = nameof(GetDistinctIds_With_Depreciated_Types_Test) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
-
-            var item1 = new MyObject("1", "my-obj-1");
-            var item2 = new MyObject("2", "my-obj-2");
-            var item3 = new MyObject2("1", "my-obj-2");
-            var item4 = new MyObject2("2", "my-obj-2");
-            var item5 = new MyObject("3", "my-obj-1");
-            var item6 = new MyObject2("4", "my-obj-2");
-
-            var depreciated1 = new IdDeprecatedEvent<MyObject>(DateTime.UtcNow);
-            var depreciated2 = new IdDeprecatedEvent<MyObject2>(DateTime.UtcNow);
-
-            stream.PutWithId(item1.Id, item1);
-            stream.PutWithId(item2.Id, item2);
-            stream.PutWithId(item3.Id, item3);
-            stream.PutWithId(item4.Id, item4);
-            stream.PutWithId(item5.Id, item5);
-            stream.PutWithId(item6.Id, item6);
-            stream.PutWithId(item1.Id, depreciated1);
-            stream.PutWithId(item4.Id, depreciated2);
-            stream.PutWithId(item6.Id, depreciated2);
-            stream.PutWithId(item6.Id, item6);
-
-            // Act
-            var actual1 = stream.GetDistinctIds<string>(new[] { typeof(MyObject).ToRepresentation() }, deprecatedIdTypes: new[] { depreciated1.GetType().ToRepresentation() });
-
-            var actual2 = stream.GetDistinctIds<string>(new[] { typeof(MyObject2).ToRepresentation() }, deprecatedIdTypes: new[] { depreciated2.GetType().ToRepresentation() });
-
-            // Assert
-            actual1.AsTest().Must().BeEqualTo((IReadOnlyCollection<string>)new[] { item2.Id, item5.Id });
-            actual2.AsTest().Must().BeEqualTo((IReadOnlyCollection<string>)new[] { item3.Id, item6.Id });
-        }
-
-        [Fact]
-        public static void StandardGetInternalRecordIds___Should_return_ids___When_called()
-        {
-            // Arrange
-            var streamName = "StandardGetInternalRecordIdsOp_returns_ids" + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
-
-            var item1 = new MyObject("1", "my-obj-1");
-            var item2 = new MyObject("2", "my-obj-2");
-            var item3 = new MyObject2("1", "my-obj-2");
-            var item4 = new MyObject2("2", "my-obj-2");
-            var item5 = new MyObject("3", "my-obj-1");
-            var item6 = new MyObject2("4", "my-obj-2");
-
-            stream.PutWithId(item1.Id, item1);
-            stream.PutWithId(item2.Id, item2);
-            stream.PutWithId(item3.Id, item3);
-            stream.PutWithId(item4.Id, item4);
-            stream.PutWithId(item5.Id, item5);
-            stream.PutWithId(item6.Id, item6);
-
-            var operation = new StandardGetInternalRecordIdsOp(new RecordFilter());
-
-            // Act
-            var actual = stream.Execute(operation);
-
-            // Assert
-            actual.AsTest().Must().BeUnorderedEqualTo(new long[] { 1, 2, 3, 4, 5, 6 });
-        }
-
-        [Fact]
-        public static void StandardGetInternalRecordIds___Should_return_empty_collection___When_no_records_found_and_RecordNotFoundStrategy_is_ReturnDefault()
-        {
-            // Arrange
-            var streamName = "StandardGetInternalRecordIdsOp_returns_empty_set_because_RecordNotFoundStrategy" + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
-
-            var operation = new StandardGetInternalRecordIdsOp(new RecordFilter(), RecordNotFoundStrategy.ReturnDefault);
-
-            // Act
-            var actual = stream.Execute(operation);
-
-            // Assert
-            actual.AsTest().Must().BeEmptyEnumerable();
-        }
-
-        [Fact]
-        public static void StandardGetInternalRecordIds___Should_throw_InvalidOperationException___When_no_records_found_and_RecordNotFoundStrategy_is_Throw()
-        {
-            // Arrange
-            var streamName = "StandardGetInternalRecordIdsOp_throws_because_RecordNotFoundStrategy" + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
-
-            var operation = new StandardGetInternalRecordIdsOp(new RecordFilter(), RecordNotFoundStrategy.Throw);
-
-            // Act
-            var actual = Record.Exception(() => stream.Execute(operation));
-
-            // Assert
-            actual.AsTest().Must().BeOfType<InvalidOperationException>();
-        }
-
-        /// <summary>
-        /// Defines the test method PutGetTests.
-        /// </summary>
         [Fact]
         public static void PutGetTests()
         {
@@ -544,9 +398,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             item.Field.MustForTest().BeEqualTo(firstValue);
         }
 
-        /// <summary>
-        /// Defines the test method HandlingTests.
-        /// </summary>
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = NaosSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
         [Fact]
         public void HandlingTests()
@@ -882,9 +733,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             */
         }
 
-        /// <summary>
-        /// Defines the test method HandlingEntryTagsUsedInStatusTests.
-        /// </summary>
         [Fact]
         public void HandlingEntryTagsUsedInStatusTests()
         {
@@ -1012,9 +860,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             this.testOutputHelper.WriteLine(Invariant($"TotalSeconds: {(stop - start).TotalSeconds}."));
         }
 
-        /// <summary>
-        /// Defines the test method GetDistinctStringSerializedIds.
-        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdThree", Justification = "Showing return value.")]
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdTwo", Justification = "Showing return value.")]
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdOneOtherType", Justification = "Showing return value.")]
@@ -1083,9 +928,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             distinct.Select(_ => _.StringSerializedId).OrderBy(_ => _).ToList().MustForTest().BeEqualTo(expected.OrderBy(_ => _).ToList());
         }
 
-        /// <summary>
-        /// Defines the test method GetDistinctStringSerializedIds.
-        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdThreeLong", Justification = "Showing return value.")]
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdTwoLong", Justification = "Showing return value.")]
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordIdOneLong", Justification = "Showing return value.")]
@@ -1151,9 +993,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
                               .ToList());
         }
 
-        /// <summary>
-        /// Defines the test method TagsCanBeNullTest.
-        /// </summary>
         [Fact]
         public static void TagsCanBeNullTest()
         {
@@ -1175,9 +1014,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             latestTwo.Metadata.Tags.MustForTest().BeNull();
         }
 
-        /// <summary>
-        /// Defines the test method TestUniqueLong.
-        /// </summary>
         [Fact]
         public static void TestUniqueLong()
         {
@@ -1190,9 +1026,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             nextDetails.MustForTest().BeGreaterThan(nextNoDetails);
         }
 
-        /// <summary>
-        /// Defines the test method TestGetDistinctEmptyStream.
-        /// </summary>
         [Fact]
         public static void TestGetDistinctEmptyStream()
         {
@@ -1203,9 +1036,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             ids.MustForTest().BeEmptyEnumerable();
         }
 
-        /// <summary>
-        /// Defines the test method TestNullStringSerializedId.
-        /// </summary>
         [Fact]
         public static void TestNullStringSerializedId()
         {
@@ -1229,9 +1059,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             latestRecord.Payload.Field.MustForTest().BeEqualTo(objectToPut.Field);
         }
 
-        /// <summary>
-        /// Defines the test method TestGetDistinctEmptyRecordFilter.
-        /// </summary>
         [Fact]
         public static void TestGetDistinctEmptyRecordFilter()
         {
@@ -1244,9 +1071,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             ids.MustForTest().NotBeEmptyEnumerable();
         }
 
-        /// <summary>
-        /// Defines the test method TestLatestStringSerializedObject.
-        /// </summary>
         [Fact]
         public static void TestLatestStringSerializedObject()
         {
@@ -1263,9 +1087,6 @@ namespace Naos.SqlServer.Protocol.Client.Test
             latestStringSerializedObject.MustForTest().EndWith("}");
         }
 
-        /// <summary>
-        /// Defines the test method TestConfigStreamBuilding.
-        /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "output", Justification = "Showing return value.")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Keeping as is in case of future conversion.")]
         [Fact]
@@ -1304,10 +1125,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             stream.MustForTest().NotBeNull().And().BeOfType<SqlStream>();
         }
 
-        private static SqlServerLocator GetSqlServerLocator(string databaseName = null)
+        private static SqlServerLocator GetSqlServerLocator()
         {
-            databaseName = databaseName ?? DatabaseName;
-            var sqlServerLocator = new SqlServerLocator("(local)", databaseName, "sa", "Password12!", "SQL2017");
+            var sqlServerLocator = new SqlServerLocator("(local)", DatabaseName, "sa", "Password12!", InstanceName);
 
             return sqlServerLocator;
         }
@@ -1343,98 +1163,27 @@ namespace Naos.SqlServer.Protocol.Client.Test
         {
             SerializerRepresentation defaultSerializerRepresentation;
             var configurationTypeRepresentation =
-                typeof(DependencyOnlyJsonSerializationConfiguration<SqlServerJsonSerializationConfiguration, TypesToRegisterJsonSerializationConfiguration<MyObject, MyObject2>>).ToRepresentation();
+                typeof(DependencyOnlyJsonSerializationConfiguration<SqlServerJsonSerializationConfiguration, TypesToRegisterJsonSerializationConfiguration<MyObject>>).ToRepresentation();
 
             defaultSerializerRepresentation = new SerializerRepresentation(
                 SerializationKind.Json,
                 configurationTypeRepresentation);
             return defaultSerializerRepresentation;
         }
-    }
 
-    /// <summary>
-    /// Test object.
-    /// Implements the <see cref="OBeautifulCode.Type.IHaveId{string}" />.
-    /// </summary>
-    /// <seealso cref="OBeautifulCode.Type.IHaveId{string}" />
-    public class MyObject : IHaveId<string>
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MyObject" /> class.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="field">The field.</param>
-        public MyObject(
-            string id,
-            string field)
+        private class MyObject : IHaveId<string>
         {
-            this.Id = id;
-            this.Field = field;
-        }
+            public MyObject(
+                string id,
+                string field)
+            {
+                this.Id = id;
+                this.Field = field;
+            }
 
-        /// <summary>
-        /// Gets the unique identifier.
-        /// </summary>
-        public string Id { get; private set; }
+            public string Id { get; private set; }
 
-        /// <summary>
-        /// Gets the field.
-        /// </summary>
-        public string Field { get; private set; }
-
-        /// <summary>
-        /// Deeps the clone with new field.
-        /// </summary>
-        /// <param name="field">The field.</param>
-        /// <returns>MyObject.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
-        public MyObject DeepCloneWithNewField(string field)
-        {
-            var result = new MyObject(this.Id, field);
-            return result;
-        }
-    }
-
-    /// <summary>
-    /// Test object.
-    /// Implements the <see cref="OBeautifulCode.Type.IHaveId{string}" />.
-    /// </summary>
-    /// <seealso cref="OBeautifulCode.Type.IHaveId{string}" />
-    public class MyObject2 : IHaveId<string>
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MyObject2" /> class.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="field">The field.</param>
-        public MyObject2(
-            string id,
-            string field)
-        {
-            this.Id = id;
-            this.Field = field;
-        }
-
-        /// <summary>
-        /// Gets the unique identifier.
-        /// </summary>
-        public string Id { get; private set; }
-
-        /// <summary>
-        /// Gets the field.
-        /// </summary>
-        public string Field { get; private set; }
-
-        /// <summary>
-        /// Deeps the clone with new field.
-        /// </summary>
-        /// <param name="field">The field.</param>
-        /// <returns>MyObject.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "NewField", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
-        public MyObject2 DeepCloneWithNewField(string field)
-        {
-            var result = new MyObject2(this.Id, field);
-            return result;
+            public string Field { get; private set; }
         }
     }
 }

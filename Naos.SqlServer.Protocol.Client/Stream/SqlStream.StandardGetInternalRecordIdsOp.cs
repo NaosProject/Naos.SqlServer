@@ -8,20 +8,21 @@ namespace Naos.SqlServer.Protocol.Client
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
     using System.Linq;
-    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.DateTime.Recipes;
-    using OBeautifulCode.Serialization;
     using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
 
     public partial class SqlStream
     {
+        private static readonly FilteredRecordsSelectionStrategy[] SupportedFilteredRecordsSelectionStrategy = new[]
+        {
+            FilteredRecordsSelectionStrategy.All,
+            FilteredRecordsSelectionStrategy.LatestById,
+        };
+
         /// <inheritdoc />
         public override IReadOnlyCollection<long> Execute(
             StandardGetInternalRecordIdsOp operation)
@@ -32,9 +33,14 @@ namespace Naos.SqlServer.Protocol.Client
 
             var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
 
+            operation.FilteredRecordsSelectionStrategy
+                .MustForArg(nameof(operation.FilteredRecordsSelectionStrategy))
+                .BeElementIn(SupportedFilteredRecordsSelectionStrategy);
+
             var storedProcOp = StreamSchema.Sprocs.GetInternalRecordIds.BuildExecuteStoredProcedureOp(
                 this.Name,
-                convertedRecordFilter);
+                convertedRecordFilter,
+                operation.FilteredRecordsSelectionStrategy);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);

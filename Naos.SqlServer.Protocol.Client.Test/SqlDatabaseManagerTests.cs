@@ -13,10 +13,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using Xunit;
     using Xunit.Abstractions;
 
-    /// <summary>
-    /// Tests for <see cref="SqlStream{TKey}"/>.
-    /// </summary>
-    public partial class SqlDatabaseManagerTests
+    public class SqlDatabaseManagerTests
     {
         private readonly ITestOutputHelper testOutputHelper;
 
