@@ -68,49 +68,48 @@ namespace Naos.SqlServer.Domain.Test
                     });
 
             EquatableTestScenarios
-               .RemoveAllScenarios()
-               .AddScenario(
+                .RemoveAllScenarios()
+                .AddScenario(
                     () =>
                     {
-                        var equalPrecision = ReferenceObjectForEquatableTestScenarios.Precision;
-                        var equalScale = ReferenceObjectForEquatableTestScenarios.Scale;
-                        var notEqualPrecision = A.Dummy<byte>().ThatIs(_ => (_ >= 1) && (_ <= 38) && (_ != equalPrecision));
-                        var notEqualScale = A.Dummy<byte>().ThatIs(_ => (_ != equalScale) && (_ < equalPrecision));
+                        var referenceObjectForEquatableTestScenarios = new DecimalSqlDataTypeRepresentation(10, 5);
+                        var notEqualPrecision = A.Dummy<byte>().ThatIs(_ => (_ > 10) && (_ <= 38));
+                        var notEqualScale = A.Dummy<byte>().ThatIs(_ => (_ < 5));
                         return new EquatableTestScenario<DecimalSqlDataTypeRepresentation>
-                               {
-                                   Name = "Default Code Generated Scenario",
-                                   ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                                   ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new DecimalSqlDataTypeRepresentation[]
-                                                                                         {
-                                                                                             new DecimalSqlDataTypeRepresentation(
-                                                                                                 ReferenceObjectForEquatableTestScenarios.Precision,
-                                                                                                 ReferenceObjectForEquatableTestScenarios.Scale),
-                                                                                         },
-                                   ObjectsThatAreNotEqualToReferenceObject = new DecimalSqlDataTypeRepresentation[]
-                                                                             {
-                                                                                 new DecimalSqlDataTypeRepresentation(
-                                                                                     notEqualPrecision,
-                                                                                     ReferenceObjectForEquatableTestScenarios.Scale),
-                                                                                 new DecimalSqlDataTypeRepresentation(
-                                                                                     ReferenceObjectForEquatableTestScenarios.Precision,
-                                                                                     notEqualScale),
-                                                                             },
-                                   ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
-                                                                                     {
-                                                                                         A.Dummy<object>(),
-                                                                                         A.Dummy<string>(),
-                                                                                         A.Dummy<int>(),
-                                                                                         A.Dummy<int?>(),
-                                                                                         A.Dummy<Guid>(),
-                                                                                         A.Dummy<BigIntSqlDataTypeRepresentation>(),
-                                                                                         A.Dummy<BinarySqlDataTypeRepresentation>(),
-                                                                                         A.Dummy<IntSqlDataTypeRepresentation>(),
-                                                                                         A.Dummy<StringSqlDataTypeRepresentation>(),
-                                                                                         A.Dummy<UtcDateTimeSqlDataTypeRepresentation>(),
-                                                                                         A.Dummy<VersionSqlDataTypeRepresentation>(),
-                                                                                         A.Dummy<XmlSqlDataTypeRepresentation>(),
-                                                                                     },
-                               };
+                        {
+                            Name = "Default Code Generated Scenario",
+                            ReferenceObject = ReferenceObjectForEquatableTestScenarios,
+                            ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new DecimalSqlDataTypeRepresentation[]
+                            {
+                                new DecimalSqlDataTypeRepresentation(
+                                    ReferenceObjectForEquatableTestScenarios.Precision,
+                                    ReferenceObjectForEquatableTestScenarios.Scale),
+                            },
+                            ObjectsThatAreNotEqualToReferenceObject = new DecimalSqlDataTypeRepresentation[]
+                            {
+                                new DecimalSqlDataTypeRepresentation(
+                                    notEqualPrecision,
+                                    ReferenceObjectForEquatableTestScenarios.Scale),
+                                new DecimalSqlDataTypeRepresentation(
+                                    ReferenceObjectForEquatableTestScenarios.Precision,
+                                    notEqualScale),
+                            },
+                            ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
+                            {
+                                A.Dummy<object>(),
+                                A.Dummy<string>(),
+                                A.Dummy<int>(),
+                                A.Dummy<int?>(),
+                                A.Dummy<Guid>(),
+                                A.Dummy<BigIntSqlDataTypeRepresentation>(),
+                                A.Dummy<BinarySqlDataTypeRepresentation>(),
+                                A.Dummy<IntSqlDataTypeRepresentation>(),
+                                A.Dummy<StringSqlDataTypeRepresentation>(),
+                                A.Dummy<UtcDateTimeSqlDataTypeRepresentation>(),
+                                A.Dummy<VersionSqlDataTypeRepresentation>(),
+                                A.Dummy<XmlSqlDataTypeRepresentation>(),
+                            },
+                        };
                     });
         }
 
