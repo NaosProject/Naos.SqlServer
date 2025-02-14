@@ -30,7 +30,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// also work on a <see cref="SqlStream"/>.
     /// In keeping this suite of tests in-sync we ensure standardized test coverage.
     /// </summary>
-    public static class SqlStreamTest
+    public static partial class SqlStreamTest
     {
         private const string DatabaseName = "master";  // change to locally created database name for local testing
         private const string InstanceName = "SQL2017"; // set to null for local testing

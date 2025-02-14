@@ -6,6 +6,7 @@
 
 namespace Naos.SqlServer.Protocol.Client
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
@@ -48,6 +49,16 @@ namespace Naos.SqlServer.Protocol.Client
                 }
                 else
                 {
+                    if (keyValuePair.Name.Length > StreamSchema.Tables.Tag.TagKeyMaxLength)
+                    {
+                        throw new InvalidOperationException(Invariant($"Tag {nameof(NamedValue<string>.Name)} exceeds the maximum allowed length of {StreamSchema.Tables.Tag.TagKeyMaxLength}."));
+                    }
+
+                    if ((keyValuePair.Value != null) && (keyValuePair.Value.Length > StreamSchema.Tables.Tag.TagValueMaxLength))
+                    {
+                        throw new InvalidOperationException(Invariant($"Tag {nameof(NamedValue<string>.Value)} exceeds the maximum allowed length of {StreamSchema.Tables.Tag.TagValueMaxLength}."));
+                    }
+
                     remaining.Add(keyValuePair);
                 }
             }
@@ -67,7 +78,7 @@ namespace Naos.SqlServer.Protocol.Client
 
                 // this is the sort order of the output of the sproc.
                 var orderedRemaining = remaining.OrderBy(_ => _.Name).ThenBy(_ => _.Value ?? XmlConversionTool.NullCanaryValue).ToList();
-                for (int idx = 0;
+                for (var idx = 0;
                     idx < orderedRemaining.Count;
                     idx++)
                 {
