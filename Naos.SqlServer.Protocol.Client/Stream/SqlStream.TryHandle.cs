@@ -34,20 +34,20 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlServerLocator = this.TryGetLocator(operation);
             var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
             var tagIdsForEntryCsv = this.GetIdsAddIfNecessaryTag(
-                                                             sqlServerLocator,
-                                                             operation.Tags ?? new List<NamedValue<string>>())
-                                                        .Select(_ => _.ToStringInvariantPreferred())
-                                                        .ToCsv();
+                    sqlServerLocator,
+                    operation.Tags ?? new List<NamedValue<string>>())
+                .Select(_ => _.ToStringInvariantPreferred())
+                .ToCsv();
             var storedProcOp = StreamSchema.Sprocs.TryHandleRecord.BuildExecuteStoredProcedureOp(
-                                                this.Name,
-                                                operation.Concern,
-                                                operation.Details ?? Invariant($"Created by {nameof(StandardTryHandleRecordOp)}."),
-                                                convertedRecordFilter,
-                                                tagIdsForEntryCsv,
-                                                operation.OrderRecordsBy,
-                                                operation.MinimumInternalRecordId,
-                                                operation.InheritRecordTags,
-                                                operation.StreamRecordItemsToInclude);
+                this.Name,
+                operation.Concern,
+                operation.Details ?? Invariant($"Created by {nameof(StandardTryHandleRecordOp)}."),
+                convertedRecordFilter,
+                tagIdsForEntryCsv,
+                operation.OrderRecordsBy,
+                operation.MinimumInternalRecordId,
+                operation.InheritRecordTags,
+                operation.StreamRecordItemsToInclude);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);

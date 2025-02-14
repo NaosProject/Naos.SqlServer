@@ -6,30 +6,14 @@
 
 namespace Naos.SqlServer.Protocol.Client
 {
-    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Data;
-    using System.Data.SqlClient;
     using System.Globalization;
-    using System.IO;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Xml.Linq;
-    using Naos.CodeAnalysis.Recipes;
-    using Naos.Database.Domain;
-    using Naos.Recipes.RunWithRetry;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.Compression;
-    using OBeautifulCode.Database.Recipes;
-    using OBeautifulCode.Enum.Recipes;
-    using OBeautifulCode.Representation.System;
-    using OBeautifulCode.Serialization;
     using OBeautifulCode.Type;
     using static System.FormattableString;
-    using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
     public partial class SqlStream
     {
@@ -42,7 +26,9 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="locator">The locator.</param>
         /// <param name="tags">The tags.</param>
         /// <returns>IReadOnlyList&lt;System.Int64&gt;.</returns>
-        public IReadOnlyList<long> GetIdsAddIfNecessaryTag(SqlServerLocator locator, IReadOnlyCollection<NamedValue<string>> tags)
+        public IReadOnlyList<long> GetIdsAddIfNecessaryTag(
+            SqlServerLocator locator,
+            IReadOnlyCollection<NamedValue<string>> tags)
         {
             if (tags == null)
             {
@@ -103,7 +89,9 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="locator">The locator.</param>
         /// <param name="tagIds">The tag identifiers.</param>
         /// <returns>IReadOnlyDictionary&lt;System.String, System.String&gt;.</returns>
-        public IReadOnlyCollection<NamedValue<string>> GetTagsByIds(SqlServerLocator locator, IReadOnlyCollection<long> tagIds)
+        public IReadOnlyCollection<NamedValue<string>> GetTagsByIds(
+            SqlServerLocator locator,
+            IReadOnlyCollection<long> tagIds)
         {
             if (tagIds == null)
             {

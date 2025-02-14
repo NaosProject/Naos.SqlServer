@@ -57,17 +57,17 @@ namespace Naos.SqlServer.Domain
                     IReadOnlyCollection<NamedValue<string>> tags)
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetIdsAddIfNecessaryTagSet)}]");
-                    var tagsXml = XmlConversionTool.GetTagsXmlString(tags);
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagsXml),
-                                             new XmlSqlDataTypeRepresentation(),
-                                             tagsXml),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.TagIdsXml),
-                                             new XmlSqlDataTypeRepresentation()),
-                                     };
+                    var tagsXml = tags.GetTagsXmlString();
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagsXml),
+                            new XmlSqlDataTypeRepresentation(),
+                            tagsXml),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.TagIdsXml),
+                            new XmlSqlDataTypeRepresentation()),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 

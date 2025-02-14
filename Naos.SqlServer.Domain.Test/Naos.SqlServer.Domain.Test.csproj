@@ -271,6 +271,7 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="ConsoleAbstraction.cs" />
+    <Compile Include="Logic\XmlConversionToolTest.cs" />
     <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinitionBaseTest.cs" />
     <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinitionBaseTest.designer.cs">
       <DependentUpon>InputParameterDefinitionBaseTest.cs</DependentUpon>
@@ -459,9 +460,7 @@
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Logic\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
