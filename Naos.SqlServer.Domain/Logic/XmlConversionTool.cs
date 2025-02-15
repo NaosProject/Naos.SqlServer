@@ -164,12 +164,12 @@ namespace Naos.SqlServer.Domain
 
             var tagsXmlBuilder = new StringBuilder();
             tagsXmlBuilder.Append(Invariant($"<{TagSetElementName}>"));
-            foreach (var tag in tags ?? new List<NamedValue<string>>())
+            foreach (var tag in tags)
             {
                 var escapedKey = new XElement("ForEscapingOnly", tag.Name).LastNode.ToString();
                 var escapedValue = tag.Value == null ? NullCanaryValue : new XElement("ForEscapingOnly", tag.Value).LastNode.ToString();
                 tagsXmlBuilder.Append(Invariant($"<{TagEntryElementName} "));
-                tagsXmlBuilder.Append(FormattableString.Invariant($"{TagEntryKeyAttributeName}=\"{escapedKey}\" {TagEntryValueAttributeName}=\"{escapedValue}\""));
+                tagsXmlBuilder.Append(Invariant($"{TagEntryKeyAttributeName}=\"{escapedKey}\" {TagEntryValueAttributeName}=\"{escapedValue}\""));
 
                 tagsXmlBuilder.Append("/>");
             }
@@ -198,7 +198,7 @@ namespace Naos.SqlServer.Domain
                 return EmptyTagSetXml;
             }
 
-            string result = null;
+            string result;
             var stringBuilder = new StringBuilder();
             using (var stringWriter = new StringWriter(stringBuilder, CultureInfo.InvariantCulture))
             using (var writer = XmlWriter.Create(stringWriter, XmlWriterSettings))
@@ -233,8 +233,10 @@ namespace Naos.SqlServer.Domain
         /// <param name="elements">The elements.</param>
         /// <param name="startAtOneInsteadOfZero">Optionally choose to start at 1/one instead of 0/zero; DEFAULT is 0/zero.</param>
         /// <returns>Ordinal dictionary of the elements.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "AtOne", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
-        public static IReadOnlyDictionary<string, string> ToOrdinalDictionary<TElement>(this IReadOnlyList<TElement> elements, bool startAtOneInsteadOfZero = false)
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "AtOne", Justification = NaosSuppressBecause.CA1702_CompoundWordsShouldBeCasedCorrectly_AnalyzerIsIncorrectlyDetectingCompoundWords)]
+        public static IReadOnlyDictionary<string, string> ToOrdinalDictionary<TElement>(
+            this IReadOnlyList<TElement> elements,
+            bool startAtOneInsteadOfZero = false)
         {
             if (elements == null)
             {
@@ -295,7 +297,7 @@ namespace Naos.SqlServer.Domain
         public class SerializableEntrySet
         {
             /// <summary>
-            /// Gets or sets the Entrys.
+            /// Gets or sets the Entries.
             /// </summary>
             [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's what the XML serializer plays nice with.")]
             [XmlElement(EntryElementName)] // Do NOT use XmlArray/XmlArrayItem attributes as it double nests...

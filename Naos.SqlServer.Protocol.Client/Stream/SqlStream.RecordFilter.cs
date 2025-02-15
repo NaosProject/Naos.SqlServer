@@ -40,10 +40,10 @@ namespace Naos.SqlServer.Protocol.Client
     public partial class SqlStream
     {
         private static readonly VersionMatchStrategy[] SupportedVersionMatchStrategies = new[]
-                                                                                         {
-                                                                                             VersionMatchStrategy.Any,
-                                                                                             VersionMatchStrategy.SpecifiedVersion,
-                                                                                         };
+        {
+            VersionMatchStrategy.Any,
+            VersionMatchStrategy.SpecifiedVersion,
+        };
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = NaosSuppressBecause.CA1502_AvoidExcessiveComplexity_DisagreeWithAssessment)]
         private RecordFilterConvertedForStoredProcedure ConvertRecordFilter(
@@ -51,33 +51,33 @@ namespace Naos.SqlServer.Protocol.Client
             SqlServerLocator sqlServerLocator)
         {
             recordFilter.VersionMatchStrategy
-                        .MustForArg(nameof(recordFilter))
-                        .BeElementIn(SupportedVersionMatchStrategies);
+                .MustForArg(nameof(recordFilter))
+                .BeElementIn(SupportedVersionMatchStrategies);
 
             recordFilter.TagMatchStrategy
-                     .MustForArg(Invariant($"{nameof(recordFilter)}.{nameof(recordFilter.TagMatchStrategy)}"))
-                     .BeEqualTo(TagMatchStrategy.RecordContainsAllQueryTags, "Currently only supported tag strategy.");
+                .MustForArg(Invariant($"{nameof(recordFilter)}.{nameof(recordFilter.TagMatchStrategy)}"))
+                .BeEqualTo(TagMatchStrategy.RecordContainsAllQueryTags, "Currently only supported tag strategy.");
 
             var internalRecordIdsCsv = !recordFilter.InternalRecordIds?.Any() ?? true
                 ? null
                 : recordFilter.InternalRecordIds
-                              .Select(_ => _.ToStringInvariantPreferred())
-                              .Distinct()
-                              .ToCsv();
+                    .Select(_ => _.ToStringInvariantPreferred())
+                    .Distinct()
+                    .ToCsv();
 
             var tagIdsCsv = !recordFilter.Tags?.Any() ?? true
                 ? null
                 : this.GetIdsAddIfNecessaryTag(
-                           sqlServerLocator,
-                           recordFilter.Tags)
-                      .Select(_ => _.ToStringInvariantPreferred())
-                      .Distinct()
-                      .ToCsv();
+                        sqlServerLocator,
+                        recordFilter.Tags)
+                    .Select(_ => _.ToStringInvariantPreferred())
+                    .Distinct()
+                    .ToCsv();
 
             var distinctIdentifierTypes = (recordFilter.Ids ?? new List<StringSerializedIdentifier>())
-                                         .Select(_ => _.IdentifierType)
-                                         .Distinct()
-                                         .ToList();
+                .Select(_ => _.IdentifierType)
+                .Distinct()
+                .ToList();
 
             IdentifiedType GetIdentifiedType(
                 TypeRepresentation typeToConvert)
@@ -92,58 +92,58 @@ namespace Naos.SqlServer.Protocol.Client
                 GetIdentifiedType);
 
             var identifierTypes = (recordFilter.IdTypes ?? new List<TypeRepresentation>())
-                                               .Select(GetIdentifiedType)
-                                               .ToList();
+                .Select(GetIdentifiedType)
+                .ToList();
             var identifierTypeIdsCsv = !identifierTypes.Any()
                 ? null
                 : identifierTypes
-                 .Select(
-                      _ =>
-                          recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
-                              ? _.IdWithoutVersion.ToStringInvariantPreferred()
-                              : _.IdWithVersion.ToStringInvariantPreferred())
-                 .Distinct()
-                 .ToCsv();
+                    .Select(
+                        _ =>
+                            recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
+                                ? _.IdWithoutVersion.ToStringInvariantPreferred()
+                                : _.IdWithVersion.ToStringInvariantPreferred())
+                    .Distinct()
+                    .ToCsv();
 
             var objectTypes = (recordFilter.ObjectTypes ?? new List<TypeRepresentation>())
-                                          .Select(GetIdentifiedType)
-                                          .ToList();
+                .Select(GetIdentifiedType)
+                .ToList();
             var objectTypeIdsCsv = !objectTypes.Any()
                 ? null
                 : objectTypes
-                 .Select(
-                      _ =>
-                          recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
-                              ? _.IdWithoutVersion.ToStringInvariantPreferred()
-                              : _.IdWithVersion.ToStringInvariantPreferred())
-                 .Distinct()
-                 .ToCsv();
+                    .Select(
+                        _ =>
+                            recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
+                                ? _.IdWithoutVersion.ToStringInvariantPreferred()
+                                : _.IdWithVersion.ToStringInvariantPreferred())
+                    .Distinct()
+                    .ToCsv();
 
             var deprecatedIdTypes = (recordFilter.DeprecatedIdTypes ?? new List<TypeRepresentation>())
-                                                .Select(GetIdentifiedType)
-                                                .ToList();
+                .Select(GetIdentifiedType)
+                .ToList();
             var deprecatedIdTypeIdsCsv = !deprecatedIdTypes.Any()
                 ? null
                 : deprecatedIdTypes
-                 .Select(
-                      _ =>
-                          recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
-                              ? _.IdWithoutVersion.ToStringInvariantPreferred()
-                              : _.IdWithVersion.ToStringInvariantPreferred())
-                 .Distinct()
-                 .ToCsv();
+                    .Select(
+                        _ =>
+                            recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
+                                ? _.IdWithoutVersion.ToStringInvariantPreferred()
+                                : _.IdWithVersion.ToStringInvariantPreferred())
+                    .Distinct()
+                    .ToCsv();
 
             var stringIdsToMatchXml = !recordFilter.Ids?.Any() ?? true
                 ? null
                 : recordFilter.Ids
-                              .Select(
-                                   _ => new Tuple<string, int>(
-                                       _.StringSerializedId,
-                                       recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
-                                           ? typeToIdMap[_.IdentifierType].IdWithoutVersion
-                                           : typeToIdMap[_.IdentifierType].IdWithVersion))
-                              .ToList()
-                              .GetTagsXmlString();
+                    .Select(
+                        _ => new Tuple<string, int>(
+                            _.StringSerializedId,
+                            recordFilter.VersionMatchStrategy == VersionMatchStrategy.Any
+                                ? typeToIdMap[_.IdentifierType].IdWithoutVersion
+                                : typeToIdMap[_.IdentifierType].IdWithVersion))
+                    .ToList()
+                    .GetTagsXmlString();
 
             var result = new RecordFilterConvertedForStoredProcedure(
                 internalRecordIdsCsv,
