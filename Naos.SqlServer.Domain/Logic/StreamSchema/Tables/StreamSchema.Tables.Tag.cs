@@ -102,7 +102,7 @@ CREATE TABLE [{streamName}].[Tag](
 
 SET ANSI_PADDING ON
 
-CREATE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(TagKey)}_{nameof(TagValue)}_Asc] ON [{streamName}].[Tag]
+CREATE UNIQUE NONCLUSTERED INDEX [IX_{nameof(Tag)}_{nameof(TagKey)}_{nameof(TagValue)}_Asc] ON [{streamName}].[Tag]
 (
 	[{nameof(TagKey)}] ASC,
 	[{nameof(TagValue)}] ASC
