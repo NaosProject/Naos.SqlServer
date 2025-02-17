@@ -56,9 +56,17 @@ RETURNS TABLE
 AS
 RETURN
 		      SELECT
-		        C.value('(@{XmlConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Tag.TagKey.SqlDataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
+                -- NOTE: Besides for Record and Handling Tags, we also use this function to parse XML containing String Serialized Ids.  
+                -- The .NET client code uses the same XML template format for Tags as it does for String Serialized Ids (it treats them as tags).
+                -- The Tag Key is the String Serialized Id and the Tag Value is the Identifier Type Id (integer in string format).
+                -- In the past, both Tags Keys and String Serialized Ids were defined as NVARCHAR(450) but now these support different maximum character values.
+                -- So here we need to use the greater of the two.  That's String Serialized Id from the Record table for the Tag Key column 
+                -- and Tag Value value from the Tag table for Tag Value column (the Identifier Type Id, as an integer, will only have a dozen or so characters max).  
+                -- In the future, we should not use this function for String Serialized Ids.  That should get it's own XML template and there should
+                -- be a function dedicated to parsing that XML into a table.
+		        C.value('(@{XmlConversionTool.TagEntryKeyAttributeName})[1]', '{Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax}') as [{Tables.Tag.TagKey.Name}]
 		      , [{Tables.Tag.TagValue.Name}] = CASE C.value('(@{XmlConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.SqlDataType.DeclarationInSqlSyntax}')
-			     WHEN '---NULL---' THEN NULL
+			     WHEN '{XmlConversionTool.NullCanaryValue}' THEN NULL
 				 ELSE C.value('(@{XmlConversionTool.TagEntryValueAttributeName})[1]', '{Tables.Tag.TagValue.SqlDataType.DeclarationInSqlSyntax}')
 				 END
 		      FROM

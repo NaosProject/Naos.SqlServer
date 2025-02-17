@@ -204,16 +204,16 @@ namespace Naos.SqlServer.Domain
             using (var writer = XmlWriter.Create(stringWriter, XmlWriterSettings))
             {
                 var serializableTagSetItems = new SerializableTagSet
-                                              {
-                                                  Tags = tags.Select(
-                                                                  _ => new SerializableTagSetItem
-                                                                       {
-                                                                           Key = _.Item1,
-                                                                           Value = _.Item2.ToStringInvariantPreferred(),
-                                                                       })
-                                                             .Distinct()
-                                                             .ToArray(),
-                                              };
+                {
+                    Tags = tags.Select(
+                            _ => new SerializableTagSetItem
+                            {
+                                Key = _.Item1,
+                                Value = _.Item2.ToStringInvariantPreferred(),
+                            })
+                        .Distinct()
+                        .ToArray(),
+                };
 
                 TagXmlSerializer.Serialize(
                     writer,
