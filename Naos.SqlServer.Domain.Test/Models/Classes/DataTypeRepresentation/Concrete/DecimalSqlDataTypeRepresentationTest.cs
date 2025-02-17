@@ -72,25 +72,31 @@ namespace Naos.SqlServer.Domain.Test
                 .AddScenario(
                     () =>
                     {
+                        var precision = A.Dummy<byte>().ThatIs(_ => (_ >= 5) && (_ <= 10));
+                        var referenceObjectForEquatableTestScenarios = new DecimalSqlDataTypeRepresentation(
+                                precision,
+                                A.Dummy<byte>().ThatIs(_ => (_ >= 5) && (_ <= precision)));
+
                         var notEqualPrecision = A.Dummy<byte>().ThatIs(_ => (_ > 10) && (_ <= 38));
                         var notEqualScale = A.Dummy<byte>().ThatIs(_ => (_ < 5));
+
                         return new EquatableTestScenario<DecimalSqlDataTypeRepresentation>
                         {
                             Name = "Default Code Generated Scenario",
-                            ReferenceObject = ReferenceObjectForEquatableTestScenarios,
+                            ReferenceObject = referenceObjectForEquatableTestScenarios,
                             ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new DecimalSqlDataTypeRepresentation[]
                             {
                                 new DecimalSqlDataTypeRepresentation(
-                                    ReferenceObjectForEquatableTestScenarios.Precision,
-                                    ReferenceObjectForEquatableTestScenarios.Scale),
+                                    referenceObjectForEquatableTestScenarios.Precision,
+                                    referenceObjectForEquatableTestScenarios.Scale),
                             },
                             ObjectsThatAreNotEqualToReferenceObject = new DecimalSqlDataTypeRepresentation[]
                             {
                                 new DecimalSqlDataTypeRepresentation(
                                     notEqualPrecision,
-                                    ReferenceObjectForEquatableTestScenarios.Scale),
+                                    referenceObjectForEquatableTestScenarios.Scale),
                                 new DecimalSqlDataTypeRepresentation(
-                                    ReferenceObjectForEquatableTestScenarios.Precision,
+                                    referenceObjectForEquatableTestScenarios.Precision,
                                     notEqualScale),
                             },
                             ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
