@@ -7,10 +7,13 @@
 namespace Naos.SqlServer.Protocol.Client.Test
 {
     using System;
+    using System.Linq;
     using FakeItEasy;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.AutoFakeItEasy;
+    using OBeautifulCode.String.Recipes;
     using OBeautifulCode.Type;
     using Xunit;
     using static System.FormattableString;
@@ -152,6 +155,26 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             // Assert
             actual.AsTest().Must().BeNull();
+        }
+
+        [Fact]
+        public static void GetLatestObjectById___Should_return_expected_object____When_matching_on_tag_within_a_large_set_of_tags()
+        {
+            // Arrange
+            var tags = Some.ReadOnlyDummies<Guid>(1000)
+                .Select(_ => new NamedValue<string>("some-tag-key", _.ToStringInvariantPreferred()))
+                .ToList();
+
+            var expected = new MyObject(A.Dummy<string>(), A.Dummy<string>());
+
+            SharedStream.PutWithId("some-id", expected, tags);
+
+            // Act
+            var actual = SharedStream.GetLatestObjectById<string, MyObject>("some-id", tagsToMatch: new[] { tags[500] });
+
+            // Assert
+            actual.Id.AsTest().Must().BeEqualTo(expected.Id);
+            actual.Field.AsTest().Must().BeEqualTo(expected.Field);
         }
     }
 }
