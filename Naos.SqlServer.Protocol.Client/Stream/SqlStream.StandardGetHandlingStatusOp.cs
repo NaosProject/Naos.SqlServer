@@ -6,7 +6,6 @@
 
 namespace Naos.SqlServer.Protocol.Client
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -16,11 +15,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Enum.Recipes;
-    using OBeautifulCode.Representation.System;
     using OBeautifulCode.String.Recipes;
-    using OBeautifulCode.Type;
-    using OBeautifulCode.Type.Recipes;
-    using static System.FormattableString;
 
     public partial class SqlStream
     {
@@ -37,7 +32,10 @@ namespace Naos.SqlServer.Protocol.Client
             var sqlServerLocator = this.TryGetLocator(operation);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
-            var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
+            var convertedRecordFilter = this.ConvertRecordFilter(
+                operation.RecordFilter,
+                null,
+                sqlServerLocator);
 
             var handlingTagsCsv = !operation.HandlingFilter.Tags?.Any() ?? true
                 ? null

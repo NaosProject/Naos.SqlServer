@@ -30,9 +30,17 @@ namespace Naos.SqlServer.Protocol.Client
             VersionMatchStrategy.SpecifiedVersion,
         };
 
+        private static readonly RecordsToFilterSelectionStrategy[] SupportedRecordsToFilterSelectionStrategy = new[]
+        {
+            RecordsToFilterSelectionStrategy.All,
+            RecordsToFilterSelectionStrategy.LatestById,
+            RecordsToFilterSelectionStrategy.LatestByIdAndObjectType,
+        };
+
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = NaosSuppressBecause.CA1502_AvoidExcessiveComplexity_DisagreeWithAssessment)]
         private RecordFilterConvertedForStoredProcedure ConvertRecordFilter(
             RecordFilter recordFilter,
+            RecordsToFilterCriteria recordsToFilterCriteria,
             SqlServerLocator sqlServerLocator)
         {
             recordFilter.VersionMatchStrategy
@@ -130,6 +138,17 @@ namespace Naos.SqlServer.Protocol.Client
                     .ToList()
                     .GetTagsXmlString();
 
+            if (recordsToFilterCriteria != null)
+            {
+                recordsToFilterCriteria.RecordsToFilterSelectionStrategy
+                    .MustForArg(Invariant($"{nameof(recordsToFilterCriteria)}.{nameof(RecordsToFilterCriteria.RecordsToFilterSelectionStrategy)}"))
+                    .BeElementIn(SupportedRecordsToFilterSelectionStrategy);
+
+                recordsToFilterCriteria.VersionMatchStrategy
+                    .MustForArg(Invariant($"{nameof(recordsToFilterCriteria)}.{nameof(RecordsToFilterCriteria.VersionMatchStrategy)}"))
+                    .BeElementIn(SupportedVersionMatchStrategies);
+            }
+
             var result = new RecordFilterConvertedForStoredProcedure(
                 internalRecordIdsCsv,
                 identifierTypeIdsCsv,
@@ -139,6 +158,7 @@ namespace Naos.SqlServer.Protocol.Client
                 recordFilter.TagMatchStrategy,
                 recordFilter.VersionMatchStrategy,
                 deprecatedIdTypeIdsCsv);
+
             return result;
         }
     }

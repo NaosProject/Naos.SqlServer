@@ -17,12 +17,6 @@ namespace Naos.SqlServer.Protocol.Client
 
     public partial class SqlStream
     {
-        private static readonly FilteredRecordsSelectionStrategy[] SupportedFilteredRecordsSelectionStrategy = new[]
-        {
-            FilteredRecordsSelectionStrategy.All,
-            FilteredRecordsSelectionStrategy.LatestById,
-        };
-
         /// <inheritdoc />
         public override IReadOnlyCollection<long> Execute(
             StandardGetInternalRecordIdsOp operation)
@@ -31,16 +25,15 @@ namespace Naos.SqlServer.Protocol.Client
 
             var sqlServerLocator = this.TryGetLocator(operation);
 
-            var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
-
-            operation.FilteredRecordsSelectionStrategy
-                .MustForArg(nameof(operation.FilteredRecordsSelectionStrategy))
-                .BeElementIn(SupportedFilteredRecordsSelectionStrategy);
+            var convertedRecordFilter = this.ConvertRecordFilter(
+                operation.RecordFilter,
+                operation.RecordsToFilterCriteria,
+                sqlServerLocator);
 
             var storedProcOp = StreamSchema.Sprocs.GetInternalRecordIds.BuildExecuteStoredProcedureOp(
                 this.Name,
                 convertedRecordFilter,
-                operation.FilteredRecordsSelectionStrategy);
+                operation.RecordsToFilterCriteria);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);

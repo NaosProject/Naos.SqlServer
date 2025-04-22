@@ -205,7 +205,7 @@ namespace Naos.SqlServer.Domain
   )
 AS
 BEGIN
-    {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, true)}
+    {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, includeHandlingTags: true, includeRecordsToFilterCriteria: false)}
 
     SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
         SELECT

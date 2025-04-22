@@ -6,19 +6,9 @@
 
 namespace Naos.SqlServer.Protocol.Client
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Linq;
-    using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.DateTime.Recipes;
-    using OBeautifulCode.Serialization;
-    using OBeautifulCode.String.Recipes;
-    using static System.FormattableString;
 
     public partial class SqlStream
     {
@@ -30,7 +20,10 @@ namespace Naos.SqlServer.Protocol.Client
 
             var sqlServerLocator = this.TryGetLocator(operation);
 
-            var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
+            var convertedRecordFilter = this.ConvertRecordFilter(
+                operation.RecordFilter,
+                null,
+                sqlServerLocator);
 
             var storedProcOp = StreamSchema.Sprocs.GetLatestStringSerializedObject.BuildExecuteStoredProcedureOp(
                 this.Name,
@@ -40,8 +33,8 @@ namespace Naos.SqlServer.Protocol.Client
             var sprocResult = sqlProtocol.Execute(storedProcOp);
 
             var result = sprocResult
-                              .OutputParameters[nameof(StreamSchema.Sprocs.GetLatestStringSerializedObject.OutputParamName.StringSerializedObject)]
-                              .GetValueOfType<string>();
+                .OutputParameters[nameof(StreamSchema.Sprocs.GetLatestStringSerializedObject.OutputParamName.StringSerializedObject)]
+                .GetValueOfType<string>();
 
             return result;
         }

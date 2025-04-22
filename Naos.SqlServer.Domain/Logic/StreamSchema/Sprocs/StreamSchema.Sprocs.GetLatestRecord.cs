@@ -284,7 +284,7 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
-    {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
+    {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, includeHandlingTags: false, includeRecordsToFilterCriteria: false)}
 
     DECLARE @{mostRecentMatchingRecordId} {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
     SELECT @{mostRecentMatchingRecordId} = (SELECT TOP 1 [{Tables.Record.Id.Name}]

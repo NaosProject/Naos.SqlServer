@@ -10,6 +10,7 @@ namespace Naos.SqlServer.Domain
     using System.Diagnostics.CodeAnalysis;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
+    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     /// <summary>
@@ -77,6 +78,16 @@ namespace Naos.SqlServer.Domain
                     /// The deprecated identifier event type identifiers as CSV.
                     /// </summary>
                     DeprecatedIdEventTypeIdsCsv,
+
+                    /// <summary>
+                    /// The <see cref="RecordsToFilterCriteria.RecordsToFilterSelectionStrategy"/>.
+                    /// </summary>
+                    RecordsToFilterSelectionStrategy,
+
+                    /// <summary>
+                    /// The <see cref="RecordsToFilterCriteria.VersionMatchStrategy"/>.
+                    /// </summary>
+                    RecordsToFilterVersionMatchStrategy,
                 }
 
                 /// <summary>
@@ -96,10 +107,12 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="convertedRecordFilter">Converted form of <see cref="RecordFilter" />.</param>
+                /// <param name="recordsToFilterCriteria">Specifies how to determine the records that are input into a <see cref="RecordFilter"/>.</param>
                 /// <returns>Operation to execute stored procedure.</returns>
                 public static ExecuteStoredProcedureOp BuildExecuteStoredProcedureOp(
                     string streamName,
-                    RecordFilterConvertedForStoredProcedure convertedRecordFilter)
+                    RecordFilterConvertedForStoredProcedure convertedRecordFilter,
+                    RecordsToFilterCriteria recordsToFilterCriteria)
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetDistinctStringSerializedIds)}]");
 
@@ -137,6 +150,14 @@ namespace Naos.SqlServer.Domain
                             nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
                             convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.RecordsToFilterSelectionStrategy),
+                            new StringSqlDataTypeRepresentation(false, 50),
+                            recordsToFilterCriteria.RecordsToFilterSelectionStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.RecordsToFilterVersionMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 20),
+                            recordsToFilterCriteria.VersionMatchStrategy.ToString()),
                         new OutputParameterDefinition<string>(
                             nameof(OutputParamName.StringIdentifiersOutputXml),
                             new XmlSqlDataTypeRepresentation()),
@@ -176,13 +197,15 @@ namespace Naos.SqlServer.Domain
  ,  @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
  ,  @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
  ,  @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.RecordsToFilterSelectionStrategy} {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax} = '{RecordsToFilterSelectionStrategy.All}' -- This parameter was introduced after the stored procedure shipped, so we are defaulting here for backward compatibility.  Existing clients that have not taken package updates will get the default value for this parameter.
+ ,  @{InputParamName.RecordsToFilterVersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = '{VersionMatchStrategy.Any}' -- This parameter was introduced after the stored procedure shipped, so we are defaulting here for backward compatibility.  Existing clients that have not taken package updates will get the default value for this parameter.
  ,  @{OutputParamName.StringIdentifiersOutputXml} AS {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
     DECLARE @{resultTableName} TABLE ([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 
-    {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
+    {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, includeHandlingTags: false, includeRecordsToFilterCriteria: true)}
 
     INSERT INTO @{resultTableName} ([{Tables.TypeWithVersion.Id.Name}], [{Tables.Record.StringSerializedId.Name}])
     SELECT DISTINCT

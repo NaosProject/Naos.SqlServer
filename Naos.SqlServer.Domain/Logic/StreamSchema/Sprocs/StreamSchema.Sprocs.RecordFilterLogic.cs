@@ -71,6 +71,16 @@ namespace Naos.SqlServer.Domain
                     /// The deprecated identifier event type identifiers as CSV.
                     /// </summary>
                     DeprecatedIdEventTypeIdsCsv,
+
+                    /// <summary>
+                    /// The <see cref="RecordsToFilterCriteria.RecordsToFilterSelectionStrategy"/>.
+                    /// </summary>
+                    RecordsToFilterSelectionStrategy,
+
+                    /// <summary>
+                    /// The <see cref="RecordsToFilterCriteria.VersionMatchStrategy"/>.
+                    /// </summary>
+                    RecordsToFilterVersionMatchStrategy,
                 }
 
                 /// <summary>
@@ -78,12 +88,14 @@ namespace Naos.SqlServer.Domain
                 /// </summary>
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="recordIdsToConsiderTable">The record ids to consider table.</param>
-                /// <param name="includeHandlingTags">A value indicating whether or not to add hanlding tag logic.</param>
+                /// <param name="includeHandlingTags">A value indicating whether or not to add handling tag logic.</param>
+                /// <param name="includeRecordsToFilterCriteria">A value indicating whether or not to include logic to honor a specified <see cref="RecordsToFilterCriteria"/>.</param>
                 /// <returns>Injection SQL for filtering.</returns>
                 public static string BuildRecordFilterToBuildRecordsToConsiderTable(
                     string streamName,
                     string recordIdsToConsiderTable,
-                    bool includeHandlingTags = false)
+                    bool includeHandlingTags,
+                    bool includeRecordsToFilterCriteria)
                 {
                     const string recordTagIdsTable = "RecordTagIdsTable";
                     const string handlingTagIdsTable = "HandlingTagIdsTable";
@@ -130,6 +142,51 @@ namespace Naos.SqlServer.Domain
         END
     END
     -- END APPLY HANDLING TAG FILTER
+    -----------------------------------------------------------------
+");
+
+                    var recordsToFilterCriteriaMixIn = !includeRecordsToFilterCriteria
+                        ? string.Empty
+                        : Invariant(
+                            $@"
+    -----------------------------------------------------------------
+    -- BEGIN APPLY RECORDS TO FILTER CRITERIA
+    -- The .NET client guarantees that the only other supported value is '{RecordsToFilterSelectionStrategy.All}'.
+    -- In that case, there's nothing to do.  If @{isRecordIdsToConsiderTableInitializedBit} = 0, the remaining
+    -- filters consider the universe of records available for filtering to be all records.
+    IF (@{InputParamName.RecordsToFilterSelectionStrategy} = '{RecordsToFilterSelectionStrategy.LatestById}')
+    BEGIN
+        INSERT INTO @{recordIdsToConsiderTable}
+        SELECT Max(r.[{Tables.Record.Id.Name}])
+        FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+        GROUP BY r.[{Tables.Record.StringSerializedId.Name}]
+
+        SET @{isRecordIdsToConsiderTableInitializedBit} = 1
+    END
+    ELSE
+    BEGIN
+        IF (@{InputParamName.RecordsToFilterSelectionStrategy} = '{RecordsToFilterSelectionStrategy.LatestByIdAndObjectType}')
+        BEGIN
+            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            BEGIN
+                INSERT INTO @{recordIdsToConsiderTable}
+                SELECT Max(r.[{Tables.Record.Id.Name}])
+                FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                GROUP BY r.[{Tables.Record.StringSerializedId.Name}], r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}]
+            END
+            ELSE
+            BEGIN
+                INSERT INTO @{recordIdsToConsiderTable}
+                SELECT Max(r.[{Tables.Record.Id.Name}])
+                FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
+                GROUP BY r.[{Tables.Record.StringSerializedId.Name}], r.[{Tables.Record.ObjectTypeWithVersionId.Name}]
+            END
+
+            SET @{isRecordIdsToConsiderTableInitializedBit} = 1
+        END
+    END
+
+    -- END APPLY RECORDS TO FILTER SELECTION STRATEGY
     -----------------------------------------------------------------
 ");
 
@@ -188,6 +245,14 @@ namespace Naos.SqlServer.Domain
     --BEGIN
     --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.DeprecatedIdEventTypeIdsCsv}')
     --END
+    --IF (@{InputParamName.RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.All}' AND @{InputParamName.RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.LatestById}' AND @{InputParamName.RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.LatestByIdAndObjectType}')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.RecordsToFilterSelectionStrategy}')
+    --END
+    --IF (@{InputParamName.RecordsToFilterVersionMatchStrategy} <> '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.VersionMatchStrategy} <> '{VersionMatchStrategy.Any}')
+    --BEGIN
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.RecordsToFilterVersionMatchStrategy}')
+    --END
     -- END PARAM CHECK
     -----------------------------------------------------------------
 
@@ -198,6 +263,8 @@ namespace Naos.SqlServer.Domain
     SET @{isRecordIdsToConsiderTableInitializedBit} = 0
     -- END DECLARE ASSETS
     -----------------------------------------------------------------
+
+{recordsToFilterCriteriaMixIn}
 
     -----------------------------------------------------------------
     -- BEGIN APPLY INTERNAL RECORD ID FILTER

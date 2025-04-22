@@ -427,7 +427,7 @@ BEGIN
 
 	IF (@{shouldAttemptHandling} = 1)
 	BEGIN
-		{RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
+		{RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, includeHandlingTags: false, includeRecordsToFilterCriteria: false)}
 
         -- Remove records under the minimum record id from consideration
         DELETE FROM @{recordIdsToConsiderTable}

@@ -24,11 +24,15 @@ namespace Naos.SqlServer.Protocol.Client
 
             var sqlServerLocator = this.TryGetLocator(operation);
 
-            var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
+            var convertedRecordFilter = this.ConvertRecordFilter(
+                operation.RecordFilter,
+                operation.RecordsToFilterCriteria,
+                sqlServerLocator);
 
             var storedProcOp = StreamSchema.Sprocs.GetDistinctStringSerializedIds.BuildExecuteStoredProcedureOp(
                 this.Name,
-                convertedRecordFilter);
+                convertedRecordFilter,
+                operation.RecordsToFilterCriteria);
 
             var sqlProtocol = this.BuildSqlOperationsProtocol(sqlServerLocator);
             var sprocResult = sqlProtocol.Execute(storedProcOp);

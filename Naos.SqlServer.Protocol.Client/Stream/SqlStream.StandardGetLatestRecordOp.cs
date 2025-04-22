@@ -29,7 +29,10 @@ namespace Naos.SqlServer.Protocol.Client
             operation.MustForArg(nameof(operation)).NotBeNull();
 
             var sqlServerLocator = this.TryGetLocator(operation);
-            var convertedRecordFilter = this.ConvertRecordFilter(operation.RecordFilter, sqlServerLocator);
+            var convertedRecordFilter = this.ConvertRecordFilter(
+                operation.RecordFilter,
+                null,
+                sqlServerLocator);
 
             var storedProcOp = StreamSchema.Sprocs.GetLatestRecord.BuildExecuteStoredProcedureOp(
                 this.Name,
