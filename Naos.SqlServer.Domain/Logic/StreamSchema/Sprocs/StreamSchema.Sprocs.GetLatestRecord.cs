@@ -61,12 +61,12 @@ namespace Naos.SqlServer.Domain
                     TagIdsToMatchCsv,
 
                     /// <summary>
-                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
+                    /// The <see cref="RecordFilter.TagMatchStrategy"/>.
                     /// </summary>
                     TagMatchStrategy,
 
                     /// <summary>
-                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.
+                    /// The <see cref="RecordFilter.VersionMatchStrategy"/>.
                     /// </summary>
                     VersionMatchStrategy,
 
@@ -84,7 +84,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Output parameter names.
                 /// </summary>
-                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public enum OutputParamName
                 {
                     /// <summary>

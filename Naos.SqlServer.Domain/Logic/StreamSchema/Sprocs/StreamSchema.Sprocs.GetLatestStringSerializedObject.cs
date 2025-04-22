@@ -62,12 +62,12 @@ namespace Naos.SqlServer.Domain
                     TagIdsToMatchCsv,
 
                     /// <summary>
-                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
+                    /// The <see cref="RecordFilter.TagMatchStrategy"/>.
                     /// </summary>
                     TagMatchStrategy,
 
                     /// <summary>
-                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.
+                    /// The <see cref="RecordFilter.VersionMatchStrategy"/>.
                     /// </summary>
                     VersionMatchStrategy,
 

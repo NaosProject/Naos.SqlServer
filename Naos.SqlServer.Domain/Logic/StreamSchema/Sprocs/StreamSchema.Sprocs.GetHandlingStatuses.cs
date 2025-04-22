@@ -73,12 +73,12 @@ namespace Naos.SqlServer.Domain
                     HandlingTagIdsToMatchCsv,
 
                     /// <summary>
-                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
+                    /// The <see cref="RecordFilter.TagMatchStrategy"/>.
                     /// </summary>
                     TagMatchStrategy,
 
                     /// <summary>
-                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.
+                    /// The <see cref="RecordFilter.VersionMatchStrategy"/>.
                     /// </summary>
                     VersionMatchStrategy,
 
@@ -118,56 +118,56 @@ namespace Naos.SqlServer.Domain
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetHandlingStatuses)}]");
                     var currentStatusesCsv = currentHandlingStatuses?.Select(_ => _.ToString()).ToCsv();
 
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.Concern),
-                                             Tables.Handling.Concern.SqlDataType,
-                                             concern),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.InternalRecordIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.InternalRecordIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.IdentifierTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.IdentifierTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.ObjectTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.ObjectTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.StringIdentifiersXml),
-                                             new XmlSqlDataTypeRepresentation(),
-                                             convertedRecordFilter.StringIdsToMatchXml),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagIdsToMatchCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.TagIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.CurrentStatusesCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             currentStatusesCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.HandlingTagIdsToMatchCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             handlingTagIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagMatchStrategy),
-                                             new StringSqlDataTypeRepresentation(false, 40),
-                                             convertedRecordFilter.TagMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.VersionMatchStrategy),
-                                             new StringSqlDataTypeRepresentation(false, 20),
-                                             convertedRecordFilter.VersionMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.RecordIdHandlingStatusXml),
-                                             new XmlSqlDataTypeRepresentation()),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.Concern),
+                            Tables.Handling.Concern.SqlDataType,
+                            concern),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.InternalRecordIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.InternalRecordIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.IdentifierTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.IdentifierTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.ObjectTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.ObjectTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.StringIdentifiersXml),
+                            new XmlSqlDataTypeRepresentation(),
+                            convertedRecordFilter.StringIdsToMatchXml),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagIdsToMatchCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.TagIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.CurrentStatusesCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            currentStatusesCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.HandlingTagIdsToMatchCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            handlingTagIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 40),
+                            convertedRecordFilter.TagMatchStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.VersionMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 20),
+                            convertedRecordFilter.VersionMatchStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.RecordIdHandlingStatusXml),
+                            new XmlSqlDataTypeRepresentation()),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 

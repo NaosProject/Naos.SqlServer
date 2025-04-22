@@ -6,12 +6,10 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     /// <summary>
@@ -66,12 +64,12 @@ namespace Naos.SqlServer.Domain
                     TagIdsToMatchCsv,
 
                     /// <summary>
-                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy" />.
+                    /// The <see cref="RecordFilter.TagMatchStrategy" />.
                     /// </summary>
                     TagMatchStrategy,
 
                     /// <summary>
-                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy" />.
+                    /// The <see cref="RecordFilter.VersionMatchStrategy" />.
                     /// </summary>
                     VersionMatchStrategy,
 
@@ -84,7 +82,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Output parameter names.
                 /// </summary>
-                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public enum OutputParamName
                 {
                     /// <summary>
@@ -103,46 +101,46 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     RecordFilterConvertedForStoredProcedure convertedRecordFilter)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].[{nameof(GetDistinctStringSerializedIds)}]");
+                    var sprocName = Invariant($"[{streamName}].[{nameof(GetDistinctStringSerializedIds)}]");
 
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.InternalRecordIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.InternalRecordIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.IdentifierTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.IdentifierTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.ObjectTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.ObjectTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.StringIdentifiersXml),
-                                             new XmlSqlDataTypeRepresentation(),
-                                             convertedRecordFilter.StringIdsToMatchXml),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagIdsToMatchCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.TagIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagMatchStrategy),
-                                             new StringSqlDataTypeRepresentation(false, 40),
-                                             convertedRecordFilter.TagMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.VersionMatchStrategy),
-                                             new StringSqlDataTypeRepresentation(false, 20),
-                                             convertedRecordFilter.VersionMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.StringIdentifiersOutputXml),
-                                             new XmlSqlDataTypeRepresentation()),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.InternalRecordIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.InternalRecordIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.IdentifierTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.IdentifierTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.ObjectTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.ObjectTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.StringIdentifiersXml),
+                            new XmlSqlDataTypeRepresentation(),
+                            convertedRecordFilter.StringIdsToMatchXml),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagIdsToMatchCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.TagIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 40),
+                            convertedRecordFilter.TagMatchStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.VersionMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 20),
+                            convertedRecordFilter.VersionMatchStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.StringIdentifiersOutputXml),
+                            new XmlSqlDataTypeRepresentation()),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -155,16 +153,8 @@ namespace Naos.SqlServer.Domain
                 /// <param name="streamName">Name of the stream.</param>
                 /// <param name="asAlter">An optional value indicating whether or not to generate a ALTER versus CREATE; DEFAULT is false and will generate a CREATE script.</param>
                 /// <returns>Creation script for creating the stored procedure.</returns>
-                [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                    "Microsoft.Naming",
-                    "CA1702:CompoundWordsShouldBeCasedCorrectly",
-                    MessageId = "ForGet",
-                    Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
-                [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                    "Microsoft.Naming",
-                    "CA1704:IdentifiersShouldBeSpelledCorrectly",
-                    MessageId = "Sproc",
-                    Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "ForGet", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sproc", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public static string BuildCreationScript(
                     string streamName,
                     bool asAlter = false)
@@ -195,7 +185,7 @@ BEGIN
     {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable)}
 
     INSERT INTO @{resultTableName} ([{Tables.TypeWithVersion.Id.Name}], [{Tables.Record.StringSerializedId.Name}])
-    SELECT DISTINCT 
+    SELECT DISTINCT
           r.[{Tables.Record.IdentifierTypeWithVersionId.Name}]
         , r.[{Tables.Record.StringSerializedId.Name}]
 	FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)

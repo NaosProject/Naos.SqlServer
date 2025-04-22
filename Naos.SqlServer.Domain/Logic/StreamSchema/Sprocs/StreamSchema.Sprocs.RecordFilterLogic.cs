@@ -6,7 +6,6 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
@@ -25,11 +24,7 @@ namespace Naos.SqlServer.Domain
                 /// <summary>
                 /// Shared input parameter names.
                 /// </summary>
-                [SuppressMessage(
-                    "Microsoft.Naming",
-                    "CA1704:IdentifiersShouldBeSpelledCorrectly",
-                    MessageId = "Param",
-                    Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
+                [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = NaosSuppressBecause.CA1704_IdentifiersShouldBeSpelledCorrectly_SpellingIsCorrectInContextOfTheDomain)]
                 public enum InputParamName
                 {
                     /// <summary>
@@ -63,12 +58,12 @@ namespace Naos.SqlServer.Domain
                     HandlingTagIdsToMatchCsv,
 
                     /// <summary>
-                    /// The <see cref="Naos.Database.Domain.TagMatchStrategy"/>.
+                    /// The <see cref="RecordFilter.TagMatchStrategy"/>.
                     /// </summary>
                     TagMatchStrategy,
 
                     /// <summary>
-                    /// The <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>.
+                    /// The <see cref="RecordFilter.VersionMatchStrategy"/>.
                     /// </summary>
                     VersionMatchStrategy,
 
@@ -173,7 +168,6 @@ namespace Naos.SqlServer.Domain
     -- BEGIN
         -- RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.StringIdentifiersXml}')
     -- END
-       
     --IF (@{InputParamName.TagIdsToMatchCsv} = '')
     --BEGIN
     --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.TagIdsToMatchCsv}')
@@ -211,7 +205,7 @@ namespace Naos.SqlServer.Domain
     BEGIN
         IF (@{filterAppliedBit} = 1)
         BEGIN
-            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN 
+            DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
             (
                 SELECT DISTINCT VALUE FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
             )
@@ -300,7 +294,7 @@ namespace Naos.SqlServer.Domain
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
                     INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
-                    ON r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.VALUE   
+                    ON r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.VALUE
                 )
             END
             ELSE
@@ -324,7 +318,7 @@ namespace Naos.SqlServer.Domain
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
                     INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
-                    ON r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.VALUE       
+                    ON r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.VALUE
                 )
             END
             ELSE
@@ -334,7 +328,7 @@ namespace Naos.SqlServer.Domain
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
                     INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
-                    ON r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.VALUE      
+                    ON r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.VALUE
                 )
             END
         END
@@ -463,7 +457,7 @@ namespace Naos.SqlServer.Domain
 					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
 					FROM [{streamName}].[{Tables.Record.Table.Name}]
 					WHERE [{Tables.Record.ObjectTypeWithoutVersionId.Name}] IN (SELECT VALUE FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ','))) rdeprecated
-				ON 
+				ON
 					rconsider.[{Tables.Record.StringSerializedId.Name}] = rdeprecated.[{Tables.Record.StringSerializedId.Name}]
 			    	AND rconsider.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = rdeprecated.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
 					AND rconsider.[{Tables.Record.Id.Name}] < rdeprecated.[{Tables.Record.Id.Name}]
