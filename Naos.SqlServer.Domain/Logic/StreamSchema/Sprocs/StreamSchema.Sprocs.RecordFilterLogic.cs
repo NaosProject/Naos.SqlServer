@@ -87,7 +87,7 @@ namespace Naos.SqlServer.Domain
                 {
                     const string recordTagIdsTable = "RecordTagIdsTable";
                     const string handlingTagIdsTable = "HandlingTagIdsTable";
-                    const string filterAppliedBit = "FilterApplied";
+                    const string isRecordIdsToConsiderTableInitializedBit = "IsRecordIdsToConsiderTableInitialized";
                     var handlingTagMixIn = !includeHandlingTags
                         ? string.Empty
                         : Invariant(
@@ -103,7 +103,7 @@ namespace Naos.SqlServer.Domain
         DECLARE @HandlingTagCount INT
         SELECT @HandlingTagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{handlingTagIdsTable}
 
-        IF (@{filterAppliedBit} = 1)
+        IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
           DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
             (
@@ -117,7 +117,7 @@ namespace Naos.SqlServer.Domain
         END
         ELSE
         BEGIN
-            SET @{filterAppliedBit} = 1
+            SET @{isRecordIdsToConsiderTableInitializedBit} = 1
             INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
             (
                 SELECT DISTINCT h.[{Tables.Handling.RecordId.Name}] AS [{Tables.Record.Id.Name}]
@@ -139,9 +139,9 @@ namespace Naos.SqlServer.Domain
     -- BEGIN RECORD FILTER INJECTED SQL - CHANGE IN BUILDING CODE AND PATCH SPROCS      --
     --------------------------------------------------------------------------------------
     /*
-    TODO: 
+    TODO:
        * Consider branch logic for common combos that could be consolidated
-       * Consider limiting queries when @{filterAppliedBit} to only Ids in @RecordIdsToConsider, how to deal with delete?
+       * Consider limiting queries when @{isRecordIdsToConsiderTableInitializedBit} to only Ids in @RecordIdsToConsider, how to deal with delete?
        * Consider copying values of @RecordIdsToConsider to a new table and truncating and overwriting (makes limiting easier), what is perf?
        * remove distinct where possible
     */
@@ -194,8 +194,8 @@ namespace Naos.SqlServer.Domain
     -----------------------------------------------------------------
     -- BEGIN DECLARE ASSETS
     DECLARE @{recordIdsToConsiderTable} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
-    DECLARE @{filterAppliedBit} BIT
-    SET @{filterAppliedBit} = 0
+    DECLARE @{isRecordIdsToConsiderTableInitializedBit} BIT
+    SET @{isRecordIdsToConsiderTableInitializedBit} = 0
     -- END DECLARE ASSETS
     -----------------------------------------------------------------
 
@@ -203,7 +203,7 @@ namespace Naos.SqlServer.Domain
     -- BEGIN APPLY INTERNAL RECORD ID FILTER
     IF (@{InputParamName.InternalRecordIdsCsv} IS NOT NULL)
     BEGIN
-        IF (@{filterAppliedBit} = 1)
+        IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
             DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
             (
@@ -212,7 +212,7 @@ namespace Naos.SqlServer.Domain
         END
         ELSE
         BEGIN
-            SET @{filterAppliedBit} = 1
+            SET @{isRecordIdsToConsiderTableInitializedBit} = 1
             INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
             (
                 SELECT DISTINCT VALUE FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
@@ -226,7 +226,7 @@ namespace Naos.SqlServer.Domain
     -- BEGIN APPLY STRING SERIALIZED ID FILTER
     IF (@{InputParamName.StringIdentifiersXml} IS NOT NULL)
     BEGIN
-        IF (@{filterAppliedBit} = 1)
+        IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
             IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
@@ -253,7 +253,7 @@ namespace Naos.SqlServer.Domain
         END
         ELSE
         BEGIN
-            SET @{filterAppliedBit} = 1
+            SET @{isRecordIdsToConsiderTableInitializedBit} = 1
             IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
@@ -285,7 +285,7 @@ namespace Naos.SqlServer.Domain
     -- BEGIN APPLY ID TYPE FILTER
     IF (@{InputParamName.IdentifierTypeIdsCsv} IS NOT NULL)
     BEGIN
-        IF (@{filterAppliedBit} = 1)
+        IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
             IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
@@ -310,7 +310,7 @@ namespace Naos.SqlServer.Domain
         END
         ELSE
         BEGIN
-            SET @{filterAppliedBit} = 1
+            SET @{isRecordIdsToConsiderTableInitializedBit} = 1
             IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
@@ -340,7 +340,7 @@ namespace Naos.SqlServer.Domain
     -- BEGIN APPLY OBJECT TYPE FILTER
     IF (@{InputParamName.ObjectTypeIdsCsv} IS NOT NULL)
     BEGIN
-        IF (@{filterAppliedBit} = 1)
+        IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
             IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
@@ -365,7 +365,7 @@ namespace Naos.SqlServer.Domain
         END
         ELSE
         BEGIN
-            SET @{filterAppliedBit} = 1
+            SET @{isRecordIdsToConsiderTableInitializedBit} = 1
             IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
@@ -400,7 +400,7 @@ namespace Naos.SqlServer.Domain
         SELECT VALUE FROM STRING_SPLIT(@{InputParamName.TagIdsToMatchCsv}, ',')
         DECLARE @RecordTagCount INT
         SELECT @RecordTagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{recordTagIdsTable}
-        IF (@{filterAppliedBit} = 1)
+        IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
           DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
           (
@@ -413,7 +413,7 @@ namespace Naos.SqlServer.Domain
         END
         ELSE
         BEGIN
-            SET @{filterAppliedBit} = 1
+            SET @{isRecordIdsToConsiderTableInitializedBit} = 1
             INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
             (
                 SELECT rt.[{Tables.RecordTag.RecordId.Name}] AS [{Tables.Record.Id.Name}]
@@ -429,7 +429,7 @@ namespace Naos.SqlServer.Domain
     {handlingTagMixIn}
     -----------------------------------------------------------------
     -- BEGIN ADD ALL IDS IF NO FILTER SUPPLIED
-    IF (@{filterAppliedBit} <> 1)
+    IF (@{isRecordIdsToConsiderTableInitializedBit} <> 1)
     BEGIN
         INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
         (
