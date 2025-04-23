@@ -186,7 +186,7 @@ namespace Naos.SqlServer.Domain
         END
     END
 
-    -- END APPLY RECORDS TO FILTER SELECTION STRATEGY
+    -- END APPLY RECORDS TO FILTER CRITERIA
     -----------------------------------------------------------------
 ");
 

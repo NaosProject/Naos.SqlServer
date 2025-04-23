@@ -138,6 +138,9 @@ namespace Naos.SqlServer.Protocol.Client
                     .ToList()
                     .GetTagsXmlString();
 
+            // Note that this method is not the ideal place to validate RecordsToFilterCriteria
+            // (that's all we're doing here with that object)
+            // but this is the easiest way to guarantee it is validated anytime a RecordFilter is used.
             if (recordsToFilterCriteria != null)
             {
                 recordsToFilterCriteria.RecordsToFilterSelectionStrategy
