@@ -172,20 +172,36 @@ CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(StringSerializedId)}_Asc]
 (
 	[{nameof(StringSerializedId)}] ASC
 )
-INCLUDE([{Id.Name}],[{IdentifierTypeWithoutVersionId.Name}],[{IdentifierTypeWithVersionId.Name}],[{ObjectTypeWithoutVersionId.Name}],[{ObjectTypeWithVersionId.Name}],[{SerializerRepresentationId.Name}],[{ObjectDateTimeUtc.Name}],[{RecordCreatedUtc.Name}])
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(IdentifierTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Record)}]
+(
+	[{nameof(IdentifierTypeWithoutVersionId)}] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(ObjectTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Record)}]
+(
+	[{nameof(ObjectTypeWithoutVersionId)}] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(StringSerializedId)}_{nameof(ObjectTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Record)}]
+(
+	[{nameof(StringSerializedId)}] ASC,
+	[{nameof(ObjectTypeWithoutVersionId)}] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(StringSerializedId)}_{nameof(IdentifierTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Record)}]
+(
+	[{nameof(StringSerializedId)}] ASC,
+	[{nameof(IdentifierTypeWithoutVersionId)}] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+
 -- -- Other indexes below cause slow downs on high throughput - need a strategy for apply these so keeping commented out for now.
---CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(IdentifierTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Record)}]
---(
---	[{nameof(IdentifierTypeWithoutVersionId)}] ASC
---)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
---CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(ObjectTypeWithoutVersionId)}_Asc] ON [{streamName}].[{nameof(Record)}]
---(
---	[{nameof(ObjectTypeWithoutVersionId)}] ASC
---)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
 --CREATE NONCLUSTERED INDEX [IX_{nameof(Record)}_{nameof(ObjectDateTimeUtc)}] ON [{streamName}].[{nameof(Record)}]
 --(
 --	[{nameof(ObjectDateTimeUtc)}] ASC
