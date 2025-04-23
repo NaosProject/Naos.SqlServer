@@ -527,7 +527,7 @@ namespace Naos.SqlServer.Domain
 				ON
 					rconsider.[{Tables.Record.StringSerializedId.Name}] = rdeprecated.[{Tables.Record.StringSerializedId.Name}]
 			    	AND rconsider.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = rdeprecated.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
-					AND rconsider.[{Tables.Record.Id.Name}] < rdeprecated.[{Tables.Record.Id.Name}]
+					AND rconsider.[{Tables.Record.Id.Name}] <= rdeprecated.[{Tables.Record.Id.Name}]
 			    WHERE
   			        rdeprecated.[{Tables.Record.Id.Name}] IS NOT NULL
             )
@@ -548,7 +548,7 @@ namespace Naos.SqlServer.Domain
 				ON 
 					rconsider.[{Tables.Record.StringSerializedId.Name}] = rdeprecated.[{Tables.Record.StringSerializedId.Name}]
 			    	AND rconsider.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = rdeprecated.[{Tables.Record.IdentifierTypeWithVersionId.Name}]
-					AND rconsider.[{Tables.Record.Id.Name}] < rdeprecated.[{Tables.Record.Id.Name}]
+					AND rconsider.[{Tables.Record.Id.Name}] <= rdeprecated.[{Tables.Record.Id.Name}]
 			    WHERE
   			        rdeprecated.[{Tables.Record.Id.Name}] IS NOT NULL
             )
