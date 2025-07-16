@@ -6,7 +6,6 @@
 
 namespace Naos.SqlServer.Domain
 {
-    using System;
     using System.Collections.Generic;
     using OBeautifulCode.Compression;
     using OBeautifulCode.Serialization;
@@ -73,26 +72,26 @@ namespace Naos.SqlServer.Domain
                     string streamName,
                     int serializerRepresentationId)
                 {
-                    var sprocName = FormattableString.Invariant($"[{streamName}].{nameof(GetSerializerRepresentationFromId)}");
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<int>(
-                                             nameof(InputParamName.Id),
-                                             Tables.SerializerRepresentation.Id.SqlDataType,
-                                             serializerRepresentationId),
-                                         new OutputParameterDefinition<SerializationKind>(
-                                             nameof(OutputParamName.SerializationKind),
-                                             Tables.SerializerRepresentation.SerializationKind.SqlDataType),
-                                         new OutputParameterDefinition<int>(
-                                             nameof(OutputParamName.ConfigTypeWithVersionId),
-                                             Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.SqlDataType),
-                                         new OutputParameterDefinition<CompressionKind>(
-                                             nameof(OutputParamName.CompressionKind),
-                                             Tables.SerializerRepresentation.CompressionKind.SqlDataType),
-                                         new OutputParameterDefinition<SerializationFormat>(
-                                             nameof(OutputParamName.SerializationFormat),
-                                             Tables.SerializerRepresentation.SerializationFormat.SqlDataType),
-                                     };
+                    var sprocName = Invariant($"[{streamName}].{nameof(GetSerializerRepresentationFromId)}");
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<int>(
+                            nameof(InputParamName.Id),
+                            Tables.SerializerRepresentation.Id.SqlDataType,
+                            serializerRepresentationId),
+                        new OutputParameterDefinition<SerializationKind>(
+                            nameof(OutputParamName.SerializationKind),
+                            Tables.SerializerRepresentation.SerializationKind.SqlDataType),
+                        new OutputParameterDefinition<int>(
+                            nameof(OutputParamName.ConfigTypeWithVersionId),
+                            Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.SqlDataType),
+                        new OutputParameterDefinition<CompressionKind>(
+                            nameof(OutputParamName.CompressionKind),
+                            Tables.SerializerRepresentation.CompressionKind.SqlDataType),
+                        new OutputParameterDefinition<SerializationFormat>(
+                            nameof(OutputParamName.SerializationFormat),
+                            Tables.SerializerRepresentation.SerializationFormat.SqlDataType),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 

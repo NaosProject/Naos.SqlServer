@@ -158,8 +158,8 @@ namespace Naos.SqlServer.Protocol.Client
                 var sqlProtocol = this.BuildSqlOperationsProtocol(locator);
                 var sprocResult = sqlProtocol.Execute(storedProcOp);
                 var assemblyQualifiedName = sprocResult
-                                           .OutputParameters[nameof(StreamSchema.Sprocs.GetTypeFromId.OutputParamName.AssemblyQualifiedName)]
-                                           .GetValueOfType<string>();
+                    .OutputParameters[nameof(StreamSchema.Sprocs.GetTypeFromId.OutputParamName.AssemblyQualifiedName)]
+                    .GetValueOfType<string>();
                 var typeRep = assemblyQualifiedName.ToTypeRepresentationFromAssemblyQualifiedName();
                 var item = typeRep.ToWithAndWithoutVersion();
                 this.assemblyQualifiedNameWithVersionIdToIdentifiedTypeMap.TryAdd(typeWithVersionId, item);
