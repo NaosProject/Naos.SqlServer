@@ -280,47 +280,6 @@ namespace Naos.SqlServer.Protocol.Client
             RunOperationOnSqlConnection(Logic, connectionString);
         }
 
-        /*
-        /// <summary>
-        /// Create a new table using provided definition.
-        /// </summary>
-        /// <param name="connectionString">Connection string to the intended database server.</param>
-        /// <param name="tableDescription">Detailed information about the database.</param>
-        /// <param name="timeout">The command timeout (default is 30 seconds).</param>
-        public static void CreateTable(string connectionString, TableDescription tableDescription, TimeSpan timeout = default(TimeSpan))
-        {
-            new { connectionString }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { configuration = tableDescription }.AsArg().Must().NotBeNull();
-
-            timeout = timeout == default ? DefaultTimeoutTimespan : timeout;
-
-            ThrowIfBadOnCreateOrModify(tableDescription);
-            var databaseFileMaxSize = tableDescription.DataFileMaxSizeInKb == Constants.InfinityMaxSize ? "UNLIMITED" : tableDescription.DataFileMaxSizeInKb + "KB";
-            var logFileMaxSize = tableDescription.LogFileMaxSizeInKb == Constants.InfinityMaxSize ? "UNLIMITED" : tableDescription.LogFileMaxSizeInKb + "KB";
-            var commandText =
-                Invariant($@"CREATE DATABASE {tableDescription.TableName}
-                        ON
-                        ( NAME = '{tableDescription.DataFileLogicalName}',
-                        FILENAME = '{tableDescription.DataFilePath}',
-                        SIZE = {tableDescription.DataFileCurrentSizeInKb}KB,
-                        MAXSIZE = {databaseFileMaxSize},
-                        FILEGROWTH = {tableDescription.DataFileGrowthSizeInKb}KB )
-                        LOG ON
-                        ( NAME = '{tableDescription.LogFileLogicalName}',
-                        FILENAME = '{tableDescription.LogFilePath}',
-                        SIZE = {tableDescription.LogFileCurrentSizeInKb}KB,
-                        MAXSIZE = {logFileMaxSize},
-                        FILEGROWTH = {tableDescription.LogFileGrowthSizeInKb}KB )");
-
-            void Logic(SqlConnection connection)
-            {
-                connection.Execute(commandText, null, null, (int?)timeout.TotalSeconds);
-            }
-
-            RunOperationOnSqlConnection(Logic, connectionString);
-        }
-        */
-
         /// <summary>
         /// List databases from server.
         /// </summary>
