@@ -1164,7 +1164,7 @@ namespace Naos.SqlServer.Protocol.Client
                     modeMixIn = "BULK_LOGGED";
                     break;
                 default:
-                    throw new NotSupportedException($"Unsupported recovery mode to set: {recoveryMode}");
+                    throw new NotSupportedException(Invariant($"Unsupported recovery mode to set: {recoveryMode}"));
             }
 
             var result = "ALTER DATABASE " + databaseName + " SET RECOVERY " + modeMixIn;
