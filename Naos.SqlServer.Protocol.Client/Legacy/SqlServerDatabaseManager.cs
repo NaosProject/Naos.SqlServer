@@ -234,7 +234,7 @@ namespace Naos.SqlServer.Protocol.Client
             var databaseFileMaxSize = definition.DataFileMaxSizeInKb == SqlServerDatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.DataFileMaxSizeInKb}KB");
             var logFileMaxSize = definition.LogFileMaxSizeInKb == SqlServerDatabaseDefinition.InfinityMaxSize ? "UNLIMITED" : Invariant($"{definition.LogFileMaxSizeInKb}KB");
 
-            var commandText =
+            var createDatabaseCommandText =
                     Invariant(
                         $@"
                         CREATE DATABASE {definition.DatabaseName}
@@ -269,11 +269,13 @@ namespace Naos.SqlServer.Protocol.Client
                     }
                 }
 
-                connection.ExecuteNonQuery(commandText, (int)timeout.TotalSeconds);
+                connection.ExecuteNonQuery(createDatabaseCommandText, (int)timeout.TotalSeconds);
 
                 if (definition.RecoveryMode != RecoveryMode.Unspecified)
                 {
-                    SetRecoveryModeAsync(connection, definition.DatabaseName, definition.RecoveryMode, timeout).Wait();
+                    var setRecoveryModeCommandText = BuildSetRecoveryModeSqlCommandText(definition.DatabaseName, definition.RecoveryMode);
+
+                    connection.ExecuteNonQuery(setRecoveryModeCommandText, (int)timeout.TotalSeconds);
                 }
             }
 
@@ -411,7 +413,9 @@ namespace Naos.SqlServer.Protocol.Client
 
                     if ((newDefinition.RecoveryMode != RecoveryMode.Unspecified) && (currentDefinition.RecoveryMode != newDefinition.RecoveryMode))
                     {
-                        SetRecoveryModeAsync(connection, newDefinition.DatabaseName, newDefinition.RecoveryMode, timeout).Wait();
+                        var setRecoveryModeCommandText = BuildSetRecoveryModeSqlCommandText(newDefinition.DatabaseName, newDefinition.RecoveryMode);
+
+                        connection.ExecuteNonQuery(setRecoveryModeCommandText, (int)timeout.TotalSeconds);
                     }
 
                     if (newDefinition.DataFileMaxSizeInKb != currentDefinition.DataFileMaxSizeInKb)
@@ -1031,7 +1035,9 @@ namespace Naos.SqlServer.Protocol.Client
 
             async Task Logic(SqlConnection connection)
             {
-                await SetRecoveryModeAsync(connection, databaseName, recoveryMode, timeout);
+                var commandText = BuildSetRecoveryModeSqlCommandText(databaseName, recoveryMode);
+
+                await connection.ExecuteNonQueryAsync(commandText, (int)timeout.TotalSeconds);
             }
 
             await RunOperationOnSqlConnectionAsync(Logic, connectionString);
@@ -1138,11 +1144,9 @@ namespace Naos.SqlServer.Protocol.Client
             return ret;
         }
 
-        private static async Task SetRecoveryModeAsync(
-            SqlConnection connection,
+        private static string BuildSetRecoveryModeSqlCommandText(
             string databaseName,
-            RecoveryMode recoveryMode,
-            TimeSpan timeout)
+            RecoveryMode recoveryMode)
         {
             new { databaseName }.AsArg().Must().NotBeNullNorWhiteSpace().And().BeAlphanumeric(SqlServerDatabaseDefinition.DatabaseNameAlphanumericOtherAllowedCharacters);
 
@@ -1163,9 +1167,9 @@ namespace Naos.SqlServer.Protocol.Client
                     throw new NotSupportedException($"Unsupported recovery mode to set: {recoveryMode}");
             }
 
-            var commandText = "ALTER DATABASE " + databaseName + " SET RECOVERY " + modeMixIn;
+            var result = "ALTER DATABASE " + databaseName + " SET RECOVERY " + modeMixIn;
 
-            await connection.ExecuteNonQueryAsync(commandText, (int)timeout.TotalSeconds);
+            return result;
         }
 
         private static void ThrowIfBad(
