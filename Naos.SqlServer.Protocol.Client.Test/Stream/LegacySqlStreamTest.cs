@@ -1051,8 +1051,8 @@ namespace Naos.SqlServer.Protocol.Client.Test
                                          new SerializerRepresentation(
                                              SerializationKind.Json,
                                              typeof(SqlServerJsonSerializationConfiguration).ToRepresentation()),
-                                         SerializerFactory.Instance)
-                                    .ToStream(SerializerFactory.Instance);
+                                         SerializerFactories.Standard)
+                                    .ToStream(SerializerFactories.Standard);
 
             stream.MustForTest().NotBeNull().And().BeOfType<SqlStream>();
         }
@@ -1082,7 +1082,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 commandTimeout ?? TimeSpan.FromMinutes(3),
                 defaultSerializerRepresentation,
                 defaultSerializationFormat,
-                new ObcSimplifyingSerializerFactory(new JsonSerializerFactory()),
+                SerializerFactories.StandardSimplifying,
                 resourceLocatorProtocol);
 
             stream.Execute(new StandardCreateStreamOp(stream.StreamRepresentation, ExistingStreamStrategy.Skip));

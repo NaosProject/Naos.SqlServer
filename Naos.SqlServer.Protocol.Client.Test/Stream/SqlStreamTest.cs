@@ -20,6 +20,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.Serialization.Json;
+    using OBeautifulCode.Serialization.Recipes;
     using OBeautifulCode.String.Recipes;
     using OBeautifulCode.Type;
     using Xunit;
@@ -949,7 +950,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 commandTimeout ?? TimeSpan.FromMinutes(3),
                 defaultSerializerRepresentation,
                 defaultSerializationFormat,
-                new ObcSimplifyingSerializerFactory(new JsonSerializerFactory()),
+                SerializerFactories.StandardSimplifying,
                 resourceLocatorProtocol);
 
             stream.Execute(new StandardCreateStreamOp(stream.StreamRepresentation, ExistingStreamStrategy.Skip));
