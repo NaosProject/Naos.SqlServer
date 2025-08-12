@@ -32,7 +32,12 @@ namespace Naos.SqlServer.Protocol.Client
 
             var sqlServerLocator = this.TryGetLocator(operation);
             var payloadSerializationFormat = operation.Payload.GetSerializationFormat();
-            var serializerRepresentation = this.GetIdAddIfNecessarySerializerRepresentation(sqlServerLocator, operation.Payload.SerializerRepresentation, payloadSerializationFormat);
+
+            var serializerRepresentation = this.GetIdAddIfNecessarySerializerRepresentation(
+                sqlServerLocator,
+                operation.Payload.SerializerRepresentation,
+                payloadSerializationFormat);
+
             var identifierTypeIds = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.Metadata.TypeRepresentationOfId);
             var objectTypeIds = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.Metadata.TypeRepresentationOfObject);
             var tagIdsCsv = operation.Metadata.Tags == null
