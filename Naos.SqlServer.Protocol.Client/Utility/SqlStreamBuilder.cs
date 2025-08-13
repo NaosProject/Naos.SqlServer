@@ -7,16 +7,11 @@
 namespace Naos.SqlServer.Protocol.Client
 {
     using System;
-    using System.Data.SqlClient;
     using System.Linq;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.Database.Recipes;
-    using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
-    using OBeautifulCode.Type;
-    using OBeautifulCode.Type.Recipes;
     using static System.FormattableString;
 
     /// <summary>
@@ -42,7 +37,7 @@ namespace Naos.SqlServer.Protocol.Client
                 throw new NotSupportedException(Invariant($"One single resource locators are currently supported and '{streamConfig.AllLocators.Count}' were provided."));
             }
 
-            var resourceLocatorProtocol = new SingleResourceLocatorProtocols(streamConfig.AllLocators.Single());
+            var resourceLocatorProtocol = new SingleResourceLocatorProtocols((SqlServerLocator)streamConfig.AllLocators.Single());
 
             var result = new SqlStream(
                 streamConfig.Name,
