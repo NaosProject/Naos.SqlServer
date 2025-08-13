@@ -34,10 +34,10 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="name">The name of the stream.</param>
         /// <param name="defaultConnectionTimeout">The default connection timeout.</param>
         /// <param name="defaultCommandTimeout">The default command timeout.</param>
-        /// <param name="defaultSerializerRepresentation">Default serializer description to use.</param>
-        /// <param name="defaultSerializationFormat">Default serializer format.</param>
-        /// <param name="serializerFactory">The factory to get a serializer to use for objects.</param>
-        /// <param name="resourceLocatorProtocol">The protocols for getting locators.</param>
+        /// <param name="defaultSerializerRepresentation">The serializer representation to use to get a serializer to use when serializing objects (not identifiers) into record payloads to put.</param>
+        /// <param name="defaultSerializationFormat">The serialization format to use when serializing objects (not identifiers) into record payloads to put.</param>
+        /// <param name="serializerFactory">The serializer factory to use to get serializers for objects (not identifiers), regardless of putting new or getting existing records.</param>
+        /// <param name="resourceLocatorProtocols">Protocol to get appropriate resource locator(s).</param>
         public SqlStream(
             string name,
             TimeSpan defaultConnectionTimeout,
@@ -45,13 +45,13 @@ namespace Naos.SqlServer.Protocol.Client
             SerializerRepresentation defaultSerializerRepresentation,
             SerializationFormat defaultSerializationFormat,
             ISerializerFactory serializerFactory,
-            IResourceLocatorProtocols resourceLocatorProtocol)
-        : base(name, serializerFactory, defaultSerializerRepresentation, defaultSerializationFormat, resourceLocatorProtocol)
+            IResourceLocatorProtocols resourceLocatorProtocols)
+        : base(name, serializerFactory, defaultSerializerRepresentation, defaultSerializationFormat, resourceLocatorProtocols)
         {
             name.MustForArg(nameof(name)).NotBeNullNorWhiteSpace();
             defaultSerializerRepresentation.MustForArg(nameof(defaultSerializerRepresentation)).NotBeNull();
             serializerFactory.MustForArg(nameof(serializerFactory)).NotBeNull();
-            resourceLocatorProtocol.MustForArg(nameof(resourceLocatorProtocol)).NotBeNull();
+            resourceLocatorProtocols.MustForArg(nameof(resourceLocatorProtocols)).NotBeNull();
 
             this.StreamRepresentation = new StreamRepresentation(this.Name);
             this.DefaultConnectionTimeout = defaultConnectionTimeout;

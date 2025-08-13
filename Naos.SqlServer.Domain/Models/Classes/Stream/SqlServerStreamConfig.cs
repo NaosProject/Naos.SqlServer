@@ -23,12 +23,12 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerStreamConfig"/> class.
         /// </summary>
-        /// <param name="name">Name of the stream.</param>
-        /// <param name="accessKinds">Access the stream has.</param>
+        /// <param name="name">The name of the stream.</param>
+        /// <param name="accessKinds">The kind of access that the stream has.</param>
         /// <param name="defaultConnectionTimeout">Default timeout to use when connecting to SQL Server.</param>
         /// <param name="defaultCommandTimeout">Default timeout to use when running a command on SQL Server.</param>
-        /// <param name="defaultSerializerRepresentation">Default <see cref="SerializerRepresentation"/> to use (used for identifier serialization).</param>
-        /// <param name="defaultSerializationFormat">Default <see cref="SerializationFormat"/> to use.</param>
+        /// <param name="defaultSerializerRepresentation">The serializer representation to use to get a serializer to use when serializing objects (not identifiers) into record payloads to put.</param>
+        /// <param name="defaultSerializationFormat">The serialization format to use when serializing objects (not identifiers) into record payloads to put.</param>
         /// <param name="allLocators">All <see cref="IResourceLocator"/>'s.</param>
         public SqlServerStreamConfig(
             string name,
