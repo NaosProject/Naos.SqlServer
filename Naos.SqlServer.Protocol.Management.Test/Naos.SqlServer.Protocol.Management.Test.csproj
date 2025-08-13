@@ -354,7 +354,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
-    <Compile Include="SqlStreamTest.cs" />
+    <Compile Include="SqlServerStandardStreamTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Naos.SqlServer.Domain\Naos.SqlServer.Domain.csproj">

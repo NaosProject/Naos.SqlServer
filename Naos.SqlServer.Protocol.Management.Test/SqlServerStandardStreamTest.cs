@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStreamTest.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStreamTest.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,30 +7,20 @@
 namespace Naos.SqlServer.Protocol.Management.Test
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Linq;
     using Naos.Database.Domain;
     using Naos.SqlServer.Domain;
     using Naos.SqlServer.Protocol.Client;
-    using Naos.SqlServer.Protocol.Management;
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Representation.System;
     using OBeautifulCode.Serialization;
     using OBeautifulCode.Serialization.Json;
     using Xunit;
     using Xunit.Abstractions;
-    using static System.FormattableString;
 
-    /// <summary>
-    /// Tests for <see cref="SqlServerStandardStream"/>.
-    /// </summary>
-    public partial class SqlStreamTest
+    public partial class SqlServerStandardStreamTest
     {
         private readonly ITestOutputHelper testOutputHelper;
 
-        public SqlStreamTest(
+        public SqlServerStandardStreamTest(
             ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
@@ -49,7 +39,7 @@ namespace Naos.SqlServer.Protocol.Management.Test
 
             var configurationTypeRepresentation = typeof(NullJsonSerializationConfiguration).ToRepresentation();
 
-            SerializerRepresentation defaultSerializerRepresentation = new SerializerRepresentation(
+            var defaultSerializerRepresentation = new SerializerRepresentation(
                 SerializationKind.Json,
                 configurationTypeRepresentation);
 

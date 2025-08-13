@@ -29,5 +29,5 @@
             "$concreteType": "Naos.SqlServer.Domain.SqlServerLocator, Naos.SqlServer.Domain"
         }
     ],
-    "$concreteType": "Naos.SqlServer.Domain.SqlServerStreamConfig, Naos.SqlServer.Domain"
+    "$concreteType": "Naos.SqlServer.Domain.SqlServerStandardStreamConfig, Naos.SqlServer.Domain"
 }

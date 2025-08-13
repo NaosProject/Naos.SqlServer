@@ -124,7 +124,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var commandTimeout = TimeSpan.FromSeconds(1000);
             var listOfStreams = Enumerable.Range(1, 10)
                                           .Select(
-                                               _ => GetCreatedSqlStream(
+                                               _ => GetCreatedSqlServerStandardStream(
                                                    streamName,
                                                    commandTimeout,
                                                    RecordTagAssociationManagementStrategy.ExternallyManaged))
@@ -164,14 +164,14 @@ namespace Naos.SqlServer.Protocol.Client.Test
         }
 
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Versionless", Justification = "Name is preferred in context.")]
-        [Fact(Skip = "Local testing only.")]
+        [Fact]
         public static void TestRecordFilterHonorsBothVersionAndVersionlessTypeRepresentations()
         {
             var streamName = nameof(TestRecordFilterHonorsBothVersionAndVersionlessTypeRepresentations) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var key = Guid.NewGuid().ToString().ToUpperInvariant();
-            var serializedKey = stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation).SerializeToString(key);
+            var serializedKey = stream.IdSerializer.SerializeToString(key);
             var firstObject = new MyObject("test", "typeless");
             stream.PutWithId(key, firstObject);
 
@@ -258,11 +258,11 @@ namespace Naos.SqlServer.Protocol.Client.Test
             getWithVersionWithoutDeprecated.MustForTest().BeNull();
         }
 
-        [Fact(Skip = "Local testing only.")]
+        [Fact]
         public static void ExistingRecordStrategyTestForPutRecord()
         {
             var streamName = nameof(ExistingRecordStrategyTestForPutRecord) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             stream.Execute(
                 new CreateStreamUserOp(
@@ -321,7 +321,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void UpdateSprocs()
         {
             var streamName = nameof(this.UpdateSprocs) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var updateOp = new UpdateStreamStoredProceduresOp(
                 RecordTagAssociationManagementStrategy.ExternallyManaged,
@@ -330,11 +330,11 @@ namespace Naos.SqlServer.Protocol.Client.Test
             this.testOutputHelper.WriteLine("Version: " + (result.PriorVersion ?? "<null>"));
         }
 
-        [Fact(Skip = "Local testing only.")]
+        [Fact]
         public static void TagCachingTests()
         {
             var streamName = nameof(TagCachingTests) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var streamOne = GetCreatedSqlStream(streamName);
+            var streamOne = GetCreatedSqlServerStandardStream(streamName);
             var sqlServerLocator = GetSqlServerLocator();
 
             var tagsOne = new List<NamedValue<string>>
@@ -349,12 +349,12 @@ namespace Naos.SqlServer.Protocol.Client.Test
             tagsBackOne.MustForTest().NotBeNullNorEmptyEnumerable();
 
             // get new tag caching...
-            var streamOneAgain = GetCreatedSqlStream(streamName);
+            var streamOneAgain = GetCreatedSqlServerStandardStream(streamName);
 
             var tagsBackOneAgain = streamOneAgain.GetTagsByIds(sqlServerLocator, tagIdsOne);
             tagsBackOneAgain.MustForTest().NotBeNullNorEmptyEnumerable();
 
-            var streamTwo = GetCreatedSqlStream(streamName);
+            var streamTwo = GetCreatedSqlServerStandardStream(streamName);
 
             var tagsTwo = new List<NamedValue<string>>
                        {
@@ -373,7 +373,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public static void PutGetTests()
         {
             var streamName = nameof(PutGetTests) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var key = stream.Name;
             var firstValue = "Testing again.";
@@ -386,7 +386,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             stream.PutWithId(key, new MyObject(key, firstValue), firstTags);
 
-            var streamUncached = GetCreatedSqlStream(streamName);
+            var streamUncached = GetCreatedSqlServerStandardStream(streamName);
 
             var firstTagsFirstOnly = new List<NamedValue<string>>
                                      {
@@ -403,7 +403,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void HandlingTests()
         {
             var streamName = nameof(this.HandlingTests) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var x = stream.GetNextUniqueLong();
             x.MustForTest().BeGreaterThan(0L);
@@ -737,7 +737,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void HandlingEntryTagsUsedInStatusTests()
         {
             var streamName = nameof(this.HandlingEntryTagsUsedInStatusTests) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var start = DateTime.UtcNow;
 
@@ -790,7 +790,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void HandlingCanBeCompletedWhileBlockedButNotNewHandlingTests()
         {
             var streamName = nameof(this.HandlingCanBeCompletedWhileBlockedButNotNewHandlingTests) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var start = DateTime.UtcNow;
 
@@ -813,7 +813,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                     ids: new[]
                          {
                              new StringSerializedIdentifier(
-                                 stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation).SerializeToString(1),
+                                 stream.IdSerializer.SerializeToString(1),
                                  typeof(int).ToRepresentation()),
                          }),
                 new HandlingFilter());
@@ -871,7 +871,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public static void GetDistinctStringSerializedIds___SamedId___WithDifferentTypes()
         {
             var streamName = nameof(GetDistinctStringSerializedIds___SamedId___WithDifferentTypes) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var firstId = Guid.NewGuid().ToString().Replace("-", ",");
             var secondId = Guid.NewGuid().ToString().Replace("-", ",");
@@ -929,7 +929,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public static void TagsCanBeNullTest()
         {
             var streamName = nameof(TagsCanBeNullTest) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var id = A.Dummy<string>();
 
@@ -950,7 +950,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public static void TestUniqueLong()
         {
             var streamName = nameof(TestUniqueLong) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var nextNoDetails = stream.Execute(new StandardGetNextUniqueLongOp());
             var nextDetails = stream.Execute(new StandardGetNextUniqueLongOp("Monkey."));
@@ -962,7 +962,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public static void TestGetDistinctEmptyStream()
         {
             var streamName = nameof(TestGetDistinctEmptyStream) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var ids = stream.Execute(new StandardGetDistinctStringSerializedIdsOp(new RecordFilter()));
             ids.MustForTest().BeEmptyEnumerable();
@@ -974,7 +974,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             const string id = null;
 
             var streamName = nameof(TestNullStringSerializedId) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
             var objectToPut = new MyObject("id", "test-null");
             stream.PutWithId(id, objectToPut, typeSelectionStrategy: TypeSelectionStrategy.UseDeclaredType);
             var ids = stream.Execute(new StandardGetDistinctStringSerializedIdsOp(new RecordFilter()));
@@ -995,7 +995,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public static void TestGetDistinctEmptyRecordFilter()
         {
             var streamName = nameof(TestGetDistinctEmptyRecordFilter) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName);
+            var stream = GetCreatedSqlServerStandardStream(streamName);
 
             var testId = Guid.NewGuid().ToStringInvariantPreferred().ToUpperInvariant();
             stream.PutWithId(testId, new MyObject("test", "empty-record-filter"));
@@ -1007,7 +1007,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public static void TestLatestStringSerializedObject()
         {
             var streamName = nameof(TestLatestStringSerializedObject) + Guid.NewGuid().ToStringInvariantPreferred().Substring(0, 5);
-            var stream = GetCreatedSqlStream(streamName, defaultSerializationFormat: SerializationFormat.String);
+            var stream = GetCreatedSqlServerStandardStream(streamName, defaultSerializationFormat: SerializationFormat.String);
 
             var latestObject = A.Dummy<MyObject>();
             stream.PutWithId(latestObject.Id, latestObject);
@@ -1064,7 +1064,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             return sqlServerLocator;
         }
 
-        private static SqlServerStandardStream GetCreatedSqlStream(
+        private static SqlServerStandardStream GetCreatedSqlServerStandardStream(
             string streamName,
             TimeSpan? commandTimeout = null,
             RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy = RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
@@ -1093,14 +1093,14 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
         private static SerializerRepresentation GetSerializerRepresentation()
         {
-            SerializerRepresentation defaultSerializerRepresentation;
             var configurationTypeRepresentation =
                 typeof(DependencyOnlyJsonSerializationConfiguration<SqlServerJsonSerializationConfiguration, TypesToRegisterJsonSerializationConfiguration<MyObject>>).ToRepresentation();
 
-            defaultSerializerRepresentation = new SerializerRepresentation(
+            var result = new SerializerRepresentation(
                 SerializationKind.Json,
                 configurationTypeRepresentation);
-            return defaultSerializerRepresentation;
+
+            return result;
         }
 
         private class MyObject : IHaveId<string>
