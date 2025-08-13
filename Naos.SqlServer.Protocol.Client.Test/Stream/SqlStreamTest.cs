@@ -130,14 +130,12 @@ namespace Naos.SqlServer.Protocol.Client.Test
             stream.PutWithId("id-1", new MyObject(A.Dummy<string>(), A.Dummy<string>()));
             stream.PutWithId("id-2", new IdDeprecatedEvent<MyObject>(DateTime.UtcNow));
 
-            var serializer = stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation);
-
             var operation = new StandardGetInternalRecordIdsOp(
                 new RecordFilter(
                     ids: new[]
                     {
-                        new StringSerializedIdentifier(serializer.SerializeToString("id-1"), typeof(string).ToRepresentation()),
-                        new StringSerializedIdentifier(serializer.SerializeToString("id-2"), typeof(string).ToRepresentation()),
+                        new StringSerializedIdentifier("id-1", typeof(string).ToRepresentation()),
+                        new StringSerializedIdentifier("id-2", typeof(string).ToRepresentation()),
                     },
                     deprecatedIdTypes: new[] { typeof(IdDeprecatedEvent<MyObject>).ToRepresentation() }));
 
@@ -231,18 +229,16 @@ namespace Naos.SqlServer.Protocol.Client.Test
             stream.PutWithId("id-1", new MyObject(A.Dummy<string>(), A.Dummy<string>()));
             stream.PutWithId("id-2", new IdDeprecatedEvent<MyObject>(DateTime.UtcNow));
 
-            var serializer = stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation);
-
             var operation = new StandardGetDistinctStringSerializedIdsOp(
                 new RecordFilter(
                     ids: new[]
                     {
-                        new StringSerializedIdentifier(serializer.SerializeToString("id-1"), typeof(string).ToRepresentation()),
-                        new StringSerializedIdentifier(serializer.SerializeToString("id-2"), typeof(string).ToRepresentation()),
+                        new StringSerializedIdentifier("id-1", typeof(string).ToRepresentation()),
+                        new StringSerializedIdentifier("id-2", typeof(string).ToRepresentation()),
                     },
                     deprecatedIdTypes: new[] { typeof(IdDeprecatedEvent<MyObject>).ToRepresentation() }));
 
-            var expected = new[] { new StringSerializedIdentifier(serializer.SerializeToString("id-1"), typeof(string).ToRepresentation()) };
+            var expected = new[] { new StringSerializedIdentifier("id-1", typeof(string).ToRepresentation()) };
 
             // Act
             var actual = stream.Execute(operation);
@@ -272,11 +268,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
             stream.PutWithId(id4, new IdDeprecatedEvent<NamedResourceLocator>(DateTime.UtcNow));
             stream.PutWithId(id2, new IdDeprecatedEvent<NamedResourceLocator>(DateTime.UtcNow), tags: tags);
 
-            var serializer = stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation);
-
             var expected = new[]
             {
-                new StringSerializedIdentifier(serializer.SerializeToString(id3), typeof(string).ToRepresentation()),
+                new StringSerializedIdentifier(id3, typeof(string).ToRepresentation()),
             };
 
             var operation = new StandardGetDistinctStringSerializedIdsOp(
@@ -313,12 +307,10 @@ namespace Naos.SqlServer.Protocol.Client.Test
             stream.PutWithId(id4, new IdDeprecatedEvent<NamedResourceLocator>(DateTime.UtcNow));
             stream.PutWithId(id2, new IdDeprecatedEvent<NamedResourceLocator>(DateTime.UtcNow), tags: tags);
 
-            var serializer = stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation);
-
             var expected = new[]
             {
-                new StringSerializedIdentifier(serializer.SerializeToString(id1), typeof(string).ToRepresentation()),
-                new StringSerializedIdentifier(serializer.SerializeToString(id3), typeof(string).ToRepresentation()),
+                new StringSerializedIdentifier(id1, typeof(string).ToRepresentation()),
+                new StringSerializedIdentifier(id3, typeof(string).ToRepresentation()),
             };
 
             var operation = new StandardGetDistinctStringSerializedIdsOp(
@@ -350,7 +342,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                             idTypes: new[] { typeof(string).ToRepresentation() },
                             objectTypes: new[] { typeof(string).ToRepresentation(), },
                             deprecatedIdTypes: new[] { typeof(IdDeprecatedEvent).ToRepresentation() })))
-                .Select(_ => stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation).Deserialize<string>(_.StringSerializedId))
+                .Select(_ => stream.IdSerializer.Deserialize<string>(_.StringSerializedId))
                 .ToList();
 
             IReadOnlyCollection<string> GetActualWrongObjectType() => stream
@@ -360,7 +352,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                             idTypes: new[] { typeof(string).ToRepresentation() },
                             objectTypes: new[] { typeof(long).ToRepresentation(), },
                             deprecatedIdTypes: new[] { typeof(IdDeprecatedEvent).ToRepresentation() })))
-                .Select(_ => stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation).Deserialize<string>(_.StringSerializedId))
+                .Select(_ => stream.IdSerializer.Deserialize<string>(_.StringSerializedId))
                 .ToList();
 
             IReadOnlyCollection<string> GetActualWrongIdType() => stream
@@ -370,7 +362,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                             idTypes: new[] { typeof(long).ToRepresentation() },
                             objectTypes: new[] { typeof(string).ToRepresentation(), },
                             deprecatedIdTypes: new[] { typeof(IdDeprecatedEvent).ToRepresentation() })))
-                .Select(_ => stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation).Deserialize<string>(_.StringSerializedId))
+                .Select(_ => stream.IdSerializer.Deserialize<string>(_.StringSerializedId))
                 .ToList();
 
             // Act, Assert
@@ -427,7 +419,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             // Assert
             actual.AsTest().Must().NotBeNull();
-            actual.Payload.DeserializePayloadUsingSpecificFactory<MyObject>(stream.SerializerFactory).Id.Must().BeEqualTo(objectToPut2.Id);
+            actual.GetDescribedSerialization().DeserializePayloadUsingSpecificFactory<MyObject>(stream.SerializerFactory).Id.Must().BeEqualTo(objectToPut2.Id);
         }
 
         [Fact]
@@ -446,12 +438,10 @@ namespace Naos.SqlServer.Protocol.Client.Test
             var expectedStreamRecord = stream.GetLatestRecordById("id-1");
             var expectedMetadata = expectedStreamRecord.Metadata;
 
-            var serializer = stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation);
-
             var expected = new StreamRecord(
                 expectedStreamRecord.InternalRecordId,
                 new StreamRecordMetadata(
-                    serializer.SerializeToString(expectedMetadata.Id),
+                    stream.IdSerializer.SerializeToString(expectedMetadata.Id),
                     stream.DefaultSerializerRepresentation,
                     expectedMetadata.TypeRepresentationOfId,
                     expectedMetadata.TypeRepresentationOfObject,
@@ -613,7 +603,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             StreamRecordMetadata ToMetadataWithoutId(StreamRecordMetadata<string> metadata)
             {
-                var stringSerializedId = stream.SerializerFactory.BuildSerializer(stream.DefaultSerializerRepresentation).SerializeToString(metadata.Id);
+                var stringSerializedId = stream.IdSerializer.SerializeToString(metadata.Id);
 
                 return new StreamRecordMetadata(stringSerializedId, metadata.SerializerRepresentation, metadata.TypeRepresentationOfId, metadata.TypeRepresentationOfObject, metadata.Tags, metadata.TimestampUtc, metadata.ObjectTimestampUtc);
             }

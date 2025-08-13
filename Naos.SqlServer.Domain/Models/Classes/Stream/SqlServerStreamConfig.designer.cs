@@ -118,7 +118,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override StreamConfigBase DeepCloneWithName(string name)
+        public override StandardStreamConfigBase DeepCloneWithName(string name)
         {
             var result = new SqlServerStreamConfig(
                                  name,
@@ -150,7 +150,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override StreamConfigBase DeepCloneWithAccessKinds(StreamAccessKinds accessKinds)
+        public override StandardStreamConfigBase DeepCloneWithAccessKinds(StreamAccessKinds accessKinds)
         {
             var result = new SqlServerStreamConfig(
                                  this.Name?.DeepClone(),
@@ -182,7 +182,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override StreamConfigBase DeepCloneWithDefaultSerializerRepresentation(SerializerRepresentation defaultSerializerRepresentation)
+        public override StandardStreamConfigBase DeepCloneWithDefaultSerializerRepresentation(SerializerRepresentation defaultSerializerRepresentation)
         {
             var result = new SqlServerStreamConfig(
                                  this.Name?.DeepClone(),
@@ -214,7 +214,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override StreamConfigBase DeepCloneWithDefaultSerializationFormat(SerializationFormat defaultSerializationFormat)
+        public override StandardStreamConfigBase DeepCloneWithDefaultSerializationFormat(SerializationFormat defaultSerializationFormat)
         {
             var result = new SqlServerStreamConfig(
                                  this.Name?.DeepClone(),
@@ -246,7 +246,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public override StreamConfigBase DeepCloneWithAllLocators(IReadOnlyCollection<IResourceLocator> allLocators)
+        public override StandardStreamConfigBase DeepCloneWithAllLocators(IReadOnlyCollection<IResourceLocator> allLocators)
         {
             var result = new SqlServerStreamConfig(
                                  this.Name?.DeepClone(),
@@ -334,7 +334,7 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        protected override StreamConfigBase DeepCloneInternal()
+        protected override StandardStreamConfigBase DeepCloneInternal()
         {
             var result = new SqlServerStreamConfig(
                                  this.Name?.DeepClone(),

@@ -35,7 +35,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             var serializerRepresentation = this.GetIdAddIfNecessarySerializerRepresentation(
                 sqlServerLocator,
-                operation.Payload.SerializerRepresentation,
+                operation.Metadata.SerializerRepresentation,
                 payloadSerializationFormat);
 
             var identifierTypeIds = this.GetIdsAddIfNecessaryType(sqlServerLocator, operation.Metadata.TypeRepresentationOfId);

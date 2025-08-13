@@ -96,5 +96,35 @@ namespace Naos.SqlServer.Protocol.Client
 
             return locator;
         }
+
+        private static StreamRecordPayloadBase BuildStreamRecordPayload(
+            StreamRecordItemsToInclude streamRecordItemsToInclude,
+            SerializationFormat serializationFormat,
+            byte[] binarySerializedObject,
+            string stringSerializedObject)
+        {
+            StreamRecordPayloadBase result;
+
+            if (streamRecordItemsToInclude == StreamRecordItemsToInclude.MetadataAndPayload)
+            {
+                switch (serializationFormat)
+                {
+                    case SerializationFormat.Binary:
+                        result = new BinaryStreamRecordPayload(binarySerializedObject);
+                        break;
+                    case SerializationFormat.String:
+                        result = new StringStreamRecordPayload(stringSerializedObject);
+                        break;
+                    default:
+                        throw new NotSupportedException(Invariant($"{nameof(SerializationFormat)} {serializationFormat} is not supported."));
+                }
+            }
+            else
+            {
+                result = new NullStreamRecordPayload();
+            }
+
+            return result;
+        }
     }
 }

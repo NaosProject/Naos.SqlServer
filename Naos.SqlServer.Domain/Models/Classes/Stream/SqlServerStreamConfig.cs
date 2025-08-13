@@ -16,9 +16,9 @@ namespace Naos.SqlServer.Domain
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
     /// <summary>
-    /// Sql Server implementation of <see cref="StreamConfigBase" />.
+    /// Sql Server implementation of <see cref="StandardStreamConfigBase" />.
     /// </summary>
-    public partial class SqlServerStreamConfig : StreamConfigBase
+    public partial class SqlServerStreamConfig : StandardStreamConfigBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerStreamConfig"/> class.

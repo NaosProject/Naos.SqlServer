@@ -89,34 +89,14 @@ namespace Naos.SqlServer.Protocol.Client
                 recordTimestamp,
                 objectTimestamp);
 
-            DescribedSerializationBase payload;
-            if (operation.StreamRecordItemsToInclude == StreamRecordItemsToInclude.MetadataAndPayload)
-            {
-                switch (identifiedSerializerRepresentation.SerializationFormat)
-                {
-                    case SerializationFormat.Binary:
-                        payload = new BinaryDescribedSerialization(
-                            objectType.WithVersion,
-                            identifiedSerializerRepresentation.SerializerRepresentation,
-                            binarySerializedObject);
-                        break;
-                    case SerializationFormat.String:
-                        payload = new StringDescribedSerialization(
-                            objectType.WithVersion,
-                            identifiedSerializerRepresentation.SerializerRepresentation,
-                            stringSerializedObject);
-                        break;
-                    default:
-                        throw new NotSupportedException(
-                            Invariant($"{nameof(SerializationFormat)} {identifiedSerializerRepresentation.SerializationFormat} is not supported."));
-                }
-            }
-            else
-            {
-                payload = new NullDescribedSerialization(metadata.TypeRepresentationOfObject.WithVersion, metadata.SerializerRepresentation);
-            }
+            var payload = BuildStreamRecordPayload(
+                operation.StreamRecordItemsToInclude,
+                identifiedSerializerRepresentation.SerializationFormat,
+                binarySerializedObject,
+                stringSerializedObject);
 
             var result = new StreamRecord(internalRecordId, metadata, payload);
+
             return result;
         }
     }

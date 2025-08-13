@@ -119,7 +119,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 timestampUtc,
                 timestampUtc);
 
-            var payload = new BinaryDescribedSerialization(payloadType, serializerRepresentation, new byte[3000000]);
+            var payload = new BinaryStreamRecordPayload(new byte[3000000]);
             var putOp = new StandardPutRecordOp(metadata, payload);
             var commandTimeout = TimeSpan.FromSeconds(1000);
             var listOfStreams = Enumerable.Range(1, 10)
@@ -979,7 +979,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             stream.PutWithId(id, objectToPut, typeSelectionStrategy: TypeSelectionStrategy.UseDeclaredType);
             var ids = stream.Execute(new StandardGetDistinctStringSerializedIdsOp(new RecordFilter()));
             ids.Single().StringSerializedId.MustForTest().BeNull();
-            var latestObjectById = stream.GetLatestObjectById<string, MyObject>(id, typeSelectionStrategy: TypeSelectionStrategy.UseDeclaredType);
+            var latestObjectById = stream.GetLatestObjectById<string, MyObject>(id);
             latestObjectById.Id.MustForTest().BeEqualTo(objectToPut.Id);
             latestObjectById.Field.MustForTest().BeEqualTo(objectToPut.Field);
             var latestObject = stream.GetLatestObject<MyObject>();
