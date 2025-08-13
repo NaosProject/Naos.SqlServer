@@ -268,7 +268,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 new CreateStreamUserOp(
                     stream.Name + "ReadOnly",
                     stream.Name + "ReadOnly-User",
-                    "ReadMe",
+                    "sadSDfj1823#$@782937423a",
                     StreamAccessKinds.Read,
                     true));
 
