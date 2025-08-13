@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.RecordFilter.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.RecordFilter.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ namespace Naos.SqlServer.Protocol.Client
 
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the stream.")]
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = NaosSuppressBecause.CA1711_IdentifiersShouldNotHaveIncorrectSuffix_TypeNameAddedAsSuffixForTestsWhereTypeIsPrimaryConcern)]
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         private static readonly VersionMatchStrategy[] SupportedVersionMatchStrategies = new[]
         {

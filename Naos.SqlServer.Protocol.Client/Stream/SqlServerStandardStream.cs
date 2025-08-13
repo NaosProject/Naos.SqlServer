@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -22,14 +22,14 @@ namespace Naos.SqlServer.Protocol.Client
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the stream.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = NaosSuppressBecause.CA1711_IdentifiersShouldNotHaveIncorrectSuffix_TypeNameAddedAsSuffixForTestsWhereTypeIsPrimaryConcern)]
-    public partial class SqlStream : StandardStreamBase,
+    public partial class SqlServerStandardStream : StandardStreamBase,
                                      ISyncAndAsyncReturningProtocol<GetOrAddIdentifiedSerializerRepresentationOp, int>,
                                      ISyncAndAsyncVoidProtocol<CreateStreamUserOp>
     {
         private readonly SqlServerLocator singleLocator;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlStream"/> class.
+        /// Initializes a new instance of the <see cref="SqlServerStandardStream"/> class.
         /// </summary>
         /// <param name="name">The name of the stream.</param>
         /// <param name="defaultConnectionTimeout">The default connection timeout.</param>
@@ -38,7 +38,7 @@ namespace Naos.SqlServer.Protocol.Client
         /// <param name="defaultSerializationFormat">The serialization format to use when serializing objects (not identifiers) into record payloads to put.</param>
         /// <param name="serializerFactory">The serializer factory to use to get serializers for objects (not identifiers), regardless of putting new or getting existing records.</param>
         /// <param name="resourceLocatorProtocols">Protocol to get appropriate resource locator(s).</param>
-        public SqlStream(
+        public SqlServerStandardStream(
             string name,
             TimeSpan defaultConnectionTimeout,
             TimeSpan defaultCommandTimeout,

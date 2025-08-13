@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LegacySqlStreamTest.cs" company="Naos Project">
+// <copyright file="LegacySqlServerStandardStreamTest.cs" company="Naos Project">
 //     Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -32,14 +32,14 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using Xunit.Abstractions;
     using static System.FormattableString;
 
-    public class LegacySqlStreamTest
+    public class LegacySqlServerStandardStreamTest
     {
         private const string DatabaseName = "master";  // change to locally created database name for local testing
         private const string InstanceName = "SQL2017"; // set to null for local testing
 
         private readonly ITestOutputHelper testOutputHelper;
 
-        public LegacySqlStreamTest(
+        public LegacySqlServerStandardStreamTest(
             ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
@@ -1025,7 +1025,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
         public void TestConfigStreamBuilding()
         {
             var localStreamName = "MyStream";
-            var x = new SqlServerStreamConfig(
+            var x = new SqlServerStandardStreamConfig(
                 localStreamName,
                 StreamAccessKinds.Read,
                 TimeSpan.FromSeconds(30),
@@ -1046,7 +1046,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                                     "Local",
                                 };
 
-            var stream = Config.GetByName<SqlServerStreamConfig>(
+            var stream = Config.GetByName<SqlServerStandardStreamConfig>(
                                          localStreamName,
                                          new SerializerRepresentation(
                                              SerializationKind.Json,
@@ -1054,7 +1054,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                                          SerializerFactories.Standard)
                                     .ToStream(SerializerFactories.Standard);
 
-            stream.MustForTest().NotBeNull().And().BeOfType<SqlStream>();
+            stream.MustForTest().NotBeNull().And().BeOfType<SqlServerStandardStream>();
         }
 
         private static SqlServerLocator GetSqlServerLocator()
@@ -1064,7 +1064,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             return sqlServerLocator;
         }
 
-        private static SqlStream GetCreatedSqlStream(
+        private static SqlServerStandardStream GetCreatedSqlStream(
             string streamName,
             TimeSpan? commandTimeout = null,
             RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy = RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
@@ -1076,7 +1076,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
 
             var defaultSerializerRepresentation = GetSerializerRepresentation();
 
-            var stream = new SqlStream(
+            var stream = new SqlServerStandardStream(
                 streamName,
                 TimeSpan.FromMinutes(1),
                 commandTimeout ?? TimeSpan.FromMinutes(3),

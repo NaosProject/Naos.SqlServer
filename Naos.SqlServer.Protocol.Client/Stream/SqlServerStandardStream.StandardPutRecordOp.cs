@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.StandardPutRecordOp.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.StandardPutRecordOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
 
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]

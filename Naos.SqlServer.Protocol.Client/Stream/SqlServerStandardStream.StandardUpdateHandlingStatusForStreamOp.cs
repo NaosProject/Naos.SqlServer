@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.StandardUpdateHandlingStatusForStreamOp.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.StandardUpdateHandlingStatusForStreamOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Type.Recipes;
     using static System.FormattableString;
 
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         private static readonly IReadOnlyCollection<HandlingStatus> AllHandlingStatusesExceptDisabledForStream =
             typeof(HandlingStatus)

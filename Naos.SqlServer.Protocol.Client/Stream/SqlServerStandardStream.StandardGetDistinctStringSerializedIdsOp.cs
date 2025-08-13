@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.StandardGetDistinctStringSerializedIdsOp.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.StandardGetDistinctStringSerializedIdsOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ namespace Naos.SqlServer.Protocol.Client
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
 
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         /// <inheritdoc />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "internalRecordId", Justification = "Leaving for debugging and future use.")]

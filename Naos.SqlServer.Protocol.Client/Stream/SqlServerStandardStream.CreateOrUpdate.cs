@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.CreateOrUpdate.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.CreateOrUpdate.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Type;
     using static System.FormattableString;
 
-    public partial class SqlStream : ISyncReturningProtocol<UpdateStreamStoredProceduresOp, UpdateStreamStoredProceduresResult>
+    public partial class SqlServerStandardStream : ISyncReturningProtocol<UpdateStreamStoredProceduresOp, UpdateStreamStoredProceduresResult>
     {
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the streams.")]

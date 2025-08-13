@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStreamTest.Schema.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStreamTest.Schema.cs" company="Naos Project">
 //     Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -18,9 +18,9 @@ namespace Naos.SqlServer.Protocol.Client.Test
     using Xunit;
     using static System.FormattableString;
 
-    public static partial class SqlStreamTest
+    public static partial class SqlServerStandardStreamTest
     {
-        private static readonly SqlStream SharedStream = BuildCreatedStream();
+        private static readonly SqlServerStandardStream SharedStream = BuildCreatedStream();
 
         [Fact]
         public static void PutWithId___Should_throw_InvalidOperationException___When_tag_key_is_too_long()

@@ -26,15 +26,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlServerStreamConfig : IModel<SqlServerStreamConfig>
+    public partial class SqlServerStandardStreamConfig : IModel<SqlServerStandardStreamConfig>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlServerStreamConfig"/> are equal.
+        /// Determines whether two objects of type <see cref="SqlServerStandardStreamConfig"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlServerStreamConfig left, SqlServerStreamConfig right)
+        public static bool operator ==(SqlServerStandardStreamConfig left, SqlServerStandardStreamConfig right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -52,15 +52,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlServerStreamConfig"/> are not equal.
+        /// Determines whether two objects of type <see cref="SqlServerStandardStreamConfig"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlServerStreamConfig left, SqlServerStreamConfig right) => !(left == right);
+        public static bool operator !=(SqlServerStandardStreamConfig left, SqlServerStandardStreamConfig right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlServerStreamConfig other)
+        public bool Equals(SqlServerStandardStreamConfig other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -84,7 +84,7 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as SqlServerStreamConfig);
+        public override bool Equals(object obj) => this == (obj as SqlServerStandardStreamConfig);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
@@ -98,7 +98,7 @@ namespace Naos.SqlServer.Domain
             .Value;
 
         /// <inheritdoc />
-        public new SqlServerStreamConfig DeepClone() => (SqlServerStreamConfig)this.DeepCloneInternal();
+        public new SqlServerStandardStreamConfig DeepClone() => (SqlServerStandardStreamConfig)this.DeepCloneInternal();
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
@@ -120,7 +120,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public override StandardStreamConfigBase DeepCloneWithName(string name)
         {
-            var result = new SqlServerStreamConfig(
+            var result = new SqlServerStandardStreamConfig(
                                  name,
                                  this.AccessKinds.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
@@ -152,7 +152,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public override StandardStreamConfigBase DeepCloneWithAccessKinds(StreamAccessKinds accessKinds)
         {
-            var result = new SqlServerStreamConfig(
+            var result = new SqlServerStandardStreamConfig(
                                  this.Name?.DeepClone(),
                                  accessKinds,
                                  this.DefaultConnectionTimeout.DeepClone(),
@@ -184,7 +184,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public override StandardStreamConfigBase DeepCloneWithDefaultSerializerRepresentation(SerializerRepresentation defaultSerializerRepresentation)
         {
-            var result = new SqlServerStreamConfig(
+            var result = new SqlServerStandardStreamConfig(
                                  this.Name?.DeepClone(),
                                  this.AccessKinds.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
@@ -216,7 +216,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public override StandardStreamConfigBase DeepCloneWithDefaultSerializationFormat(SerializationFormat defaultSerializationFormat)
         {
-            var result = new SqlServerStreamConfig(
+            var result = new SqlServerStandardStreamConfig(
                                  this.Name?.DeepClone(),
                                  this.AccessKinds.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
@@ -248,7 +248,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public override StandardStreamConfigBase DeepCloneWithAllLocators(IReadOnlyCollection<IResourceLocator> allLocators)
         {
-            var result = new SqlServerStreamConfig(
+            var result = new SqlServerStandardStreamConfig(
                                  this.Name?.DeepClone(),
                                  this.AccessKinds.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
@@ -264,7 +264,7 @@ namespace Naos.SqlServer.Domain
         /// Deep clones this object with a new <see cref="DefaultConnectionTimeout" />.
         /// </summary>
         /// <param name="defaultConnectionTimeout">The new <see cref="DefaultConnectionTimeout" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlServerStreamConfig" /> using the specified <paramref name="defaultConnectionTimeout" /> for <see cref="DefaultConnectionTimeout" /> and a deep clone of every other property.</returns>
+        /// <returns>New <see cref="SqlServerStandardStreamConfig" /> using the specified <paramref name="defaultConnectionTimeout" /> for <see cref="DefaultConnectionTimeout" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -282,9 +282,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlServerStreamConfig DeepCloneWithDefaultConnectionTimeout(TimeSpan defaultConnectionTimeout)
+        public SqlServerStandardStreamConfig DeepCloneWithDefaultConnectionTimeout(TimeSpan defaultConnectionTimeout)
         {
-            var result = new SqlServerStreamConfig(
+            var result = new SqlServerStandardStreamConfig(
                                  this.Name?.DeepClone(),
                                  this.AccessKinds.DeepClone(),
                                  defaultConnectionTimeout,
@@ -300,7 +300,7 @@ namespace Naos.SqlServer.Domain
         /// Deep clones this object with a new <see cref="DefaultCommandTimeout" />.
         /// </summary>
         /// <param name="defaultCommandTimeout">The new <see cref="DefaultCommandTimeout" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlServerStreamConfig" /> using the specified <paramref name="defaultCommandTimeout" /> for <see cref="DefaultCommandTimeout" /> and a deep clone of every other property.</returns>
+        /// <returns>New <see cref="SqlServerStandardStreamConfig" /> using the specified <paramref name="defaultCommandTimeout" /> for <see cref="DefaultCommandTimeout" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -318,9 +318,9 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlServerStreamConfig DeepCloneWithDefaultCommandTimeout(TimeSpan defaultCommandTimeout)
+        public SqlServerStandardStreamConfig DeepCloneWithDefaultCommandTimeout(TimeSpan defaultCommandTimeout)
         {
-            var result = new SqlServerStreamConfig(
+            var result = new SqlServerStandardStreamConfig(
                                  this.Name?.DeepClone(),
                                  this.AccessKinds.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
@@ -336,7 +336,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         protected override StandardStreamConfigBase DeepCloneInternal()
         {
-            var result = new SqlServerStreamConfig(
+            var result = new SqlServerStandardStreamConfig(
                                  this.Name?.DeepClone(),
                                  this.AccessKinds.DeepClone(),
                                  this.DefaultConnectionTimeout.DeepClone(),
@@ -352,7 +352,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.SqlServerStreamConfig: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, AccessKinds = {this.AccessKinds.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {this.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {this.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {this.AllLocators?.ToString() ?? "<null>"}, DefaultConnectionTimeout = {this.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {this.DefaultCommandTimeout.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.SqlServerStandardStreamConfig: Name = {this.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, AccessKinds = {this.AccessKinds.ToString() ?? "<null>"}, DefaultSerializerRepresentation = {this.DefaultSerializerRepresentation?.ToString() ?? "<null>"}, DefaultSerializationFormat = {this.DefaultSerializationFormat.ToString() ?? "<null>"}, AllLocators = {this.AllLocators?.ToString() ?? "<null>"}, DefaultConnectionTimeout = {this.DefaultConnectionTimeout.ToString() ?? "<null>"}, DefaultCommandTimeout = {this.DefaultCommandTimeout.ToString() ?? "<null>"}.");
 
             return result;
         }

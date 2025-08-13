@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.TagCaching.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.TagCaching.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Type;
     using static System.FormattableString;
 
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         private readonly ConcurrentDictionary<long, NamedValue<string>> tagIdToKeyValueMap = new ConcurrentDictionary<long, NamedValue<string>>();
         private readonly ConcurrentDictionary<NamedValue<string>, long> tagKeyValueToIdMap = new ConcurrentDictionary<NamedValue<string>, long>();

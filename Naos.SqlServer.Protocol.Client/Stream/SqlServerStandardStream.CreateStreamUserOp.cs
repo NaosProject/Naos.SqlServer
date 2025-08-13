@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.CreateStreamUserOp.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.CreateStreamUserOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
 
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "sprocResult", Justification = "Part of contract, could be a output parameter in future.")]

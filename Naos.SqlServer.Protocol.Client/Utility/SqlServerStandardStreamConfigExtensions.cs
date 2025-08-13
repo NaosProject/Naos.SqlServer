@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStreamBuilder.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStreamConfigExtensions.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -16,18 +16,18 @@ namespace Naos.SqlServer.Protocol.Client
     using static System.FormattableString;
 
     /// <summary>
-    /// Extension methods on <see cref="SqlServerStreamConfig"/>.
+    /// Extension methods on <see cref="SqlServerStandardStreamConfig"/>.
     /// </summary>
-    public static class SqlStreamBuilder
+    public static class SqlServerStandardStreamConfigExtensions
     {
         /// <summary>
-        /// Builds a <see cref="SqlServerStreamConfig"/> from config.
+        /// Builds a <see cref="SqlServerStandardStreamConfig"/> from config.
         /// </summary>
         /// <param name="streamConfig">The stream configuration object.</param>
         /// <param name="serializerFactory">The serializer factory.</param>
-        /// <returns>A <see cref="SqlStream"/>.</returns>
-        public static SqlStream ToStream(
-            this SqlServerStreamConfig streamConfig,
+        /// <returns>A <see cref="SqlServerStandardStream"/>.</returns>
+        public static SqlServerStandardStream ToStream(
+            this SqlServerStandardStreamConfig streamConfig,
             ISerializerFactory serializerFactory)
         {
             streamConfig.MustForArg(nameof(streamConfig)).NotBeNull();
@@ -47,7 +47,7 @@ namespace Naos.SqlServer.Protocol.Client
 
             var resourceLocatorProtocol = new SingleResourceLocatorProtocols(singleLocator);
 
-            var result = new SqlStream(
+            var result = new SqlServerStandardStream(
                 streamConfig.Name,
                 streamConfig.DefaultConnectionTimeout,
                 streamConfig.DefaultCommandTimeout,

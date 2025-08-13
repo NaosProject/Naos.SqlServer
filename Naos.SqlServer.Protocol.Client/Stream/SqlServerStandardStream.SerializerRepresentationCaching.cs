@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.SerializerRepresentationCaching.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.SerializerRepresentationCaching.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.Serialization;
     using SerializationFormat = OBeautifulCode.Serialization.SerializationFormat;
 
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         private readonly ConcurrentDictionary<SerializerRepresentation, IdentifiedSerializerRepresentation> serializerRepresentationToIdentifiedSerializerMap = new ConcurrentDictionary<SerializerRepresentation, IdentifiedSerializerRepresentation>();
         private readonly ConcurrentDictionary<int, IdentifiedSerializerRepresentation> serializerRepresentationIdToIdentifiedSerializerMap = new ConcurrentDictionary<int, IdentifiedSerializerRepresentation>();

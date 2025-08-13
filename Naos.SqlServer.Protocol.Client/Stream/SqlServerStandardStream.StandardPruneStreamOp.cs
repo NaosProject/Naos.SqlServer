@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.StandardPruneStreamOp.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.StandardPruneStreamOp.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ namespace Naos.SqlServer.Protocol.Client
     using OBeautifulCode.String.Recipes;
     using static System.FormattableString;
 
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         /// <inheritdoc />
         public override void Execute(

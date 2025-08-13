@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStream.TypeCaching.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStream.TypeCaching.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ namespace Naos.SqlServer.Protocol.Client
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Acceptable given it creates the stream.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = NaosSuppressBecause.CA1711_IdentifiersShouldNotHaveIncorrectSuffix_TypeNameAddedAsSuffixForTestsWhereTypeIsPrimaryConcern)]
-    public partial class SqlStream
+    public partial class SqlServerStandardStream
     {
         private readonly ConcurrentDictionary<int, TypeRepresentationWithAndWithoutVersion> assemblyQualifiedNameWithVersionIdToIdentifiedTypeMap = new ConcurrentDictionary<int, TypeRepresentationWithAndWithoutVersion>();
         private readonly ConcurrentDictionary<string, IdentifiedType> assemblyQualifiedNameWithVersionToIdentifiedTypeMap = new ConcurrentDictionary<string, IdentifiedType>();

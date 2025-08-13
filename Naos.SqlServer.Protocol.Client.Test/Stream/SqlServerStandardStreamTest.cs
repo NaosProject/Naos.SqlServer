@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlStreamTest.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStreamTest.cs" company="Naos Project">
 //     Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -28,10 +28,10 @@ namespace Naos.SqlServer.Protocol.Client.Test
     /// <summary>
     /// README: This is a copy of Naos.Database.Domain.Test.MemoryStandardStreamTest; tweaked only to
     /// work with a SQL Server-based streams.  All of the <see cref="MemoryStandardStream"/> tests should
-    /// also work on a <see cref="SqlStream"/>.
+    /// also work on a <see cref="SqlServerStandardStream"/>.
     /// In keeping this suite of tests in-sync we ensure standardized test coverage.
     /// </summary>
-    public static partial class SqlStreamTest
+    public static partial class SqlServerStandardStreamTest
     {
         private const string DatabaseName = "master";  // change to locally created database name for local testing
         private const string InstanceName = "SQL2017"; // set to null for local testing
@@ -918,7 +918,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
             actual2.AsTest().Must().BeUnorderedEqualTo(expected);
         }
 
-        private static SqlStream BuildCreatedStream(
+        private static SqlServerStandardStream BuildCreatedStream(
             string streamName = null,
             TimeSpan? commandTimeout = null,
             RecordTagAssociationManagementStrategy recordTagAssociationManagementStrategy = RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction,
@@ -934,7 +934,7 @@ namespace Naos.SqlServer.Protocol.Client.Test
                 SerializationKind.Json,
                 configurationTypeRepresentation);
 
-            var stream = new SqlStream(
+            var stream = new SqlServerStandardStream(
                 streamName ??  Guid.NewGuid().ToStringInvariantPreferred(),
                 TimeSpan.FromMinutes(1),
                 commandTimeout ?? TimeSpan.FromMinutes(3),

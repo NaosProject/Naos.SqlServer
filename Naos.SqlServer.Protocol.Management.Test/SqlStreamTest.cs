@@ -24,7 +24,7 @@ namespace Naos.SqlServer.Protocol.Management.Test
     using static System.FormattableString;
 
     /// <summary>
-    /// Tests for <see cref="SqlStream"/>.
+    /// Tests for <see cref="SqlServerStandardStream"/>.
     /// </summary>
     public partial class SqlStreamTest
     {
@@ -54,7 +54,7 @@ namespace Naos.SqlServer.Protocol.Management.Test
                 configurationTypeRepresentation);
 
             var defaultSerializationFormat = SerializationFormat.String;
-            var stream = new SqlStream(
+            var stream = new SqlServerStandardStream(
                 "Example",
                 TimeSpan.FromMinutes(1),
                 TimeSpan.FromMinutes(3),

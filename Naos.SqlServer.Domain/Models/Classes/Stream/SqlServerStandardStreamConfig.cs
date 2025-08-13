@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SqlServerStreamConfig.cs" company="Naos Project">
+// <copyright file="SqlServerStandardStreamConfig.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -18,10 +18,10 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// Sql Server implementation of <see cref="StandardStreamConfigBase" />.
     /// </summary>
-    public partial class SqlServerStreamConfig : StandardStreamConfigBase
+    public partial class SqlServerStandardStreamConfig : StandardStreamConfigBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlServerStreamConfig"/> class.
+        /// Initializes a new instance of the <see cref="SqlServerStandardStreamConfig"/> class.
         /// </summary>
         /// <param name="name">The name of the stream.</param>
         /// <param name="accessKinds">The kind of access that the stream has.</param>
@@ -30,7 +30,7 @@ namespace Naos.SqlServer.Domain
         /// <param name="defaultSerializerRepresentation">The serializer representation to use to get a serializer to use when serializing objects (not identifiers) into record payloads to put.</param>
         /// <param name="defaultSerializationFormat">The serialization format to use when serializing objects (not identifiers) into record payloads to put.</param>
         /// <param name="allLocators">All <see cref="IResourceLocator"/>'s.</param>
-        public SqlServerStreamConfig(
+        public SqlServerStandardStreamConfig(
             string name,
             StreamAccessKinds accessKinds,
             TimeSpan defaultConnectionTimeout,
