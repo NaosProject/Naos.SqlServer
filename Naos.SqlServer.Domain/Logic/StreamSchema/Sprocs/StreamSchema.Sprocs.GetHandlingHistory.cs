@@ -7,8 +7,6 @@
 namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
-    using Naos.Database.Domain;
-    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     public static partial class StreamSchema
@@ -66,19 +64,19 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetHandlingHistory)}]");
                     var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.Concern),
-                                             Tables.Handling.Concern.SqlDataType,
-                                             concern),
-                                         new InputParameterDefinition<long>(
-                                             nameof(InputParamName.InternalRecordId),
-                                             Tables.Record.Id.SqlDataType,
-                                             internalRecordId),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.EntriesXml),
-                                             new XmlSqlDataTypeRepresentation()),
-                                     };
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.Concern),
+                            Tables.Handling.Concern.SqlDataType,
+                            concern),
+                        new InputParameterDefinition<long>(
+                            nameof(InputParamName.InternalRecordId),
+                            Tables.Record.Id.SqlDataType,
+                            internalRecordId),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.EntriesXml),
+                            new XmlSqlDataTypeRepresentation()),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -102,7 +100,7 @@ namespace Naos.SqlServer.Domain
     @{InputParamName.Concern} {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}
  ,  @{InputParamName.InternalRecordId} {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
  ,  @{OutputParamName.EntriesXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
-  )
+)
 AS
 BEGIN
     SELECT @{OutputParamName.EntriesXml} = (

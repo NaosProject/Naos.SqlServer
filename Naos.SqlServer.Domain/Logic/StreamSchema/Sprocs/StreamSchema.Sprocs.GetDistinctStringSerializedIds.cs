@@ -203,10 +203,32 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
+
+    --------------------------------------------------------------------------------------
+    -- BEGIN SETUP                                                                      --
+    --------------------------------------------------------------------------------------
+{LocalVariableComment}
+    DECLARE @{LocalVariablePrefix}{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.InternalRecordIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.IdentifierTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.ObjectTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} = @{InputParamName.StringIdentifiersXml}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.TagIdsToMatchCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax} = @{InputParamName.TagMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = @{InputParamName.VersionMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.DeprecatedIdEventTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.RecordsToFilterSelectionStrategy} {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax} = @{InputParamName.RecordsToFilterSelectionStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.RecordsToFilterVersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = @{InputParamName.RecordsToFilterVersionMatchStrategy}
+
     DECLARE @{resultTableName} TABLE ([{Tables.Record.StringSerializedId.Name}] {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} NULL, [{Tables.TypeWithVersion.Id.Name}] {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
+    --------------------------------------------------------------------------------------
+    -- END SETUP                                                                        --
+    --------------------------------------------------------------------------------------
 
     {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, includeHandlingTags: false, includeRecordsToFilterCriteria: true)}
 
+    --------------------------------------------------------------------------------------
+    -- BEGIN STORED PROCEDURE SPECIFIC LOGIC                                            --
+    --------------------------------------------------------------------------------------
     INSERT INTO @{resultTableName} ([{Tables.TypeWithVersion.Id.Name}], [{Tables.Record.StringSerializedId.Name}])
     SELECT DISTINCT
           r.[{Tables.Record.IdentifierTypeWithVersionId.Name}]
@@ -224,9 +246,12 @@ BEGIN
         , ISNULL([{streamName}].[{Funcs.AdjustForGetStringSerializedId.Name}](e.[{Tables.Record.StringSerializedId.Name}]), '{XmlConversionTool.NullCanaryValue}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
     FROM @{resultTableName} e
     FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}'))
-END
 
-			");
+    --------------------------------------------------------------------------------------
+    -- END STORED PROCEDURE SPECIFIC LOGIC                                              --
+    --------------------------------------------------------------------------------------
+
+END");
 
                     return result;
                 }

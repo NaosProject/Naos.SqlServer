@@ -74,14 +74,14 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(CreateStreamUser)}");
 
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(nameof(InputParamName.LoginName), new StringSqlDataTypeRepresentation(true, 128), loginName ?? username),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.Username), new StringSqlDataTypeRepresentation(true, 128), username),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.ClearTextPassword), new StringSqlDataTypeRepresentation(true, 128), clearTextPassword),
-                                         new InputParameterDefinition<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant), roles),
-                                         new InputParameterDefinition<int>(nameof(InputParamName.ShouldCreateLogin), new IntSqlDataTypeRepresentation(), shouldCreateLogin ? 1 : 0),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(nameof(InputParamName.LoginName), new StringSqlDataTypeRepresentation(true, 128), loginName ?? username),
+                        new InputParameterDefinition<string>(nameof(InputParamName.Username), new StringSqlDataTypeRepresentation(true, 128), username),
+                        new InputParameterDefinition<string>(nameof(InputParamName.ClearTextPassword), new StringSqlDataTypeRepresentation(true, 128), clearTextPassword),
+                        new InputParameterDefinition<string>(nameof(InputParamName.RoleCsv), new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant), roles),
+                        new InputParameterDefinition<int>(nameof(InputParamName.ShouldCreateLogin), new IntSqlDataTypeRepresentation(), shouldCreateLogin ? 1 : 0),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -102,11 +102,11 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{Name}](
-  @{InputParamName.LoginName} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-, @{InputParamName.Username} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-, @{InputParamName.ClearTextPassword} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
-, @{InputParamName.RoleCsv} AS {new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}
-, @{InputParamName.ShouldCreateLogin} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+    @{InputParamName.LoginName} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
+ ,  @{InputParamName.Username} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
+ ,  @{InputParamName.ClearTextPassword} AS {new StringSqlDataTypeRepresentation(true, 128).DeclarationInSqlSyntax}
+ ,  @{InputParamName.RoleCsv} AS {new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.ShouldCreateLogin} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
 )
 AS
 BEGIN

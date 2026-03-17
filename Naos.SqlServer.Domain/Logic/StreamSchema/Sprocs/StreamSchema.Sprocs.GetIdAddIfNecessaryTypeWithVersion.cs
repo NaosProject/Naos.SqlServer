@@ -57,14 +57,16 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetIdAddIfNecessaryTypeWithVersion)}]");
 
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.AssemblyQualifiedNameWithVersion),
-                                             Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType,
-                                             assemblyQualifiedNameWithVersion),
-                                         new OutputParameterDefinition<int>(nameof(OutputParamName.Id), Tables.TypeWithVersion.Id.SqlDataType),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.AssemblyQualifiedNameWithVersion),
+                            Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType,
+                            assemblyQualifiedNameWithVersion),
+                        new OutputParameterDefinition<int>(
+                            nameof(OutputParamName.Id),
+                            Tables.TypeWithVersion.Id.SqlDataType),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -86,9 +88,9 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetIdAddIfNecessaryTypeWithVersion.Name}](
-  @{nameof(InputParamName.AssemblyQualifiedNameWithVersion)} {Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType.DeclarationInSqlSyntax},
-  @{nameof(OutputParamName.Id)} {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-  )
+    @{nameof(InputParamName.AssemblyQualifiedNameWithVersion)} {Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{nameof(OutputParamName.Id)} {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+)
 AS
 BEGIN
 

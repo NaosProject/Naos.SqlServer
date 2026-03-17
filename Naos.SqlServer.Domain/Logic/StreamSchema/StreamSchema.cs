@@ -32,6 +32,28 @@ namespace Naos.SqlServer.Domain
         public const int GeneralPurposeErrorStateForThrowStatement = 1;
 
         /// <summary>
+        /// Prefix to add to all local copies of stored procedure parameters.
+        /// </summary>
+        public const string LocalVariablePrefix = "Local_";
+
+        /// <summary>
+        /// Comment to use for local variables.
+        /// </summary>
+        public const string LocalVariableComment = @"
+    -- SQL Server caches execution plans keyed in part by the connection's SET options. ADO.NET connects with SET ARITHABORT OFF.
+    -- Because of this, the first call to this stored procedure from .NET will cache query plans for the statements contained within
+    -- the stored procedure (NOT one plan per SP, but actually one plan per statement - this SP may generate a handful of plans).
+    -- The cached query plans are based on the particular set of parameter values that the stored procedure is called with.
+    -- This may cause the optimizer to generate a terrible plan (e.g., one that does a table scan instead of an index seek)
+    -- for a different set of parameter values.  Because these stored procedures provide many parameters and a lot of flexibility
+    -- in which are used and what values they contain, we should not cache a query plan based on the first call to the SP.
+    -- Local variables are the solution.  SQL Server only sniffs the procedure's parameters, not local variables. When the optimizer
+    -- sees a local variable, it can't peek at the runtime value during compilation, so it falls back to average density statistics.
+    -- It won't produce the absolute best plan for any particular value, but it'll produce a reasonably good plan for all values.
+    -- SQL Server updates statistics automatically in the background when a sufficient percentage of rows have changed.
+    -- However, it's also a good practice to supplement that with a job that keeps the statistics fresh.";
+
+        /// <summary>
         /// Builds the creation script for object table.
         /// </summary>
         /// <param name="streamName">Name of the stream.</param>

@@ -64,12 +64,24 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(GetTypeFromId)}");
 
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<int>(nameof(InputParamName.Id), versioned ? Tables.TypeWithVersion.Id.SqlDataType : Tables.TypeWithoutVersion.Id.SqlDataType, typeId),
-                                         new InputParameterDefinition<int>(nameof(InputParamName.Versioned), new IntSqlDataTypeRepresentation(), versioned ? 1 : 0),
-                                         new OutputParameterDefinition<string>(nameof(OutputParamName.AssemblyQualifiedName), versioned ? Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType : Tables.TypeWithoutVersion.AssemblyQualifiedName.SqlDataType),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<int>(
+                            nameof(InputParamName.Id),
+                            versioned
+                                ? Tables.TypeWithVersion.Id.SqlDataType
+                                : Tables.TypeWithoutVersion.Id.SqlDataType,
+                            typeId),
+                        new InputParameterDefinition<int>(
+                            nameof(InputParamName.Versioned),
+                            new IntSqlDataTypeRepresentation(),
+                            versioned ? 1 : 0),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.AssemblyQualifiedName),
+                            versioned
+                                ? Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType
+                                : Tables.TypeWithoutVersion.AssemblyQualifiedName.SqlDataType),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -91,8 +103,8 @@ namespace Naos.SqlServer.Domain
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetTypeFromId.Name}](
     @{InputParamName.Id} {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-  , @{InputParamName.Versioned} [BIT]
-  , @{OutputParamName.AssemblyQualifiedName} {Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{InputParamName.Versioned} [BIT]
+ ,  @{OutputParamName.AssemblyQualifiedName} {Tables.TypeWithVersion.AssemblyQualifiedName.SqlDataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN

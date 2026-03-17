@@ -52,9 +52,11 @@ namespace Naos.SqlServer.Domain
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetStreamDetails)}]");
 
                     var parameters = new List<ParameterDefinitionBase>
-                                     {
-                                         new OutputParameterDefinition<string>(nameof(OutputParamName.DetailsXml), new XmlSqlDataTypeRepresentation()),
-                                     };
+                    {
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.DetailsXml),
+                            new XmlSqlDataTypeRepresentation()),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -79,7 +81,7 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetStreamDetails.Name}](
-  @{OutputParamName.DetailsXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+    @{OutputParamName.DetailsXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN

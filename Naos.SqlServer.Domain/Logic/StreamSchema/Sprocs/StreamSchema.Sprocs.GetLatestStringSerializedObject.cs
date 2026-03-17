@@ -8,12 +8,8 @@ namespace Naos.SqlServer.Domain
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using Naos.CodeAnalysis.Recipes;
     using Naos.Database.Domain;
-    using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.String.Recipes;
-    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     public static partial class StreamSchema
@@ -100,44 +96,44 @@ namespace Naos.SqlServer.Domain
                     RecordFilterConvertedForStoredProcedure convertedRecordFilter)
                 {
                     var sprocName = Invariant($"[{streamName}].{Name}");
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.InternalRecordIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.InternalRecordIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.IdentifierTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.IdentifierTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.ObjectTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.ObjectTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.StringIdentifiersXml),
-                                             new XmlSqlDataTypeRepresentation(),
-                                             convertedRecordFilter.StringIdsToMatchXml),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagIdsToMatchCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.TagIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagMatchStrategy),
-                                             new StringSqlDataTypeRepresentation(false, 40),
-                                             convertedRecordFilter.TagMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.VersionMatchStrategy),
-                                             new StringSqlDataTypeRepresentation(false, 20),
-                                             convertedRecordFilter.VersionMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.StringSerializedObject),
-                                             new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant)),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.InternalRecordIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.InternalRecordIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.IdentifierTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.IdentifierTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.ObjectTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.ObjectTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.StringIdentifiersXml),
+                            new XmlSqlDataTypeRepresentation(),
+                            convertedRecordFilter.StringIdsToMatchXml),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagIdsToMatchCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.TagIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 40),
+                            convertedRecordFilter.TagMatchStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.VersionMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 20),
+                            convertedRecordFilter.VersionMatchStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.StringSerializedObject),
+                            new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant)),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -174,8 +170,28 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
+    --------------------------------------------------------------------------------------
+    -- BEGIN SETUP                                                                      --
+    --------------------------------------------------------------------------------------
+{LocalVariableComment}
+    DECLARE @{LocalVariablePrefix}{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.InternalRecordIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.IdentifierTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.ObjectTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} = @{InputParamName.StringIdentifiersXml}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.TagIdsToMatchCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax} = @{InputParamName.TagMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = @{InputParamName.VersionMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.DeprecatedIdEventTypeIdsCsv}
+
+    --------------------------------------------------------------------------------------
+    -- END SETUP                                                                        --
+    --------------------------------------------------------------------------------------
+
     {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, includeHandlingTags: false, includeRecordsToFilterCriteria: false)}
 
+    --------------------------------------------------------------------------------------
+    -- BEGIN STORED PROCEDURE SPECIFIC LOGIC                                            --
+    --------------------------------------------------------------------------------------
     DECLARE @{mostRecentMatchingRecordId} {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
     SELECT @{mostRecentMatchingRecordId} = (SELECT TOP 1 [{Tables.Record.Id.Name}]
          FROM @{recordIdsToConsiderTable}
@@ -183,6 +199,11 @@ BEGIN
     SELECT @{OutputParamName.StringSerializedObject} = [{Tables.Record.StringSerializedObject.Name}]
          FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
          WHERE r.[{Tables.Record.Id.Name}] = @{mostRecentMatchingRecordId}
+
+    --------------------------------------------------------------------------------------
+    -- END STORED PROCEDURE SPECIFIC LOGIC                                              --
+    --------------------------------------------------------------------------------------
+
 END");
 
                     return result;

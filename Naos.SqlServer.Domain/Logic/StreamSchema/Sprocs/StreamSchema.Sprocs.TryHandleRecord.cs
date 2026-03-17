@@ -219,100 +219,100 @@ namespace Naos.SqlServer.Domain
 
                     var sprocName = Invariant($"[{streamName}].{nameof(TryHandleRecord)}");
 
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.Concern),
-                                             Tables.Handling.Concern.SqlDataType,
-                                             concern),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.Details),
-                                             Tables.Handling.Details.SqlDataType,
-                                             details),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.InternalRecordIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.InternalRecordIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.IdentifierTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.IdentifierTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.ObjectTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.ObjectTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.StringIdentifiersXml),
-                                             new XmlSqlDataTypeRepresentation(),
-                                             convertedRecordFilter.StringIdsToMatchXml),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagIdsToMatchCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.TagIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagMatchStrategy),
-                                             new StringSqlDataTypeRepresentation(false, 40),
-                                             convertedRecordFilter.TagMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.VersionMatchStrategy),
-                                             new StringSqlDataTypeRepresentation(false, 20),
-                                             convertedRecordFilter.VersionMatchStrategy.ToString()),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
-                                             new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
-                                             convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagIdsForEntryCsv),
-                                             Tables.Record.TagIdsCsv.SqlDataType,
-                                             tagIdsForEntryCsv),
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.OrderRecordsBy),
-                                             new StringSqlDataTypeRepresentation(false, 50),
-                                             orderRecordsBy.ToString()),
-                                         new InputParameterDefinition<int>(
-                                             nameof(InputParamName.InheritRecordTags),
-                                             new IntSqlDataTypeRepresentation(),
-                                             inheritRecordTags ? 1 : 0),
-                                         new InputParameterDefinition<long?>(
-                                             nameof(InputParamName.MinimumInternalRecordId),
-                                             Tables.Record.Id.SqlDataType,
-                                             minimumInternalRecordId),
-                                         new InputParameterDefinition<int>(
-                                             nameof(InputParamName.IncludePayload),
-                                             new IntSqlDataTypeRepresentation(),
-                                             streamRecordItemsToInclude == StreamRecordItemsToInclude.MetadataAndPayload ? 1 : 0),
-                                         new OutputParameterDefinition<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
-                                         new OutputParameterDefinition<int>(nameof(OutputParamName.IsBlocked), new IntSqlDataTypeRepresentation()),
-                                         new OutputParameterDefinition<long>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
-                                         new OutputParameterDefinition<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.SqlDataType),
-                                         new OutputParameterDefinition<int>(
-                                             nameof(OutputParamName.SerializerRepresentationId),
-                                             Tables.SerializerRepresentation.Id.SqlDataType),
-                                         new OutputParameterDefinition<int>(
-                                             nameof(OutputParamName.IdentifierTypeWithVersionId),
-                                             Tables.TypeWithVersion.Id.SqlDataType),
-                                         new OutputParameterDefinition<int>(
-                                             nameof(OutputParamName.ObjectTypeWithVersionId),
-                                             Tables.TypeWithVersion.Id.SqlDataType),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.StringSerializedId),
-                                             Tables.Record.StringSerializedId.SqlDataType),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.StringSerializedObject),
-                                             Tables.Record.StringSerializedObject.SqlDataType),
-                                         new OutputParameterDefinition<byte[]>(
-                                             nameof(OutputParamName.BinarySerializedObject),
-                                             Tables.Record.BinarySerializedObject.SqlDataType),
-                                         new OutputParameterDefinition<DateTime>(
-                                             nameof(OutputParamName.RecordDateTime),
-                                             Tables.Record.RecordCreatedUtc.SqlDataType),
-                                         new OutputParameterDefinition<DateTime?>(
-                                             nameof(OutputParamName.ObjectDateTime),
-                                             Tables.Record.ObjectDateTimeUtc.SqlDataType),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.TagIdsCsv),
-                                             Tables.Record.TagIdsCsv.SqlDataType),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.Concern),
+                            Tables.Handling.Concern.SqlDataType,
+                            concern),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.Details),
+                            Tables.Handling.Details.SqlDataType,
+                            details),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.InternalRecordIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.InternalRecordIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.IdentifierTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.IdentifierTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.ObjectTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.ObjectTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.StringIdentifiersXml),
+                            new XmlSqlDataTypeRepresentation(),
+                            convertedRecordFilter.StringIdsToMatchXml),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagIdsToMatchCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.TagIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 40),
+                            convertedRecordFilter.TagMatchStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.VersionMatchStrategy),
+                            new StringSqlDataTypeRepresentation(false, 20),
+                            convertedRecordFilter.VersionMatchStrategy.ToString()),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.DeprecatedIdEventTypeIdsCsv),
+                            new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant),
+                            convertedRecordFilter.DeprecatedIdEventTypeIdsCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagIdsForEntryCsv),
+                            Tables.Record.TagIdsCsv.SqlDataType,
+                            tagIdsForEntryCsv),
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.OrderRecordsBy),
+                            new StringSqlDataTypeRepresentation(false, 50),
+                            orderRecordsBy.ToString()),
+                        new InputParameterDefinition<int>(
+                            nameof(InputParamName.InheritRecordTags),
+                            new IntSqlDataTypeRepresentation(),
+                            inheritRecordTags ? 1 : 0),
+                        new InputParameterDefinition<long?>(
+                            nameof(InputParamName.MinimumInternalRecordId),
+                            Tables.Record.Id.SqlDataType,
+                            minimumInternalRecordId),
+                        new InputParameterDefinition<int>(
+                            nameof(InputParamName.IncludePayload),
+                            new IntSqlDataTypeRepresentation(),
+                            streamRecordItemsToInclude == StreamRecordItemsToInclude.MetadataAndPayload ? 1 : 0),
+                        new OutputParameterDefinition<int>(nameof(OutputParamName.ShouldHandle), new IntSqlDataTypeRepresentation()),
+                        new OutputParameterDefinition<int>(nameof(OutputParamName.IsBlocked), new IntSqlDataTypeRepresentation()),
+                        new OutputParameterDefinition<long>(nameof(OutputParamName.Id), Tables.Handling.Id.SqlDataType),
+                        new OutputParameterDefinition<long>(nameof(OutputParamName.InternalRecordId), Tables.Record.Id.SqlDataType),
+                        new OutputParameterDefinition<int>(
+                            nameof(OutputParamName.SerializerRepresentationId),
+                            Tables.SerializerRepresentation.Id.SqlDataType),
+                        new OutputParameterDefinition<int>(
+                            nameof(OutputParamName.IdentifierTypeWithVersionId),
+                            Tables.TypeWithVersion.Id.SqlDataType),
+                        new OutputParameterDefinition<int>(
+                            nameof(OutputParamName.ObjectTypeWithVersionId),
+                            Tables.TypeWithVersion.Id.SqlDataType),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.StringSerializedId),
+                            Tables.Record.StringSerializedId.SqlDataType),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.StringSerializedObject),
+                            Tables.Record.StringSerializedObject.SqlDataType),
+                        new OutputParameterDefinition<byte[]>(
+                            nameof(OutputParamName.BinarySerializedObject),
+                            Tables.Record.BinarySerializedObject.SqlDataType),
+                        new OutputParameterDefinition<DateTime>(
+                            nameof(OutputParamName.RecordDateTime),
+                            Tables.Record.RecordCreatedUtc.SqlDataType),
+                        new OutputParameterDefinition<DateTime?>(
+                            nameof(OutputParamName.ObjectDateTime),
+                            Tables.Record.ObjectDateTimeUtc.SqlDataType),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.TagIdsCsv),
+                            Tables.Record.TagIdsCsv.SqlDataType),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -375,37 +375,61 @@ namespace Naos.SqlServer.Domain
                     var createOrModify = asAlter ? "CREATE OR ALTER" : "CREATE";
                     var result = Invariant($@"
 {createOrModify} PROCEDURE [{streamName}].[{TryHandleRecord.Name}](
-  @{InputParamName.Concern} AS {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.Details} AS {Tables.Handling.Details.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
-, @{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
-, @{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
-, @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
-, @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
-, @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
-, @{InputParamName.OrderRecordsBy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsForEntryCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{InputParamName.MinimumInternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.IncludePayload} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{OutputParamName.Id} AS {Tables.Handling.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ShouldHandle} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.IsBlocked} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+    @{InputParamName.Concern} AS {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.Details} AS {Tables.Handling.Details.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+ ,  @{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax}
+ ,  @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
+ ,  @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
+ ,  @{InputParamName.OrderRecordsBy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+ ,  @{InputParamName.TagIdsForEntryCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+ ,  @{InputParamName.MinimumInternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.IncludePayload} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+ ,  @{OutputParamName.Id} AS {Tables.Handling.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.InternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.ObjectDateTime} AS {Tables.Record.ObjectDateTimeUtc.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.RecordDateTime} AS {Tables.Record.RecordCreatedUtc.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.ShouldHandle} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.IsBlocked} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
+    --------------------------------------------------------------------------------------
+    -- BEGIN SETUP                                                                      --
+    --------------------------------------------------------------------------------------
+{LocalVariableComment}
+    DECLARE @{LocalVariablePrefix}{InputParamName.Concern} AS {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax} = @{InputParamName.Concern}
+    DECLARE @{LocalVariablePrefix}{InputParamName.Details} AS {Tables.Handling.Details.SqlDataType.DeclarationInSqlSyntax} = @{InputParamName.Details}
+    DECLARE @{LocalVariablePrefix}{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.InternalRecordIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.IdentifierTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.ObjectTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} = @{InputParamName.StringIdentifiersXml}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.TagIdsToMatchCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax} = @{InputParamName.TagMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = @{InputParamName.VersionMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.DeprecatedIdEventTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.OrderRecordsBy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax} = @{InputParamName.OrderRecordsBy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagIdsForEntryCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax} = @{InputParamName.TagIdsForEntryCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.InheritRecordTags} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} = @{InputParamName.InheritRecordTags}
+    DECLARE @{LocalVariablePrefix}{InputParamName.MinimumInternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} = @{InputParamName.MinimumInternalRecordId}
+    DECLARE @{LocalVariablePrefix}{InputParamName.IncludePayload} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax} = @{InputParamName.IncludePayload}
+
+    --------------------------------------------------------------------------------------
+    -- END SETUP                                                                        --
+    --------------------------------------------------------------------------------------
+
     DECLARE @{streamBlockedStatus} {Tables.Handling.Status.SqlDataType.DeclarationInSqlSyntax}
 	SELECT TOP 1 @{streamBlockedStatus} = [{Tables.Handling.Status.Name}] FROM [{streamName}].[{Tables.Handling.Table.Name}]
 	WHERE [{Tables.Handling.Concern.Name}] = '{Concerns.StreamHandlingDisabledConcern}'
@@ -431,7 +455,7 @@ BEGIN
 
         -- Remove records under the minimum record id from consideration
         DELETE FROM @{recordIdsToConsiderTable}
-	        WHERE [{Tables.Record.Id.Name}] < @{InputParamName.MinimumInternalRecordId}
+	        WHERE [{Tables.Record.Id.Name}] < @{LocalVariablePrefix}{InputParamName.MinimumInternalRecordId}
 
         -- Remove records with disabled handling status from consideration
         DELETE FROM @{recordIdsToConsiderTable}
@@ -450,7 +474,7 @@ BEGIN
 
         DECLARE @{candidateRecordIds} TABLE([{Tables.Record.Id.Name}] {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} NOT NULL)
 		DECLARE @{isUnhandledRecord} {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-		IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
+		IF (@{LocalVariablePrefix}{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
 		BEGIN
             -- In an ascending scenario, we want to check records that have previous handling history first
             -- because those will have the lowest record ids.
@@ -459,7 +483,7 @@ BEGIN
 			FROM @{recordIdsToConsiderTable} rtc
 			INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
                 ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
-                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+                   AND h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern}
 		    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 		        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
                    AND h.[{Tables.Handling.Concern.Name}] = h1.[{Tables.Handling.Concern.Name}]
@@ -484,7 +508,7 @@ BEGIN
 				FROM @{recordIdsToConsiderTable} rtc
 				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
                 ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
-                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+                   AND h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern}
 				WHERE
                    h.[{Tables.Handling.Id.Name}] IS NULL
 
@@ -495,7 +519,7 @@ BEGIN
 				END
 			END -- Check for new records
 		END -- If ascending
-		ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdDescending}')
+		ELSE IF (@{LocalVariablePrefix}{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdDescending}')
 		BEGIN
             -- In a descending scenario, we want to check records that have never been handled first
             -- because those will have the highest record ids.
@@ -504,7 +528,7 @@ BEGIN
 			FROM @{recordIdsToConsiderTable} rtc
 			LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
             ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
-               AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+               AND h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern}
 			WHERE
                h.[{Tables.Handling.Id.Name}] IS NULL
 
@@ -519,7 +543,7 @@ BEGIN
 				FROM @{recordIdsToConsiderTable} rtc
 				INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
-	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+	                   AND h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern}
 			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 			        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
 	                   AND h.[{Tables.Handling.Concern.Name}] = h1.[{Tables.Handling.Concern.Name}]
@@ -538,7 +562,7 @@ BEGIN
 				END
 			END -- Check for re-run
 		END -- Descending
-		ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.Random}')
+		ELSE IF (@{LocalVariablePrefix}{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.Random}')
 		BEGIN
             -- In a random scenario, we will randomly choose between ascending and descending
             -- first (see comments above about the preference for previously handled over never handled
@@ -550,7 +574,7 @@ BEGIN
 				FROM @{recordIdsToConsiderTable} rtc
 				LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 	            ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
-	               AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+	               AND h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern}
 				WHERE
 	               h.[{Tables.Handling.Id.Name}] IS NULL
 
@@ -565,7 +589,7 @@ BEGIN
 					FROM @{recordIdsToConsiderTable} rtc
 					INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 		                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
-		                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+		                   AND h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern}
 				    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 				        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
 		                   AND h.[{Tables.Handling.Concern.Name}] = h1.[{Tables.Handling.Concern.Name}]
@@ -591,7 +615,7 @@ BEGIN
 				FROM @{recordIdsToConsiderTable} rtc
 				INNER JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
-	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+	                   AND h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern}
 			    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1 WITH (NOLOCK)
 			        ON     h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}]
 	                   AND h.[{Tables.Handling.Concern.Name}] = h1.[{Tables.Handling.Concern.Name}]
@@ -616,7 +640,7 @@ BEGIN
 					FROM @{recordIdsToConsiderTable} rtc
 					LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h WITH (NOLOCK)
 	                ON     h.[{Tables.Handling.RecordId.Name}] = rtc.[{Tables.Record.Id.Name}]
-	                   AND h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern}
+	                   AND h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern}
 					WHERE
 	                   h.[{Tables.Handling.Id.Name}] IS NULL
 
@@ -631,43 +655,43 @@ BEGIN
 		ELSE
 		BEGIN
 				DECLARE @NotValidStrategyErrorMessage varchar(100)
-				SET @NotValidStrategyErrorMessage =  CONCAT('Invalid {InputParamName.OrderRecordsBy}: ', @{InputParamName.OrderRecordsBy}, '.');
+				SET @NotValidStrategyErrorMessage =  CONCAT('Invalid {LocalVariablePrefix}{InputParamName.OrderRecordsBy}: ', @{LocalVariablePrefix}{InputParamName.OrderRecordsBy}, '.');
 				THROW {GeneralPurposeErrorNumberForThrowStatement}, @NotValidStrategyErrorMessage, {GeneralPurposeErrorStateForThrowStatement}
 		END
 		IF EXISTS (SELECT TOP 1 [{Tables.Record.Id.Name}] FROM @{candidateRecordIds})
 		BEGIN
 			DECLARE @{recordIdToAttemptToClaim} {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
 			-- TODO: add logic here, loop through candidates until we have one or out of options...
-			IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
+			IF (@{LocalVariablePrefix}{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdAscending}')
 			BEGIN
 				SELECT TOP 1 @{recordIdToAttemptToClaim} = [{Tables.Record.Id.Name}] FROM @{candidateRecordIds} ORDER BY [{Tables.Record.Id.Name}] ASC
 			END
-			ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdDescending}')
+			ELSE IF (@{LocalVariablePrefix}{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.InternalRecordIdDescending}')
 			BEGIN
 				SELECT TOP 1 @{recordIdToAttemptToClaim} = [{Tables.Record.Id.Name}] FROM @{candidateRecordIds} ORDER BY [{Tables.Record.Id.Name}] DESC
 			END
-			ELSE IF (@{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.Random}')
+			ELSE IF (@{LocalVariablePrefix}{InputParamName.OrderRecordsBy} = '{OrderRecordsBy.Random}')
 			BEGIN
 				SELECT TOP 1 @{recordIdToAttemptToClaim} = [{Tables.Record.Id.Name}] FROM @{candidateRecordIds} ORDER BY NEWID()
 			END
 			ELSE
 			BEGIN
 				DECLARE @NotValidStrategyClaimErrorMessage varchar(100)
-				SET @NotValidStrategyClaimErrorMessage =  CONCAT('Invalid {InputParamName.OrderRecordsBy}: ', @{InputParamName.OrderRecordsBy}, '.');
+				SET @NotValidStrategyClaimErrorMessage =  CONCAT('Invalid {LocalVariablePrefix}{InputParamName.OrderRecordsBy}: ', @{LocalVariablePrefix}{InputParamName.OrderRecordsBy}, '.');
 				THROW {GeneralPurposeErrorNumberForThrowStatement}, @NotValidStrategyClaimErrorMessage, {GeneralPurposeErrorStateForThrowStatement}
 			END
 
 			EXEC [{streamName}].[{PutHandling.Name}]
-			@{PutHandling.InputParamName.Concern} = @{InputParamName.Concern},
-			@{PutHandling.InputParamName.Details} = @{InputParamName.Details},
-			@{PutHandling.InputParamName.RecordId} = @{recordIdToAttemptToClaim},
-			@{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}',
-			@{PutHandling.InputParamName.AcceptableCurrentStatusesCsv} = '{acceptableStatusesCsv}',
-			@{PutHandling.InputParamName.TagIdsForEntryCsv} = @{InputParamName.TagIdsForEntryCsv},
-			@{PutHandling.InputParamName.InheritRecordTags} = @{InputParamName.InheritRecordTags},
-			@{PutHandling.InputParamName.IsUnHandledRecord} = @{isUnhandledRecord},
-			@{PutHandling.InputParamName.IsClaimingRecordId} = 1,
-			@{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
+			    @{PutHandling.InputParamName.Concern} = @{LocalVariablePrefix}{InputParamName.Concern},
+			    @{PutHandling.InputParamName.Details} = @{LocalVariablePrefix}{InputParamName.Details},
+			    @{PutHandling.InputParamName.RecordId} = @{recordIdToAttemptToClaim},
+			    @{PutHandling.InputParamName.NewStatus} = '{HandlingStatus.Running}',
+			    @{PutHandling.InputParamName.AcceptableCurrentStatusesCsv} = '{acceptableStatusesCsv}',
+			    @{PutHandling.InputParamName.TagIdsForEntryCsv} = @{LocalVariablePrefix}{InputParamName.TagIdsForEntryCsv},
+			    @{PutHandling.InputParamName.InheritRecordTags} = @{LocalVariablePrefix}{InputParamName.InheritRecordTags},
+			    @{PutHandling.InputParamName.IsUnHandledRecord} = @{isUnhandledRecord},
+			    @{PutHandling.InputParamName.IsClaimingRecordId} = 1,
+			    @{PutHandling.OutputParamName.Id} = @{OutputParamName.Id} OUTPUT
 
 			IF (@{OutputParamName.Id} IS NULL)
 			BEGIN
@@ -689,16 +713,16 @@ BEGIN
 		 , @{OutputParamName.ObjectTypeWithVersionId} = [{Tables.Record.ObjectTypeWithVersionId.Name}]
 		 , @{OutputParamName.StringSerializedId} = [{Tables.Record.StringSerializedId.Name}]
 		 , @{OutputParamName.StringSerializedObject} = (
-            CASE @{InputParamName.IncludePayload}
+            CASE @{LocalVariablePrefix}{InputParamName.IncludePayload}
                 WHEN 1 THEN [{Tables.Record.StringSerializedObject.Name}]
                 WHEN 0 THEN NULL
-                ELSE CONVERT({new StringSqlDataTypeRepresentation(false, 1).DeclarationInSqlSyntax}, CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.'))
+                ELSE CONVERT({new StringSqlDataTypeRepresentation(false, 1).DeclarationInSqlSyntax}, CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{LocalVariablePrefix}{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.'))
             END)
 		 , @{OutputParamName.BinarySerializedObject} = (
-            CASE @{InputParamName.IncludePayload}
+            CASE @{LocalVariablePrefix}{InputParamName.IncludePayload}
                 WHEN 1 THEN [{Tables.Record.BinarySerializedObject.Name}]
                 WHEN 0 THEN NULL
-                ELSE CONVERT({new BinarySqlDataTypeRepresentation(1).DeclarationInSqlSyntax}, CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.'))
+                ELSE CONVERT({new BinarySqlDataTypeRepresentation(1).DeclarationInSqlSyntax}, CONVERT({new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}, '@{LocalVariablePrefix}{InputParamName.IncludePayload} is used as a bit flag and should only be 1 or 0.'))
             END)
 		 , @{OutputParamName.TagIdsCsv} = [{Tables.Record.TagIdsCsv.Name}]
 		 , @{OutputParamName.RecordDateTime} = [{Tables.Record.RecordCreatedUtc.Name}]

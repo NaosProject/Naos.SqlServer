@@ -10,7 +10,6 @@ namespace Naos.SqlServer.Domain
     using System.Linq;
     using Naos.Database.Domain;
     using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.Type;
     using static System.FormattableString;
 
     public static partial class StreamSchema
@@ -202,25 +201,53 @@ namespace Naos.SqlServer.Domain
  ,  @{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax}
  ,  @{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax}
  ,  @{OutputParamName.RecordIdHandlingStatusXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
-  )
+)
 AS
 BEGIN
+    --------------------------------------------------------------------------------------
+    -- BEGIN SETUP                                                                      --
+    --------------------------------------------------------------------------------------
+{LocalVariableComment}
+    DECLARE @{LocalVariablePrefix}{InputParamName.Concern} {Tables.Handling.Concern.SqlDataType.DeclarationInSqlSyntax} = @{InputParamName.Concern}
+    DECLARE @{LocalVariablePrefix}{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.InternalRecordIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.IdentifierTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.ObjectTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} = @{InputParamName.StringIdentifiersXml}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.TagIdsToMatchCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.CurrentStatusesCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.CurrentStatusesCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.HandlingTagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.HandlingTagIdsToMatchCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax} = @{InputParamName.TagMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = @{InputParamName.VersionMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.DeprecatedIdEventTypeIdsCsv}
+
+    --------------------------------------------------------------------------------------
+    -- END SETUP                                                                        --
+    --------------------------------------------------------------------------------------
+
     {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, includeHandlingTags: true, includeRecordsToFilterCriteria: false)}
 
+    --------------------------------------------------------------------------------------
+    -- BEGIN STORED PROCEDURE SPECIFIC LOGIC                                            --
+    --------------------------------------------------------------------------------------
     SELECT @{OutputParamName.RecordIdHandlingStatusXml} = (
         SELECT
               rids.[{Tables.Record.Id.Name}] AS [@{XmlConversionTool.TagEntryKeyAttributeName}]
             , ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') AS [@{XmlConversionTool.TagEntryValueAttributeName}]
         FROM @{recordIdsToConsiderTable} rids
         LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h
-            ON rids.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND (h.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
+            ON rids.[{Tables.Record.Id.Name}] = h.[{Tables.Handling.RecordId.Name}] AND (h.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern} OR h.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
 	    LEFT JOIN [{streamName}].[{Tables.Handling.Table.Name}] h1
-	        ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND (h1.[{Tables.Handling.Concern.Name}] = @{InputParamName.Concern} OR h1.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
+	        ON h.[{Tables.Handling.RecordId.Name}] = h1.[{Tables.Handling.RecordId.Name}] AND h.[{Tables.Handling.Id.Name}] < h1.[{Tables.Handling.Id.Name}] AND (h1.[{Tables.Handling.Concern.Name}] = @{LocalVariablePrefix}{InputParamName.Concern} OR h1.[{Tables.Handling.Concern.Name}] = '{Concerns.RecordHandlingDisabledConcern}')
         WHERE h1.[{Tables.Handling.Id.Name}] IS NULL
-        AND ((@{InputParamName.CurrentStatusesCsv} IS NULL) OR (ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') IN (SELECT value FROM STRING_SPLIT(@{InputParamName.CurrentStatusesCsv}, ','))))
+        AND ((@{LocalVariablePrefix}{InputParamName.CurrentStatusesCsv} IS NULL) OR (ISNULL(h.[{Tables.Handling.Status.Name}], '{HandlingStatus.AvailableByDefault}') IN (SELECT value FROM STRING_SPLIT(@{LocalVariablePrefix}{InputParamName.CurrentStatusesCsv}, ','))))
         ORDER BY h.[{Tables.Handling.Id.Name}]
         FOR XML PATH ('{XmlConversionTool.TagEntryElementName}'), ROOT('{XmlConversionTool.TagSetElementName}')
     )
+
+    --------------------------------------------------------------------------------------
+    -- END STORED PROCEDURE SPECIFIC LOGIC                                              --
+    --------------------------------------------------------------------------------------
+
 END");
 
                     return result;

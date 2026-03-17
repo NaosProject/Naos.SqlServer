@@ -84,9 +84,9 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{Name}](
-  @{nameof(InputParamName.AssemblyQualifiedNameWithoutVersion)} {Tables.TypeWithoutVersion.AssemblyQualifiedName.SqlDataType.DeclarationInSqlSyntax},
-  @{nameof(OutputParamName.Id)} {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-  )
+    @{nameof(InputParamName.AssemblyQualifiedNameWithoutVersion)} {Tables.TypeWithoutVersion.AssemblyQualifiedName.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{nameof(OutputParamName.Id)} {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+)
 AS
 BEGIN
 

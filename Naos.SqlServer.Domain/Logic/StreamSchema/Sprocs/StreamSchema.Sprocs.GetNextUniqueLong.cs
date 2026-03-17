@@ -58,11 +58,16 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].[{nameof(GetNextUniqueLong)}]");
 
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(nameof(InputParamName.Details), Tables.NextUniqueLong.Details.SqlDataType, operation.Details),
-                                         new OutputParameterDefinition<long>(nameof(OutputParamName.Value), Tables.NextUniqueLong.Id.SqlDataType),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.Details),
+                            Tables.NextUniqueLong.Details.SqlDataType,
+                            operation.Details),
+                        new OutputParameterDefinition<long>(
+                            nameof(OutputParamName.Value),
+                            Tables.NextUniqueLong.Id.SqlDataType),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -85,47 +90,47 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetNextUniqueLong.Name}](
-  @{InputParamName.Details} {Tables.NextUniqueLong.Details.SqlDataType.DeclarationInSqlSyntax}
-, @{OutputParamName.Value} {Tables.NextUniqueLong.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+    @{InputParamName.Details} {Tables.NextUniqueLong.Details.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{OutputParamName.Value} {Tables.NextUniqueLong.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
 
-BEGIN TRANSACTION [{transaction}]
-  BEGIN TRY
-	  BEGIN
-	      INSERT INTO [{streamName}].[{Tables.NextUniqueLong.Table.Name}] WITH (TABLOCKX) (
-		      [{Tables.NextUniqueLong.Details.Name}]
-		    , [{Tables.NextUniqueLong.RecordCreatedUtc.Name}]
-		  ) VALUES (
-              @{InputParamName.Details}
-		    , GETUTCDATE()
-		  )
+    BEGIN TRANSACTION [{transaction}]
+        BEGIN TRY
+	        BEGIN
+	            INSERT INTO [{streamName}].[{Tables.NextUniqueLong.Table.Name}] WITH (TABLOCKX) (
+		            [{Tables.NextUniqueLong.Details.Name}]
+		          , [{Tables.NextUniqueLong.RecordCreatedUtc.Name}]
+		        ) VALUES (
+                    @{InputParamName.Details}
+		          , GETUTCDATE()
+		        )
 
-	      SET @{OutputParamName.Value} = SCOPE_IDENTITY()
-	  END
+	            SET @{OutputParamName.Value} = SCOPE_IDENTITY()
+	        END
 
-      COMMIT TRANSACTION [{transaction}]
+            COMMIT TRANSACTION [{transaction}]
 
-  END TRY
+        END TRY
 
-  BEGIN CATCH
-      SET @{OutputParamName.Value} = NULL
-      DECLARE @ThrowMessage nvarchar(max),
-              @ErrorMessage nvarchar(max),
-              @ErrorSeverity int,
-              @ErrorState int
+        BEGIN CATCH
+            SET @{OutputParamName.Value} = NULL
+            DECLARE @ThrowMessage nvarchar(max),
+                    @ErrorMessage nvarchar(max),
+                    @ErrorSeverity int,
+                    @ErrorState int
 
-      SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
-      SELECT @ThrowMessage = @ErrorMessage + '; ErrorSeverity=' + cast(@ErrorSeverity as nvarchar(20)) + '; ErrorState=' + cast(@ErrorState as nvarchar(20))
+            SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+            SELECT @ThrowMessage = @ErrorMessage + '; ErrorSeverity=' + cast(@ErrorSeverity as nvarchar(20)) + '; ErrorState=' + cast(@ErrorState as nvarchar(20))
 
-      IF (@@trancount > 0)
-      BEGIN
-         ROLLBACK TRANSACTION [{transaction}]
-      END;
+            IF (@@trancount > 0)
+            BEGIN
+                ROLLBACK TRANSACTION [{transaction}]
+            END;
 
-      THROW {GeneralPurposeErrorNumberForThrowStatement}, @ThrowMessage, {GeneralPurposeErrorStateForThrowStatement}
-  END CATCH
+            THROW {GeneralPurposeErrorNumberForThrowStatement}, @ThrowMessage, {GeneralPurposeErrorStateForThrowStatement}
+        END CATCH
 END");
 
                     return result;

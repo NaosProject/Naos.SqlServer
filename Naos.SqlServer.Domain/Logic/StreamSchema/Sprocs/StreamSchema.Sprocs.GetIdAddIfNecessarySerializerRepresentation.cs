@@ -124,13 +124,13 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{Name}](
-  @{InputParamName.ConfigTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ConfigTypeWithVersionId} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.SerializationFormat} AS {Tables.SerializerRepresentation.SerializationFormat.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.CompressionKind} AS {Tables.SerializerRepresentation.CompressionKind.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.UnregisteredTypeEncounteredStrategy} AS {Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy.SqlDataType.DeclarationInSqlSyntax}
-, @{OutputParamName.Id} AS {Tables.SerializerRepresentation.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+    @{InputParamName.ConfigTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.ConfigTypeWithVersionId} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.SerializationFormat} AS {Tables.SerializerRepresentation.SerializationFormat.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.CompressionKind} AS {Tables.SerializerRepresentation.CompressionKind.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.UnregisteredTypeEncounteredStrategy} AS {Tables.SerializerRepresentation.UnregisteredTypeEncounteredStrategy.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{OutputParamName.Id} AS {Tables.SerializerRepresentation.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN

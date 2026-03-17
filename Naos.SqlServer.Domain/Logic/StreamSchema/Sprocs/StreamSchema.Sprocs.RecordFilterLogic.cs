@@ -30,57 +30,68 @@ namespace Naos.SqlServer.Domain
                     /// <summary>
                     /// The internal record identifiers as CSV.
                     /// </summary>
-                    InternalRecordIdsCsv,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_InternalRecordIdsCsv,
 
                     /// <summary>
                     /// The identifier type identifiers as CSV.
                     /// </summary>
-                    IdentifierTypeIdsCsv,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_IdentifierTypeIdsCsv,
 
                     /// <summary>
                     /// The object type identifiers as CSV.
                     /// </summary>
-                    ObjectTypeIdsCsv,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_ObjectTypeIdsCsv,
 
                     /// <summary>
                     /// The string identifiers to match as XML (key is string identifier and value is the appropriate type identifier per the <see cref="OBeautifulCode.Type.VersionMatchStrategy"/>).
                     /// </summary>
-                    StringIdentifiersXml,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_StringIdentifiersXml,
 
                     /// <summary>
                     /// The record tag identifiers as CSV.
                     /// </summary>
-                    TagIdsToMatchCsv,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_TagIdsToMatchCsv,
 
                     /// <summary>
                     /// The handling tag identifiers as CSV.
                     /// </summary>
-                    HandlingTagIdsToMatchCsv,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_HandlingTagIdsToMatchCsv,
 
                     /// <summary>
                     /// The <see cref="RecordFilter.TagMatchStrategy"/>.
                     /// </summary>
-                    TagMatchStrategy,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_TagMatchStrategy,
 
                     /// <summary>
                     /// The <see cref="RecordFilter.VersionMatchStrategy"/>.
                     /// </summary>
-                    VersionMatchStrategy,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_VersionMatchStrategy,
 
                     /// <summary>
                     /// The deprecated identifier event type identifiers as CSV.
                     /// </summary>
-                    DeprecatedIdEventTypeIdsCsv,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_DeprecatedIdEventTypeIdsCsv,
 
                     /// <summary>
                     /// The <see cref="RecordsToFilterCriteria.RecordsToFilterSelectionStrategy"/>.
                     /// </summary>
-                    RecordsToFilterSelectionStrategy,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_RecordsToFilterSelectionStrategy,
 
                     /// <summary>
                     /// The <see cref="RecordsToFilterCriteria.VersionMatchStrategy"/>.
                     /// </summary>
-                    RecordsToFilterVersionMatchStrategy,
+                    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "Required for local copies of stored procedure paramters.")]
+                    Local_RecordsToFilterVersionMatchStrategy,
                 }
 
                 /// <summary>
@@ -106,11 +117,11 @@ namespace Naos.SqlServer.Domain
                             $@"
     -----------------------------------------------------------------
     -- BEGIN APPLY HANDLING TAG FILTER
-    IF (@{InputParamName.HandlingTagIdsToMatchCsv} IS NOT NULL)
+    IF (@{InputParamName.Local_HandlingTagIdsToMatchCsv} IS NOT NULL)
     BEGIN
         DECLARE @{handlingTagIdsTable} TABLE([{Tables.Tag.Id.Name}] {new BigIntSqlDataTypeRepresentation().DeclarationInSqlSyntax} NOT NULL)
         INSERT INTO @{handlingTagIdsTable} ([{Tables.Tag.Id.Name}])
-        SELECT VALUE FROM STRING_SPLIT(@{InputParamName.HandlingTagIdsToMatchCsv}, ',')
+        SELECT VALUE FROM STRING_SPLIT(@{InputParamName.Local_HandlingTagIdsToMatchCsv}, ',')
 
         DECLARE @HandlingTagCount INT
         SELECT @HandlingTagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{handlingTagIdsTable}
@@ -154,7 +165,7 @@ namespace Naos.SqlServer.Domain
     -- The .NET client guarantees that the only other supported value is '{RecordsToFilterSelectionStrategy.All}'.
     -- In that case, there's nothing to do.  If @{isRecordIdsToConsiderTableInitializedBit} = 0, the remaining
     -- filters consider the universe of records available for filtering to be all records.
-    IF (@{InputParamName.RecordsToFilterSelectionStrategy} = '{RecordsToFilterSelectionStrategy.LatestById}')
+    IF (@{InputParamName.Local_RecordsToFilterSelectionStrategy} = '{RecordsToFilterSelectionStrategy.LatestById}')
     BEGIN
         INSERT INTO @{recordIdsToConsiderTable}
         SELECT Max(r.[{Tables.Record.Id.Name}])
@@ -165,9 +176,9 @@ namespace Naos.SqlServer.Domain
     END
     ELSE
     BEGIN
-        IF (@{InputParamName.RecordsToFilterSelectionStrategy} = '{RecordsToFilterSelectionStrategy.LatestByIdAndObjectType}')
+        IF (@{InputParamName.Local_RecordsToFilterSelectionStrategy} = '{RecordsToFilterSelectionStrategy.LatestByIdAndObjectType}')
         BEGIN
-            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            IF (@{InputParamName.Local_VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 INSERT INTO @{recordIdsToConsiderTable}
                 SELECT Max(r.[{Tables.Record.Id.Name}])
@@ -209,49 +220,49 @@ namespace Naos.SqlServer.Domain
     -- Skipping these checks for performance purposes
     -- The .NET client will guarantee non-empty CSV, non-empty XML, and supported Enum values.
     -- Further, .NET client guarantees that CSVs contain distinct values.
-    --IF (@{InputParamName.InternalRecordIdsCsv} = '')
+    --IF (@{InputParamName.Local_InternalRecordIdsCsv} = '')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.InternalRecordIdsCsv}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_InternalRecordIdsCsv}')
     --END
-    --IF (@{InputParamName.IdentifierTypeIdsCsv} = '')
+    --IF (@{InputParamName.Local_IdentifierTypeIdsCsv} = '')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.IdentifierTypeIdsCsv}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_IdentifierTypeIdsCsv}')
     --END
-    --IF (@{InputParamName.ObjectTypeIdsCsv} = '')
+    --IF (@{InputParamName.Local_ObjectTypeIdsCsv} = '')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.ObjectTypeIdsCsv}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_ObjectTypeIdsCsv}')
     --END
-    -- IF (@{InputParamName.StringIdentifiersXml} IS NOT NULL) and (@{InputParamName.StringIdentifiersXml}.EXISTS('*') = 0) -- DOES EXISTS('*') do slow XML stuff?
+    -- IF (@{InputParamName.Local_StringIdentifiersXml} IS NOT NULL) and (@{InputParamName.Local_StringIdentifiersXml}.EXISTS('*') = 0) -- DOES EXISTS('*') do slow XML stuff?
     -- BEGIN
-        -- RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.StringIdentifiersXml}')
+        -- RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_StringIdentifiersXml}')
     -- END
-    --IF (@{InputParamName.TagIdsToMatchCsv} = '')
+    --IF (@{InputParamName.Local_TagIdsToMatchCsv} = '')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.TagIdsToMatchCsv}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_TagIdsToMatchCsv}')
     --END
-    --IF (@{InputParamName.HandlingTagIdsToMatchCsv} = '')
+    --IF (@{InputParamName.Local_HandlingTagIdsToMatchCsv} = '')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.HandlingTagIdsToMatchCsv}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_HandlingTagIdsToMatchCsv}')
     --END
-    --IF (@{InputParamName.TagMatchStrategy} <> '{TagMatchStrategy.RecordContainsAllQueryTags}')
+    --IF (@{InputParamName.Local_TagMatchStrategy} <> '{TagMatchStrategy.RecordContainsAllQueryTags}')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.TagMatchStrategy}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_TagMatchStrategy}')
     --END
-    --IF (@{InputParamName.VersionMatchStrategy} <> '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.VersionMatchStrategy} <> '{VersionMatchStrategy.Any}')
+    --IF (@{InputParamName.Local_VersionMatchStrategy} <> '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.Local_VersionMatchStrategy} <> '{VersionMatchStrategy.Any}')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.VersionMatchStrategy}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_VersionMatchStrategy}')
     --END
-    --IF (@{InputParamName.DeprecatedIdEventTypeIdsCsv} = '')
+    --IF (@{InputParamName.Local_DeprecatedIdEventTypeIdsCsv} = '')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.DeprecatedIdEventTypeIdsCsv}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_DeprecatedIdEventTypeIdsCsv}')
     --END
-    --IF (@{InputParamName.RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.All}' AND @{InputParamName.RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.LatestById}' AND @{InputParamName.RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.LatestByIdAndObjectType}')
+    --IF (@{InputParamName.Local_RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.All}' AND @{InputParamName.Local_RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.LatestById}' AND @{InputParamName.Local_RecordsToFilterSelectionStrategy} <> '{RecordsToFilterSelectionStrategy.LatestByIdAndObjectType}')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.RecordsToFilterSelectionStrategy}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_RecordsToFilterSelectionStrategy}')
     --END
-    --IF (@{InputParamName.RecordsToFilterVersionMatchStrategy} <> '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.VersionMatchStrategy} <> '{VersionMatchStrategy.Any}')
+    --IF (@{InputParamName.Local_RecordsToFilterVersionMatchStrategy} <> '{VersionMatchStrategy.SpecifiedVersion}' AND @{InputParamName.Local_VersionMatchStrategy} <> '{VersionMatchStrategy.Any}')
     --BEGIN
-    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.RecordsToFilterVersionMatchStrategy}')
+    --  RAISERROR (15600,-1,-1, '{nameof(RecordFilterLogic)}.@{InputParamName.Local_RecordsToFilterVersionMatchStrategy}')
     --END
     -- END PARAM CHECK
     -----------------------------------------------------------------
@@ -268,13 +279,13 @@ namespace Naos.SqlServer.Domain
 
     -----------------------------------------------------------------
     -- BEGIN APPLY INTERNAL RECORD ID FILTER
-    IF (@{InputParamName.InternalRecordIdsCsv} IS NOT NULL)
+    IF (@{InputParamName.Local_InternalRecordIdsCsv} IS NOT NULL)
     BEGIN
         IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
             DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
             (
-                SELECT DISTINCT VALUE FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+                SELECT DISTINCT VALUE FROM STRING_SPLIT(@{InputParamName.Local_InternalRecordIdsCsv}, ',')
             )
         END
         ELSE
@@ -282,7 +293,7 @@ namespace Naos.SqlServer.Domain
             SET @{isRecordIdsToConsiderTableInitializedBit} = 1
             INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
             (
-                SELECT DISTINCT VALUE FROM STRING_SPLIT(@{InputParamName.InternalRecordIdsCsv}, ',')
+                SELECT DISTINCT VALUE FROM STRING_SPLIT(@{InputParamName.Local_InternalRecordIdsCsv}, ',')
             )
         END
     END
@@ -291,17 +302,17 @@ namespace Naos.SqlServer.Domain
 
     -----------------------------------------------------------------
     -- BEGIN APPLY STRING SERIALIZED ID FILTER
-    IF (@{InputParamName.StringIdentifiersXml} IS NOT NULL)
+    IF (@{InputParamName.Local_StringIdentifiersXml} IS NOT NULL)
     BEGIN
         IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
-            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            IF (@{InputParamName.Local_VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
+                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.Local_StringIdentifiersXml}) i
                     ON r.[{Tables.Record.StringSerializedId.Name}] = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](i.[{Tables.Tag.TagKey.Name}])
                     AND r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
                 )
@@ -312,7 +323,7 @@ namespace Naos.SqlServer.Domain
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
+                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.Local_StringIdentifiersXml}) i
                     ON r.[{Tables.Record.StringSerializedId.Name}] = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](i.[{Tables.Tag.TagKey.Name}])
                     AND r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
                 )
@@ -321,13 +332,13 @@ namespace Naos.SqlServer.Domain
         ELSE
         BEGIN
             SET @{isRecordIdsToConsiderTableInitializedBit} = 1
-            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            IF (@{InputParamName.Local_VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
+                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.Local_StringIdentifiersXml}) i
                     ON r.[{Tables.Record.StringSerializedId.Name}] = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](i.[{Tables.Tag.TagKey.Name}])
                     AND r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
                 )
@@ -338,7 +349,7 @@ namespace Naos.SqlServer.Domain
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.StringIdentifiersXml}) i
+                    INNER JOIN [{streamName}].[{Funcs.GetTagsTableVariableFromTagsXml.Name}](@{InputParamName.Local_StringIdentifiersXml}) i
                     ON r.[{Tables.Record.StringSerializedId.Name}] = [{streamName}].[{Funcs.AdjustForPutStringSerializedId.Name}](i.[{Tables.Tag.TagKey.Name}])
                     AND r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.[{Tables.Tag.TagValue.Name}]
                 )
@@ -350,17 +361,17 @@ namespace Naos.SqlServer.Domain
 
     -----------------------------------------------------------------
     -- BEGIN APPLY ID TYPE FILTER
-    IF (@{InputParamName.IdentifierTypeIdsCsv} IS NOT NULL)
+    IF (@{InputParamName.Local_IdentifierTypeIdsCsv} IS NOT NULL)
     BEGIN
         IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
-            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            IF (@{InputParamName.Local_VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
+                    INNER JOIN STRING_SPLIT(@{InputParamName.Local_IdentifierTypeIdsCsv}, ',') i
                     ON r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.VALUE
                 )
             END
@@ -370,7 +381,7 @@ namespace Naos.SqlServer.Domain
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
+                    INNER JOIN STRING_SPLIT(@{InputParamName.Local_IdentifierTypeIdsCsv}, ',') i
                     ON r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.VALUE
                 )
             END
@@ -378,13 +389,13 @@ namespace Naos.SqlServer.Domain
         ELSE
         BEGIN
             SET @{isRecordIdsToConsiderTableInitializedBit} = 1
-            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            IF (@{InputParamName.Local_VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
+                    INNER JOIN STRING_SPLIT(@{InputParamName.Local_IdentifierTypeIdsCsv}, ',') i
                     ON r.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = i.VALUE
                 )
             END
@@ -394,7 +405,7 @@ namespace Naos.SqlServer.Domain
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN STRING_SPLIT(@{InputParamName.IdentifierTypeIdsCsv}, ',') i
+                    INNER JOIN STRING_SPLIT(@{InputParamName.Local_IdentifierTypeIdsCsv}, ',') i
                     ON r.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = i.VALUE
                 )
             END
@@ -405,18 +416,18 @@ namespace Naos.SqlServer.Domain
 
     -----------------------------------------------------------------
     -- BEGIN APPLY OBJECT TYPE FILTER
-    IF (@{InputParamName.ObjectTypeIdsCsv} IS NOT NULL)
+    IF (@{InputParamName.Local_ObjectTypeIdsCsv} IS NOT NULL)
     BEGIN
         IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
         BEGIN
-            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            IF (@{InputParamName.Local_VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] NOT IN
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',') i
-                    ON r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = i.VALUE   
+                    INNER JOIN STRING_SPLIT(@{InputParamName.Local_ObjectTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = i.VALUE
                 )
             END
             ELSE
@@ -425,7 +436,7 @@ namespace Naos.SqlServer.Domain
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',') i
+                    INNER JOIN STRING_SPLIT(@{InputParamName.Local_ObjectTypeIdsCsv}, ',') i
                     ON r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = i.VALUE
                 )
             END
@@ -433,14 +444,14 @@ namespace Naos.SqlServer.Domain
         ELSE
         BEGIN
             SET @{isRecordIdsToConsiderTableInitializedBit} = 1
-            IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+            IF (@{InputParamName.Local_VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
             BEGIN
                 INSERT INTO @{recordIdsToConsiderTable} ([{Tables.Record.Id.Name}])
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',') i
-                    ON r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = i.VALUE       
+                    INNER JOIN STRING_SPLIT(@{InputParamName.Local_ObjectTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.ObjectTypeWithoutVersionId.Name}] = i.VALUE
                 )
             END
             ELSE
@@ -449,22 +460,22 @@ namespace Naos.SqlServer.Domain
                 (
                     SELECT DISTINCT r.[{Tables.Record.Id.Name}]
                     FROM [{streamName}].[{Tables.Record.Table.Name}] r WITH (NOLOCK)
-                    INNER JOIN STRING_SPLIT(@{InputParamName.ObjectTypeIdsCsv}, ',') i
-                    ON r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = i.VALUE      
+                    INNER JOIN STRING_SPLIT(@{InputParamName.Local_ObjectTypeIdsCsv}, ',') i
+                    ON r.[{Tables.Record.ObjectTypeWithVersionId.Name}] = i.VALUE
                 )
             END
         END
     END
     -- END APPLY OBJECT TYPE FILTER
     -----------------------------------------------------------------
-    
+
     -----------------------------------------------------------------
     -- BEGIN APPLY RECORD TAG FILTER
-    IF (@{InputParamName.TagIdsToMatchCsv} IS NOT NULL)
+    IF (@{InputParamName.Local_TagIdsToMatchCsv} IS NOT NULL)
     BEGIN
         DECLARE @{recordTagIdsTable} TABLE([{Tables.Tag.Id.Name}] {new BigIntSqlDataTypeRepresentation().DeclarationInSqlSyntax} NOT NULL)
         INSERT INTO @{recordTagIdsTable} ([{Tables.Tag.Id.Name}])
-        SELECT VALUE FROM STRING_SPLIT(@{InputParamName.TagIdsToMatchCsv}, ',')
+        SELECT VALUE FROM STRING_SPLIT(@{InputParamName.Local_TagIdsToMatchCsv}, ',')
         DECLARE @RecordTagCount INT
         SELECT @RecordTagCount = COUNT([{Tables.Tag.Id.Name}]) FROM @{recordTagIdsTable}
         IF (@{isRecordIdsToConsiderTableInitializedBit} = 1)
@@ -509,9 +520,9 @@ namespace Naos.SqlServer.Domain
 
     -----------------------------------------------------------------
     -- BEGIN REMOVE DEPRECATED IDS FILTER
-    IF (@{InputParamName.DeprecatedIdEventTypeIdsCsv} IS NOT NULL)
+    IF (@{InputParamName.Local_DeprecatedIdEventTypeIdsCsv} IS NOT NULL)
     BEGIN
-        IF (@{InputParamName.VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
+        IF (@{InputParamName.Local_VersionMatchStrategy} = '{VersionMatchStrategy.Any}')
         BEGIN
             DELETE FROM @{recordIdsToConsiderTable} WHERE [{Tables.Record.Id.Name}] IN
             (
@@ -523,7 +534,7 @@ namespace Naos.SqlServer.Domain
 				LEFT JOIN
 					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
 					FROM [{streamName}].[{Tables.Record.Table.Name}]
-					WHERE [{Tables.Record.ObjectTypeWithoutVersionId.Name}] IN (SELECT VALUE FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ','))) rdeprecated
+					WHERE [{Tables.Record.ObjectTypeWithoutVersionId.Name}] IN (SELECT VALUE FROM STRING_SPLIT(@{InputParamName.Local_DeprecatedIdEventTypeIdsCsv}, ','))) rdeprecated
 				ON
 					rconsider.[{Tables.Record.StringSerializedId.Name}] = rdeprecated.[{Tables.Record.StringSerializedId.Name}]
 			    	AND rconsider.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}] = rdeprecated.[{Tables.Record.IdentifierTypeWithoutVersionId.Name}]
@@ -544,7 +555,7 @@ namespace Naos.SqlServer.Domain
 				LEFT JOIN
 					(SELECT [{Tables.Record.Id.Name}], [{Tables.Record.StringSerializedId.Name}], [{Tables.Record.IdentifierTypeWithVersionId.Name}]
 					FROM [{streamName}].[{Tables.Record.Table.Name}]
-					WHERE [{Tables.Record.ObjectTypeWithVersionId.Name}] IN (SELECT VALUE FROM STRING_SPLIT(@{InputParamName.DeprecatedIdEventTypeIdsCsv}, ','))) rdeprecated
+					WHERE [{Tables.Record.ObjectTypeWithVersionId.Name}] IN (SELECT VALUE FROM STRING_SPLIT(@{InputParamName.Local_DeprecatedIdEventTypeIdsCsv}, ','))) rdeprecated
 				ON 
 					rconsider.[{Tables.Record.StringSerializedId.Name}] = rdeprecated.[{Tables.Record.StringSerializedId.Name}]
 			    	AND rconsider.[{Tables.Record.IdentifierTypeWithVersionId.Name}] = rdeprecated.[{Tables.Record.IdentifierTypeWithVersionId.Name}]

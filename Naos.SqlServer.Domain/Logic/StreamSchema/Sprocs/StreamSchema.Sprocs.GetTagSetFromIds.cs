@@ -64,16 +64,16 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].{Name}");
                     var tagIdsCsv = tagIds?.Select(_ => _.ToStringInvariantPreferred()).ToCsv();
-                    var parameters = new List<ParameterDefinitionBase>()
-                                     {
-                                         new InputParameterDefinition<string>(
-                                             nameof(InputParamName.TagIdsCsv),
-                                             Tables.Record.TagIdsCsv.SqlDataType,
-                                             tagIdsCsv),
-                                         new OutputParameterDefinition<string>(
-                                             nameof(OutputParamName.TagsXml),
-                                             new XmlSqlDataTypeRepresentation()),
-                                     };
+                    var parameters = new List<ParameterDefinitionBase>
+                    {
+                        new InputParameterDefinition<string>(
+                            nameof(InputParamName.TagIdsCsv),
+                            Tables.Record.TagIdsCsv.SqlDataType,
+                            tagIdsCsv),
+                        new OutputParameterDefinition<string>(
+                            nameof(OutputParamName.TagsXml),
+                            new XmlSqlDataTypeRepresentation()),
+                    };
 
                     var result = new ExecuteStoredProcedureOp(sprocName, parameters);
 
@@ -94,9 +94,9 @@ namespace Naos.SqlServer.Domain
                     var result = Invariant(
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetTagSetFromIds.Name}](
-  @{nameof(InputParamName.TagIdsCsv)} {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax},
-  @{nameof(OutputParamName.TagsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
-  )
+    @{nameof(InputParamName.TagIdsCsv)} {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{nameof(OutputParamName.TagsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+)
 AS
 BEGIN
     SELECT @{OutputParamName.TagsXml} = (SELECT

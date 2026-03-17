@@ -157,7 +157,7 @@ namespace Naos.SqlServer.Domain
                 {
                     var sprocName = Invariant($"[{streamName}].{nameof(PutRecord)}");
 
-                    var parameters = new List<ParameterDefinitionBase>()
+                    var parameters = new List<ParameterDefinitionBase>
                     {
                         new InputParameterDefinition<int>(nameof(InputParamName.SerializerRepresentationId), Tables.SerializerRepresentation.Id.SqlDataType, serializerRepresentation.Id),
                         new InputParameterDefinition<int?>(nameof(InputParamName.IdentifierTypeWithoutVersionId), Tables.TypeWithoutVersion.Id.SqlDataType, identifierType?.IdWithoutVersion),
@@ -208,135 +208,135 @@ namespace Naos.SqlServer.Domain
                         case RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocInTransaction:
                             insertRowsBlock = Invariant($@"
 		BEGIN TRANSACTION [{transaction}]
-		  BEGIN TRY
-		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
-			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
-			, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
-			, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
-			, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
-			, [{nameof(Tables.Record.SerializerRepresentationId)}]
-			, [{nameof(Tables.Record.StringSerializedId)}]
-			, [{nameof(Tables.Record.StringSerializedObject)}]
-			, [{nameof(Tables.Record.BinarySerializedObject)}]
-			, [{nameof(Tables.Record.TagIdsCsv)}]
-			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
-			, [{nameof(Tables.Record.RecordCreatedUtc)}]
-			) VALUES (
-			  @{InputParamName.IdentifierTypeWithoutVersionId}
-			, @{InputParamName.IdentifierTypeWithVersionId}
-			, @{InputParamName.ObjectTypeWithoutVersionId}
-			, @{InputParamName.ObjectTypeWithVersionId}
-			, @{InputParamName.SerializerRepresentationId}
-			, @{InputParamName.StringSerializedId}
-			, @{InputParamName.StringSerializedObject}
-			, @{InputParamName.BinarySerializedObject}
-			, @{InputParamName.TagIdsCsv}
-			, @{InputParamName.ObjectDateTimeUtc}
-			, @{recordCreatedUtc}
-			)
+		    BEGIN TRY
+		        INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
+			        [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
+			      , [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
+			      , [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
+			      , [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
+			      , [{nameof(Tables.Record.SerializerRepresentationId)}]
+			      , [{nameof(Tables.Record.StringSerializedId)}]
+			      , [{nameof(Tables.Record.StringSerializedObject)}]
+			      , [{nameof(Tables.Record.BinarySerializedObject)}]
+			      , [{nameof(Tables.Record.TagIdsCsv)}]
+			      , [{nameof(Tables.Record.ObjectDateTimeUtc)}]
+			      , [{nameof(Tables.Record.RecordCreatedUtc)}]
+			    ) VALUES (
+			        @{InputParamName.IdentifierTypeWithoutVersionId}
+			      , @{InputParamName.IdentifierTypeWithVersionId}
+			      , @{InputParamName.ObjectTypeWithoutVersionId}
+			      , @{InputParamName.ObjectTypeWithVersionId}
+			      , @{InputParamName.SerializerRepresentationId}
+			      , @{InputParamName.StringSerializedId}
+			      , @{InputParamName.StringSerializedObject}
+			      , @{InputParamName.BinarySerializedObject}
+			      , @{InputParamName.TagIdsCsv}
+			      , @{InputParamName.ObjectDateTimeUtc}
+			      , @{recordCreatedUtc}
+			    )
 
-	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+	            SET @{OutputParamName.Id} = SCOPE_IDENTITY()
 
-	      INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
-		    [{Tables.RecordTag.RecordId.Name}]
-		  , [{Tables.RecordTag.TagId.Name}]
-		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
-          SELECT
-  		    @{OutputParamName.Id}
-		  , value AS [{Tables.Tag.Id.Name}]
-		  , @{recordCreatedUtc}
-          FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ',')
-	    COMMIT TRANSACTION [{transaction}]
-	  END TRY
-	  BEGIN CATCH
-	      DECLARE @PruneThrowMessage nvarchar(max),
-                  @PruneErrorMessage nvarchar(max),
-	              @PruneErrorSeverity int,
-	              @PruneErrorState int
+	            INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
+		            [{Tables.RecordTag.RecordId.Name}]
+                  , [{Tables.RecordTag.TagId.Name}]
+                  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
+                SELECT
+  		            @{OutputParamName.Id}
+		          , value AS [{Tables.Tag.Id.Name}]
+		          , @{recordCreatedUtc}
+                FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ',')
+	            COMMIT TRANSACTION [{transaction}]
+	        END TRY
+	        BEGIN CATCH
+	            DECLARE @PruneThrowMessage nvarchar(max),
+                        @PruneErrorMessage nvarchar(max),
+	                    @PruneErrorSeverity int,
+	                    @PruneErrorState int
 
-	      SELECT @PruneErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @PruneErrorSeverity = ERROR_SEVERITY(), @PruneErrorState = ERROR_STATE()
-          SELECT @PruneThrowMessage = @PruneErrorMessage + '; ErrorSeverity=' + cast(@PruneErrorSeverity as nvarchar(20)) + '; ErrorState=' + cast(@PruneErrorState as nvarchar(20))
+	            SELECT @PruneErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @PruneErrorSeverity = ERROR_SEVERITY(), @PruneErrorState = ERROR_STATE()
+                SELECT @PruneThrowMessage = @PruneErrorMessage + '; ErrorSeverity=' + cast(@PruneErrorSeverity as nvarchar(20)) + '; ErrorState=' + cast(@PruneErrorState as nvarchar(20))
 
-	      IF (@@trancount > 0)
-	      BEGIN
-	         ROLLBACK TRANSACTION [{transaction}]
-	      END;
+	            IF (@@trancount > 0)
+	            BEGIN
+	                ROLLBACK TRANSACTION [{transaction}]
+	            END;
 
-	      THROW {GeneralPurposeErrorNumberForThrowStatement}, @PruneThrowMessage, {GeneralPurposeErrorStateForThrowStatement}
-	  END CATCH");
+	            THROW {GeneralPurposeErrorNumberForThrowStatement}, @PruneThrowMessage, {GeneralPurposeErrorStateForThrowStatement}
+	        END CATCH");
                             break;
                         case RecordTagAssociationManagementStrategy.AssociatedDuringPutInSprocOutOfTransaction:
                             insertRowsBlock = Invariant($@"
 
-		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
-			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
-			, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
-			, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
-			, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
-			, [{nameof(Tables.Record.SerializerRepresentationId)}]
-			, [{nameof(Tables.Record.StringSerializedId)}]
-			, [{nameof(Tables.Record.StringSerializedObject)}]
-			, [{nameof(Tables.Record.BinarySerializedObject)}]
-			, [{nameof(Tables.Record.TagIdsCsv)}]
-			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
-			, [{nameof(Tables.Record.RecordCreatedUtc)}]
-			) VALUES (
-			  @{InputParamName.IdentifierTypeWithoutVersionId}
-			, @{InputParamName.IdentifierTypeWithVersionId}
-			, @{InputParamName.ObjectTypeWithoutVersionId}
-			, @{InputParamName.ObjectTypeWithVersionId}
-			, @{InputParamName.SerializerRepresentationId}
-			, @{InputParamName.StringSerializedId}
-			, @{InputParamName.StringSerializedObject}
-			, @{InputParamName.BinarySerializedObject}
-			, @{InputParamName.TagIdsCsv}
-			, @{InputParamName.ObjectDateTimeUtc}
-			, @{recordCreatedUtc}
-			)
+		INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
+              [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
+            , [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
+            , [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
+            , [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
+            , [{nameof(Tables.Record.SerializerRepresentationId)}]
+            , [{nameof(Tables.Record.StringSerializedId)}]
+            , [{nameof(Tables.Record.StringSerializedObject)}]
+            , [{nameof(Tables.Record.BinarySerializedObject)}]
+            , [{nameof(Tables.Record.TagIdsCsv)}]
+            , [{nameof(Tables.Record.ObjectDateTimeUtc)}]
+            , [{nameof(Tables.Record.RecordCreatedUtc)}]
+		) VALUES (
+		      @{InputParamName.IdentifierTypeWithoutVersionId}
+		    , @{InputParamName.IdentifierTypeWithVersionId}
+		    , @{InputParamName.ObjectTypeWithoutVersionId}
+            , @{InputParamName.ObjectTypeWithVersionId}
+            , @{InputParamName.SerializerRepresentationId}
+            , @{InputParamName.StringSerializedId}
+            , @{InputParamName.StringSerializedObject}
+            , @{InputParamName.BinarySerializedObject}
+            , @{InputParamName.TagIdsCsv}
+            , @{InputParamName.ObjectDateTimeUtc}
+            , @{recordCreatedUtc}
+		)
 
-	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+	    SET @{OutputParamName.Id} = SCOPE_IDENTITY()
 
-	      INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
+	    INSERT INTO [{streamName}].[{Tables.RecordTag.Table.Name}](
 		    [{Tables.RecordTag.RecordId.Name}]
 		  , [{Tables.RecordTag.TagId.Name}]
 		  , [{Tables.RecordTag.RecordCreatedUtc.Name}])
-	      SELECT
+	    SELECT
   		    @{OutputParamName.Id}
 		  , value AS [{Tables.Tag.Id.Name}]
 		  , @{recordCreatedUtc}
-         FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ',')
+        FROM STRING_SPLIT(@{InputParamName.TagIdsCsv}, ',')
 ");
                             break;
                         case RecordTagAssociationManagementStrategy.ExternallyManaged:
                             insertRowsBlock = Invariant($@"
-		  INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
-			  [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
-			, [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
-			, [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
-			, [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
-			, [{nameof(Tables.Record.SerializerRepresentationId)}]
-			, [{nameof(Tables.Record.StringSerializedId)}]
-			, [{nameof(Tables.Record.StringSerializedObject)}]
-			, [{nameof(Tables.Record.BinarySerializedObject)}]
-			, [{nameof(Tables.Record.TagIdsCsv)}]
-			, [{nameof(Tables.Record.ObjectDateTimeUtc)}]
-			, [{nameof(Tables.Record.RecordCreatedUtc)}]
-			) VALUES (
-			  @{InputParamName.IdentifierTypeWithoutVersionId}
-			, @{InputParamName.IdentifierTypeWithVersionId}
-			, @{InputParamName.ObjectTypeWithoutVersionId}
-			, @{InputParamName.ObjectTypeWithVersionId}
-			, @{InputParamName.SerializerRepresentationId}
-			, @{InputParamName.StringSerializedId}
-			, @{InputParamName.StringSerializedObject}
-			, @{InputParamName.BinarySerializedObject}
-			, @{InputParamName.TagIdsCsv}
-			, @{InputParamName.ObjectDateTimeUtc}
-			, @{recordCreatedUtc}
-			)
+		INSERT INTO [{streamName}].[{Tables.Record.Table.Name}] (
+              [{nameof(Tables.Record.IdentifierTypeWithoutVersionId)}]
+            , [{nameof(Tables.Record.IdentifierTypeWithVersionId)}]
+            , [{nameof(Tables.Record.ObjectTypeWithoutVersionId)}]
+            , [{nameof(Tables.Record.ObjectTypeWithVersionId)}]
+            , [{nameof(Tables.Record.SerializerRepresentationId)}]
+            , [{nameof(Tables.Record.StringSerializedId)}]
+            , [{nameof(Tables.Record.StringSerializedObject)}]
+            , [{nameof(Tables.Record.BinarySerializedObject)}]
+            , [{nameof(Tables.Record.TagIdsCsv)}]
+            , [{nameof(Tables.Record.ObjectDateTimeUtc)}]
+            , [{nameof(Tables.Record.RecordCreatedUtc)}]
+        ) VALUES (
+              @{InputParamName.IdentifierTypeWithoutVersionId}
+            , @{InputParamName.IdentifierTypeWithVersionId}
+            , @{InputParamName.ObjectTypeWithoutVersionId}
+            , @{InputParamName.ObjectTypeWithVersionId}
+            , @{InputParamName.SerializerRepresentationId}
+            , @{InputParamName.StringSerializedId}
+            , @{InputParamName.StringSerializedObject}
+            , @{InputParamName.BinarySerializedObject}
+            , @{InputParamName.TagIdsCsv}
+            , @{InputParamName.ObjectDateTimeUtc}
+            , @{recordCreatedUtc}
+        )
 
-	      SET @{OutputParamName.Id} = SCOPE_IDENTITY()
-		  ");
+	    SET @{OutputParamName.Id} = SCOPE_IDENTITY()
+		");
                             break;
                         default:
                             throw new NotSupportedException(Invariant($"{nameof(RecordTagAssociationManagementStrategy)} '{recordTagAssociationManagementStrategy}' is not supported."));
@@ -344,23 +344,23 @@ namespace Naos.SqlServer.Domain
 
                     var result = Invariant($@"
 {createOrModify} PROCEDURE [{streamName}].[{PutRecord.Name}](
-  @{InputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.InternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
-, @{InputParamName.ExistingRecordStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
-, @{InputParamName.RecordRetentionCount} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-, @{InputParamName.VersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
-, @{OutputParamName.Id} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.ExistingRecordIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-, @{OutputParamName.PrunedRecordIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+    @{InputParamName.SerializerRepresentationId} AS {Tables.SerializerRepresentation.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.IdentifierTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.IdentifierTypeWithVersionId} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.ObjectTypeWithoutVersionId} AS {Tables.TypeWithoutVersion.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.ObjectTypeWithVersionId} AS {Tables.TypeWithVersion.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.InternalRecordId} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.StringSerializedId} AS {Tables.Record.StringSerializedId.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.StringSerializedObject} AS {Tables.Record.StringSerializedObject.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.BinarySerializedObject} AS {Tables.Record.BinarySerializedObject.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.ObjectDateTimeUtc} AS {Tables.Record.ObjectDateTimeUtc.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.TagIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax}
+ ,  @{InputParamName.ExistingRecordStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+ ,  @{InputParamName.RecordRetentionCount} AS {new IntSqlDataTypeRepresentation().DeclarationInSqlSyntax}
+ ,  @{InputParamName.VersionMatchStrategy} AS {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax}
+ ,  @{OutputParamName.Id} AS {Tables.Record.Id.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.ExistingRecordIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.PrunedRecordIdsCsv} AS {Tables.Record.TagIdsCsv.SqlDataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
@@ -479,7 +479,7 @@ BEGIN
                         @ErrorMessage nvarchar(max),
                         @ErrorSeverity int,
                         @ErrorState int
-              
+
                 SELECT @ErrorMessage = ERROR_MESSAGE() + ' Line ' + cast(ERROR_LINE() as nvarchar(5)), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
                 SELECT @ThrowMessage = @ErrorMessage + '; ErrorSeverity=' + cast(@ErrorSeverity as nvarchar(20)) + '; ErrorState=' + cast(@ErrorState as nvarchar(20))
 

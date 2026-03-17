@@ -113,14 +113,14 @@ namespace Naos.SqlServer.Domain
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{GetSerializerRepresentationFromId.Name}](
     @{InputParamName.Id} {Tables.SerializerRepresentation.Id.SqlDataType.DeclarationInSqlSyntax}
-  , @{OutputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-  , @{OutputParamName.ConfigTypeWithVersionId} {Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-  , @{OutputParamName.CompressionKind} {Tables.SerializerRepresentation.CompressionKind.SqlDataType.DeclarationInSqlSyntax} OUTPUT
-  , @{OutputParamName.SerializationFormat} {Tables.SerializerRepresentation.SerializationFormat.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.SerializationKind} {Tables.SerializerRepresentation.SerializationKind.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.ConfigTypeWithVersionId} {Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.CompressionKind} {Tables.SerializerRepresentation.CompressionKind.SqlDataType.DeclarationInSqlSyntax} OUTPUT
+ ,  @{OutputParamName.SerializationFormat} {Tables.SerializerRepresentation.SerializationFormat.SqlDataType.DeclarationInSqlSyntax} OUTPUT
 )
 AS
 BEGIN
-SELECT
+    SELECT
 	    @{OutputParamName.SerializationKind} = [{Tables.SerializerRepresentation.SerializationKind.Name}]
 	  , @{OutputParamName.ConfigTypeWithVersionId} = [{Tables.SerializerRepresentation.SerializationConfigurationTypeWithVersionId.Name}]
 	  , @{OutputParamName.CompressionKind} = [{Tables.SerializerRepresentation.CompressionKind.Name}]

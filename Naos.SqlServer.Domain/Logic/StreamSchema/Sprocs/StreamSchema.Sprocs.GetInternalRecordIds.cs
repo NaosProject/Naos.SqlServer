@@ -193,9 +193,36 @@ namespace Naos.SqlServer.Domain
 )
 AS
 BEGIN
+    --------------------------------------------------------------------------------------
+    -- BEGIN SETUP                                                                      --
+    --------------------------------------------------------------------------------------
+{LocalVariableComment}
+    DECLARE @{LocalVariablePrefix}{InputParamName.InternalRecordIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.InternalRecordIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.IdentifierTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.IdentifierTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.ObjectTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.ObjectTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.StringIdentifiersXml} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} = @{InputParamName.StringIdentifiersXml}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagIdsToMatchCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.TagIdsToMatchCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.TagMatchStrategy} {new StringSqlDataTypeRepresentation(false, 40).DeclarationInSqlSyntax} = @{InputParamName.TagMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.VersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = @{InputParamName.VersionMatchStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.DeprecatedIdEventTypeIdsCsv} {new StringSqlDataTypeRepresentation(false, StringSqlDataTypeRepresentation.MaxNonUnicodeLengthConstant).DeclarationInSqlSyntax} = @{InputParamName.DeprecatedIdEventTypeIdsCsv}
+    DECLARE @{LocalVariablePrefix}{InputParamName.RecordsToFilterSelectionStrategy} {new StringSqlDataTypeRepresentation(false, 50).DeclarationInSqlSyntax} = @{InputParamName.RecordsToFilterSelectionStrategy}
+    DECLARE @{LocalVariablePrefix}{InputParamName.RecordsToFilterVersionMatchStrategy} {new StringSqlDataTypeRepresentation(false, 20).DeclarationInSqlSyntax} = @{InputParamName.RecordsToFilterVersionMatchStrategy}
+
+    --------------------------------------------------------------------------------------
+    -- END SETUP                                                                        --
+    --------------------------------------------------------------------------------------
+
     {RecordFilterLogic.BuildRecordFilterToBuildRecordsToConsiderTable(streamName, recordIdsToConsiderTable, includeHandlingTags: false, includeRecordsToFilterCriteria: true)}
 
+    --------------------------------------------------------------------------------------
+    -- BEGIN STORED PROCEDURE SPECIFIC LOGIC                                            --
+    --------------------------------------------------------------------------------------
     SELECT @{OutputParamName.InternalRecordIdsCsvOutput} = STRING_AGG(CONVERT({new StringSqlDataTypeRepresentation(true, StringSqlDataTypeRepresentation.MaxUnicodeLengthConstant).DeclarationInSqlSyntax}, [{Tables.Record.Id.Name}]), ',') FROM @{recordIdsToConsiderTable}
+
+    --------------------------------------------------------------------------------------
+    -- END STORED PROCEDURE SPECIFIC LOGIC                                              --
+    --------------------------------------------------------------------------------------
+
 END");
 
                     return result;

@@ -92,8 +92,8 @@ namespace Naos.SqlServer.Domain
                         $@"
 {createOrModify} PROCEDURE [{streamName}].[{Name}](
     @{nameof(InputParamName.TagsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax}
-  , @{nameof(OutputParamName.TagIdsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
-  )
+ ,  @{nameof(OutputParamName.TagIdsXml)} {new XmlSqlDataTypeRepresentation().DeclarationInSqlSyntax} OUTPUT
+)
 AS
 BEGIN
     DECLARE @{tagIdsTable} TABLE(
