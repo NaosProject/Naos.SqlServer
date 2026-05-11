@@ -34,6 +34,24 @@ namespace Naos.SqlServer.Domain.Test
                 .AddScenario(() =>
                     new ConstructorArgumentValidationTestScenario<SqlScriptValidationResult>
                     {
+                        Name = "constructor should throw ArgumentException when parameter 'parsingErrors' contains a null element scenario",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<SqlScriptValidationResult>();
+
+                            var result = new SqlScriptValidationResult(
+                                referenceObject.TargetSqlServerVersion,
+                                new SqlScriptParsingError[0].Concat(referenceObject.ParsingErrors).Concat(new SqlScriptParsingError[] { null }).Concat(referenceObject.ParsingErrors).ToList(),
+                                referenceObject.RuleViolations);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentException),
+                        ExpectedExceptionMessageContains = new[] { "parsingErrors", "contains at least one null element", },
+                    })
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<SqlScriptValidationResult>
+                    {
                         Name = "constructor should throw ArgumentException when parameter 'violations' contains a null element scenario",
                         ConstructionFunc = () =>
                         {
@@ -41,7 +59,8 @@ namespace Naos.SqlServer.Domain.Test
 
                             var result = new SqlScriptValidationResult(
                                 referenceObject.TargetSqlServerVersion,
-                                new SqlScriptValidationRuleViolation[0].Concat(referenceObject.Violations).Concat(new SqlScriptValidationRuleViolation[] { null }).Concat(referenceObject.Violations).ToList());
+                                referenceObject.ParsingErrors,
+                                new SqlScriptValidationRuleViolation[0].Concat(referenceObject.RuleViolations).Concat(new SqlScriptValidationRuleViolation[] { null }).Concat(referenceObject.RuleViolations).ToList());
 
                             return result;
                         },
@@ -51,15 +70,22 @@ namespace Naos.SqlServer.Domain.Test
         }
 
         [Fact]
-        public static void HasAnyRuleViolation___Should_return_false___When_there_are_no_rule_violations()
+        public static void IsValid___Should_return_false___When_there_are_some_parsing_errors()
         {
             // Arrange
-            var systemUnderTest1 = new SqlScriptValidationResult(A.Dummy<SqlServerVersion>(), null);
-            var systemUnderTest2 = new SqlScriptValidationResult(A.Dummy<SqlServerVersion>(), new SqlScriptValidationRuleViolation[0]);
+            var systemUnderTest1 = new SqlScriptValidationResult(
+                A.Dummy<SqlServerVersion>(),
+                Some.ReadOnlyDummies<SqlScriptParsingError>().ToList(),
+                null);
+
+            var systemUnderTest2 = new SqlScriptValidationResult(
+                A.Dummy<SqlServerVersion>(),
+                Some.ReadOnlyDummies<SqlScriptParsingError>().ToList(),
+                new SqlScriptValidationRuleViolation[0]);
 
             // Act
-            var actual1 = systemUnderTest1.HasAnyRuleViolation();
-            var actual2 = systemUnderTest2.HasAnyRuleViolation();
+            var actual1 = systemUnderTest1.IsValid();
+            var actual2 = systemUnderTest2.IsValid();
 
             // Assert
             actual1.AsTest().Must().BeFalse();
@@ -67,16 +93,57 @@ namespace Naos.SqlServer.Domain.Test
         }
 
         [Fact]
-        public static void HasAnyRuleViolation___Should_return_true___When_there_are_some_rule_violations()
+        public static void IsValid___Should_return_false___When_there_are_some_rule_violations()
         {
             // Arrange
-            var systemUnderTest = new SqlScriptValidationResult(A.Dummy<SqlServerVersion>(), Some.ReadOnlyDummies<SqlScriptValidationRuleViolation>().ToList());
+            var systemUnderTest1 = new SqlScriptValidationResult(
+                A.Dummy<SqlServerVersion>(),
+                null,
+                Some.ReadOnlyDummies<SqlScriptValidationRuleViolation>().ToList());
+
+            var systemUnderTest2 = new SqlScriptValidationResult(
+                A.Dummy<SqlServerVersion>(),
+                new SqlScriptParsingError[0],
+                Some.ReadOnlyDummies<SqlScriptValidationRuleViolation>().ToList());
 
             // Act
-            var actual = systemUnderTest.HasAnyRuleViolation();
+            var actual1 = systemUnderTest1.IsValid();
+            var actual2 = systemUnderTest2.IsValid();
 
             // Assert
-            actual.AsTest().Must().BeTrue();
+            actual1.AsTest().Must().BeFalse();
+            actual2.AsTest().Must().BeFalse();
+        }
+
+        [Fact]
+        public static void IsValid___Should_return_true___When_there_are_no_parsing_errors_and_no_rule_violations()
+        {
+            // Arrange
+            var systemUnderTest = new[]
+            {
+                new SqlScriptValidationResult(
+                    A.Dummy<SqlServerVersion>(),
+                    null,
+                    null),
+                new SqlScriptValidationResult(
+                    A.Dummy<SqlServerVersion>(),
+                    new SqlScriptParsingError[0],
+                    null),
+                new SqlScriptValidationResult(
+                    A.Dummy<SqlServerVersion>(),
+                    null,
+                    new SqlScriptValidationRuleViolation[0]),
+                new SqlScriptValidationResult(
+                    A.Dummy<SqlServerVersion>(),
+                    new SqlScriptParsingError[0],
+                    new SqlScriptValidationRuleViolation[0]),
+            };
+
+            // Act
+            var actual = systemUnderTest.Select(_ => _.IsValid()).ToArray();
+
+            // Assert
+            actual.AsTest().Must().Each().BeTrue();
         }
     }
 }

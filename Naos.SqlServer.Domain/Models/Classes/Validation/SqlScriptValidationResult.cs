@@ -20,16 +20,20 @@ namespace Naos.SqlServer.Domain
         /// Initializes a new instance of the <see cref="SqlScriptValidationResult"/> class.
         /// </summary>
         /// <param name="targetSqlServerVersion">The SQL Server release whose T-SQL grammar the parser was configured for.</param>
-        /// <param name="violations">The rule that was violated.</param>
+        /// <param name="parsingErrors">The parsing errors.</param>
+        /// <param name="ruleViolations">The rule violations.</param>
         public SqlScriptValidationResult(
             SqlServerVersion targetSqlServerVersion,
-            IReadOnlyList<SqlScriptValidationRuleViolation> violations)
+            IReadOnlyList<SqlScriptParsingError> parsingErrors,
+            IReadOnlyList<SqlScriptValidationRuleViolation> ruleViolations)
         {
             new { targetSqlServerVersion }.AsArg().Must().NotBeEqualTo(SqlServerVersion.Unknown);
-            new { violations }.AsArg().Must().NotContainAnyNullElementsWhenNotNull();
+            new { parsingErrors }.AsArg().Must().NotContainAnyNullElementsWhenNotNull();
+            new { ruleViolations }.AsArg().Must().NotContainAnyNullElementsWhenNotNull();
 
             this.TargetSqlServerVersion = targetSqlServerVersion;
-            this.Violations = violations;
+            this.ParsingErrors = parsingErrors;
+            this.RuleViolations = ruleViolations;
         }
 
         /// <summary>
@@ -38,19 +42,26 @@ namespace Naos.SqlServer.Domain
         public SqlServerVersion TargetSqlServerVersion { get; private set; }
 
         /// <summary>
-        /// Gets the rule that was violated.
+        /// Gets the parsing errors.
         /// </summary>
-        public IReadOnlyList<SqlScriptValidationRuleViolation> Violations { get; private set; }
+        public IReadOnlyList<SqlScriptParsingError> ParsingErrors { get; private set; }
 
         /// <summary>
-        /// Determines whether there are any rule violations.
+        /// Gets the rule violations.
+        /// </summary>
+        public IReadOnlyList<SqlScriptValidationRuleViolation> RuleViolations { get; private set; }
+
+        /// <summary>
+        /// Determines whether the SQL statement is valid.
         /// </summary>
         /// <returns>
-        /// true if there are any rule violations, otherwise false.
+        /// true if the SQL statement is valid, otherwise false.
         /// </returns>
-        public bool HasAnyRuleViolation()
+        public bool IsValid()
         {
-            var result = (this.Violations != null) && this.Violations.Any();
+            var result =
+                ((this.ParsingErrors == null) || !this.ParsingErrors.Any()) &&
+                ((this.RuleViolations == null) || !this.RuleViolations.Any());
 
             return result;
         }

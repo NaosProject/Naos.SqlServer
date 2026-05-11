@@ -248,6 +248,11 @@ namespace Naos.SqlServer.Domain.Test
 
             // ------------------------ Validation ---------------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlScriptParsingError(
+                    A.Dummy<ZeroOrPositiveInteger>(),
+                    A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlScriptValidationRuleViolation(
                     A.Dummy<SqlScriptValidationRuleBase>(),
                     A.Dummy<ZeroOrPositiveInteger>(),

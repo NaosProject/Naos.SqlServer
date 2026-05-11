@@ -23,15 +23,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class SqlScriptValidationResult : IModel<SqlScriptValidationResult>
+    public partial class SqlScriptParsingError : IModel<SqlScriptParsingError>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlScriptValidationResult"/> are equal.
+        /// Determines whether two objects of type <see cref="SqlScriptParsingError"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(SqlScriptValidationResult left, SqlScriptValidationResult right)
+        public static bool operator ==(SqlScriptParsingError left, SqlScriptParsingError right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -49,15 +49,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="SqlScriptValidationResult"/> are not equal.
+        /// Determines whether two objects of type <see cref="SqlScriptParsingError"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(SqlScriptValidationResult left, SqlScriptValidationResult right) => !(left == right);
+        public static bool operator !=(SqlScriptParsingError left, SqlScriptParsingError right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(SqlScriptValidationResult other)
+        public bool Equals(SqlScriptParsingError other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -69,42 +69,39 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.TargetSqlServerVersion.IsEqualTo(other.TargetSqlServerVersion)
-                      && this.ParsingErrors.IsEqualTo(other.ParsingErrors)
-                      && this.RuleViolations.IsEqualTo(other.RuleViolations);
+            var result = this.Offset.IsEqualTo(other.Offset)
+                      && this.Details.IsEqualTo(other.Details, StringComparer.Ordinal);
 
             return result;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as SqlScriptValidationResult);
+        public override bool Equals(object obj) => this == (obj as SqlScriptParsingError);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.TargetSqlServerVersion)
-            .Hash(this.ParsingErrors)
-            .Hash(this.RuleViolations)
+            .Hash(this.Offset)
+            .Hash(this.Details)
             .Value;
 
         /// <inheritdoc />
         public object Clone() => this.DeepClone();
 
         /// <inheritdoc />
-        public SqlScriptValidationResult DeepClone()
+        public SqlScriptParsingError DeepClone()
         {
-            var result = new SqlScriptValidationResult(
-                                 this.TargetSqlServerVersion.DeepClone(),
-                                 this.ParsingErrors?.DeepClone(),
-                                 this.RuleViolations?.DeepClone());
+            var result = new SqlScriptParsingError(
+                                 this.Offset.DeepClone(),
+                                 this.Details?.DeepClone());
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="TargetSqlServerVersion" />.
+        /// Deep clones this object with a new <see cref="Offset" />.
         /// </summary>
-        /// <param name="targetSqlServerVersion">The new <see cref="TargetSqlServerVersion" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlScriptValidationResult" /> using the specified <paramref name="targetSqlServerVersion" /> for <see cref="TargetSqlServerVersion" /> and a deep clone of every other property.</returns>
+        /// <param name="offset">The new <see cref="Offset" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="SqlScriptParsingError" /> using the specified <paramref name="offset" /> for <see cref="Offset" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -122,21 +119,20 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlScriptValidationResult DeepCloneWithTargetSqlServerVersion(SqlServerVersion targetSqlServerVersion)
+        public SqlScriptParsingError DeepCloneWithOffset(int offset)
         {
-            var result = new SqlScriptValidationResult(
-                                 targetSqlServerVersion,
-                                 this.ParsingErrors?.DeepClone(),
-                                 this.RuleViolations?.DeepClone());
+            var result = new SqlScriptParsingError(
+                                 offset,
+                                 this.Details?.DeepClone());
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="ParsingErrors" />.
+        /// Deep clones this object with a new <see cref="Details" />.
         /// </summary>
-        /// <param name="parsingErrors">The new <see cref="ParsingErrors" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlScriptValidationResult" /> using the specified <paramref name="parsingErrors" /> for <see cref="ParsingErrors" /> and a deep clone of every other property.</returns>
+        /// <param name="details">The new <see cref="Details" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="SqlScriptParsingError" /> using the specified <paramref name="details" /> for <see cref="Details" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -154,53 +150,11 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlScriptValidationResult DeepCloneWithParsingErrors(IReadOnlyList<SqlScriptParsingError> parsingErrors)
+        public SqlScriptParsingError DeepCloneWithDetails(string details)
         {
-            var result = new SqlScriptValidationResult(
-                                 this.TargetSqlServerVersion.DeepClone(),
-                                 parsingErrors,
-                                 this.RuleViolations?.DeepClone());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="RuleViolations" />.
-        /// </summary>
-        /// <param name="ruleViolations">The new <see cref="RuleViolations" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="SqlScriptValidationResult" /> using the specified <paramref name="ruleViolations" /> for <see cref="RuleViolations" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public SqlScriptValidationResult DeepCloneWithRuleViolations(IReadOnlyList<SqlScriptValidationRuleViolation> ruleViolations)
-        {
-            var result = new SqlScriptValidationResult(
-                                 this.TargetSqlServerVersion.DeepClone(),
-                                 this.ParsingErrors?.DeepClone(),
-                                 ruleViolations);
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        public override string ToString()
-        {
-            var result = Invariant($"Naos.SqlServer.Domain.SqlScriptValidationResult: TargetSqlServerVersion = {this.TargetSqlServerVersion.ToString() ?? "<null>"}, ParsingErrors = {this.ParsingErrors?.ToString() ?? "<null>"}, RuleViolations = {this.RuleViolations?.ToString() ?? "<null>"}.");
+            var result = new SqlScriptParsingError(
+                                 this.Offset.DeepClone(),
+                                 details);
 
             return result;
         }
@@ -246,21 +200,14 @@ namespace Naos.SqlServer.Domain
             {
                 IReadOnlyList<ValidationFailure> localValidationFailures;
 
-                localValidationFailures = ValidatableExtensions.GetValidationFailures(this.TargetSqlServerVersion, options, propertyPathTracker, nameof(this.TargetSqlServerVersion));
+                localValidationFailures = ValidatableExtensions.GetValidationFailures(this.Offset, options, propertyPathTracker, nameof(this.Offset));
                 result.AddRange(localValidationFailures);
                 if (stopOnFirstObjectWithFailures && result.Any())
                 {
                     return;
                 }
 
-                localValidationFailures = ValidatableExtensions.GetValidationFailures(this.ParsingErrors, options, propertyPathTracker, nameof(this.ParsingErrors));
-                result.AddRange(localValidationFailures);
-                if (stopOnFirstObjectWithFailures && result.Any())
-                {
-                    return;
-                }
-
-                localValidationFailures = ValidatableExtensions.GetValidationFailures(this.RuleViolations, options, propertyPathTracker, nameof(this.RuleViolations));
+                localValidationFailures = ValidatableExtensions.GetValidationFailures(this.Details, options, propertyPathTracker, nameof(this.Details));
                 result.AddRange(localValidationFailures);
                 if (stopOnFirstObjectWithFailures && result.Any())
                 {

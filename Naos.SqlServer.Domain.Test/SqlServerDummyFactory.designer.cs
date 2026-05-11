@@ -249,8 +249,14 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<Version>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlScriptParsingError(
+                                 A.Dummy<int>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlScriptValidationResult(
                                  A.Dummy<SqlServerVersion>(),
+                                 A.Dummy<IReadOnlyList<SqlScriptParsingError>>(),
                                  A.Dummy<IReadOnlyList<SqlScriptValidationRuleViolation>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(

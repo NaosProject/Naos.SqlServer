@@ -162,6 +162,9 @@
     <Compile Include="Models\Classes\Validation\DisallowSystemSchemasSqlScriptValidationRule.designer.cs">
       <DependentUpon>DisallowSystemSchemasSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\SqlScriptParsingError.designer.cs">
+      <DependentUpon>SqlScriptParsingError.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\SqlScriptValidationResult.designer.cs">
       <DependentUpon>SqlScriptValidationResult.cs</DependentUpon>
     </Compile>
@@ -170,6 +173,7 @@
     <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleBase.designer.cs">
       <DependentUpon>SqlScriptValidationRuleBase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\SqlScriptParsingError.cs" />
     <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleViolation.cs" />
     <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleViolation.designer.cs">
       <DependentUpon>SqlScriptValidationRuleViolation.cs</DependentUpon>
