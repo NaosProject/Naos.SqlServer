@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Naos.SqlServer.Protocol.Mig
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Naos.SqlServer.Protocol.Migration.Test", "Naos.SqlServer.Protocol.Migration.Test\Naos.SqlServer.Protocol.Migration.Test.csproj", "{0DD73B5A-907F-4A24-8AD0-5A449D9A39CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Naos.SqlServer.Protocol.Validation", "Naos.SqlServer.Protocol.Validation\Naos.SqlServer.Protocol.Validation.csproj", "{09405775-1C20-4FA9-A600-EDADC0AFA835}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Naos.SqlServer.Protocol.Validation.Test", "Naos.SqlServer.Protocol.Validation.Test\Naos.SqlServer.Protocol.Validation.Test.csproj", "{6F6768B7-0F3E-4FBE-B1DB-D9E4A6681F10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +83,14 @@ Global
 		{0DD73B5A-907F-4A24-8AD0-5A449D9A39CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DD73B5A-907F-4A24-8AD0-5A449D9A39CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DD73B5A-907F-4A24-8AD0-5A449D9A39CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09405775-1C20-4FA9-A600-EDADC0AFA835}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09405775-1C20-4FA9-A600-EDADC0AFA835}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09405775-1C20-4FA9-A600-EDADC0AFA835}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09405775-1C20-4FA9-A600-EDADC0AFA835}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F6768B7-0F3E-4FBE-B1DB-D9E4A6681F10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F6768B7-0F3E-4FBE-B1DB-D9E4A6681F10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F6768B7-0F3E-4FBE-B1DB-D9E4A6681F10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F6768B7-0F3E-4FBE-B1DB-D9E4A6681F10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
