@@ -373,8 +373,8 @@
       <DependentUpon>ScriptedObjectTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\ProjectInfo.cs" />
-    <Compile Include="RecordFilterConvertedForStoredProcedureTest.cs" />
-    <Compile Include="RecordFilterConvertedForStoredProcedureTest.designer.cs">
+    <Compile Include="Models\Classes\Stream\RecordFilterConvertedForStoredProcedureTest.cs" />
+    <Compile Include="Models\Classes\Stream\RecordFilterConvertedForStoredProcedureTest.designer.cs">
       <DependentUpon>RecordFilterConvertedForStoredProcedureTest.cs</DependentUpon>
     </Compile>
     <Compile Include="SerializationConfigurationTypes.cs" />
@@ -436,8 +436,8 @@
     <Compile Include="Models\Classes\Stream\SqlServerStandardStreamConfigTest.designer.cs">
       <DependentUpon>SqlServerStandardStreamConfigTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="VersionSqlDataTypeRepresentationTest.cs" />
-    <Compile Include="VersionSqlDataTypeRepresentationTest.designer.cs">
+    <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\VersionSqlDataTypeRepresentationTest.cs" />
+    <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\VersionSqlDataTypeRepresentationTest.designer.cs">
       <DependentUpon>VersionSqlDataTypeRepresentationTest.cs</DependentUpon>
     </Compile>
     <AdditionalFiles Include=".analyzers\stylecop.json" />
