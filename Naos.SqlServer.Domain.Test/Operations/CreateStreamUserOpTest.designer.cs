@@ -458,6 +458,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<ExecuteStoredProcedureOp>(),
                         A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>(),
                         A.Dummy<UpdateStreamStoredProceduresOp>(),
+                        A.Dummy<ValidateSqlScriptOp>(),
                     },
                 });
 

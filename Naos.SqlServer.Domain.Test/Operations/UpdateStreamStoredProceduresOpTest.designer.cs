@@ -174,6 +174,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<CreateStreamUserOp>(),
                         A.Dummy<ExecuteStoredProcedureOp>(),
                         A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>(),
+                        A.Dummy<ValidateSqlScriptOp>(),
                     },
                 });
 

@@ -262,6 +262,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<CreateStreamUserOp>(),
                         A.Dummy<ExecuteStoredProcedureOp>(),
                         A.Dummy<UpdateStreamStoredProceduresOp>(),
+                        A.Dummy<ValidateSqlScriptOp>(),
                     },
                 });
 

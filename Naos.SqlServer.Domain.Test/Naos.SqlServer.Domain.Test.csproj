@@ -278,6 +278,14 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="ConsoleAbstraction.cs" />
+    <Compile Include="Models\Classes\Validation\DisallowSchemasSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\DisallowSchemasSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>DisallowSchemasSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\DisallowSystemSchemasSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\DisallowSystemSchemasSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>DisallowSystemSchemasSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Logic\XmlConversionToolTest.cs" />
     <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinitionBaseTest.cs" />
     <Compile Include="Models\Classes\Definition\Parameter\Input\InputParameterDefinitionBaseTest.designer.cs">
@@ -391,6 +399,18 @@
     <Compile Include="Models\Classes\Stream\SqlOutputParameterResult{TValue}Test.designer.cs">
       <DependentUpon>SqlOutputParameterResult{TValue}Test.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleBaseTest.cs" />
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleBaseTest.designer.cs">
+      <DependentUpon>SqlScriptValidationRuleBaseTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleViolationTest.cs" />
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleViolationTest.designer.cs">
+      <DependentUpon>SqlScriptValidationRuleViolationTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationResultTest.cs" />
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationResultTest.designer.cs">
+      <DependentUpon>SqlScriptValidationResultTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlServerDummyFactory.cs" />
     <Compile Include="SqlServerDummyFactory.designer.cs">
       <DependentUpon>SqlServerDummyFactory.cs</DependentUpon>
@@ -441,6 +461,10 @@
       <DependentUpon>VersionSqlDataTypeRepresentationTest.cs</DependentUpon>
     </Compile>
     <AdditionalFiles Include=".analyzers\stylecop.json" />
+    <Compile Include="Operations\ValidateSqlScriptOpTest.cs" />
+    <Compile Include="Operations\ValidateSqlScriptOpTest.designer.cs">
+      <DependentUpon>ValidateSqlScriptOpTest.cs</DependentUpon>
+    </Compile>
     <None Include=".analyzers\test.ruleset" />
     <None Include="DummyFactory.recipe-nuspec" />
     <None Include="packages.config" />
@@ -467,6 +491,7 @@
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

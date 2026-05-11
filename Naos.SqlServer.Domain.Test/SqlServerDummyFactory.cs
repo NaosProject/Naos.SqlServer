@@ -245,6 +245,13 @@ namespace Naos.SqlServer.Domain.Test
                     A.Dummy<SerializationFormat>(),
                     Some.ReadOnlyDummies<SqlServerLocator>().ToList()));
 
+            // ------------------------ Validation ---------------------------------
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlScriptValidationRuleViolation(
+                    A.Dummy<SqlScriptValidationRuleBase>(),
+                    A.Dummy<ZeroOrPositiveInteger>(),
+                    A.Dummy<string>()));
+
             // ------------------------ Operations ---------------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateStreamUserOp(

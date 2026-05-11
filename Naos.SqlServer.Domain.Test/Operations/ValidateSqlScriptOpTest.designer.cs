@@ -34,220 +34,220 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class ExecuteStoredProcedureOpTest
+    public static partial class ValidateSqlScriptOpTest
     {
-        private static readonly StringRepresentationTestScenarios<ExecuteStoredProcedureOp> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly StringRepresentationTestScenarios<ValidateSqlScriptOp> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<ValidateSqlScriptOp>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<ExecuteStoredProcedureOp>
+                new StringRepresentationTestScenario<ValidateSqlScriptOp>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                        var systemUnderTest = A.Dummy<ValidateSqlScriptOp>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestExpectedStringRepresentation<ValidateSqlScriptOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ExecuteStoredProcedureOp: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Parameters = {systemUnderTest.Parameters?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ValidateSqlScriptOp: Sql = {systemUnderTest.Sql?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Rules = {systemUnderTest.Rules?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<ExecuteStoredProcedureOp> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly ConstructorArgumentValidationTestScenarios<ValidateSqlScriptOp> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<ValidateSqlScriptOp>()
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'name' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'sql' is null scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
-                        var result = new ExecuteStoredProcedureOp(
+                        var result = new ValidateSqlScriptOp(
                                              null,
-                                             referenceObject.Parameters);
+                                             referenceObject.Rules);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "name", },
+                    ExpectedExceptionMessageContains = new[] { "sql", },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "constructor should throw ArgumentException when parameter 'name' is white space scenario",
+                    Name = "constructor should throw ArgumentException when parameter 'sql' is white space scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
-                        var result = new ExecuteStoredProcedureOp(
+                        var result = new ValidateSqlScriptOp(
                                              Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.Parameters);
+                                             referenceObject.Rules);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "name", "white space", },
+                    ExpectedExceptionMessageContains = new[] { "sql", "white space", },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'parameters' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'rules' is null scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
-                        var result = new ExecuteStoredProcedureOp(
-                                             referenceObject.Name,
+                        var result = new ValidateSqlScriptOp(
+                                             referenceObject.Sql,
                                              null);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "parameters", },
+                    ExpectedExceptionMessageContains = new[] { "rules", },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "constructor should throw ArgumentException when parameter 'parameters' is an empty enumerable scenario",
+                    Name = "constructor should throw ArgumentException when parameter 'rules' is an empty enumerable scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
-                        var result = new ExecuteStoredProcedureOp(
-                                             referenceObject.Name,
-                                             new List<ParameterDefinitionBase>());
+                        var result = new ValidateSqlScriptOp(
+                                             referenceObject.Sql,
+                                             new List<SqlScriptValidationRuleBase>());
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "parameters", "is an empty enumerable", },
+                    ExpectedExceptionMessageContains = new[] { "rules", "is an empty enumerable", },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "constructor should throw ArgumentException when parameter 'parameters' contains a null element scenario",
+                    Name = "constructor should throw ArgumentException when parameter 'rules' contains a null element scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
-                        var result = new ExecuteStoredProcedureOp(
-                                             referenceObject.Name,
-                                             new ParameterDefinitionBase[0].Concat(referenceObject.Parameters).Concat(new ParameterDefinitionBase[] { null }).Concat(referenceObject.Parameters).ToList());
+                        var result = new ValidateSqlScriptOp(
+                                             referenceObject.Sql,
+                                             new SqlScriptValidationRuleBase[0].Concat(referenceObject.Rules).Concat(new SqlScriptValidationRuleBase[] { null }).Concat(referenceObject.Rules).ToList());
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "parameters", "contains at least one null element", },
+                    ExpectedExceptionMessageContains = new[] { "rules", "contains at least one null element", },
                 });
 
-        private static readonly ConstructorPropertyAssignmentTestScenarios<ExecuteStoredProcedureOp> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly ConstructorPropertyAssignmentTestScenarios<ValidateSqlScriptOp> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<ValidateSqlScriptOp>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorPropertyAssignmentTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "Name should return same 'name' parameter passed to constructor when getting",
+                    Name = "Sql should return same 'sql' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestExpectedPropertyValue<ValidateSqlScriptOp>
                         {
-                            SystemUnderTest = new ExecuteStoredProcedureOp(
-                                                      referenceObject.Name,
-                                                      referenceObject.Parameters),
-                            ExpectedPropertyValue = referenceObject.Name,
+                            SystemUnderTest = new ValidateSqlScriptOp(
+                                                      referenceObject.Sql,
+                                                      referenceObject.Rules),
+                            ExpectedPropertyValue = referenceObject.Sql,
                         };
 
                         return result;
                     },
-                    PropertyName = "Name",
+                    PropertyName = "Sql",
                 })
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorPropertyAssignmentTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "Parameters should return same 'parameters' parameter passed to constructor when getting",
+                    Name = "Rules should return same 'rules' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestExpectedPropertyValue<ValidateSqlScriptOp>
                         {
-                            SystemUnderTest = new ExecuteStoredProcedureOp(
-                                                      referenceObject.Name,
-                                                      referenceObject.Parameters),
-                            ExpectedPropertyValue = referenceObject.Parameters,
+                            SystemUnderTest = new ValidateSqlScriptOp(
+                                                      referenceObject.Sql,
+                                                      referenceObject.Rules),
+                            ExpectedPropertyValue = referenceObject.Rules,
                         };
 
                         return result;
                     },
-                    PropertyName = "Parameters",
+                    PropertyName = "Rules",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<ExecuteStoredProcedureOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly DeepCloneWithTestScenarios<ValidateSqlScriptOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ValidateSqlScriptOp>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<ExecuteStoredProcedureOp>
+                new DeepCloneWithTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "DeepCloneWithName should deep clone object and replace Name with the provided name",
-                    WithPropertyName = "Name",
+                    Name = "DeepCloneWithSql should deep clone object and replace Sql with the provided sql",
+                    WithPropertyName = "Sql",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                        var systemUnderTest = A.Dummy<ValidateSqlScriptOp>();
 
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>().ThatIs(_ => !systemUnderTest.Name.IsEqualTo(_.Name));
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>().ThatIs(_ => !systemUnderTest.Sql.IsEqualTo(_.Sql));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestDeepCloneWithValue<ValidateSqlScriptOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Name,
+                            DeepCloneWithValue = referenceObject.Sql,
                         };
 
                         return result;
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<ExecuteStoredProcedureOp>
+                new DeepCloneWithTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "DeepCloneWithParameters should deep clone object and replace Parameters with the provided parameters",
-                    WithPropertyName = "Parameters",
+                    Name = "DeepCloneWithRules should deep clone object and replace Rules with the provided rules",
+                    WithPropertyName = "Rules",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                        var systemUnderTest = A.Dummy<ValidateSqlScriptOp>();
 
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>().ThatIs(_ => !systemUnderTest.Parameters.IsEqualTo(_.Parameters));
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>().ThatIs(_ => !systemUnderTest.Rules.IsEqualTo(_.Rules));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestDeepCloneWithValue<ValidateSqlScriptOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Parameters,
+                            DeepCloneWithValue = referenceObject.Rules,
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ExecuteStoredProcedureOp ReferenceObjectForEquatableTestScenarios = A.Dummy<ExecuteStoredProcedureOp>();
+        private static readonly ValidateSqlScriptOp ReferenceObjectForEquatableTestScenarios = A.Dummy<ValidateSqlScriptOp>();
 
-        private static readonly EquatableTestScenarios<ExecuteStoredProcedureOp> EquatableTestScenarios = new EquatableTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly EquatableTestScenarios<ValidateSqlScriptOp> EquatableTestScenarios = new EquatableTestScenarios<ValidateSqlScriptOp>()
             .AddScenario(() =>
-                new EquatableTestScenario<ExecuteStoredProcedureOp>
+                new EquatableTestScenario<ValidateSqlScriptOp>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new ExecuteStoredProcedureOp[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new ValidateSqlScriptOp[]
                     {
-                        new ExecuteStoredProcedureOp(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.Parameters),
+                        new ValidateSqlScriptOp(
+                                ReferenceObjectForEquatableTestScenarios.Sql,
+                                ReferenceObjectForEquatableTestScenarios.Rules),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new ExecuteStoredProcedureOp[]
+                    ObjectsThatAreNotEqualToReferenceObject = new ValidateSqlScriptOp[]
                     {
-                        new ExecuteStoredProcedureOp(
-                                A.Dummy<ExecuteStoredProcedureOp>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
-                                ReferenceObjectForEquatableTestScenarios.Parameters),
-                        new ExecuteStoredProcedureOp(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                A.Dummy<ExecuteStoredProcedureOp>().Whose(_ => !_.Parameters.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Parameters)).Parameters),
+                        new ValidateSqlScriptOp(
+                                A.Dummy<ValidateSqlScriptOp>().Whose(_ => !_.Sql.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Sql)).Sql,
+                                ReferenceObjectForEquatableTestScenarios.Rules),
+                        new ValidateSqlScriptOp(
+                                ReferenceObjectForEquatableTestScenarios.Sql,
+                                A.Dummy<ValidateSqlScriptOp>().Whose(_ => !_.Rules.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Rules)).Rules),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -257,18 +257,18 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
                         A.Dummy<CreateStreamUserOp>(),
+                        A.Dummy<ExecuteStoredProcedureOp>(),
                         A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>(),
                         A.Dummy<UpdateStreamStoredProceduresOp>(),
-                        A.Dummy<ValidateSqlScriptOp>(),
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<ExecuteStoredProcedureOp> ValidModelTestScenarios = new ValidModelTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly ValidModelTestScenarios<ValidateSqlScriptOp> ValidModelTestScenarios = new ValidModelTestScenarios<ValidateSqlScriptOp>()
             .AddScenario(() =>
-                new ValidModelTestScenario<ExecuteStoredProcedureOp>
+                new ValidModelTestScenario<ValidateSqlScriptOp>
                 {
-                    Name = "a dummy ExecuteStoredProcedureOp should be valid",
-                    SystemUnderTest = A.Dummy<ExecuteStoredProcedureOp>(),
+                    Name = "a dummy ValidateSqlScriptOp should be valid",
+                    SystemUnderTest = A.Dummy<ValidateSqlScriptOp>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -289,12 +289,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void ExecuteStoredProcedureOp___Should_implement_IModel_of_ExecuteStoredProcedureOp___When_reflecting()
+            public static void ValidateSqlScriptOp___Should_implement_IModel_of_ValidateSqlScriptOp___When_reflecting()
             {
                 // Arrange
-                var type = typeof(ExecuteStoredProcedureOp);
+                var type = typeof(ValidateSqlScriptOp);
 
-                var expectedModelMethods = typeof(IModel<ExecuteStoredProcedureOp>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<ValidateSqlScriptOp>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -304,7 +304,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<ExecuteStoredProcedureOp>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<ValidateSqlScriptOp>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -322,10 +322,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void ExecuteStoredProcedureOp___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void ValidateSqlScriptOp___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(ExecuteStoredProcedureOp);
+                var type = typeof(ValidateSqlScriptOp);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -505,10 +505,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                var systemUnderTest = A.Dummy<ValidateSqlScriptOp>();
 
                 // Act
-                var actual = (ExecuteStoredProcedureOp)systemUnderTest.Clone();
+                var actual = (ValidateSqlScriptOp)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -532,7 +532,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                var systemUnderTest = A.Dummy<ValidateSqlScriptOp>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -541,16 +541,16 @@ namespace Naos.SqlServer.Domain.Test
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
 
-                if (systemUnderTest.Parameters == null)
+                if (systemUnderTest.Rules == null)
                 {
-                    actual.Parameters.AsTest().Must().BeNull();
+                    actual.Rules.AsTest().Must().BeNull();
                 }
-                else if (!actual.Parameters.GetType().IsValueType)
+                else if (!actual.Rules.GetType().IsValueType)
                 {
                     // When the declared type is a reference type, we still have to check the runtime type.
                     // The object could be a boxed value type, which will fail this asseration because
                     // a deep clone of a value type object is the same object.
-                    actual.Parameters.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Parameters);
+                    actual.Rules.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Rules);
                 }
             }
 
@@ -570,7 +570,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Name", "Parameters" };
+                var propertyNames = new string[] { "Sql", "Rules" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -583,12 +583,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (ExecuteStoredProcedureOp)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (ValidateSqlScriptOp)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(ExecuteStoredProcedureOp).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(ValidateSqlScriptOp).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -650,7 +650,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ExecuteStoredProcedureOp>();
+                var expected = A.Dummy<ValidateSqlScriptOp>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -679,7 +679,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ExecuteStoredProcedureOp>();
+                var expected = A.Dummy<ValidateSqlScriptOp>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -708,7 +708,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ExecuteStoredProcedureOp>();
+                var expected = A.Dummy<ValidateSqlScriptOp>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -737,7 +737,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ExecuteStoredProcedureOp>();
+                var expected = A.Dummy<ValidateSqlScriptOp>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -771,8 +771,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                ExecuteStoredProcedureOp systemUnderTest1 = null;
-                ExecuteStoredProcedureOp systemUnderTest2 = null;
+                ValidateSqlScriptOp systemUnderTest1 = null;
+                ValidateSqlScriptOp systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -802,7 +802,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ExecuteStoredProcedureOp systemUnderTest = null;
+                    ValidateSqlScriptOp systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -951,8 +951,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                ExecuteStoredProcedureOp systemUnderTest1 = null;
-                ExecuteStoredProcedureOp systemUnderTest2 = null;
+                ValidateSqlScriptOp systemUnderTest1 = null;
+                ValidateSqlScriptOp systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -982,7 +982,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ExecuteStoredProcedureOp systemUnderTest = null;
+                    ValidateSqlScriptOp systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1271,17 +1271,17 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_ReturningOperationBase_of_SqlScriptValidationResult___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ReturningOperationBase<StoredProcedureExecutionResult> systemUnderTest = null;
+                    ReturningOperationBase<SqlScriptValidationResult> systemUnderTest = null;
 
                     // Act
-                    var actual = scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)systemUnderTest);
+                    var actual = scenario.ReferenceObject.Equals((ReturningOperationBase<SqlScriptValidationResult>)systemUnderTest);
 
                     // Assert
                     actual.AsTest().Must().BeFalse(because: scenario.Id);
@@ -1302,14 +1302,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_ReturningOperationBase_of_SqlScriptValidationResult___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actual = scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)scenario.ReferenceObject);
+                    var actual = scenario.ReferenceObject.Equals((ReturningOperationBase<SqlScriptValidationResult>)scenario.ReferenceObject);
 
                     // Assert
                     actual.AsTest().Must().BeTrue(because: scenario.Id);
@@ -1330,14 +1330,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_ReturningOperationBase_of_SqlScriptValidationResult___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)_)).ToList();
+                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<SqlScriptValidationResult>)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
@@ -1358,14 +1358,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_ReturningOperationBase_of_SqlScriptValidationResult___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)_)).ToList();
+                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<SqlScriptValidationResult>)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
@@ -1386,14 +1386,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_ReturningOperationBase_of_SqlScriptValidationResult___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)_)).ToList();
+                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<SqlScriptValidationResult>)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
@@ -1414,14 +1414,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_ValidateSqlScriptOp___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ExecuteStoredProcedureOp systemUnderTest = null;
+                    ValidateSqlScriptOp systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1445,7 +1445,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_ValidateSqlScriptOp___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1473,7 +1473,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_ValidateSqlScriptOp___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1501,7 +1501,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_ValidateSqlScriptOp___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1529,7 +1529,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_ValidateSqlScriptOp___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

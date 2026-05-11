@@ -154,12 +154,36 @@
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\DisallowSchemasSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\DisallowSchemasSqlScriptValidationRule.designer.cs">
+      <DependentUpon>DisallowSchemasSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\DisallowSystemSchemasSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\DisallowSystemSchemasSqlScriptValidationRule.designer.cs">
+      <DependentUpon>DisallowSystemSchemasSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationResult.designer.cs">
+      <DependentUpon>SqlScriptValidationResult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleBase.cs" />
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationResult.cs" />
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleBase.designer.cs">
+      <DependentUpon>SqlScriptValidationRuleBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleViolation.cs" />
+    <Compile Include="Models\Classes\Validation\SqlScriptValidationRuleViolation.designer.cs">
+      <DependentUpon>SqlScriptValidationRuleViolation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Enums\Management\JobStatus.cs" />
+    <Compile Include="Operations\ValidateSqlScriptOp.cs" />
     <Compile Include="Operations\ExecuteStoredProcedureOp.designer.cs">
       <DependentUpon>ExecuteStoredProcedureOp.cs</DependentUpon>
     </Compile>
     <Compile Include="Operations\UpdateStreamStoredProceduresOp.designer.cs">
       <DependentUpon>UpdateStreamStoredProceduresOp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\ValidateSqlScriptOp.designer.cs">
+      <DependentUpon>ValidateSqlScriptOp.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\ProjectInfo.cs" />
     <Compile Include="Protocols\Interfaces\IProtocolSqlOperations.cs" />
@@ -338,6 +362,7 @@
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Naos.Build.Analyzers.1.55.58\build\Naos.Build.Analyzers.targets" Condition="Exists('..\packages\Naos.Build.Analyzers.1.55.58\build\Naos.Build.Analyzers.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -34,220 +34,203 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class ExecuteStoredProcedureOpTest
+    public static partial class DisallowSchemasSqlScriptValidationRuleTest
     {
-        private static readonly StringRepresentationTestScenarios<ExecuteStoredProcedureOp> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly StringRepresentationTestScenarios<DisallowSchemasSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<DisallowSchemasSqlScriptValidationRule>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<ExecuteStoredProcedureOp>
+                new StringRepresentationTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                        var systemUnderTest = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestExpectedStringRepresentation<DisallowSchemasSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ExecuteStoredProcedureOp: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Parameters = {systemUnderTest.Parameters?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.DisallowSchemasSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DisallowedSchemas = {systemUnderTest.DisallowedSchemas?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<ExecuteStoredProcedureOp> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly ConstructorArgumentValidationTestScenarios<DisallowSchemasSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<DisallowSchemasSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'name' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'disallowedSchemas' is null scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var result = new ExecuteStoredProcedureOp(
+                        var result = new DisallowSchemasSqlScriptValidationRule(
                                              null,
-                                             referenceObject.Parameters);
+                                             referenceObject.Id);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "name", },
+                    ExpectedExceptionMessageContains = new[] { "disallowedSchemas", },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "constructor should throw ArgumentException when parameter 'name' is white space scenario",
+                    Name = "constructor should throw ArgumentException when parameter 'disallowedSchemas' is an empty enumerable scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var result = new ExecuteStoredProcedureOp(
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.Parameters);
+                        var result = new DisallowSchemasSqlScriptValidationRule(
+                                             new List<string>(),
+                                             referenceObject.Id);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "name", "white space", },
+                    ExpectedExceptionMessageContains = new[] { "disallowedSchemas", "is an empty enumerable", },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'parameters' is null scenario",
+                    Name = "constructor should throw ArgumentException when parameter 'disallowedSchemas' contains a null element scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var result = new ExecuteStoredProcedureOp(
-                                             referenceObject.Name,
-                                             null);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "parameters", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'parameters' is an empty enumerable scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
-
-                        var result = new ExecuteStoredProcedureOp(
-                                             referenceObject.Name,
-                                             new List<ParameterDefinitionBase>());
+                        var result = new DisallowSchemasSqlScriptValidationRule(
+                                             new string[0].Concat(referenceObject.DisallowedSchemas).Concat(new string[] { null }).Concat(referenceObject.DisallowedSchemas).ToList(),
+                                             referenceObject.Id);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "parameters", "is an empty enumerable", },
+                    ExpectedExceptionMessageContains = new[] { "disallowedSchemas", "contains at least one null element", },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorArgumentValidationTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "constructor should throw ArgumentException when parameter 'parameters' contains a null element scenario",
+                    Name = "constructor should throw ArgumentException when parameter 'disallowedSchemas' contains a white space element scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var result = new ExecuteStoredProcedureOp(
-                                             referenceObject.Name,
-                                             new ParameterDefinitionBase[0].Concat(referenceObject.Parameters).Concat(new ParameterDefinitionBase[] { null }).Concat(referenceObject.Parameters).ToList());
+                        var result = new DisallowSchemasSqlScriptValidationRule(
+                                             new string[0].Concat(referenceObject.DisallowedSchemas).Concat(new string[] { "  \r\n  " }).Concat(referenceObject.DisallowedSchemas).ToList(),
+                                             referenceObject.Id);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "parameters", "contains at least one null element", },
+                    ExpectedExceptionMessageContains = new[] { "disallowedSchemas", "contains an element that is white space", },
                 });
 
-        private static readonly ConstructorPropertyAssignmentTestScenarios<ExecuteStoredProcedureOp> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly ConstructorPropertyAssignmentTestScenarios<DisallowSchemasSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<DisallowSchemasSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorPropertyAssignmentTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "Name should return same 'name' parameter passed to constructor when getting",
+                    Name = "DisallowedSchemas should return same 'disallowedSchemas' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestExpectedPropertyValue<DisallowSchemasSqlScriptValidationRule>
                         {
-                            SystemUnderTest = new ExecuteStoredProcedureOp(
-                                                      referenceObject.Name,
-                                                      referenceObject.Parameters),
-                            ExpectedPropertyValue = referenceObject.Name,
+                            SystemUnderTest = new DisallowSchemasSqlScriptValidationRule(
+                                                      referenceObject.DisallowedSchemas,
+                                                      referenceObject.Id),
+                            ExpectedPropertyValue = referenceObject.DisallowedSchemas,
                         };
 
                         return result;
                     },
-                    PropertyName = "Name",
+                    PropertyName = "DisallowedSchemas",
                 })
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<ExecuteStoredProcedureOp>
+                new ConstructorPropertyAssignmentTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "Parameters should return same 'parameters' parameter passed to constructor when getting",
+                    Name = "Id should return same 'id' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>();
+                        var referenceObject = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestExpectedPropertyValue<DisallowSchemasSqlScriptValidationRule>
                         {
-                            SystemUnderTest = new ExecuteStoredProcedureOp(
-                                                      referenceObject.Name,
-                                                      referenceObject.Parameters),
-                            ExpectedPropertyValue = referenceObject.Parameters,
+                            SystemUnderTest = new DisallowSchemasSqlScriptValidationRule(
+                                                      referenceObject.DisallowedSchemas,
+                                                      referenceObject.Id),
+                            ExpectedPropertyValue = referenceObject.Id,
                         };
 
                         return result;
                     },
-                    PropertyName = "Parameters",
+                    PropertyName = "Id",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<ExecuteStoredProcedureOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly DeepCloneWithTestScenarios<DisallowSchemasSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<DisallowSchemasSqlScriptValidationRule>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<ExecuteStoredProcedureOp>
+                new DeepCloneWithTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "DeepCloneWithName should deep clone object and replace Name with the provided name",
-                    WithPropertyName = "Name",
+                    Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
+                    WithPropertyName = "Id",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                        var systemUnderTest = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>().ThatIs(_ => !systemUnderTest.Name.IsEqualTo(_.Name));
+                        var referenceObject = A.Dummy<DisallowSchemasSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestDeepCloneWithValue<DisallowSchemasSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Name,
+                            DeepCloneWithValue = referenceObject.Id,
                         };
 
                         return result;
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<ExecuteStoredProcedureOp>
+                new DeepCloneWithTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "DeepCloneWithParameters should deep clone object and replace Parameters with the provided parameters",
-                    WithPropertyName = "Parameters",
+                    Name = "DeepCloneWithDisallowedSchemas should deep clone object and replace DisallowedSchemas with the provided disallowedSchemas",
+                    WithPropertyName = "DisallowedSchemas",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                        var systemUnderTest = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-                        var referenceObject = A.Dummy<ExecuteStoredProcedureOp>().ThatIs(_ => !systemUnderTest.Parameters.IsEqualTo(_.Parameters));
+                        var referenceObject = A.Dummy<DisallowSchemasSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.DisallowedSchemas.IsEqualTo(_.DisallowedSchemas));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<ExecuteStoredProcedureOp>
+                        var result = new SystemUnderTestDeepCloneWithValue<DisallowSchemasSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Parameters,
+                            DeepCloneWithValue = referenceObject.DisallowedSchemas,
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ExecuteStoredProcedureOp ReferenceObjectForEquatableTestScenarios = A.Dummy<ExecuteStoredProcedureOp>();
+        private static readonly DisallowSchemasSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
-        private static readonly EquatableTestScenarios<ExecuteStoredProcedureOp> EquatableTestScenarios = new EquatableTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly EquatableTestScenarios<DisallowSchemasSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<DisallowSchemasSqlScriptValidationRule>()
             .AddScenario(() =>
-                new EquatableTestScenario<ExecuteStoredProcedureOp>
+                new EquatableTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new ExecuteStoredProcedureOp[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new DisallowSchemasSqlScriptValidationRule[]
                     {
-                        new ExecuteStoredProcedureOp(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.Parameters),
+                        new DisallowSchemasSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.DisallowedSchemas,
+                                ReferenceObjectForEquatableTestScenarios.Id),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new ExecuteStoredProcedureOp[]
+                    ObjectsThatAreNotEqualToReferenceObject = new DisallowSchemasSqlScriptValidationRule[]
                     {
-                        new ExecuteStoredProcedureOp(
-                                A.Dummy<ExecuteStoredProcedureOp>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
-                                ReferenceObjectForEquatableTestScenarios.Parameters),
-                        new ExecuteStoredProcedureOp(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                A.Dummy<ExecuteStoredProcedureOp>().Whose(_ => !_.Parameters.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Parameters)).Parameters),
+                        new DisallowSchemasSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.DisallowedSchemas,
+                                A.Dummy<DisallowSchemasSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new DisallowSchemasSqlScriptValidationRule(
+                                A.Dummy<DisallowSchemasSqlScriptValidationRule>().Whose(_ => !_.DisallowedSchemas.IsEqualTo(ReferenceObjectForEquatableTestScenarios.DisallowedSchemas)).DisallowedSchemas,
+                                ReferenceObjectForEquatableTestScenarios.Id),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -256,19 +239,16 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
-                        A.Dummy<CreateStreamUserOp>(),
-                        A.Dummy<GetOrAddIdentifiedSerializerRepresentationOp>(),
-                        A.Dummy<UpdateStreamStoredProceduresOp>(),
-                        A.Dummy<ValidateSqlScriptOp>(),
+                        A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<ExecuteStoredProcedureOp> ValidModelTestScenarios = new ValidModelTestScenarios<ExecuteStoredProcedureOp>()
+        private static readonly ValidModelTestScenarios<DisallowSchemasSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<DisallowSchemasSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ValidModelTestScenario<ExecuteStoredProcedureOp>
+                new ValidModelTestScenario<DisallowSchemasSqlScriptValidationRule>
                 {
-                    Name = "a dummy ExecuteStoredProcedureOp should be valid",
-                    SystemUnderTest = A.Dummy<ExecuteStoredProcedureOp>(),
+                    Name = "a dummy DisallowSchemasSqlScriptValidationRule should be valid",
+                    SystemUnderTest = A.Dummy<DisallowSchemasSqlScriptValidationRule>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -289,12 +269,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void ExecuteStoredProcedureOp___Should_implement_IModel_of_ExecuteStoredProcedureOp___When_reflecting()
+            public static void DisallowSchemasSqlScriptValidationRule___Should_implement_IModel_of_DisallowSchemasSqlScriptValidationRule___When_reflecting()
             {
                 // Arrange
-                var type = typeof(ExecuteStoredProcedureOp);
+                var type = typeof(DisallowSchemasSqlScriptValidationRule);
 
-                var expectedModelMethods = typeof(IModel<ExecuteStoredProcedureOp>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<DisallowSchemasSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -304,7 +284,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<ExecuteStoredProcedureOp>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<DisallowSchemasSqlScriptValidationRule>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -322,10 +302,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void ExecuteStoredProcedureOp___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void DisallowSchemasSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(ExecuteStoredProcedureOp);
+                var type = typeof(DisallowSchemasSqlScriptValidationRule);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -505,10 +485,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                var systemUnderTest = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
                 // Act
-                var actual = (ExecuteStoredProcedureOp)systemUnderTest.Clone();
+                var actual = (DisallowSchemasSqlScriptValidationRule)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -532,7 +512,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<ExecuteStoredProcedureOp>();
+                var systemUnderTest = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -541,16 +521,16 @@ namespace Naos.SqlServer.Domain.Test
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
 
-                if (systemUnderTest.Parameters == null)
+                if (systemUnderTest.DisallowedSchemas == null)
                 {
-                    actual.Parameters.AsTest().Must().BeNull();
+                    actual.DisallowedSchemas.AsTest().Must().BeNull();
                 }
-                else if (!actual.Parameters.GetType().IsValueType)
+                else if (!actual.DisallowedSchemas.GetType().IsValueType)
                 {
                     // When the declared type is a reference type, we still have to check the runtime type.
                     // The object could be a boxed value type, which will fail this asseration because
                     // a deep clone of a value type object is the same object.
-                    actual.Parameters.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Parameters);
+                    actual.DisallowedSchemas.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.DisallowedSchemas);
                 }
             }
 
@@ -570,7 +550,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Name", "Parameters" };
+                var propertyNames = new string[] { "Id", "DisallowedSchemas" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -583,12 +563,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (ExecuteStoredProcedureOp)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (DisallowSchemasSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(ExecuteStoredProcedureOp).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(DisallowSchemasSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -650,7 +630,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ExecuteStoredProcedureOp>();
+                var expected = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -679,7 +659,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ExecuteStoredProcedureOp>();
+                var expected = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -708,7 +688,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ExecuteStoredProcedureOp>();
+                var expected = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -737,7 +717,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ExecuteStoredProcedureOp>();
+                var expected = A.Dummy<DisallowSchemasSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -771,8 +751,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                ExecuteStoredProcedureOp systemUnderTest1 = null;
-                ExecuteStoredProcedureOp systemUnderTest2 = null;
+                DisallowSchemasSqlScriptValidationRule systemUnderTest1 = null;
+                DisallowSchemasSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -802,7 +782,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ExecuteStoredProcedureOp systemUnderTest = null;
+                    DisallowSchemasSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -951,8 +931,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                ExecuteStoredProcedureOp systemUnderTest1 = null;
-                ExecuteStoredProcedureOp systemUnderTest2 = null;
+                DisallowSchemasSqlScriptValidationRule systemUnderTest1 = null;
+                DisallowSchemasSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -982,7 +962,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ExecuteStoredProcedureOp systemUnderTest = null;
+                    DisallowSchemasSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1128,17 +1108,17 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_OperationBase___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    OperationBase systemUnderTest = null;
+                    SqlScriptValidationRuleBase systemUnderTest = null;
 
                     // Act
-                    var actual = scenario.ReferenceObject.Equals((OperationBase)systemUnderTest);
+                    var actual = scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)systemUnderTest);
 
                     // Assert
                     actual.AsTest().Must().BeFalse(because: scenario.Id);
@@ -1159,14 +1139,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_OperationBase___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actual = scenario.ReferenceObject.Equals((OperationBase)scenario.ReferenceObject);
+                    var actual = scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)scenario.ReferenceObject);
 
                     // Assert
                     actual.AsTest().Must().BeTrue(because: scenario.Id);
@@ -1187,14 +1167,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_OperationBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((OperationBase)_)).ToList();
+                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
@@ -1215,14 +1195,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_OperationBase___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((OperationBase)_)).ToList();
+                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
@@ -1243,14 +1223,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_OperationBase___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((OperationBase)_)).ToList();
+                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
 
                     // Assert
                     actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
@@ -1271,157 +1251,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_DisallowSchemasSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ReturningOperationBase<StoredProcedureExecutionResult> systemUnderTest = null;
-
-                    // Act
-                    var actual = scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)systemUnderTest);
-
-                    // Assert
-                    actual.AsTest().Must().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_true___When_parameter_other_is_same_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actual = scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)scenario.ReferenceObject);
-
-                    // Assert
-                    actual.AsTest().Must().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_false___When_objects_being_compared_have_different_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReturningOperationBase_of_StoredProcedureExecutionResult___Should_return_true___When_objects_being_compared_have_same_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ReturningOperationBase<StoredProcedureExecutionResult>)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_false___When_parameter_other_is_null()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange
-                    ExecuteStoredProcedureOp systemUnderTest = null;
+                    DisallowSchemasSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1445,7 +1282,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_DisallowSchemasSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1473,7 +1310,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_DisallowSchemasSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1501,7 +1338,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_DisallowSchemasSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1529,7 +1366,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ExecuteStoredProcedureOp___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_DisallowSchemasSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

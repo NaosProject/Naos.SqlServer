@@ -86,6 +86,15 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<byte>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new DisallowSchemasSqlScriptValidationRule(
+                                 A.Dummy<IReadOnlyCollection<string>>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new DisallowSystemSchemasSqlScriptValidationRule(
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new ExecuteStoredProcedureOp(
                                  A.Dummy<string>(),
                                  A.Dummy<IReadOnlyList<ParameterDefinitionBase>>()));
@@ -240,6 +249,34 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<Version>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlScriptValidationResult(
+                                 A.Dummy<IReadOnlyList<SqlScriptValidationRuleViolation>>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var availableTypes = new[]
+                    {
+                        typeof(DisallowSchemasSqlScriptValidationRule),
+                        typeof(DisallowSystemSchemasSqlScriptValidationRule)
+                    };
+
+                    var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);
+
+                    var randomType = availableTypes[randomIndex];
+
+                    var result = (SqlScriptValidationRuleBase)AD.ummy(randomType);
+
+                    return result;
+                });
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SqlScriptValidationRuleViolation(
+                                 A.Dummy<SqlScriptValidationRuleBase>(),
+                                 A.Dummy<int>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlServerConnectionDefinition
                              {
                                  Server       = A.Dummy<string>(),
@@ -326,6 +363,11 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new UtcDateTimeSqlDataTypeRepresentation());
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ValidateSqlScriptOp(
+                                 A.Dummy<string>(),
+                                 A.Dummy<IReadOnlyList<SqlScriptValidationRuleBase>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new VersionSqlDataTypeRepresentation());
