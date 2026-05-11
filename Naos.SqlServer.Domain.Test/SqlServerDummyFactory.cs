@@ -40,6 +40,7 @@ namespace Naos.SqlServer.Domain.Test
             // --------------------------- Enums -----------------------------
             AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(ScriptableObjectType.Invalid);
             AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(JobStatus.Invalid);
+            AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(SqlServerVersion.Unknown);
 
             // --------------------------- Interfaces ------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(() =>

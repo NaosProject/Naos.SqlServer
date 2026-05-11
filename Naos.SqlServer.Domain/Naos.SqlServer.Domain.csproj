@@ -175,6 +175,7 @@
       <DependentUpon>SqlScriptValidationRuleViolation.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Enums\Management\JobStatus.cs" />
+    <Compile Include="Models\Enums\Validation\SqlServerVersion.cs" />
     <Compile Include="Operations\ValidateSqlScriptOp.cs" />
     <Compile Include="Operations\ExecuteStoredProcedureOp.designer.cs">
       <DependentUpon>ExecuteStoredProcedureOp.cs</DependentUpon>

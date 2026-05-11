@@ -48,7 +48,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedStringRepresentation<ValidateSqlScriptOp>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ValidateSqlScriptOp: Sql = {systemUnderTest.Sql?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Rules = {systemUnderTest.Rules?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ValidateSqlScriptOp: TargetSqlServerVersion = {systemUnderTest.TargetSqlServerVersion.ToString() ?? "<null>"}, Sql = {systemUnderTest.Sql?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Rules = {systemUnderTest.Rules?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
@@ -59,12 +59,31 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorArgumentValidationTestScenario<ValidateSqlScriptOp>
                 {
+                    Name = "constructor should throw ArgumentOutOfRangeException when parameter 'targetSqlServerVersion' is SqlServerVersion.Unknown",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
+
+                        var result = new ValidateSqlScriptOp(
+                                             SqlServerVersion.Unknown,
+                                             referenceObject.Sql,
+                                             referenceObject.Rules);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                    ExpectedExceptionMessageContains = new[] { "targetSqlServerVersion", "Unknown", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<ValidateSqlScriptOp>
+                {
                     Name = "constructor should throw ArgumentNullException when parameter 'sql' is null scenario",
                     ConstructionFunc = () =>
                     {
                         var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
                         var result = new ValidateSqlScriptOp(
+                                             referenceObject.TargetSqlServerVersion,
                                              null,
                                              referenceObject.Rules);
 
@@ -82,6 +101,7 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
                         var result = new ValidateSqlScriptOp(
+                                             referenceObject.TargetSqlServerVersion,
                                              Invariant($"  {Environment.NewLine}  "),
                                              referenceObject.Rules);
 
@@ -99,6 +119,7 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
                         var result = new ValidateSqlScriptOp(
+                                             referenceObject.TargetSqlServerVersion,
                                              referenceObject.Sql,
                                              null);
 
@@ -116,6 +137,7 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
                         var result = new ValidateSqlScriptOp(
+                                             referenceObject.TargetSqlServerVersion,
                                              referenceObject.Sql,
                                              new List<SqlScriptValidationRuleBase>());
 
@@ -133,6 +155,7 @@ namespace Naos.SqlServer.Domain.Test
                         var referenceObject = A.Dummy<ValidateSqlScriptOp>();
 
                         var result = new ValidateSqlScriptOp(
+                                             referenceObject.TargetSqlServerVersion,
                                              referenceObject.Sql,
                                              new SqlScriptValidationRuleBase[0].Concat(referenceObject.Rules).Concat(new SqlScriptValidationRuleBase[] { null }).Concat(referenceObject.Rules).ToList());
 
@@ -146,6 +169,27 @@ namespace Naos.SqlServer.Domain.Test
             .AddScenario(() =>
                 new ConstructorPropertyAssignmentTestScenario<ValidateSqlScriptOp>
                 {
+                    Name = "TargetSqlServerVersion should return same 'targetSqlServerVersion' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<ValidateSqlScriptOp>
+                        {
+                            SystemUnderTest = new ValidateSqlScriptOp(
+                                                      referenceObject.TargetSqlServerVersion,
+                                                      referenceObject.Sql,
+                                                      referenceObject.Rules),
+                            ExpectedPropertyValue = referenceObject.TargetSqlServerVersion,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "TargetSqlServerVersion",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<ValidateSqlScriptOp>
+                {
                     Name = "Sql should return same 'sql' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
@@ -154,6 +198,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<ValidateSqlScriptOp>
                         {
                             SystemUnderTest = new ValidateSqlScriptOp(
+                                                      referenceObject.TargetSqlServerVersion,
                                                       referenceObject.Sql,
                                                       referenceObject.Rules),
                             ExpectedPropertyValue = referenceObject.Sql,
@@ -174,6 +219,7 @@ namespace Naos.SqlServer.Domain.Test
                         var result = new SystemUnderTestExpectedPropertyValue<ValidateSqlScriptOp>
                         {
                             SystemUnderTest = new ValidateSqlScriptOp(
+                                                      referenceObject.TargetSqlServerVersion,
                                                       referenceObject.Sql,
                                                       referenceObject.Rules),
                             ExpectedPropertyValue = referenceObject.Rules,
@@ -185,6 +231,26 @@ namespace Naos.SqlServer.Domain.Test
                 });
 
         private static readonly DeepCloneWithTestScenarios<ValidateSqlScriptOp> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ValidateSqlScriptOp>()
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<ValidateSqlScriptOp>
+                {
+                    Name = "DeepCloneWithTargetSqlServerVersion should deep clone object and replace TargetSqlServerVersion with the provided targetSqlServerVersion",
+                    WithPropertyName = "TargetSqlServerVersion",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<ValidateSqlScriptOp>();
+
+                        var referenceObject = A.Dummy<ValidateSqlScriptOp>().ThatIs(_ => !systemUnderTest.TargetSqlServerVersion.IsEqualTo(_.TargetSqlServerVersion));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<ValidateSqlScriptOp>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.TargetSqlServerVersion,
+                        };
+
+                        return result;
+                    },
+                })
             .AddScenario(() =>
                 new DeepCloneWithTestScenario<ValidateSqlScriptOp>
                 {
@@ -237,15 +303,22 @@ namespace Naos.SqlServer.Domain.Test
                     ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new ValidateSqlScriptOp[]
                     {
                         new ValidateSqlScriptOp(
+                                ReferenceObjectForEquatableTestScenarios.TargetSqlServerVersion,
                                 ReferenceObjectForEquatableTestScenarios.Sql,
                                 ReferenceObjectForEquatableTestScenarios.Rules),
                     },
                     ObjectsThatAreNotEqualToReferenceObject = new ValidateSqlScriptOp[]
                     {
                         new ValidateSqlScriptOp(
+                                A.Dummy<ValidateSqlScriptOp>().Whose(_ => !_.TargetSqlServerVersion.IsEqualTo(ReferenceObjectForEquatableTestScenarios.TargetSqlServerVersion)).TargetSqlServerVersion,
+                                ReferenceObjectForEquatableTestScenarios.Sql,
+                                ReferenceObjectForEquatableTestScenarios.Rules),
+                        new ValidateSqlScriptOp(
+                                ReferenceObjectForEquatableTestScenarios.TargetSqlServerVersion,
                                 A.Dummy<ValidateSqlScriptOp>().Whose(_ => !_.Sql.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Sql)).Sql,
                                 ReferenceObjectForEquatableTestScenarios.Rules),
                         new ValidateSqlScriptOp(
+                                ReferenceObjectForEquatableTestScenarios.TargetSqlServerVersion,
                                 ReferenceObjectForEquatableTestScenarios.Sql,
                                 A.Dummy<ValidateSqlScriptOp>().Whose(_ => !_.Rules.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Rules)).Rules),
                     },
@@ -570,7 +643,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Sql", "Rules" };
+                var propertyNames = new string[] { "TargetSqlServerVersion", "Sql", "Rules" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 

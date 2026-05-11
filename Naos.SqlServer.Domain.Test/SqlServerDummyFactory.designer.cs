@@ -250,6 +250,7 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SqlScriptValidationResult(
+                                 A.Dummy<SqlServerVersion>(),
                                  A.Dummy<IReadOnlyList<SqlScriptValidationRuleViolation>>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
@@ -366,6 +367,7 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new ValidateSqlScriptOp(
+                                 A.Dummy<SqlServerVersion>(),
                                  A.Dummy<string>(),
                                  A.Dummy<IReadOnlyList<SqlScriptValidationRuleBase>>()));
 

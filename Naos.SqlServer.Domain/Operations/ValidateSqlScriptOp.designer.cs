@@ -69,7 +69,8 @@ namespace Naos.SqlServer.Domain
                 return false;
             }
 
-            var result = this.Sql.IsEqualTo(other.Sql, StringComparer.Ordinal)
+            var result = this.TargetSqlServerVersion.IsEqualTo(other.TargetSqlServerVersion)
+                      && this.Sql.IsEqualTo(other.Sql, StringComparer.Ordinal)
                       && this.Rules.IsEqualTo(other.Rules);
 
             return result;
@@ -80,12 +81,45 @@ namespace Naos.SqlServer.Domain
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
+            .Hash(this.TargetSqlServerVersion)
             .Hash(this.Sql)
             .Hash(this.Rules)
             .Value;
 
         /// <inheritdoc />
         public new ValidateSqlScriptOp DeepClone() => (ValidateSqlScriptOp)this.DeepCloneInternal();
+
+        /// <summary>
+        /// Deep clones this object with a new <see cref="TargetSqlServerVersion" />.
+        /// </summary>
+        /// <param name="targetSqlServerVersion">The new <see cref="TargetSqlServerVersion" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="ValidateSqlScriptOp" /> using the specified <paramref name="targetSqlServerVersion" /> for <see cref="TargetSqlServerVersion" /> and a deep clone of every other property.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public ValidateSqlScriptOp DeepCloneWithTargetSqlServerVersion(SqlServerVersion targetSqlServerVersion)
+        {
+            var result = new ValidateSqlScriptOp(
+                                 targetSqlServerVersion,
+                                 this.Sql?.DeepClone(),
+                                 this.Rules?.DeepClone());
+
+            return result;
+        }
 
         /// <summary>
         /// Deep clones this object with a new <see cref="Sql" />.
@@ -112,6 +146,7 @@ namespace Naos.SqlServer.Domain
         public ValidateSqlScriptOp DeepCloneWithSql(string sql)
         {
             var result = new ValidateSqlScriptOp(
+                                 this.TargetSqlServerVersion.DeepClone(),
                                  sql,
                                  this.Rules?.DeepClone());
 
@@ -143,6 +178,7 @@ namespace Naos.SqlServer.Domain
         public ValidateSqlScriptOp DeepCloneWithRules(IReadOnlyList<SqlScriptValidationRuleBase> rules)
         {
             var result = new ValidateSqlScriptOp(
+                                 this.TargetSqlServerVersion.DeepClone(),
                                  this.Sql?.DeepClone(),
                                  rules);
 
@@ -154,6 +190,7 @@ namespace Naos.SqlServer.Domain
         protected override OperationBase DeepCloneInternal()
         {
             var result = new ValidateSqlScriptOp(
+                                 this.TargetSqlServerVersion.DeepClone(),
                                  this.Sql?.DeepClone(),
                                  this.Rules?.DeepClone());
 
@@ -164,7 +201,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.ValidateSqlScriptOp: Sql = {this.Sql?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Rules = {this.Rules?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.ValidateSqlScriptOp: TargetSqlServerVersion = {this.TargetSqlServerVersion.ToString() ?? "<null>"}, Sql = {this.Sql?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Rules = {this.Rules?.ToString() ?? "<null>"}.");
 
             return result;
         }
@@ -209,6 +246,13 @@ namespace Naos.SqlServer.Domain
             void ValidateProperties()
             {
                 IReadOnlyList<ValidationFailure> localValidationFailures;
+
+                localValidationFailures = ValidatableExtensions.GetValidationFailures(this.TargetSqlServerVersion, options, propertyPathTracker, nameof(this.TargetSqlServerVersion));
+                result.AddRange(localValidationFailures);
+                if (stopOnFirstObjectWithFailures && result.Any())
+                {
+                    return;
+                }
 
                 localValidationFailures = ValidatableExtensions.GetValidationFailures(this.Sql, options, propertyPathTracker, nameof(this.Sql));
                 result.AddRange(localValidationFailures);

@@ -40,7 +40,8 @@ namespace Naos.SqlServer.Domain.Test
                             var referenceObject = A.Dummy<SqlScriptValidationResult>();
 
                             var result = new SqlScriptValidationResult(
-                                                 new SqlScriptValidationRuleViolation[0].Concat(referenceObject.Violations).Concat(new SqlScriptValidationRuleViolation[] { null }).Concat(referenceObject.Violations).ToList());
+                                referenceObject.TargetSqlServerVersion,
+                                new SqlScriptValidationRuleViolation[0].Concat(referenceObject.Violations).Concat(new SqlScriptValidationRuleViolation[] { null }).Concat(referenceObject.Violations).ToList());
 
                             return result;
                         },
@@ -53,8 +54,8 @@ namespace Naos.SqlServer.Domain.Test
         public static void HasAnyRuleViolation___Should_return_false___When_there_are_no_rule_violations()
         {
             // Arrange
-            var systemUnderTest1 = new SqlScriptValidationResult(null);
-            var systemUnderTest2 = new SqlScriptValidationResult(new SqlScriptValidationRuleViolation[0]);
+            var systemUnderTest1 = new SqlScriptValidationResult(A.Dummy<SqlServerVersion>(), null);
+            var systemUnderTest2 = new SqlScriptValidationResult(A.Dummy<SqlServerVersion>(), new SqlScriptValidationRuleViolation[0]);
 
             // Act
             var actual1 = systemUnderTest1.HasAnyRuleViolation();
@@ -69,7 +70,7 @@ namespace Naos.SqlServer.Domain.Test
         public static void HasAnyRuleViolation___Should_return_true___When_there_are_some_rule_violations()
         {
             // Arrange
-            var systemUnderTest = new SqlScriptValidationResult(Some.ReadOnlyDummies<SqlScriptValidationRuleViolation>().ToList());
+            var systemUnderTest = new SqlScriptValidationResult(A.Dummy<SqlServerVersion>(), Some.ReadOnlyDummies<SqlScriptValidationRuleViolation>().ToList());
 
             // Act
             var actual = systemUnderTest.HasAnyRuleViolation();

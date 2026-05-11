@@ -19,14 +19,23 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlScriptValidationResult"/> class.
         /// </summary>
+        /// <param name="targetSqlServerVersion">The SQL Server release whose T-SQL grammar the parser was configured for.</param>
         /// <param name="violations">The rule that was violated.</param>
         public SqlScriptValidationResult(
+            SqlServerVersion targetSqlServerVersion,
             IReadOnlyList<SqlScriptValidationRuleViolation> violations)
         {
+            new { targetSqlServerVersion }.AsArg().Must().NotBeEqualTo(SqlServerVersion.Unknown);
             new { violations }.AsArg().Must().NotContainAnyNullElementsWhenNotNull();
 
+            this.TargetSqlServerVersion = targetSqlServerVersion;
             this.Violations = violations;
         }
+
+        /// <summary>
+        /// Gets the SQL Server release whose T-SQL grammar the parser was configured for.
+        /// </summary>
+        public SqlServerVersion TargetSqlServerVersion { get; private set; }
 
         /// <summary>
         /// Gets the rule that was violated.
