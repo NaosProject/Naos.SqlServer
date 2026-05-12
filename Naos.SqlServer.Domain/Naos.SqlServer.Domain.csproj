@@ -154,6 +154,10 @@
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\ReadOnlySelectSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\ReadOnlySelectSqlScriptValidationRule.designer.cs">
+      <DependentUpon>ReadOnlySelectSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\SingleStatementSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRule.designer.cs">

@@ -273,6 +273,7 @@
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.DisallowSystemSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.ParsingErrors.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.DisallowSchemasSqlScriptValidationRule.cs" />
+    <Compile Include="Protocols\ValidateSqlScriptProtocolTest.ReadOnlySelectSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.SingleStatementSqlScriptValidationRule.cs" />
   </ItemGroup>
   <ItemGroup>

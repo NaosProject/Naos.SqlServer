@@ -188,6 +188,10 @@ namespace Naos.SqlServer.Domain.Test
                 });
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ReadOnlySelectSqlScriptValidationRule(
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new RecordFilterConvertedForStoredProcedure(
                                  A.Dummy<string>(),
                                  A.Dummy<string>(),
@@ -276,6 +280,7 @@ namespace Naos.SqlServer.Domain.Test
                         typeof(AllowOnlySchemasSqlScriptValidationRule),
                         typeof(DisallowSchemasSqlScriptValidationRule),
                         typeof(DisallowSystemSchemasSqlScriptValidationRule),
+                        typeof(ReadOnlySelectSqlScriptValidationRule),
                         typeof(SingleStatementSqlScriptValidationRule)
                     };
 
