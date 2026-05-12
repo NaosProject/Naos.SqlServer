@@ -10,7 +10,7 @@ namespace Naos.SqlServer.Domain
     using OBeautifulCode.Assertion.Recipes;
 
     /// <summary>
-    /// A rule that disallows the usage of the specified schemas in a SQL script.
+    /// A rule that disallows explicit references to the specified schemas in a SQL script.
     /// </summary>
     public partial class DisallowSchemasSqlScriptValidationRule : SqlScriptValidationRuleBase
     {
