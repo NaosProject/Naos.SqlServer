@@ -230,6 +230,10 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SchemaQualifiedTableReferencesSqlScriptValidationRule(
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new ScriptedObject(
                                  A.Dummy<string>(),
                                  A.Dummy<ScriptableObjectType>(),
@@ -295,6 +299,7 @@ namespace Naos.SqlServer.Domain.Test
                         typeof(FlatQuerySqlScriptValidationRule),
                         typeof(ReadOnlySelectSqlScriptValidationRule),
                         typeof(SanctionedSchemasSqlScriptValidationRule),
+                        typeof(SchemaQualifiedTableReferencesSqlScriptValidationRule),
                         typeof(SingleSchemaSqlScriptValidationRule),
                         typeof(SingleStatementSqlScriptValidationRule)
                     };

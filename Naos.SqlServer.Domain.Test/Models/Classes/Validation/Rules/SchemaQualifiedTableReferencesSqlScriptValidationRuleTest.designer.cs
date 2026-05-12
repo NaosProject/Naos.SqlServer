@@ -34,130 +34,41 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class SanctionedSchemasSqlScriptValidationRuleTest
+    public static partial class SchemaQualifiedTableReferencesSqlScriptValidationRuleTest
     {
-        private static readonly StringRepresentationTestScenarios<SanctionedSchemasSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SanctionedSchemasSqlScriptValidationRule>()
+        private static readonly StringRepresentationTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<SanctionedSchemasSqlScriptValidationRule>
+                new StringRepresentationTestScenario<SchemaQualifiedTableReferencesSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<SanctionedSchemasSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedStringRepresentation<SchemaQualifiedTableReferencesSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SanctionedSchemasSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, SanctionedSchemas = {systemUnderTest.SanctionedSchemas?.ToString() ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SchemaQualifiedTableReferencesSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<SanctionedSchemasSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<SanctionedSchemasSqlScriptValidationRule>()
+        private static readonly ConstructorArgumentValidationTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
+
+        private static readonly ConstructorPropertyAssignmentTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<SanctionedSchemasSqlScriptValidationRule>
-                {
-                    Name = "constructor should throw ArgumentNullException when parameter 'sanctionedSchemas' is null scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
-
-                        var result = new SanctionedSchemasSqlScriptValidationRule(
-                                             null,
-                                             referenceObject.Id);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "sanctionedSchemas", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<SanctionedSchemasSqlScriptValidationRule>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'sanctionedSchemas' is an empty enumerable scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
-
-                        var result = new SanctionedSchemasSqlScriptValidationRule(
-                                             new List<string>(),
-                                             referenceObject.Id);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "sanctionedSchemas", "is an empty enumerable", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<SanctionedSchemasSqlScriptValidationRule>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'sanctionedSchemas' contains a null element scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
-
-                        var result = new SanctionedSchemasSqlScriptValidationRule(
-                                             new string[0].Concat(referenceObject.SanctionedSchemas).Concat(new string[] { null }).Concat(referenceObject.SanctionedSchemas).ToList(),
-                                             referenceObject.Id);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "sanctionedSchemas", "contains at least one null element", },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<SanctionedSchemasSqlScriptValidationRule>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'sanctionedSchemas' contains a white space element scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
-
-                        var result = new SanctionedSchemasSqlScriptValidationRule(
-                                             new string[0].Concat(referenceObject.SanctionedSchemas).Concat(new string[] { "  \r\n  " }).Concat(referenceObject.SanctionedSchemas).ToList(),
-                                             referenceObject.Id);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "sanctionedSchemas", "contains an element that is white space", },
-                });
-
-        private static readonly ConstructorPropertyAssignmentTestScenarios<SanctionedSchemasSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<SanctionedSchemasSqlScriptValidationRule>()
-            .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<SanctionedSchemasSqlScriptValidationRule>
-                {
-                    Name = "SanctionedSchemas should return same 'sanctionedSchemas' parameter passed to constructor when getting",
-                    SystemUnderTestExpectedPropertyValueFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
-
-                        var result = new SystemUnderTestExpectedPropertyValue<SanctionedSchemasSqlScriptValidationRule>
-                        {
-                            SystemUnderTest = new SanctionedSchemasSqlScriptValidationRule(
-                                                      referenceObject.SanctionedSchemas,
-                                                      referenceObject.Id),
-                            ExpectedPropertyValue = referenceObject.SanctionedSchemas,
-                        };
-
-                        return result;
-                    },
-                    PropertyName = "SanctionedSchemas",
-                })
-            .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<SanctionedSchemasSqlScriptValidationRule>
+                new ConstructorPropertyAssignmentTestScenario<SchemaQualifiedTableReferencesSqlScriptValidationRule>
                 {
                     Name = "Id should return same 'id' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                        var referenceObject = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<SanctionedSchemasSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedPropertyValue<SchemaQualifiedTableReferencesSqlScriptValidationRule>
                         {
-                            SystemUnderTest = new SanctionedSchemasSqlScriptValidationRule(
-                                                      referenceObject.SanctionedSchemas,
+                            SystemUnderTest = new SchemaQualifiedTableReferencesSqlScriptValidationRule(
                                                       referenceObject.Id),
                             ExpectedPropertyValue = referenceObject.Id,
                         };
@@ -167,19 +78,19 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "Id",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<SanctionedSchemasSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SanctionedSchemasSqlScriptValidationRule>()
+        private static readonly DeepCloneWithTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SanctionedSchemasSqlScriptValidationRule>
+                new DeepCloneWithTestScenario<SchemaQualifiedTableReferencesSqlScriptValidationRule>
                 {
                     Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
                     WithPropertyName = "Id",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
-                        var referenceObject = A.Dummy<SanctionedSchemasSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
+                        var referenceObject = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SanctionedSchemasSqlScriptValidationRule>
+                        var result = new SystemUnderTestDeepCloneWithValue<SchemaQualifiedTableReferencesSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.Id,
@@ -187,50 +98,25 @@ namespace Naos.SqlServer.Domain.Test
 
                         return result;
                     },
-                })
-            .AddScenario(() =>
-                new DeepCloneWithTestScenario<SanctionedSchemasSqlScriptValidationRule>
-                {
-                    Name = "DeepCloneWithSanctionedSchemas should deep clone object and replace SanctionedSchemas with the provided sanctionedSchemas",
-                    WithPropertyName = "SanctionedSchemas",
-                    SystemUnderTestDeepCloneWithValueFunc = () =>
-                    {
-                        var systemUnderTest = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
-
-                        var referenceObject = A.Dummy<SanctionedSchemasSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.SanctionedSchemas.IsEqualTo(_.SanctionedSchemas));
-
-                        var result = new SystemUnderTestDeepCloneWithValue<SanctionedSchemasSqlScriptValidationRule>
-                        {
-                            SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.SanctionedSchemas,
-                        };
-
-                        return result;
-                    },
                 });
 
-        private static readonly SanctionedSchemasSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+        private static readonly SchemaQualifiedTableReferencesSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
-        private static readonly EquatableTestScenarios<SanctionedSchemasSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<SanctionedSchemasSqlScriptValidationRule>()
+        private static readonly EquatableTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new EquatableTestScenario<SanctionedSchemasSqlScriptValidationRule>
+                new EquatableTestScenario<SchemaQualifiedTableReferencesSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SanctionedSchemasSqlScriptValidationRule[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SchemaQualifiedTableReferencesSqlScriptValidationRule[]
                     {
-                        new SanctionedSchemasSqlScriptValidationRule(
-                                ReferenceObjectForEquatableTestScenarios.SanctionedSchemas,
+                        new SchemaQualifiedTableReferencesSqlScriptValidationRule(
                                 ReferenceObjectForEquatableTestScenarios.Id),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new SanctionedSchemasSqlScriptValidationRule[]
+                    ObjectsThatAreNotEqualToReferenceObject = new SchemaQualifiedTableReferencesSqlScriptValidationRule[]
                     {
-                        new SanctionedSchemasSqlScriptValidationRule(
-                                ReferenceObjectForEquatableTestScenarios.SanctionedSchemas,
-                                A.Dummy<SanctionedSchemasSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
-                        new SanctionedSchemasSqlScriptValidationRule(
-                                A.Dummy<SanctionedSchemasSqlScriptValidationRule>().Whose(_ => !_.SanctionedSchemas.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SanctionedSchemas)).SanctionedSchemas,
-                                ReferenceObjectForEquatableTestScenarios.Id),
+                        new SchemaQualifiedTableReferencesSqlScriptValidationRule(
+                                A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -244,18 +130,18 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
                         A.Dummy<FlatQuerySqlScriptValidationRule>(),
                         A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
-                        A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>(),
+                        A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
                         A.Dummy<SingleSchemaSqlScriptValidationRule>(),
                         A.Dummy<SingleStatementSqlScriptValidationRule>(),
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<SanctionedSchemasSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<SanctionedSchemasSqlScriptValidationRule>()
+        private static readonly ValidModelTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<SchemaQualifiedTableReferencesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ValidModelTestScenario<SanctionedSchemasSqlScriptValidationRule>
+                new ValidModelTestScenario<SchemaQualifiedTableReferencesSqlScriptValidationRule>
                 {
-                    Name = "a dummy SanctionedSchemasSqlScriptValidationRule should be valid",
-                    SystemUnderTest = A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
+                    Name = "a dummy SchemaQualifiedTableReferencesSqlScriptValidationRule should be valid",
+                    SystemUnderTest = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -276,12 +162,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SanctionedSchemasSqlScriptValidationRule___Should_implement_IModel_of_SanctionedSchemasSqlScriptValidationRule___When_reflecting()
+            public static void SchemaQualifiedTableReferencesSqlScriptValidationRule___Should_implement_IModel_of_SchemaQualifiedTableReferencesSqlScriptValidationRule___When_reflecting()
             {
                 // Arrange
-                var type = typeof(SanctionedSchemasSqlScriptValidationRule);
+                var type = typeof(SchemaQualifiedTableReferencesSqlScriptValidationRule);
 
-                var expectedModelMethods = typeof(IModel<SanctionedSchemasSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<SchemaQualifiedTableReferencesSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -291,7 +177,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SanctionedSchemasSqlScriptValidationRule>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SchemaQualifiedTableReferencesSqlScriptValidationRule>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -309,10 +195,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SanctionedSchemasSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void SchemaQualifiedTableReferencesSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(SanctionedSchemasSqlScriptValidationRule);
+                var type = typeof(SchemaQualifiedTableReferencesSqlScriptValidationRule);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -492,10 +378,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
                 // Act
-                var actual = (SanctionedSchemasSqlScriptValidationRule)systemUnderTest.Clone();
+                var actual = (SchemaQualifiedTableReferencesSqlScriptValidationRule)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -519,7 +405,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -527,18 +413,6 @@ namespace Naos.SqlServer.Domain.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
-
-                if (systemUnderTest.SanctionedSchemas == null)
-                {
-                    actual.SanctionedSchemas.AsTest().Must().BeNull();
-                }
-                else if (!actual.SanctionedSchemas.GetType().IsValueType)
-                {
-                    // When the declared type is a reference type, we still have to check the runtime type.
-                    // The object could be a boxed value type, which will fail this asseration because
-                    // a deep clone of a value type object is the same object.
-                    actual.SanctionedSchemas.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.SanctionedSchemas);
-                }
             }
 
             [Fact]
@@ -557,7 +431,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Id", "SanctionedSchemas" };
+                var propertyNames = new string[] { "Id" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -570,12 +444,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (SanctionedSchemasSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (SchemaQualifiedTableReferencesSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(SanctionedSchemasSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(SchemaQualifiedTableReferencesSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -637,7 +511,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                var expected = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -666,7 +540,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                var expected = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -695,7 +569,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                var expected = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -724,7 +598,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SanctionedSchemasSqlScriptValidationRule>();
+                var expected = A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -758,8 +632,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SanctionedSchemasSqlScriptValidationRule systemUnderTest1 = null;
-                SanctionedSchemasSqlScriptValidationRule systemUnderTest2 = null;
+                SchemaQualifiedTableReferencesSqlScriptValidationRule systemUnderTest1 = null;
+                SchemaQualifiedTableReferencesSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -789,7 +663,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SanctionedSchemasSqlScriptValidationRule systemUnderTest = null;
+                    SchemaQualifiedTableReferencesSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -938,8 +812,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SanctionedSchemasSqlScriptValidationRule systemUnderTest1 = null;
-                SanctionedSchemasSqlScriptValidationRule systemUnderTest2 = null;
+                SchemaQualifiedTableReferencesSqlScriptValidationRule systemUnderTest1 = null;
+                SchemaQualifiedTableReferencesSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -969,7 +843,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SanctionedSchemasSqlScriptValidationRule systemUnderTest = null;
+                    SchemaQualifiedTableReferencesSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1258,14 +1132,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SanctionedSchemasSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_SchemaQualifiedTableReferencesSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SanctionedSchemasSqlScriptValidationRule systemUnderTest = null;
+                    SchemaQualifiedTableReferencesSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1289,7 +1163,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SanctionedSchemasSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_SchemaQualifiedTableReferencesSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1317,7 +1191,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SanctionedSchemasSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_SchemaQualifiedTableReferencesSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1345,7 +1219,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SanctionedSchemasSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_SchemaQualifiedTableReferencesSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1373,7 +1247,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SanctionedSchemasSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_SchemaQualifiedTableReferencesSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

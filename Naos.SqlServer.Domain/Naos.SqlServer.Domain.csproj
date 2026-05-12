@@ -172,6 +172,9 @@
     <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemasSqlScriptValidationRule.designer.cs">
       <DependentUpon>SanctionedSchemasSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SchemaQualifiedTableReferencesSqlScriptValidationRule.designer.cs">
+      <DependentUpon>SchemaQualifiedTableReferencesSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\SingleSchemaSqlScriptValidationRule.designer.cs">
       <DependentUpon>SingleSchemaSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
@@ -179,6 +182,7 @@
     <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowedSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SchemaQualifiedTableReferencesSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\SingleSchemaSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRule.designer.cs">
       <DependentUpon>DisallowSystemSchemasSqlScriptValidationRule.cs</DependentUpon>

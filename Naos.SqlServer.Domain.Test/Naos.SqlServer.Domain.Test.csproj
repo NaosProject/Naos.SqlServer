@@ -401,6 +401,10 @@
     <Compile Include="Models\Classes\Validation\Rules\FlatQuerySqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>FlatQuerySqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SchemaQualifiedTableReferencesSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SchemaQualifiedTableReferencesSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>SchemaQualifiedTableReferencesSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="SerializationConfigurationTypes.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\SqlDataTypeRepresentationBaseTest.cs" />
