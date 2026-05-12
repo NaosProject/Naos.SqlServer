@@ -39,6 +39,11 @@ namespace Naos.SqlServer.Domain.Test
         public DefaultSqlServerDummyFactory()
         {
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new AllowOnlySchemasSqlScriptValidationRule(
+                                 A.Dummy<IReadOnlyCollection<string>>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new BackupSqlServerDatabaseDetails(
                                  A.Dummy<string>(),
                                  A.Dummy<string>(),
@@ -264,6 +269,7 @@ namespace Naos.SqlServer.Domain.Test
                 {
                     var availableTypes = new[]
                     {
+                        typeof(AllowOnlySchemasSqlScriptValidationRule),
                         typeof(DisallowSchemasSqlScriptValidationRule),
                         typeof(DisallowSystemSchemasSqlScriptValidationRule)
                     };

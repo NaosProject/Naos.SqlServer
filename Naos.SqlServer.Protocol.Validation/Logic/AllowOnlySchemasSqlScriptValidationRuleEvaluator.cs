@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DisallowSystemSchemasSqlScriptValidationRuleEvaluator.cs" company="Naos Project">
+// <copyright file="AllowOnlySchemasSqlScriptValidationRuleEvaluator.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,22 +12,21 @@ namespace Naos.SqlServer.Protocol.Validation
     using Naos.SqlServer.Domain;
 
     /// <summary>
-    /// Evaluates a <see cref="DisallowSystemSchemasSqlScriptValidationRule"/>.
+    /// Evaluates a <see cref="AllowOnlySchemasSqlScriptValidationRule"/>.
     /// </summary>
-    public class DisallowSystemSchemasSqlScriptValidationRuleEvaluator : SchemasUsedSqlScriptValidationRuleEvaluatorBase
+    public class AllowOnlySchemasSqlScriptValidationRuleEvaluator : SchemasUsedSqlScriptValidationRuleEvaluatorBase
     {
-        private readonly HashSet<string> disallowedSchemas = new HashSet<string>(
-            new[] { "sys", "INFORMATION_SCHEMA" },
-            StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> sanctionedSchemas;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisallowSystemSchemasSqlScriptValidationRuleEvaluator"/> class.
+        /// Initializes a new instance of the <see cref="AllowOnlySchemasSqlScriptValidationRuleEvaluator"/> class.
         /// </summary>
         /// <param name="rule">The rule to evaluate.</param>
-        public DisallowSystemSchemasSqlScriptValidationRuleEvaluator(
-            DisallowSystemSchemasSqlScriptValidationRule rule)
+        public AllowOnlySchemasSqlScriptValidationRuleEvaluator(
+            AllowOnlySchemasSqlScriptValidationRule rule)
             : base(rule)
         {
+            this.sanctionedSchemas = new HashSet<string>(rule.SanctionedSchemas, StringComparer.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc />
@@ -42,11 +41,11 @@ namespace Naos.SqlServer.Protocol.Validation
 
             var schema = schemaIdentifier.Value;
 
-            if (this.disallowedSchemas.Contains(schema))
+            if (!this.sanctionedSchemas.Contains(schema))
             {
                 this.AddViolation(
                     offset,
-                    "reference to disallowed system schema: " + schema);
+                    "reference to unsanctioned schema: " + schema);
             }
         }
     }

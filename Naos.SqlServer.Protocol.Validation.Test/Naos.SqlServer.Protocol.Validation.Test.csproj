@@ -269,6 +269,7 @@
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.cs" />
+    <Compile Include="Protocols\ValidateSqlScriptProtocolTest.AllowOnlySchemasSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.DisallowSystemSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.ParsingErrors.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.DisallowSchemasSqlScriptValidationRule.cs" />

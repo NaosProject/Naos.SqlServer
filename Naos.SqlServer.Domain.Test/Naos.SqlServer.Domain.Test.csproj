@@ -277,6 +277,10 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>AllowOnlySchemasSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConsoleAbstraction.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSchemasSqlScriptValidationRuleTest.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSchemasSqlScriptValidationRuleTest.designer.cs">

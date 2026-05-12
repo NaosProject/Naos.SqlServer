@@ -111,6 +111,7 @@
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringXmlDocOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Logic\AllowOnlySchemasSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\SchemasUsedSqlScriptValidationRuleEvaluatorBase.cs" />
     <Compile Include="Logic\DisallowSystemSchemasSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\SqlScriptValidationRuleEvaluatorBase.cs" />

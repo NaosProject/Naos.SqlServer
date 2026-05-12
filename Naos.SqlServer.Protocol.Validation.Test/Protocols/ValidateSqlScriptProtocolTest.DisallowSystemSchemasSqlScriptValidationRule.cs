@@ -21,7 +21,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From sys.objects",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -31,7 +31,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From (Select * From sys.objects) A",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 29, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 29, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -41,7 +41,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select a.id From dbo.other a Inner Join sys.objects b On a.id = b.id",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 40, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 40, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -51,7 +51,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select a.id From dbo.other a Left Join sys.objects As b On a.id = b.id",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 39, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 39, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -61,7 +61,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Update sys.objects Set x = 1",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 7, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 7, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -71,7 +71,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Delete From sys.objects Where x = 1",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 12, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 12, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -81,7 +81,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Insert Into sys.objects (x) Values (1)",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 12, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 12, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -91,7 +91,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Merge Into sys.objects As t Using dbo.src As s On t.id = s.id When Matched Then Update Set x = s.x;",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 11, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 11, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -101,7 +101,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "With cte As (Select id From sys.objects) Select * From cte",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 28, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 28, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -111,7 +111,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From dbo.other Where id In (Select id From sys.objects)",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 52, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 52, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -121,7 +121,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From dbo.other o Where Exists (Select 1 From sys.objects m Where m.id = o.id)",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 54, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 54, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -131,7 +131,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select id From dbo.other Union Select id From sys.objects",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 46, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 46, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -141,7 +141,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From dbo.other o Cross Apply (Select Top 1 * From sys.objects m Where m.id = o.id) x",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 59, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 59, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -151,7 +151,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From [INFORMATION_SCHEMA].objects",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: INFORMATION_SCHEMA" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: INFORMATION_SCHEMA" },
                 },
             },
 
@@ -161,7 +161,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From [SYS].[objects]",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: SYS" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: SYS" },
                 },
             },
 
@@ -171,7 +171,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From Sys.objects",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: Sys" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: Sys" },
                 },
             },
 
@@ -181,7 +181,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From mydb.sys.objects",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -191,7 +191,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From INFORMATION_SCHEMA.tables",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: INFORMATION_SCHEMA" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: INFORMATION_SCHEMA" },
                 },
             },
 
@@ -201,8 +201,8 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From sys.t1 a Inner Join INFORMATION_SCHEMA.t2 b On a.id = b.id",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: sys" },
-                    new ExpectedViolation { Offset = 34, Details = "disallowed reference to system schema: INFORMATION_SCHEMA" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: sys" },
+                    new ExpectedViolation { Offset = 34, Details = "reference to disallowed system schema: INFORMATION_SCHEMA" },
                 },
             },
 
@@ -212,8 +212,8 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From sys.t1\r\nGO\r\nSelect * From INFORMATION_SCHEMA.t2",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: sys" },
-                    new ExpectedViolation { Offset = 40, Details = "disallowed reference to system schema: INFORMATION_SCHEMA" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: sys" },
+                    new ExpectedViolation { Offset = 40, Details = "reference to disallowed system schema: INFORMATION_SCHEMA" },
                 },
             },
 
@@ -223,8 +223,8 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From sys.t1; Select * From INFORMATION_SCHEMA.t2;",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: sys" },
-                    new ExpectedViolation { Offset = 36, Details = "disallowed reference to system schema: INFORMATION_SCHEMA" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: sys" },
+                    new ExpectedViolation { Offset = 36, Details = "reference to disallowed system schema: INFORMATION_SCHEMA" },
                 },
             },
 
@@ -234,8 +234,8 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From sys.objects a Inner Join sys.objects b On a.id = b.id",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: sys" },
-                    new ExpectedViolation { Offset = 39, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: sys" },
+                    new ExpectedViolation { Offset = 39, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -245,7 +245,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Exec sys.sp_help",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 5, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 5, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -255,7 +255,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Drop Table information_schema.objects",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 11, Details = "disallowed reference to system schema: information_schema" },
+                    new ExpectedViolation { Offset = 11, Details = "reference to disallowed system schema: information_schema" },
                 },
             },
 
@@ -265,7 +265,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Truncate Table sys.objects",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 15, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 15, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -275,7 +275,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Alter Table sys.objects Add col1 Int Null",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 12, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 12, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -285,7 +285,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create Table sys.objects (x Int)",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 13, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 13, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -295,7 +295,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create Index ix_objects_x On sys.objects (x)",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 29, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 29, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -305,7 +305,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From sys.my_tvf()",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -316,7 +316,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select * From dbo.other Where sys.fn_my_function(id) = 1",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 30, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 30, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -326,7 +326,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select 1 From dbo.alpha Where sys.t.col = 1",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 30, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 30, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -336,7 +336,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select 1 From dbo.alpha Where mydb.sys.t.col = 1",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 30, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 30, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -346,7 +346,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create Procedure sys.my_sp As Begin Select 1 End",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 17, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 17, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -356,7 +356,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create Function sys.my_fn () Returns Int As Begin Return 1 End",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 16, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 16, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -366,7 +366,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create View sys.my_view As Select 1 As x",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 12, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 12, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -376,7 +376,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create Trigger dbo.my_tr On sys.my_table After Insert As Begin Select 1 End",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 28, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 28, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -386,7 +386,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create Synonym dbo.my_syn For sys.my_table",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 30, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 30, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -396,7 +396,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create Table dbo.child (parent_id Int References sys.parent (id))",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 49, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 49, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -406,7 +406,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select Top 0 * Into sys.new_t From dbo.src",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 20, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 20, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -416,7 +416,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Select Next Value For sys.my_seq",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 22, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 22, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -426,7 +426,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Declare @x sys.my_type",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 11, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 11, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -436,7 +436,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Bulk Insert sys.my_table From 'file.csv'",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 12, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 12, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -446,7 +446,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Set Identity_Insert sys.my_table On",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 20, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 20, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -457,7 +457,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Create Schema sys",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 14, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 14, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -467,7 +467,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Drop Schema sys",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 12, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 12, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -477,7 +477,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Drop Schema [sys]",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 12, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 12, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -487,7 +487,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Alter Schema sys Transfer dbo.t",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 13, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 13, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -497,7 +497,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Alter Schema dbo Transfer sys.t",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 26, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 26, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -507,8 +507,8 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Alter Schema sys Transfer INFORMATION_SCHEMA.t",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 13, Details = "disallowed reference to system schema: sys" },
-                    new ExpectedViolation { Offset = 26, Details = "disallowed reference to system schema: INFORMATION_SCHEMA" },
+                    new ExpectedViolation { Offset = 13, Details = "reference to disallowed system schema: sys" },
+                    new ExpectedViolation { Offset = 26, Details = "reference to disallowed system schema: INFORMATION_SCHEMA" },
                 },
             },
 
@@ -518,7 +518,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Grant Select On Schema::sys To my_user",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 24, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 24, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -528,7 +528,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Grant Select On Object::sys.t To my_user",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 24, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 24, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -538,7 +538,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Grant Select On sys.t To my_user",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 16, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 16, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -548,7 +548,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Revoke Select On Schema::sys From my_user",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 25, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 25, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -558,7 +558,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Deny Select On sys.t To my_user",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 15, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 15, Details = "reference to disallowed system schema: sys" },
                 },
             },
 
@@ -568,7 +568,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 Sql = "Alter Authorization On Schema::sys To my_user",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 31, Details = "disallowed reference to system schema: sys" },
+                    new ExpectedViolation { Offset = 31, Details = "reference to disallowed system schema: sys" },
                 },
             },
         };

@@ -32,6 +32,9 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Gets the disallowed schemas.
         /// </summary>
+        /// <remarks>
+        /// Each schema reference encountered in the script is compared case-insensitively against this collection.
+        /// </remarks>
         public IReadOnlyCollection<string> DisallowedSchemas { get; private set; }
     }
 }
