@@ -154,7 +154,15 @@
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.designer.cs">
+      <DependentUpon>DisallowAdHocDistributedQueriesSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\FlatQuerySqlScriptValidationRule.designer.cs">
+      <DependentUpon>FlatQuerySqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\ReadOnlySelectSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\FlatQuerySqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\ReadOnlySelectSqlScriptValidationRule.designer.cs">
       <DependentUpon>ReadOnlySelectSqlScriptValidationRule.cs</DependentUpon>
     </Compile>

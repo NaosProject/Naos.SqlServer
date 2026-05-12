@@ -144,6 +144,14 @@ namespace Naos.SqlServer.Protocol.Validation
                 {
                     ruleEvaluator = new ReadOnlySelectSqlScriptValidationRuleEvaluator(readOnlySelectSqlScriptValidationRule);
                 }
+                else if (rule is DisallowAdHocDistributedQueriesSqlScriptValidationRule disallowAdHocDistributedQueriesSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new DisallowAdHocDistributedQueriesSqlScriptValidationRuleEvaluator(disallowAdHocDistributedQueriesSqlScriptValidationRule);
+                }
+                else if (rule is FlatQuerySqlScriptValidationRule flatQuerySqlScriptValidationRule)
+                {
+                    ruleEvaluator = new FlatQuerySqlScriptValidationRuleEvaluator(flatQuerySqlScriptValidationRule);
+                }
                 else
                 {
                     throw new NotSupportedException(Invariant($"This type of {nameof(SqlScriptValidationRuleBase)} is not supported: {rule.GetType().ToStringReadable()}."));

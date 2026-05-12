@@ -277,6 +277,10 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRuleTest.cs" />
     <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>AllowOnlySchemasSqlScriptValidationRuleTest.cs</DependentUpon>
@@ -392,6 +396,10 @@
     <Compile Include="Models\Classes\Validation\Rules\ReadOnlySelectSqlScriptValidationRuleTest.cs" />
     <Compile Include="Models\Classes\Validation\Rules\ReadOnlySelectSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>ReadOnlySelectSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\FlatQuerySqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\FlatQuerySqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>FlatQuerySqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
     <Compile Include="SerializationConfigurationTypes.cs" />
     <Compile Include="GlobalSuppressions.cs" />

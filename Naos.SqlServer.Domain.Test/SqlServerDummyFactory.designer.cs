@@ -91,6 +91,10 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<byte>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new DisallowSchemasSqlScriptValidationRule(
                                  A.Dummy<IReadOnlyCollection<string>>(),
                                  A.Dummy<string>()));
@@ -103,6 +107,10 @@ namespace Naos.SqlServer.Domain.Test
                 () => new ExecuteStoredProcedureOp(
                                  A.Dummy<string>(),
                                  A.Dummy<IReadOnlyList<ParameterDefinitionBase>>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new FlatQuerySqlScriptValidationRule(
+                                 A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new GetOrAddIdentifiedSerializerRepresentationOp(
@@ -278,8 +286,10 @@ namespace Naos.SqlServer.Domain.Test
                     var availableTypes = new[]
                     {
                         typeof(AllowOnlySchemasSqlScriptValidationRule),
+                        typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule),
                         typeof(DisallowSchemasSqlScriptValidationRule),
                         typeof(DisallowSystemSchemasSqlScriptValidationRule),
+                        typeof(FlatQuerySqlScriptValidationRule),
                         typeof(ReadOnlySelectSqlScriptValidationRule),
                         typeof(SingleStatementSqlScriptValidationRule)
                     };

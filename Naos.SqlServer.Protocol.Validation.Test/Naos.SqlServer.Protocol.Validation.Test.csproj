@@ -270,10 +270,12 @@
     <Compile Include="Properties\ProjectInfo.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.AllowOnlySchemasSqlScriptValidationRule.cs" />
+    <Compile Include="Protocols\ValidateSqlScriptProtocolTest.DisallowAdHocDistributedQueriesSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.DisallowSystemSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.ParsingErrors.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.DisallowSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.ReadOnlySelectSqlScriptValidationRule.cs" />
+    <Compile Include="Protocols\ValidateSqlScriptProtocolTest.FlatQuerySqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.SingleStatementSqlScriptValidationRule.cs" />
   </ItemGroup>
   <ItemGroup>

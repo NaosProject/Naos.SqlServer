@@ -34,41 +34,41 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class SingleStatementSqlScriptValidationRuleTest
+    public static partial class DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest
     {
-        private static readonly StringRepresentationTestScenarios<SingleStatementSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SingleStatementSqlScriptValidationRule>()
+        private static readonly StringRepresentationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<SingleStatementSqlScriptValidationRule>
+                new StringRepresentationTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<SingleStatementSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedStringRepresentation<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SingleStatementSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.DisallowAdHocDistributedQueriesSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<SingleStatementSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<SingleStatementSqlScriptValidationRule>();
+        private static readonly ConstructorArgumentValidationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
-        private static readonly ConstructorPropertyAssignmentTestScenarios<SingleStatementSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<SingleStatementSqlScriptValidationRule>()
+        private static readonly ConstructorPropertyAssignmentTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<SingleStatementSqlScriptValidationRule>
+                new ConstructorPropertyAssignmentTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
                 {
                     Name = "Id should return same 'id' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                        var referenceObject = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<SingleStatementSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedPropertyValue<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
                         {
-                            SystemUnderTest = new SingleStatementSqlScriptValidationRule(
+                            SystemUnderTest = new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
                                                       referenceObject.Id),
                             ExpectedPropertyValue = referenceObject.Id,
                         };
@@ -78,19 +78,19 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "Id",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<SingleStatementSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SingleStatementSqlScriptValidationRule>()
+        private static readonly DeepCloneWithTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SingleStatementSqlScriptValidationRule>
+                new DeepCloneWithTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
                 {
                     Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
                     WithPropertyName = "Id",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
-                        var referenceObject = A.Dummy<SingleStatementSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
+                        var referenceObject = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SingleStatementSqlScriptValidationRule>
+                        var result = new SystemUnderTestDeepCloneWithValue<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.Id,
@@ -100,23 +100,23 @@ namespace Naos.SqlServer.Domain.Test
                     },
                 });
 
-        private static readonly SingleStatementSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<SingleStatementSqlScriptValidationRule>();
+        private static readonly DisallowAdHocDistributedQueriesSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
-        private static readonly EquatableTestScenarios<SingleStatementSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<SingleStatementSqlScriptValidationRule>()
+        private static readonly EquatableTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new EquatableTestScenario<SingleStatementSqlScriptValidationRule>
+                new EquatableTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SingleStatementSqlScriptValidationRule[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new DisallowAdHocDistributedQueriesSqlScriptValidationRule[]
                     {
-                        new SingleStatementSqlScriptValidationRule(
+                        new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
                                 ReferenceObjectForEquatableTestScenarios.Id),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new SingleStatementSqlScriptValidationRule[]
+                    ObjectsThatAreNotEqualToReferenceObject = new DisallowAdHocDistributedQueriesSqlScriptValidationRule[]
                     {
-                        new SingleStatementSqlScriptValidationRule(
-                                A.Dummy<SingleStatementSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
+                                A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -126,20 +126,20 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
                         A.Dummy<AllowOnlySchemasSqlScriptValidationRule>(),
-                        A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
                         A.Dummy<DisallowSchemasSqlScriptValidationRule>(),
                         A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
                         A.Dummy<FlatQuerySqlScriptValidationRule>(),
                         A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
+                        A.Dummy<SingleStatementSqlScriptValidationRule>(),
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<SingleStatementSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<SingleStatementSqlScriptValidationRule>()
+        private static readonly ValidModelTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ValidModelTestScenario<SingleStatementSqlScriptValidationRule>
+                new ValidModelTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
                 {
-                    Name = "a dummy SingleStatementSqlScriptValidationRule should be valid",
-                    SystemUnderTest = A.Dummy<SingleStatementSqlScriptValidationRule>(),
+                    Name = "a dummy DisallowAdHocDistributedQueriesSqlScriptValidationRule should be valid",
+                    SystemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -160,12 +160,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SingleStatementSqlScriptValidationRule___Should_implement_IModel_of_SingleStatementSqlScriptValidationRule___When_reflecting()
+            public static void DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_implement_IModel_of_DisallowAdHocDistributedQueriesSqlScriptValidationRule___When_reflecting()
             {
                 // Arrange
-                var type = typeof(SingleStatementSqlScriptValidationRule);
+                var type = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule);
 
-                var expectedModelMethods = typeof(IModel<SingleStatementSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<DisallowAdHocDistributedQueriesSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -175,7 +175,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SingleStatementSqlScriptValidationRule>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<DisallowAdHocDistributedQueriesSqlScriptValidationRule>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -193,10 +193,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SingleStatementSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(SingleStatementSqlScriptValidationRule);
+                var type = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -376,10 +376,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
                 // Act
-                var actual = (SingleStatementSqlScriptValidationRule)systemUnderTest.Clone();
+                var actual = (DisallowAdHocDistributedQueriesSqlScriptValidationRule)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -403,7 +403,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -442,12 +442,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (SingleStatementSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (DisallowAdHocDistributedQueriesSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(SingleStatementSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -509,7 +509,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -538,7 +538,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -567,7 +567,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -596,7 +596,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SingleStatementSqlScriptValidationRule>();
+                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -630,8 +630,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SingleStatementSqlScriptValidationRule systemUnderTest1 = null;
-                SingleStatementSqlScriptValidationRule systemUnderTest2 = null;
+                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest1 = null;
+                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -661,7 +661,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SingleStatementSqlScriptValidationRule systemUnderTest = null;
+                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -810,8 +810,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SingleStatementSqlScriptValidationRule systemUnderTest1 = null;
-                SingleStatementSqlScriptValidationRule systemUnderTest2 = null;
+                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest1 = null;
+                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -841,7 +841,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SingleStatementSqlScriptValidationRule systemUnderTest = null;
+                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1130,14 +1130,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleStatementSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SingleStatementSqlScriptValidationRule systemUnderTest = null;
+                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1161,7 +1161,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleStatementSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1189,7 +1189,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleStatementSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1217,7 +1217,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleStatementSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1245,7 +1245,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleStatementSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
