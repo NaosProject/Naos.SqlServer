@@ -225,6 +225,10 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SingleStatementSqlScriptValidationRule(
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () =>
                 {
                     var availableTypes = new[]
@@ -271,7 +275,8 @@ namespace Naos.SqlServer.Domain.Test
                     {
                         typeof(AllowOnlySchemasSqlScriptValidationRule),
                         typeof(DisallowSchemasSqlScriptValidationRule),
-                        typeof(DisallowSystemSchemasSqlScriptValidationRule)
+                        typeof(DisallowSystemSchemasSqlScriptValidationRule),
+                        typeof(SingleStatementSqlScriptValidationRule)
                     };
 
                     var randomIndex = ThreadSafeRandom.Next(0, availableTypes.Length);

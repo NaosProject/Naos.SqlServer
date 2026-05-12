@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DisallowSystemSchemasSqlScriptValidationRuleTest.cs" company="Naos Project">
+// <copyright file="SingleStatementSqlScriptValidationRuleTest.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -23,14 +23,14 @@ namespace Naos.SqlServer.Domain.Test
     using static System.FormattableString;
 
     [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = ObcSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
-    public static partial class DisallowSystemSchemasSqlScriptValidationRuleTest
+    public static partial class SingleStatementSqlScriptValidationRuleTest
     {
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = ObcSuppressBecause.CA1505_AvoidUnmaintainableCode_DisagreeWithAssessment)]
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
-        static DisallowSystemSchemasSqlScriptValidationRuleTest()
+        static SingleStatementSqlScriptValidationRuleTest()
         {
             ConstructorArgumentValidationTestScenarios
-                .AddScenario(ConstructorArgumentValidationTestScenario<DisallowSystemSchemasSqlScriptValidationRule>.ConstructorCannotThrowScenario);
+                .AddScenario(ConstructorArgumentValidationTestScenario<SingleStatementSqlScriptValidationRule>.ConstructorCannotThrowScenario);
         }
     }
 }

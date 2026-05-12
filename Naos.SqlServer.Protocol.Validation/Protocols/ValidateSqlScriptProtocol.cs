@@ -136,6 +136,10 @@ namespace Naos.SqlServer.Protocol.Validation
                 {
                     ruleEvaluator = new AllowOnlySchemasSqlScriptValidationRuleEvaluator(allowOnlySchemasSqlScriptValidationRule);
                 }
+                else if (rule is SingleStatementSqlScriptValidationRule singleStatementSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new SingleStatementSqlScriptValidationRuleEvaluator(singleStatementSqlScriptValidationRule);
+                }
                 else
                 {
                     throw new NotSupportedException(Invariant($"This type of {nameof(SqlScriptValidationRuleBase)} is not supported: {rule.GetType().ToStringReadable()}."));

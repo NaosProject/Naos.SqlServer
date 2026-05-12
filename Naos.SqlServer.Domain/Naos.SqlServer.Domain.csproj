@@ -154,6 +154,7 @@
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SingleStatementSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRule.designer.cs">
       <DependentUpon>AllowOnlySchemasSqlScriptValidationRule.cs</DependentUpon>
@@ -165,6 +166,9 @@
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRule.designer.cs">
       <DependentUpon>DisallowSystemSchemasSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SingleStatementSqlScriptValidationRule.designer.cs">
+      <DependentUpon>SingleStatementSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Validation\SqlScriptParsingError.designer.cs">
       <DependentUpon>SqlScriptParsingError.cs</DependentUpon>

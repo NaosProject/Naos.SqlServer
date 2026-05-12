@@ -114,6 +114,7 @@
     <Compile Include="Logic\AllowOnlySchemasSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\SchemasUsedSqlScriptValidationRuleEvaluatorBase.cs" />
     <Compile Include="Logic\DisallowSystemSchemasSqlScriptValidationRuleEvaluator.cs" />
+    <Compile Include="Logic\SingleStatementSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\SqlScriptValidationRuleEvaluatorBase.cs" />
     <Compile Include="Logic\DisallowSchemasSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

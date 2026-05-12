@@ -419,6 +419,10 @@
     <Compile Include="Models\Classes\Validation\SqlScriptParsingErrorTest.designer.cs">
       <DependentUpon>SqlScriptParsingErrorTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SingleStatementSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SingleStatementSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>SingleStatementSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlServerDummyFactory.cs" />
     <Compile Include="SqlServerDummyFactory.designer.cs">
       <DependentUpon>SqlServerDummyFactory.cs</DependentUpon>
