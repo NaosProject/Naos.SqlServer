@@ -136,6 +136,10 @@ namespace Naos.SqlServer.Protocol.Validation
                 {
                     ruleEvaluator = new SanctionedSchemasSqlScriptValidationRuleEvaluator(sanctionedSchemasSqlScriptValidationRule);
                 }
+                else if (rule is SingleSchemaSqlScriptValidationRule singleSchemaSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new SingleSchemaSqlScriptValidationRuleEvaluator(singleSchemaSqlScriptValidationRule);
+                }
                 else if (rule is SingleStatementSqlScriptValidationRule singleStatementSqlScriptValidationRule)
                 {
                     ruleEvaluator = new SingleStatementSqlScriptValidationRuleEvaluator(singleStatementSqlScriptValidationRule);

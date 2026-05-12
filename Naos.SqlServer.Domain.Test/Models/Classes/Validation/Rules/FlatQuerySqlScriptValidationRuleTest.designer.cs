@@ -130,6 +130,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
                         A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
                         A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
+                        A.Dummy<SingleSchemaSqlScriptValidationRule>(),
                         A.Dummy<SingleStatementSqlScriptValidationRule>(),
                     },
                 });

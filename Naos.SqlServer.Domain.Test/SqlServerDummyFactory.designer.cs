@@ -237,6 +237,10 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SingleSchemaSqlScriptValidationRule(
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SingleStatementSqlScriptValidationRule(
                                  A.Dummy<string>()));
 
@@ -291,6 +295,7 @@ namespace Naos.SqlServer.Domain.Test
                         typeof(FlatQuerySqlScriptValidationRule),
                         typeof(ReadOnlySelectSqlScriptValidationRule),
                         typeof(SanctionedSchemasSqlScriptValidationRule),
+                        typeof(SingleSchemaSqlScriptValidationRule),
                         typeof(SingleStatementSqlScriptValidationRule)
                     };
 
