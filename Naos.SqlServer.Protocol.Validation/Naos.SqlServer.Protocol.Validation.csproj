@@ -120,6 +120,7 @@
     <Compile Include="Logic\SingleStatementSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\SqlScriptValidationRuleEvaluatorBase.cs" />
     <Compile Include="Logic\DisallowedSchemasSqlScriptValidationRuleEvaluator.cs" />
+    <Compile Include="Logic\SanctionedSchemaQualifiedTablesSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\SchemaQualifiedTableReferencesSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\SingleSchemaSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

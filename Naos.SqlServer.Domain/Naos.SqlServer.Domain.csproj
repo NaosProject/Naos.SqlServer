@@ -169,6 +169,9 @@
     <Compile Include="Models\Classes\Validation\Rules\ReadOnlySelectSqlScriptValidationRule.designer.cs">
       <DependentUpon>ReadOnlySelectSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemaQualifiedTablesSqlScriptValidationRule.designer.cs">
+      <DependentUpon>SanctionedSchemaQualifiedTablesSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemasSqlScriptValidationRule.designer.cs">
       <DependentUpon>SanctionedSchemasSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
@@ -182,13 +185,18 @@
     <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowedSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemaQualifiedTablesSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\SchemaQualifiedTableReferencesSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\SchemaQualifiedTableName.cs" />
     <Compile Include="Models\Classes\Validation\Rules\SingleSchemaSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRule.designer.cs">
       <DependentUpon>DisallowSystemSchemasSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Validation\Rules\SingleStatementSqlScriptValidationRule.designer.cs">
       <DependentUpon>SingleStatementSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SchemaQualifiedTableName.designer.cs">
+      <DependentUpon>SchemaQualifiedTableName.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Validation\SqlScriptParsingError.designer.cs">
       <DependentUpon>SqlScriptParsingError.cs</DependentUpon>

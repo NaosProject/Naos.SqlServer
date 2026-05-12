@@ -225,8 +225,18 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<RestrictedUserOption>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SanctionedSchemaQualifiedTablesSqlScriptValidationRule(
+                                 A.Dummy<IReadOnlyCollection<SchemaQualifiedTableName>>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SanctionedSchemasSqlScriptValidationRule(
                                  A.Dummy<IReadOnlyCollection<string>>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SchemaQualifiedTableName(
+                                 A.Dummy<string>(),
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
@@ -298,6 +308,7 @@ namespace Naos.SqlServer.Domain.Test
                         typeof(DisallowSystemSchemasSqlScriptValidationRule),
                         typeof(FlatQuerySqlScriptValidationRule),
                         typeof(ReadOnlySelectSqlScriptValidationRule),
+                        typeof(SanctionedSchemaQualifiedTablesSqlScriptValidationRule),
                         typeof(SanctionedSchemasSqlScriptValidationRule),
                         typeof(SchemaQualifiedTableReferencesSqlScriptValidationRule),
                         typeof(SingleSchemaSqlScriptValidationRule),

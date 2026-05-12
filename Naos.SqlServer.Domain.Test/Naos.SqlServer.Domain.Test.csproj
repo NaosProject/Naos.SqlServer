@@ -405,6 +405,14 @@
     <Compile Include="Models\Classes\Validation\Rules\SchemaQualifiedTableReferencesSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>SchemaQualifiedTableReferencesSqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemaQualifiedTablesSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemaQualifiedTablesSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>SanctionedSchemaQualifiedTablesSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SchemaQualifiedTableNameTest.cs" />
+    <Compile Include="Models\Classes\Validation\SchemaQualifiedTableNameTest.designer.cs">
+      <DependentUpon>SchemaQualifiedTableNameTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="SerializationConfigurationTypes.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\SqlDataTypeRepresentationBaseTest.cs" />

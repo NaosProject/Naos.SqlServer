@@ -34,89 +34,186 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class FlatQuerySqlScriptValidationRuleTest
+    public static partial class SchemaQualifiedTableNameTest
     {
-        private static readonly StringRepresentationTestScenarios<FlatQuerySqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<FlatQuerySqlScriptValidationRule>()
-            .AddScenario(() =>
-                new StringRepresentationTestScenario<FlatQuerySqlScriptValidationRule>
-                {
-                    Name = "Default Code Generated Scenario",
-                    SystemUnderTestExpectedStringRepresentationFunc = () =>
-                    {
-                        var systemUnderTest = A.Dummy<FlatQuerySqlScriptValidationRule>();
+        private static readonly StringRepresentationTestScenarios<SchemaQualifiedTableName> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SchemaQualifiedTableName>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<FlatQuerySqlScriptValidationRule>
-                        {
-                            SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.FlatQuerySqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
-                        };
+        private static readonly ConstructorArgumentValidationTestScenarios<SchemaQualifiedTableName> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<SchemaQualifiedTableName>()
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<SchemaQualifiedTableName>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'schemaName' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SchemaQualifiedTableName>();
+
+                        var result = new SchemaQualifiedTableName(
+                                             null,
+                                             referenceObject.TableName);
 
                         return result;
                     },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "schemaName", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<SchemaQualifiedTableName>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'schemaName' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SchemaQualifiedTableName>();
+
+                        var result = new SchemaQualifiedTableName(
+                                             Invariant($"  {Environment.NewLine}  "),
+                                             referenceObject.TableName);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "schemaName", "white space", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<SchemaQualifiedTableName>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'tableName' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SchemaQualifiedTableName>();
+
+                        var result = new SchemaQualifiedTableName(
+                                             referenceObject.SchemaName,
+                                             null);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "tableName", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<SchemaQualifiedTableName>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'tableName' is white space scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SchemaQualifiedTableName>();
+
+                        var result = new SchemaQualifiedTableName(
+                                             referenceObject.SchemaName,
+                                             Invariant($"  {Environment.NewLine}  "));
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "tableName", "white space", },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<FlatQuerySqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<FlatQuerySqlScriptValidationRule>();
-
-        private static readonly ConstructorPropertyAssignmentTestScenarios<FlatQuerySqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<FlatQuerySqlScriptValidationRule>()
+        private static readonly ConstructorPropertyAssignmentTestScenarios<SchemaQualifiedTableName> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<SchemaQualifiedTableName>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<FlatQuerySqlScriptValidationRule>
+                new ConstructorPropertyAssignmentTestScenario<SchemaQualifiedTableName>
                 {
-                    Name = "Id should return same 'id' parameter passed to constructor when getting",
+                    Name = "SchemaName should return same 'schemaName' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<FlatQuerySqlScriptValidationRule>();
+                        var referenceObject = A.Dummy<SchemaQualifiedTableName>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<FlatQuerySqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedPropertyValue<SchemaQualifiedTableName>
                         {
-                            SystemUnderTest = new FlatQuerySqlScriptValidationRule(
-                                                      referenceObject.Id),
-                            ExpectedPropertyValue = referenceObject.Id,
+                            SystemUnderTest = new SchemaQualifiedTableName(
+                                                      referenceObject.SchemaName,
+                                                      referenceObject.TableName),
+                            ExpectedPropertyValue = referenceObject.SchemaName,
                         };
 
                         return result;
                     },
-                    PropertyName = "Id",
+                    PropertyName = "SchemaName",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<SchemaQualifiedTableName>
+                {
+                    Name = "TableName should return same 'tableName' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SchemaQualifiedTableName>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<SchemaQualifiedTableName>
+                        {
+                            SystemUnderTest = new SchemaQualifiedTableName(
+                                                      referenceObject.SchemaName,
+                                                      referenceObject.TableName),
+                            ExpectedPropertyValue = referenceObject.TableName,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "TableName",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<FlatQuerySqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<FlatQuerySqlScriptValidationRule>()
+        private static readonly DeepCloneWithTestScenarios<SchemaQualifiedTableName> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SchemaQualifiedTableName>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<FlatQuerySqlScriptValidationRule>
+                new DeepCloneWithTestScenario<SchemaQualifiedTableName>
                 {
-                    Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
-                    WithPropertyName = "Id",
+                    Name = "DeepCloneWithSchemaName should deep clone object and replace SchemaName with the provided schemaName",
+                    WithPropertyName = "SchemaName",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<FlatQuerySqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<SchemaQualifiedTableName>();
 
-                        var referenceObject = A.Dummy<FlatQuerySqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
+                        var referenceObject = A.Dummy<SchemaQualifiedTableName>().ThatIs(_ => !systemUnderTest.SchemaName.IsEqualTo(_.SchemaName));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<FlatQuerySqlScriptValidationRule>
+                        var result = new SystemUnderTestDeepCloneWithValue<SchemaQualifiedTableName>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Id,
+                            DeepCloneWithValue = referenceObject.SchemaName,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<SchemaQualifiedTableName>
+                {
+                    Name = "DeepCloneWithTableName should deep clone object and replace TableName with the provided tableName",
+                    WithPropertyName = "TableName",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<SchemaQualifiedTableName>();
+
+                        var referenceObject = A.Dummy<SchemaQualifiedTableName>().ThatIs(_ => !systemUnderTest.TableName.IsEqualTo(_.TableName));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<SchemaQualifiedTableName>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.TableName,
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly FlatQuerySqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<FlatQuerySqlScriptValidationRule>();
+        private static readonly SchemaQualifiedTableName ReferenceObjectForEquatableTestScenarios = A.Dummy<SchemaQualifiedTableName>();
 
-        private static readonly EquatableTestScenarios<FlatQuerySqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<FlatQuerySqlScriptValidationRule>()
+        private static readonly EquatableTestScenarios<SchemaQualifiedTableName> EquatableTestScenarios = new EquatableTestScenarios<SchemaQualifiedTableName>()
             .AddScenario(() =>
-                new EquatableTestScenario<FlatQuerySqlScriptValidationRule>
+                new EquatableTestScenario<SchemaQualifiedTableName>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new FlatQuerySqlScriptValidationRule[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SchemaQualifiedTableName[]
                     {
-                        new FlatQuerySqlScriptValidationRule(
-                                ReferenceObjectForEquatableTestScenarios.Id),
+                        new SchemaQualifiedTableName(
+                                ReferenceObjectForEquatableTestScenarios.SchemaName,
+                                ReferenceObjectForEquatableTestScenarios.TableName),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new FlatQuerySqlScriptValidationRule[]
+                    ObjectsThatAreNotEqualToReferenceObject = new SchemaQualifiedTableName[]
                     {
-                        new FlatQuerySqlScriptValidationRule(
-                                A.Dummy<FlatQuerySqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new SchemaQualifiedTableName(
+                                A.Dummy<SchemaQualifiedTableName>().Whose(_ => !_.SchemaName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SchemaName)).SchemaName,
+                                ReferenceObjectForEquatableTestScenarios.TableName),
+                        new SchemaQualifiedTableName(
+                                ReferenceObjectForEquatableTestScenarios.SchemaName,
+                                A.Dummy<SchemaQualifiedTableName>().Whose(_ => !_.TableName.IsEqualTo(ReferenceObjectForEquatableTestScenarios.TableName)).TableName),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -125,24 +222,15 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
-                        A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
-                        A.Dummy<DisallowedSchemasSqlScriptValidationRule>(),
-                        A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
-                        A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
-                        A.Dummy<SanctionedSchemaQualifiedTablesSqlScriptValidationRule>(),
-                        A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
-                        A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>(),
-                        A.Dummy<SingleSchemaSqlScriptValidationRule>(),
-                        A.Dummy<SingleStatementSqlScriptValidationRule>(),
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<FlatQuerySqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<FlatQuerySqlScriptValidationRule>()
+        private static readonly ValidModelTestScenarios<SchemaQualifiedTableName> ValidModelTestScenarios = new ValidModelTestScenarios<SchemaQualifiedTableName>()
             .AddScenario(() =>
-                new ValidModelTestScenario<FlatQuerySqlScriptValidationRule>
+                new ValidModelTestScenario<SchemaQualifiedTableName>
                 {
-                    Name = "a dummy FlatQuerySqlScriptValidationRule should be valid",
-                    SystemUnderTest = A.Dummy<FlatQuerySqlScriptValidationRule>(),
+                    Name = "a dummy SchemaQualifiedTableName should be valid",
+                    SystemUnderTest = A.Dummy<SchemaQualifiedTableName>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -163,12 +251,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void FlatQuerySqlScriptValidationRule___Should_implement_IModel_of_FlatQuerySqlScriptValidationRule___When_reflecting()
+            public static void SchemaQualifiedTableName___Should_implement_IModel_of_SchemaQualifiedTableName___When_reflecting()
             {
                 // Arrange
-                var type = typeof(FlatQuerySqlScriptValidationRule);
+                var type = typeof(SchemaQualifiedTableName);
 
-                var expectedModelMethods = typeof(IModel<FlatQuerySqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<SchemaQualifiedTableName>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -178,7 +266,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<FlatQuerySqlScriptValidationRule>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SchemaQualifiedTableName>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -196,10 +284,36 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void FlatQuerySqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void SchemaQualifiedTableName___Should_declare_ToString_method___When_reflecting()
             {
                 // Arrange
-                var type = typeof(FlatQuerySqlScriptValidationRule);
+                var expected = typeof(SchemaQualifiedTableName);
+
+                // Act
+                var actual = expected.GetMethodsFiltered(MemberRelationships.DeclaredInType, MemberOwners.Instance, MemberAccessModifiers.Public).Single(_ => (_.Name == nameof(ToString)) && (!_.GetParameters().Any()));
+
+                // Assert
+                actual.DeclaringType.AsTest().Must().BeEqualTo(expected);
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void SchemaQualifiedTableName___Should_be_attributed_with_Serializable____When_reflecting()
+            {
+                // Arrange
+                var type = typeof(SchemaQualifiedTableName);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -379,10 +493,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<FlatQuerySqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<SchemaQualifiedTableName>();
 
                 // Act
-                var actual = (FlatQuerySqlScriptValidationRule)systemUnderTest.Clone();
+                var actual = (SchemaQualifiedTableName)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -406,7 +520,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<FlatQuerySqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<SchemaQualifiedTableName>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -432,7 +546,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Id" };
+                var propertyNames = new string[] { "SchemaName", "TableName" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -445,12 +559,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (FlatQuerySqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (SchemaQualifiedTableName)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(FlatQuerySqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(SchemaQualifiedTableName).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -512,7 +626,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<FlatQuerySqlScriptValidationRule>();
+                var expected = A.Dummy<SchemaQualifiedTableName>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -541,7 +655,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<FlatQuerySqlScriptValidationRule>();
+                var expected = A.Dummy<SchemaQualifiedTableName>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -570,7 +684,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<FlatQuerySqlScriptValidationRule>();
+                var expected = A.Dummy<SchemaQualifiedTableName>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -599,7 +713,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<FlatQuerySqlScriptValidationRule>();
+                var expected = A.Dummy<SchemaQualifiedTableName>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -633,8 +747,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                FlatQuerySqlScriptValidationRule systemUnderTest1 = null;
-                FlatQuerySqlScriptValidationRule systemUnderTest2 = null;
+                SchemaQualifiedTableName systemUnderTest1 = null;
+                SchemaQualifiedTableName systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -664,7 +778,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    FlatQuerySqlScriptValidationRule systemUnderTest = null;
+                    SchemaQualifiedTableName systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -813,8 +927,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                FlatQuerySqlScriptValidationRule systemUnderTest1 = null;
-                FlatQuerySqlScriptValidationRule systemUnderTest2 = null;
+                SchemaQualifiedTableName systemUnderTest1 = null;
+                SchemaQualifiedTableName systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -844,7 +958,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    FlatQuerySqlScriptValidationRule systemUnderTest = null;
+                    SchemaQualifiedTableName systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -990,157 +1104,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_SchemaQualifiedTableName___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlScriptValidationRuleBase systemUnderTest = null;
-
-                    // Act
-                    var actual = scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)systemUnderTest);
-
-                    // Assert
-                    actual.AsTest().Must().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_true___When_parameter_other_is_same_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actual = scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)scenario.ReferenceObject);
-
-                    // Assert
-                    actual.AsTest().Must().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_objects_being_compared_have_different_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_true___When_objects_being_compared_have_same_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_FlatQuerySqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange
-                    FlatQuerySqlScriptValidationRule systemUnderTest = null;
+                    SchemaQualifiedTableName systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1164,7 +1135,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_FlatQuerySqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_SchemaQualifiedTableName___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1192,7 +1163,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_FlatQuerySqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_SchemaQualifiedTableName___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1220,7 +1191,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_FlatQuerySqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_SchemaQualifiedTableName___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1248,7 +1219,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_FlatQuerySqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_SchemaQualifiedTableName___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
