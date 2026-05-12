@@ -124,17 +124,17 @@ namespace Naos.SqlServer.Protocol.Validation
             {
                 SqlScriptValidationRuleEvaluatorBase ruleEvaluator;
 
-                if (rule is DisallowSchemasSqlScriptValidationRule disallowSchemasSqlScriptValidationRule)
+                if (rule is DisallowedSchemasSqlScriptValidationRule disallowedSchemasSqlScriptValidationRule)
                 {
-                    ruleEvaluator = new DisallowSchemasSqlScriptValidationRuleEvaluator(disallowSchemasSqlScriptValidationRule);
+                    ruleEvaluator = new DisallowedSchemasSqlScriptValidationRuleEvaluator(disallowedSchemasSqlScriptValidationRule);
                 }
                 else if (rule is DisallowSystemSchemasSqlScriptValidationRule disallowSystemSchemasSqlScriptValidationRule)
                 {
                     ruleEvaluator = new DisallowSystemSchemasSqlScriptValidationRuleEvaluator(disallowSystemSchemasSqlScriptValidationRule);
                 }
-                else if (rule is AllowOnlySchemasSqlScriptValidationRule allowOnlySchemasSqlScriptValidationRule)
+                else if (rule is SanctionedSchemasSqlScriptValidationRule sanctionedSchemasSqlScriptValidationRule)
                 {
-                    ruleEvaluator = new AllowOnlySchemasSqlScriptValidationRuleEvaluator(allowOnlySchemasSqlScriptValidationRule);
+                    ruleEvaluator = new SanctionedSchemasSqlScriptValidationRuleEvaluator(sanctionedSchemasSqlScriptValidationRule);
                 }
                 else if (rule is SingleStatementSqlScriptValidationRule singleStatementSqlScriptValidationRule)
                 {

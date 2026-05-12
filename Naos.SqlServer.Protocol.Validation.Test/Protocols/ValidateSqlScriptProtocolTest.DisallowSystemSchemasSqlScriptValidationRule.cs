@@ -598,8 +598,8 @@ namespace Naos.SqlServer.Protocol.Validation.Test
         public static void Execute___Should_return_no_violations___When_DisallowSystemSchemasSqlScriptValidationRule_has_not_been_violated()
         {
             // Arrange
-            // The DisallowSchemas scenarios reference only non-system schemas (my_schema, myschema2, mydb, dbo, …), none of which DisallowSystemSchemas flags.
-            var testScenariosWithExpected = DisallowSchemasSqlScriptValidationRuleTestScenariosWithExpected;
+            // The DisallowedSchemas scenarios reference only non-system schemas (my_schema, myschema2, mydb, dbo, …), none of which DisallowSystemSchemas flags.
+            var testScenariosWithExpected = DisallowedSchemasSqlScriptValidationRuleTestScenariosWithExpected;
 
             var rule = new DisallowSystemSchemasSqlScriptValidationRule();
 

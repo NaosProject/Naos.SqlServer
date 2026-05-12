@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DisallowSchemasSqlScriptValidationRule.cs" company="Naos Project">
+// <copyright file="DisallowedSchemasSqlScriptValidationRule.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,14 +12,14 @@ namespace Naos.SqlServer.Domain
     /// <summary>
     /// A rule that disallows explicit references to the specified schemas in a SQL script.
     /// </summary>
-    public partial class DisallowSchemasSqlScriptValidationRule : SqlScriptValidationRuleBase
+    public partial class DisallowedSchemasSqlScriptValidationRule : SqlScriptValidationRuleBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisallowSchemasSqlScriptValidationRule"/> class.
+        /// Initializes a new instance of the <see cref="DisallowedSchemasSqlScriptValidationRule"/> class.
         /// </summary>
         /// <param name="disallowedSchemas">The disallowed schemas.</param>
         /// <param name="id">OPTIONAL identifier.  DEFAULT is no identifier.</param>
-        public DisallowSchemasSqlScriptValidationRule(
+        public DisallowedSchemasSqlScriptValidationRule(
             IReadOnlyCollection<string> disallowedSchemas,
             string id = null)
             : base(id)

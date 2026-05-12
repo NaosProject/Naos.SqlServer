@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DisallowSchemasSqlScriptValidationRuleEvaluator.cs" company="Naos Project">
+// <copyright file="DisallowedSchemasSqlScriptValidationRuleEvaluator.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,18 +12,18 @@ namespace Naos.SqlServer.Protocol.Validation
     using Naos.SqlServer.Domain;
 
     /// <summary>
-    /// Evaluates a <see cref="DisallowSchemasSqlScriptValidationRule"/>.
+    /// Evaluates a <see cref="DisallowedSchemasSqlScriptValidationRule"/>.
     /// </summary>
-    public class DisallowSchemasSqlScriptValidationRuleEvaluator : SchemasUsedSqlScriptValidationRuleEvaluatorBase
+    public class DisallowedSchemasSqlScriptValidationRuleEvaluator : SchemasUsedSqlScriptValidationRuleEvaluatorBase
     {
         private readonly HashSet<string> disallowedSchemas;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisallowSchemasSqlScriptValidationRuleEvaluator"/> class.
+        /// Initializes a new instance of the <see cref="DisallowedSchemasSqlScriptValidationRuleEvaluator"/> class.
         /// </summary>
         /// <param name="rule">The rule to evaluate.</param>
-        public DisallowSchemasSqlScriptValidationRuleEvaluator(
-            DisallowSchemasSqlScriptValidationRule rule)
+        public DisallowedSchemasSqlScriptValidationRuleEvaluator(
+            DisallowedSchemasSqlScriptValidationRule rule)
             : base(rule)
         {
             this.disallowedSchemas = new HashSet<string>(rule.DisallowedSchemas, StringComparer.OrdinalIgnoreCase);

@@ -23,15 +23,15 @@ namespace Naos.SqlServer.Domain
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class DisallowSchemasSqlScriptValidationRule : IModel<DisallowSchemasSqlScriptValidationRule>
+    public partial class SanctionedSchemasSqlScriptValidationRule : IModel<SanctionedSchemasSqlScriptValidationRule>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="DisallowSchemasSqlScriptValidationRule"/> are equal.
+        /// Determines whether two objects of type <see cref="SanctionedSchemasSqlScriptValidationRule"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(DisallowSchemasSqlScriptValidationRule left, DisallowSchemasSqlScriptValidationRule right)
+        public static bool operator ==(SanctionedSchemasSqlScriptValidationRule left, SanctionedSchemasSqlScriptValidationRule right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -49,15 +49,15 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="DisallowSchemasSqlScriptValidationRule"/> are not equal.
+        /// Determines whether two objects of type <see cref="SanctionedSchemasSqlScriptValidationRule"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(DisallowSchemasSqlScriptValidationRule left, DisallowSchemasSqlScriptValidationRule right) => !(left == right);
+        public static bool operator !=(SanctionedSchemasSqlScriptValidationRule left, SanctionedSchemasSqlScriptValidationRule right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(DisallowSchemasSqlScriptValidationRule other)
+        public bool Equals(SanctionedSchemasSqlScriptValidationRule other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -70,22 +70,22 @@ namespace Naos.SqlServer.Domain
             }
 
             var result = this.Id.IsEqualTo(other.Id, StringComparer.Ordinal)
-                      && this.DisallowedSchemas.IsEqualTo(other.DisallowedSchemas);
+                      && this.SanctionedSchemas.IsEqualTo(other.SanctionedSchemas);
 
             return result;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as DisallowSchemasSqlScriptValidationRule);
+        public override bool Equals(object obj) => this == (obj as SanctionedSchemasSqlScriptValidationRule);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
             .Hash(this.Id)
-            .Hash(this.DisallowedSchemas)
+            .Hash(this.SanctionedSchemas)
             .Value;
 
         /// <inheritdoc />
-        public new DisallowSchemasSqlScriptValidationRule DeepClone() => (DisallowSchemasSqlScriptValidationRule)this.DeepCloneInternal();
+        public new SanctionedSchemasSqlScriptValidationRule DeepClone() => (SanctionedSchemasSqlScriptValidationRule)this.DeepCloneInternal();
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
@@ -107,18 +107,18 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public override SqlScriptValidationRuleBase DeepCloneWithId(string id)
         {
-            var result = new DisallowSchemasSqlScriptValidationRule(
-                                 this.DisallowedSchemas?.DeepClone(),
+            var result = new SanctionedSchemasSqlScriptValidationRule(
+                                 this.SanctionedSchemas?.DeepClone(),
                                  id);
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="DisallowedSchemas" />.
+        /// Deep clones this object with a new <see cref="SanctionedSchemas" />.
         /// </summary>
-        /// <param name="disallowedSchemas">The new <see cref="DisallowedSchemas" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="DisallowSchemasSqlScriptValidationRule" /> using the specified <paramref name="disallowedSchemas" /> for <see cref="DisallowedSchemas" /> and a deep clone of every other property.</returns>
+        /// <param name="sanctionedSchemas">The new <see cref="SanctionedSchemas" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="SanctionedSchemasSqlScriptValidationRule" /> using the specified <paramref name="sanctionedSchemas" /> for <see cref="SanctionedSchemas" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
@@ -136,10 +136,10 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public DisallowSchemasSqlScriptValidationRule DeepCloneWithDisallowedSchemas(IReadOnlyCollection<string> disallowedSchemas)
+        public SanctionedSchemasSqlScriptValidationRule DeepCloneWithSanctionedSchemas(IReadOnlyCollection<string> sanctionedSchemas)
         {
-            var result = new DisallowSchemasSqlScriptValidationRule(
-                                 disallowedSchemas,
+            var result = new SanctionedSchemasSqlScriptValidationRule(
+                                 sanctionedSchemas,
                                  this.Id?.DeepClone());
 
             return result;
@@ -149,8 +149,8 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         protected override SqlScriptValidationRuleBase DeepCloneInternal()
         {
-            var result = new DisallowSchemasSqlScriptValidationRule(
-                                 this.DisallowedSchemas?.DeepClone(),
+            var result = new SanctionedSchemasSqlScriptValidationRule(
+                                 this.SanctionedSchemas?.DeepClone(),
                                  this.Id?.DeepClone());
 
             return result;
@@ -160,7 +160,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"Naos.SqlServer.Domain.DisallowSchemasSqlScriptValidationRule: Id = {this.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, DisallowedSchemas = {this.DisallowedSchemas?.ToString() ?? "<null>"}.");
+            var result = Invariant($"Naos.SqlServer.Domain.SanctionedSchemasSqlScriptValidationRule: Id = {this.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, SanctionedSchemas = {this.SanctionedSchemas?.ToString() ?? "<null>"}.");
 
             return result;
         }
@@ -213,7 +213,7 @@ namespace Naos.SqlServer.Domain
                     return;
                 }
 
-                localValidationFailures = ValidatableExtensions.GetValidationFailures(this.DisallowedSchemas, options, propertyPathTracker, nameof(this.DisallowedSchemas));
+                localValidationFailures = ValidatableExtensions.GetValidationFailures(this.SanctionedSchemas, options, propertyPathTracker, nameof(this.SanctionedSchemas));
                 result.AddRange(localValidationFailures);
                 if (stopOnFirstObjectWithFailures && result.Any())
                 {

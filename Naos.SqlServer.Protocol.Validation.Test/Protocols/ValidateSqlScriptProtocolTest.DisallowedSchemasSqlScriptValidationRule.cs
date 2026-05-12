@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ValidateSqlScriptProtocolTest.DisallowSchemasSqlScriptValidationRule.cs" company="Naos Project">
+// <copyright file="ValidateSqlScriptProtocolTest.DisallowedSchemasSqlScriptValidationRule.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
 
     public static partial class ValidateSqlScriptProtocolTest
     {
-        private static readonly IReadOnlyList<TestScenariosWithExpected> DisallowSchemasSqlScriptValidationRuleTestScenariosWithExpected = new[]
+        private static readonly IReadOnlyList<TestScenariosWithExpected> DisallowedSchemasSqlScriptValidationRuleTestScenariosWithExpected = new[]
         {
             // simple SELECT, schema-qualified table
             new TestScenariosWithExpected
@@ -574,12 +574,12 @@ namespace Naos.SqlServer.Protocol.Validation.Test
         };
 
         [Fact]
-        public static void Execute___Should_return_violations___When_DisallowSchemasSqlScriptValidationRule_has_been_violated()
+        public static void Execute___Should_return_violations___When_DisallowedSchemasSqlScriptValidationRule_has_been_violated()
         {
             // Arrange
-            var testScenariosWithExpected = DisallowSchemasSqlScriptValidationRuleTestScenariosWithExpected;
+            var testScenariosWithExpected = DisallowedSchemasSqlScriptValidationRuleTestScenariosWithExpected;
 
-            var rule = new DisallowSchemasSqlScriptValidationRule(
+            var rule = new DisallowedSchemasSqlScriptValidationRule(
                 new[]
                 {
                     A.Dummy<string>(),
@@ -602,12 +602,12 @@ namespace Naos.SqlServer.Protocol.Validation.Test
         }
 
         [Fact]
-        public static void Execute___Should_return_no_violations___When_DisallowSchemasSqlScriptValidationRule_has_not_been_violated()
+        public static void Execute___Should_return_no_violations___When_DisallowedSchemasSqlScriptValidationRule_has_not_been_violated()
         {
             // Arrange
-            var testScenariosWithExpected = DisallowSchemasSqlScriptValidationRuleTestScenariosWithExpected;
+            var testScenariosWithExpected = DisallowedSchemasSqlScriptValidationRuleTestScenariosWithExpected;
 
-            var rule = new DisallowSchemasSqlScriptValidationRule(
+            var rule = new DisallowedSchemasSqlScriptValidationRule(
                 new[]
                 {
                     A.Dummy<string>(),

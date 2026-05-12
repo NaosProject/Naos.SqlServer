@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AllowOnlySchemasSqlScriptValidationRule.cs" company="Naos Project">
+// <copyright file="SanctionedSchemasSqlScriptValidationRule.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -30,18 +30,18 @@ namespace Naos.SqlServer.Domain
     /// <para>
     /// An empty <see cref="SanctionedSchemas"/> collection is not supported — the constructor
     /// rejects it.  If you want to forbid every named schema, use
-    /// <see cref="DisallowSchemasSqlScriptValidationRule"/> with the specific schemas you want
+    /// <see cref="DisallowedSchemasSqlScriptValidationRule"/> with the specific schemas you want
     /// to block, or write a custom rule.
     /// </para>
     /// </remarks>
-    public partial class AllowOnlySchemasSqlScriptValidationRule : SqlScriptValidationRuleBase
+    public partial class SanctionedSchemasSqlScriptValidationRule : SqlScriptValidationRuleBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AllowOnlySchemasSqlScriptValidationRule"/> class.
+        /// Initializes a new instance of the <see cref="SanctionedSchemasSqlScriptValidationRule"/> class.
         /// </summary>
         /// <param name="sanctionedSchemas">The sanctioned schemas.</param>
         /// <param name="id">OPTIONAL identifier.  DEFAULT is no identifier.</param>
-        public AllowOnlySchemasSqlScriptValidationRule(
+        public SanctionedSchemasSqlScriptValidationRule(
             IReadOnlyCollection<string> sanctionedSchemas,
             string id = null)
             : base(id)

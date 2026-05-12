@@ -281,15 +281,12 @@
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRuleTest.cs" />
-    <Compile Include="Models\Classes\Validation\Rules\AllowOnlySchemasSqlScriptValidationRuleTest.designer.cs">
-      <DependentUpon>AllowOnlySchemasSqlScriptValidationRuleTest.cs</DependentUpon>
+    <Compile Include="Models\Classes\Validation\Rules\DisallowedSchemasSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>DisallowedSchemasSqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemasSqlScriptValidationRuleTest.cs" />
     <Compile Include="ConsoleAbstraction.cs" />
-    <Compile Include="Models\Classes\Validation\Rules\DisallowSchemasSqlScriptValidationRuleTest.cs" />
-    <Compile Include="Models\Classes\Validation\Rules\DisallowSchemasSqlScriptValidationRuleTest.designer.cs">
-      <DependentUpon>DisallowSchemasSqlScriptValidationRuleTest.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\DisallowedSchemasSqlScriptValidationRuleTest.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRuleTest.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>DisallowSystemSchemasSqlScriptValidationRuleTest.cs</DependentUpon>
@@ -317,6 +314,9 @@
     </Compile>
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResultTest.designer.cs">
       <DependentUpon>StoredProcedureExecutionResultTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemasSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>SanctionedSchemasSqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Operations\GetOrAddIdentifiedSerializerRepresentationOpTest.cs" />
     <Compile Include="Operations\GetOrAddIdentifiedSerializerRepresentationOpTest.designer.cs">

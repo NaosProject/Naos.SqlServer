@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ValidateSqlScriptProtocolTest.AllowOnlySchemasSqlScriptValidationRule.cs" company="Naos Project">
+// <copyright file="ValidateSqlScriptProtocolTest.SanctionedSchemasSqlScriptValidationRule.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
         // The violations scenarios assume a rule sanctioning ["MY_SCHEMA", "myschema2"].
         // Within these scripts, "my_schema" and "myschema2" (case-insensitive) are sanctioned
         // negative controls and "dbo" / "sys" are the unsanctioned schemas that should fire.
-        private static readonly IReadOnlyList<TestScenariosWithExpected> AllowOnlySchemasSqlScriptValidationRuleTestScenariosWithExpected = new[]
+        private static readonly IReadOnlyList<TestScenariosWithExpected> SanctionedSchemasSqlScriptValidationRuleTestScenariosWithExpected = new[]
         {
             // simple SELECT, schema-qualified table
             new TestScenariosWithExpected
@@ -576,12 +576,12 @@ namespace Naos.SqlServer.Protocol.Validation.Test
         };
 
         [Fact]
-        public static void Execute___Should_return_violations___When_AllowOnlySchemasSqlScriptValidationRule_has_been_violated()
+        public static void Execute___Should_return_violations___When_SanctionedSchemasSqlScriptValidationRule_has_been_violated()
         {
             // Arrange
-            var testScenariosWithExpected = AllowOnlySchemasSqlScriptValidationRuleTestScenariosWithExpected;
+            var testScenariosWithExpected = SanctionedSchemasSqlScriptValidationRuleTestScenariosWithExpected;
 
-            var rule = new AllowOnlySchemasSqlScriptValidationRule(
+            var rule = new SanctionedSchemasSqlScriptValidationRule(
                 new[]
                 {
                     "MY_SCHEMA",
@@ -602,14 +602,14 @@ namespace Naos.SqlServer.Protocol.Validation.Test
         }
 
         [Fact]
-        public static void Execute___Should_return_no_violations___When_AllowOnlySchemasSqlScriptValidationRule_has_not_been_violated()
+        public static void Execute___Should_return_no_violations___When_SanctionedSchemasSqlScriptValidationRule_has_not_been_violated()
         {
-            // Arrange — reuse the DisallowSchemas scenarios; sanction every schema they reference
+            // Arrange — reuse the DisallowedSchemas scenarios; sanction every schema they reference
             // (my_schema / myschema2 / dbo).  Database-qualifier "mydb" in 3-part names is not
             // extracted as a schema, so we don't need to sanction it.
-            var testScenariosWithExpected = DisallowSchemasSqlScriptValidationRuleTestScenariosWithExpected;
+            var testScenariosWithExpected = DisallowedSchemasSqlScriptValidationRuleTestScenariosWithExpected;
 
-            var rule = new AllowOnlySchemasSqlScriptValidationRule(
+            var rule = new SanctionedSchemasSqlScriptValidationRule(
                 new[]
                 {
                     "MY_SCHEMA",

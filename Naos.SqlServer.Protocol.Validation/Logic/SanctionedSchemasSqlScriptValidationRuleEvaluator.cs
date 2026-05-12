@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AllowOnlySchemasSqlScriptValidationRuleEvaluator.cs" company="Naos Project">
+// <copyright file="SanctionedSchemasSqlScriptValidationRuleEvaluator.cs" company="Naos Project">
 //    Copyright (c) Naos Project 2019. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,18 +12,18 @@ namespace Naos.SqlServer.Protocol.Validation
     using Naos.SqlServer.Domain;
 
     /// <summary>
-    /// Evaluates a <see cref="AllowOnlySchemasSqlScriptValidationRule"/>.
+    /// Evaluates a <see cref="SanctionedSchemasSqlScriptValidationRule"/>.
     /// </summary>
-    public class AllowOnlySchemasSqlScriptValidationRuleEvaluator : SchemasUsedSqlScriptValidationRuleEvaluatorBase
+    public class SanctionedSchemasSqlScriptValidationRuleEvaluator : SchemasUsedSqlScriptValidationRuleEvaluatorBase
     {
         private readonly HashSet<string> sanctionedSchemas;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AllowOnlySchemasSqlScriptValidationRuleEvaluator"/> class.
+        /// Initializes a new instance of the <see cref="SanctionedSchemasSqlScriptValidationRuleEvaluator"/> class.
         /// </summary>
         /// <param name="rule">The rule to evaluate.</param>
-        public AllowOnlySchemasSqlScriptValidationRuleEvaluator(
-            AllowOnlySchemasSqlScriptValidationRule rule)
+        public SanctionedSchemasSqlScriptValidationRuleEvaluator(
+            SanctionedSchemasSqlScriptValidationRule rule)
             : base(rule)
         {
             this.sanctionedSchemas = new HashSet<string>(rule.SanctionedSchemas, StringComparer.OrdinalIgnoreCase);
