@@ -278,12 +278,12 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
     <Compile Include="ConsoleAbstraction.cs" />
-    <Compile Include="Models\Classes\Validation\DisallowSchemasSqlScriptValidationRuleTest.cs" />
-    <Compile Include="Models\Classes\Validation\DisallowSchemasSqlScriptValidationRuleTest.designer.cs">
+    <Compile Include="Models\Classes\Validation\Rules\DisallowSchemasSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowSchemasSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>DisallowSchemasSqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Classes\Validation\DisallowSystemSchemasSqlScriptValidationRuleTest.cs" />
-    <Compile Include="Models\Classes\Validation\DisallowSystemSchemasSqlScriptValidationRuleTest.designer.cs">
+    <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>DisallowSystemSchemasSqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Logic\XmlConversionToolTest.cs" />
