@@ -158,12 +158,16 @@
     <Compile Include="Models\Classes\Validation\ColumnFilterOperators.designer.cs">
       <DependentUpon>ColumnFilterOperators.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\BenchmarkingFilterValuesByColumnSqlScriptValidationRule.designer.cs">
+      <DependentUpon>BenchmarkingFilterValuesByColumnSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule.designer.cs">
       <DependentUpon>ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Validation\Rules\ConstrainedFilterOperatorsByColumnSqlScriptValidationRule.designer.cs">
       <DependentUpon>ConstrainedFilterOperatorsByColumnSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\BenchmarkingFilterValuesByColumnSqlScriptValidationRule.cs" />
     <Compile Include="Models\Enums\Validation\FilterOperator.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.designer.cs">

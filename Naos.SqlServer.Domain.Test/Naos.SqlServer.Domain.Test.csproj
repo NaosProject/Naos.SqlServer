@@ -277,6 +277,10 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\BenchmarkingFilterValuesByColumnSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\BenchmarkingFilterValuesByColumnSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>BenchmarkingFilterValuesByColumnSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleTest.cs" />
     <Compile Include="Models\Classes\Validation\Rules\ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleTest.cs</DependentUpon>

@@ -53,6 +53,14 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                 A.Dummy<SchemaQualifiedColumnName>(),
+                                 A.Dummy<IReadOnlyCollection<string>>(),
+                                 A.Dummy<int>(),
+                                 A.Dummy<bool>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new BigIntSqlDataTypeRepresentation());
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
@@ -328,6 +336,7 @@ namespace Naos.SqlServer.Domain.Test
                 {
                     var availableTypes = new[]
                     {
+                        typeof(BenchmarkingFilterValuesByColumnSqlScriptValidationRule),
                         typeof(ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule),
                         typeof(ConstrainedFilterOperatorsByColumnSqlScriptValidationRule),
                         typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule),

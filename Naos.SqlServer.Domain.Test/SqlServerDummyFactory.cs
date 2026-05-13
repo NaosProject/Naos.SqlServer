@@ -260,6 +260,14 @@ namespace Naos.SqlServer.Domain.Test
                     A.Dummy<ZeroOrPositiveInteger>(),
                     A.Dummy<string>()));
 
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                    A.Dummy<SchemaQualifiedColumnName>(),
+                    Some.ReadOnlyDummies<string>().ToList(),
+                    A.Dummy<PositiveInteger>(),
+                    A.Dummy<bool>(),
+                    A.Dummy<string>()));
+
             // ------------------------ Operations ---------------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateStreamUserOp(

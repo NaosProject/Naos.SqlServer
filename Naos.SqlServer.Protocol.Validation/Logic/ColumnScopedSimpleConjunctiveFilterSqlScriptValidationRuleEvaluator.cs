@@ -17,8 +17,6 @@ namespace Naos.SqlServer.Protocol.Validation
     /// </summary>
     public class ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleEvaluator : FilterPredicateSqlScriptValidationRuleEvaluatorBase
     {
-        private readonly ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule rule;
-
         // Index of configured columns by column name (case-insensitive).  Used both to
         // narrow full-identity matches in HandleResolvedFilterPredicate (via the values),
         // and to detect bare-name matches in HandleUnresolvedBareColumnReference (via the
@@ -40,8 +38,6 @@ namespace Naos.SqlServer.Protocol.Validation
             ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule rule)
             : base(rule)
         {
-            this.rule = rule;
-
             this.columnsByName = new Dictionary<string, List<SchemaQualifiedColumnName>>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var column in rule.Columns)

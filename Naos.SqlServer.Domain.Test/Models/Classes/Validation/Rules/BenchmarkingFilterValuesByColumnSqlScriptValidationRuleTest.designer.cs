@@ -34,41 +34,237 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class ReadOnlySelectSqlScriptValidationRuleTest
+    public static partial class BenchmarkingFilterValuesByColumnSqlScriptValidationRuleTest
     {
-        private static readonly StringRepresentationTestScenarios<ReadOnlySelectSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<ReadOnlySelectSqlScriptValidationRule>()
+        private static readonly StringRepresentationTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<ReadOnlySelectSqlScriptValidationRule>
+                new StringRepresentationTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<ReadOnlySelectSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedStringRepresentation<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ReadOnlySelectSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.BenchmarkingFilterValuesByColumnSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Column = {systemUnderTest.Column?.ToString() ?? "<null>"}, OwnedValues = {systemUnderTest.OwnedValues?.ToString() ?? "<null>"}, MinimumDistinctPeerValues = {systemUnderTest.MinimumDistinctPeerValues.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, RequireFilterOnConstrainedColumn = {systemUnderTest.RequireFilterOnConstrainedColumn.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<ReadOnlySelectSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<ReadOnlySelectSqlScriptValidationRule>();
-
-        private static readonly ConstructorPropertyAssignmentTestScenarios<ReadOnlySelectSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<ReadOnlySelectSqlScriptValidationRule>()
+        private static readonly ConstructorArgumentValidationTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<ReadOnlySelectSqlScriptValidationRule>
+                new ConstructorArgumentValidationTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'column' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                             null,
+                                             referenceObject.OwnedValues,
+                                             referenceObject.MinimumDistinctPeerValues,
+                                             referenceObject.RequireFilterOnConstrainedColumn,
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "column", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'ownedValues' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                             referenceObject.Column,
+                                             null,
+                                             referenceObject.MinimumDistinctPeerValues,
+                                             referenceObject.RequireFilterOnConstrainedColumn,
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "ownedValues", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'ownedValues' is an empty enumerable scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                             referenceObject.Column,
+                                             new List<string>(),
+                                             referenceObject.MinimumDistinctPeerValues,
+                                             referenceObject.RequireFilterOnConstrainedColumn,
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "ownedValues", "is an empty enumerable", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'ownedValues' contains a null element scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                             referenceObject.Column,
+                                             new string[0].Concat(referenceObject.OwnedValues).Concat(new string[] { null }).Concat(referenceObject.OwnedValues).ToList(),
+                                             referenceObject.MinimumDistinctPeerValues,
+                                             referenceObject.RequireFilterOnConstrainedColumn,
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "ownedValues", "contains at least one null element", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'ownedValues' contains a white space element scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                             referenceObject.Column,
+                                             new string[0].Concat(referenceObject.OwnedValues).Concat(new string[] { "  \r\n  " }).Concat(referenceObject.OwnedValues).ToList(),
+                                             referenceObject.MinimumDistinctPeerValues,
+                                             referenceObject.RequireFilterOnConstrainedColumn,
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "ownedValues", "contains an element that is white space", },
+                });
+
+        private static readonly ConstructorPropertyAssignmentTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>()
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "Column should return same 'column' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                                      referenceObject.Column,
+                                                      referenceObject.OwnedValues,
+                                                      referenceObject.MinimumDistinctPeerValues,
+                                                      referenceObject.RequireFilterOnConstrainedColumn,
+                                                      referenceObject.Id),
+                            ExpectedPropertyValue = referenceObject.Column,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "Column",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "OwnedValues should return same 'ownedValues' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                                      referenceObject.Column,
+                                                      referenceObject.OwnedValues,
+                                                      referenceObject.MinimumDistinctPeerValues,
+                                                      referenceObject.RequireFilterOnConstrainedColumn,
+                                                      referenceObject.Id),
+                            ExpectedPropertyValue = referenceObject.OwnedValues,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "OwnedValues",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "MinimumDistinctPeerValues should return same 'minimumDistinctPeerValues' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                                      referenceObject.Column,
+                                                      referenceObject.OwnedValues,
+                                                      referenceObject.MinimumDistinctPeerValues,
+                                                      referenceObject.RequireFilterOnConstrainedColumn,
+                                                      referenceObject.Id),
+                            ExpectedPropertyValue = referenceObject.MinimumDistinctPeerValues,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "MinimumDistinctPeerValues",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "RequireFilterOnConstrainedColumn should return same 'requireFilterOnConstrainedColumn' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                                      referenceObject.Column,
+                                                      referenceObject.OwnedValues,
+                                                      referenceObject.MinimumDistinctPeerValues,
+                                                      referenceObject.RequireFilterOnConstrainedColumn,
+                                                      referenceObject.Id),
+                            ExpectedPropertyValue = referenceObject.RequireFilterOnConstrainedColumn,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "RequireFilterOnConstrainedColumn",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
                 {
                     Name = "Id should return same 'id' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<ReadOnlySelectSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedPropertyValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
                         {
-                            SystemUnderTest = new ReadOnlySelectSqlScriptValidationRule(
+                            SystemUnderTest = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                                      referenceObject.Column,
+                                                      referenceObject.OwnedValues,
+                                                      referenceObject.MinimumDistinctPeerValues,
+                                                      referenceObject.RequireFilterOnConstrainedColumn,
                                                       referenceObject.Id),
                             ExpectedPropertyValue = referenceObject.Id,
                         };
@@ -78,19 +274,19 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "Id",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<ReadOnlySelectSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ReadOnlySelectSqlScriptValidationRule>()
+        private static readonly DeepCloneWithTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<ReadOnlySelectSqlScriptValidationRule>
+                new DeepCloneWithTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
                 {
                     Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
                     WithPropertyName = "Id",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
-                        var referenceObject = A.Dummy<ReadOnlySelectSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<ReadOnlySelectSqlScriptValidationRule>
+                        var result = new SystemUnderTestDeepCloneWithValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.Id,
@@ -98,25 +294,137 @@ namespace Naos.SqlServer.Domain.Test
 
                         return result;
                     },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "DeepCloneWithColumn should deep clone object and replace Column with the provided column",
+                    WithPropertyName = "Column",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Column.IsEqualTo(_.Column));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.Column,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "DeepCloneWithOwnedValues should deep clone object and replace OwnedValues with the provided ownedValues",
+                    WithPropertyName = "OwnedValues",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.OwnedValues.IsEqualTo(_.OwnedValues));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.OwnedValues,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "DeepCloneWithMinimumDistinctPeerValues should deep clone object and replace MinimumDistinctPeerValues with the provided minimumDistinctPeerValues",
+                    WithPropertyName = "MinimumDistinctPeerValues",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.MinimumDistinctPeerValues.IsEqualTo(_.MinimumDistinctPeerValues));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.MinimumDistinctPeerValues,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                {
+                    Name = "DeepCloneWithRequireFilterOnConstrainedColumn should deep clone object and replace RequireFilterOnConstrainedColumn with the provided requireFilterOnConstrainedColumn",
+                    WithPropertyName = "RequireFilterOnConstrainedColumn",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
+
+                        var referenceObject = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.RequireFilterOnConstrainedColumn.IsEqualTo(_.RequireFilterOnConstrainedColumn));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.RequireFilterOnConstrainedColumn,
+                        };
+
+                        return result;
+                    },
                 });
 
-        private static readonly ReadOnlySelectSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+        private static readonly BenchmarkingFilterValuesByColumnSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
-        private static readonly EquatableTestScenarios<ReadOnlySelectSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<ReadOnlySelectSqlScriptValidationRule>()
+        private static readonly EquatableTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>()
             .AddScenario(() =>
-                new EquatableTestScenario<ReadOnlySelectSqlScriptValidationRule>
+                new EquatableTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new ReadOnlySelectSqlScriptValidationRule[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule[]
                     {
-                        new ReadOnlySelectSqlScriptValidationRule(
+                        new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.Column,
+                                ReferenceObjectForEquatableTestScenarios.OwnedValues,
+                                ReferenceObjectForEquatableTestScenarios.MinimumDistinctPeerValues,
+                                ReferenceObjectForEquatableTestScenarios.RequireFilterOnConstrainedColumn,
                                 ReferenceObjectForEquatableTestScenarios.Id),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new ReadOnlySelectSqlScriptValidationRule[]
+                    ObjectsThatAreNotEqualToReferenceObject = new BenchmarkingFilterValuesByColumnSqlScriptValidationRule[]
                     {
-                        new ReadOnlySelectSqlScriptValidationRule(
-                                A.Dummy<ReadOnlySelectSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.Column,
+                                ReferenceObjectForEquatableTestScenarios.OwnedValues,
+                                ReferenceObjectForEquatableTestScenarios.MinimumDistinctPeerValues,
+                                ReferenceObjectForEquatableTestScenarios.RequireFilterOnConstrainedColumn,
+                                A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().Whose(_ => !_.Column.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Column)).Column,
+                                ReferenceObjectForEquatableTestScenarios.OwnedValues,
+                                ReferenceObjectForEquatableTestScenarios.MinimumDistinctPeerValues,
+                                ReferenceObjectForEquatableTestScenarios.RequireFilterOnConstrainedColumn,
+                                ReferenceObjectForEquatableTestScenarios.Id),
+                        new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.Column,
+                                A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().Whose(_ => !_.OwnedValues.IsEqualTo(ReferenceObjectForEquatableTestScenarios.OwnedValues)).OwnedValues,
+                                ReferenceObjectForEquatableTestScenarios.MinimumDistinctPeerValues,
+                                ReferenceObjectForEquatableTestScenarios.RequireFilterOnConstrainedColumn,
+                                ReferenceObjectForEquatableTestScenarios.Id),
+                        new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.Column,
+                                ReferenceObjectForEquatableTestScenarios.OwnedValues,
+                                A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().Whose(_ => !_.MinimumDistinctPeerValues.IsEqualTo(ReferenceObjectForEquatableTestScenarios.MinimumDistinctPeerValues)).MinimumDistinctPeerValues,
+                                ReferenceObjectForEquatableTestScenarios.RequireFilterOnConstrainedColumn,
+                                ReferenceObjectForEquatableTestScenarios.Id),
+                        new BenchmarkingFilterValuesByColumnSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.Column,
+                                ReferenceObjectForEquatableTestScenarios.OwnedValues,
+                                ReferenceObjectForEquatableTestScenarios.MinimumDistinctPeerValues,
+                                A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>().Whose(_ => !_.RequireFilterOnConstrainedColumn.IsEqualTo(ReferenceObjectForEquatableTestScenarios.RequireFilterOnConstrainedColumn)).RequireFilterOnConstrainedColumn,
+                                ReferenceObjectForEquatableTestScenarios.Id),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -125,13 +433,13 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
-                        A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>(),
                         A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>(),
                         A.Dummy<ConstrainedFilterOperatorsByColumnSqlScriptValidationRule>(),
                         A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
                         A.Dummy<DisallowedSchemasSqlScriptValidationRule>(),
                         A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
                         A.Dummy<FlatQuerySqlScriptValidationRule>(),
+                        A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
                         A.Dummy<SanctionedSchemaQualifiedTablesSqlScriptValidationRule>(),
                         A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
                         A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>(),
@@ -141,12 +449,12 @@ namespace Naos.SqlServer.Domain.Test
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<ReadOnlySelectSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<ReadOnlySelectSqlScriptValidationRule>()
+        private static readonly ValidModelTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ValidModelTestScenario<ReadOnlySelectSqlScriptValidationRule>
+                new ValidModelTestScenario<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>
                 {
-                    Name = "a dummy ReadOnlySelectSqlScriptValidationRule should be valid",
-                    SystemUnderTest = A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
+                    Name = "a dummy BenchmarkingFilterValuesByColumnSqlScriptValidationRule should be valid",
+                    SystemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -167,12 +475,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void ReadOnlySelectSqlScriptValidationRule___Should_implement_IModel_of_ReadOnlySelectSqlScriptValidationRule___When_reflecting()
+            public static void BenchmarkingFilterValuesByColumnSqlScriptValidationRule___Should_implement_IModel_of_BenchmarkingFilterValuesByColumnSqlScriptValidationRule___When_reflecting()
             {
                 // Arrange
-                var type = typeof(ReadOnlySelectSqlScriptValidationRule);
+                var type = typeof(BenchmarkingFilterValuesByColumnSqlScriptValidationRule);
 
-                var expectedModelMethods = typeof(IModel<ReadOnlySelectSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -182,7 +490,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<ReadOnlySelectSqlScriptValidationRule>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -200,10 +508,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void ReadOnlySelectSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void BenchmarkingFilterValuesByColumnSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(ReadOnlySelectSqlScriptValidationRule);
+                var type = typeof(BenchmarkingFilterValuesByColumnSqlScriptValidationRule);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -383,10 +691,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
                 // Act
-                var actual = (ReadOnlySelectSqlScriptValidationRule)systemUnderTest.Clone();
+                var actual = (BenchmarkingFilterValuesByColumnSqlScriptValidationRule)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -410,7 +718,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -418,6 +726,30 @@ namespace Naos.SqlServer.Domain.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
+
+                if (systemUnderTest.Column == null)
+                {
+                    actual.Column.AsTest().Must().BeNull();
+                }
+                else if (!actual.Column.GetType().IsValueType)
+                {
+                    // When the declared type is a reference type, we still have to check the runtime type.
+                    // The object could be a boxed value type, which will fail this asseration because
+                    // a deep clone of a value type object is the same object.
+                    actual.Column.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Column);
+                }
+
+                if (systemUnderTest.OwnedValues == null)
+                {
+                    actual.OwnedValues.AsTest().Must().BeNull();
+                }
+                else if (!actual.OwnedValues.GetType().IsValueType)
+                {
+                    // When the declared type is a reference type, we still have to check the runtime type.
+                    // The object could be a boxed value type, which will fail this asseration because
+                    // a deep clone of a value type object is the same object.
+                    actual.OwnedValues.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.OwnedValues);
+                }
             }
 
             [Fact]
@@ -436,7 +768,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Id" };
+                var propertyNames = new string[] { "Id", "Column", "OwnedValues", "MinimumDistinctPeerValues", "RequireFilterOnConstrainedColumn" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -449,12 +781,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (ReadOnlySelectSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (BenchmarkingFilterValuesByColumnSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(ReadOnlySelectSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(BenchmarkingFilterValuesByColumnSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -516,7 +848,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                var expected = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -545,7 +877,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                var expected = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -574,7 +906,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                var expected = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -603,7 +935,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<ReadOnlySelectSqlScriptValidationRule>();
+                var expected = A.Dummy<BenchmarkingFilterValuesByColumnSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -637,8 +969,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                ReadOnlySelectSqlScriptValidationRule systemUnderTest1 = null;
-                ReadOnlySelectSqlScriptValidationRule systemUnderTest2 = null;
+                BenchmarkingFilterValuesByColumnSqlScriptValidationRule systemUnderTest1 = null;
+                BenchmarkingFilterValuesByColumnSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -668,7 +1000,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ReadOnlySelectSqlScriptValidationRule systemUnderTest = null;
+                    BenchmarkingFilterValuesByColumnSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -817,8 +1149,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                ReadOnlySelectSqlScriptValidationRule systemUnderTest1 = null;
-                ReadOnlySelectSqlScriptValidationRule systemUnderTest2 = null;
+                BenchmarkingFilterValuesByColumnSqlScriptValidationRule systemUnderTest1 = null;
+                BenchmarkingFilterValuesByColumnSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -848,7 +1180,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ReadOnlySelectSqlScriptValidationRule systemUnderTest = null;
+                    BenchmarkingFilterValuesByColumnSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1137,14 +1469,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReadOnlySelectSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_BenchmarkingFilterValuesByColumnSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    ReadOnlySelectSqlScriptValidationRule systemUnderTest = null;
+                    BenchmarkingFilterValuesByColumnSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1168,7 +1500,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReadOnlySelectSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_BenchmarkingFilterValuesByColumnSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1196,7 +1528,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReadOnlySelectSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_BenchmarkingFilterValuesByColumnSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1224,7 +1556,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReadOnlySelectSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_BenchmarkingFilterValuesByColumnSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1252,7 +1584,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_ReadOnlySelectSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_BenchmarkingFilterValuesByColumnSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

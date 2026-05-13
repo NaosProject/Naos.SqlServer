@@ -8,9 +8,11 @@ namespace Naos.SqlServer.Protocol.Validation
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using Microsoft.SqlServer.TransactSql.ScriptDom;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
@@ -114,6 +116,7 @@ namespace Naos.SqlServer.Protocol.Validation
             return result;
         }
 
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = NaosSuppressBecause.CA1506_AvoidExcessiveClassCoupling_DisagreeWithAssessment)]
         private static IReadOnlyList<SqlScriptValidationRuleViolation> EvaluateRules(
             TSqlFragment root,
             IReadOnlyList<SqlScriptValidationRuleBase> rules)
@@ -175,6 +178,10 @@ namespace Naos.SqlServer.Protocol.Validation
                 else if (rule is ConstrainedFilterOperatorsByColumnSqlScriptValidationRule constrainedFilterOperatorsByColumnSqlScriptValidationRule)
                 {
                     ruleEvaluator = new ConstrainedFilterOperatorsByColumnSqlScriptValidationRuleEvaluator(constrainedFilterOperatorsByColumnSqlScriptValidationRule);
+                }
+                else if (rule is BenchmarkingFilterValuesByColumnSqlScriptValidationRule benchmarkingFilterValuesByColumnSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new BenchmarkingFilterValuesByColumnSqlScriptValidationRuleEvaluator(benchmarkingFilterValuesByColumnSqlScriptValidationRule);
                 }
                 else
                 {
