@@ -10,7 +10,6 @@ namespace Naos.SqlServer.Protocol.Validation
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Microsoft.SqlServer.TransactSql.ScriptDom;
-    using Naos.CodeAnalysis.Recipes;
     using Naos.SqlServer.Domain;
     using OBeautifulCode.Assertion.Recipes;
 

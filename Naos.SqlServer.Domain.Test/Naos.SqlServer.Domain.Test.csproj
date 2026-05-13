@@ -451,6 +451,10 @@
     <Compile Include="Models\Classes\Validation\Rules\SingleSchemaSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>SingleSchemaSqlScriptValidationRuleTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SimpleConjunctiveFilterSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SimpleConjunctiveFilterSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>SimpleConjunctiveFilterSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlServerDummyFactory.cs" />
     <Compile Include="SqlServerDummyFactory.designer.cs">
       <DependentUpon>SqlServerDummyFactory.cs</DependentUpon>

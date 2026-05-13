@@ -34,41 +34,41 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class SingleSchemaSqlScriptValidationRuleTest
+    public static partial class SimpleConjunctiveFilterSqlScriptValidationRuleTest
     {
-        private static readonly StringRepresentationTestScenarios<SingleSchemaSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SingleSchemaSqlScriptValidationRule>()
+        private static readonly StringRepresentationTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<SingleSchemaSqlScriptValidationRule>
+                new StringRepresentationTestScenario<SimpleConjunctiveFilterSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<SingleSchemaSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedStringRepresentation<SimpleConjunctiveFilterSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SingleSchemaSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SimpleConjunctiveFilterSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<SingleSchemaSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<SingleSchemaSqlScriptValidationRule>();
+        private static readonly ConstructorArgumentValidationTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
-        private static readonly ConstructorPropertyAssignmentTestScenarios<SingleSchemaSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<SingleSchemaSqlScriptValidationRule>()
+        private static readonly ConstructorPropertyAssignmentTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<SingleSchemaSqlScriptValidationRule>
+                new ConstructorPropertyAssignmentTestScenario<SimpleConjunctiveFilterSqlScriptValidationRule>
                 {
                     Name = "Id should return same 'id' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                        var referenceObject = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<SingleSchemaSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedPropertyValue<SimpleConjunctiveFilterSqlScriptValidationRule>
                         {
-                            SystemUnderTest = new SingleSchemaSqlScriptValidationRule(
+                            SystemUnderTest = new SimpleConjunctiveFilterSqlScriptValidationRule(
                                                       referenceObject.Id),
                             ExpectedPropertyValue = referenceObject.Id,
                         };
@@ -78,19 +78,19 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "Id",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<SingleSchemaSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SingleSchemaSqlScriptValidationRule>()
+        private static readonly DeepCloneWithTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<SingleSchemaSqlScriptValidationRule>
+                new DeepCloneWithTestScenario<SimpleConjunctiveFilterSqlScriptValidationRule>
                 {
                     Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
                     WithPropertyName = "Id",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
-                        var referenceObject = A.Dummy<SingleSchemaSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
+                        var referenceObject = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<SingleSchemaSqlScriptValidationRule>
+                        var result = new SystemUnderTestDeepCloneWithValue<SimpleConjunctiveFilterSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.Id,
@@ -100,23 +100,23 @@ namespace Naos.SqlServer.Domain.Test
                     },
                 });
 
-        private static readonly SingleSchemaSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+        private static readonly SimpleConjunctiveFilterSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
-        private static readonly EquatableTestScenarios<SingleSchemaSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<SingleSchemaSqlScriptValidationRule>()
+        private static readonly EquatableTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new EquatableTestScenario<SingleSchemaSqlScriptValidationRule>
+                new EquatableTestScenario<SimpleConjunctiveFilterSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SingleSchemaSqlScriptValidationRule[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SimpleConjunctiveFilterSqlScriptValidationRule[]
                     {
-                        new SingleSchemaSqlScriptValidationRule(
+                        new SimpleConjunctiveFilterSqlScriptValidationRule(
                                 ReferenceObjectForEquatableTestScenarios.Id),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new SingleSchemaSqlScriptValidationRule[]
+                    ObjectsThatAreNotEqualToReferenceObject = new SimpleConjunctiveFilterSqlScriptValidationRule[]
                     {
-                        new SingleSchemaSqlScriptValidationRule(
-                                A.Dummy<SingleSchemaSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new SimpleConjunctiveFilterSqlScriptValidationRule(
+                                A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -125,25 +125,28 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
+                        A.Dummy<AuthorizedFilterValuesByColumnSqlScriptValidationRule>(),
+                        A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>(),
                         A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
                         A.Dummy<DisallowedSchemasSqlScriptValidationRule>(),
                         A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
                         A.Dummy<FlatQuerySqlScriptValidationRule>(),
                         A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
+                        A.Dummy<SanctionedFilterOperatorsByColumnSqlScriptValidationRule>(),
                         A.Dummy<SanctionedSchemaQualifiedTablesSqlScriptValidationRule>(),
                         A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
                         A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>(),
-                        A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>(),
+                        A.Dummy<SingleSchemaSqlScriptValidationRule>(),
                         A.Dummy<SingleStatementSqlScriptValidationRule>(),
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<SingleSchemaSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<SingleSchemaSqlScriptValidationRule>()
+        private static readonly ValidModelTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<SimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ValidModelTestScenario<SingleSchemaSqlScriptValidationRule>
+                new ValidModelTestScenario<SimpleConjunctiveFilterSqlScriptValidationRule>
                 {
-                    Name = "a dummy SingleSchemaSqlScriptValidationRule should be valid",
-                    SystemUnderTest = A.Dummy<SingleSchemaSqlScriptValidationRule>(),
+                    Name = "a dummy SimpleConjunctiveFilterSqlScriptValidationRule should be valid",
+                    SystemUnderTest = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -164,12 +167,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SingleSchemaSqlScriptValidationRule___Should_implement_IModel_of_SingleSchemaSqlScriptValidationRule___When_reflecting()
+            public static void SimpleConjunctiveFilterSqlScriptValidationRule___Should_implement_IModel_of_SimpleConjunctiveFilterSqlScriptValidationRule___When_reflecting()
             {
                 // Arrange
-                var type = typeof(SingleSchemaSqlScriptValidationRule);
+                var type = typeof(SimpleConjunctiveFilterSqlScriptValidationRule);
 
-                var expectedModelMethods = typeof(IModel<SingleSchemaSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<SimpleConjunctiveFilterSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -179,7 +182,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SingleSchemaSqlScriptValidationRule>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SimpleConjunctiveFilterSqlScriptValidationRule>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -197,10 +200,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void SingleSchemaSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void SimpleConjunctiveFilterSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(SingleSchemaSqlScriptValidationRule);
+                var type = typeof(SimpleConjunctiveFilterSqlScriptValidationRule);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -380,10 +383,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 // Act
-                var actual = (SingleSchemaSqlScriptValidationRule)systemUnderTest.Clone();
+                var actual = (SimpleConjunctiveFilterSqlScriptValidationRule)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -407,7 +410,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -446,12 +449,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (SingleSchemaSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (SimpleConjunctiveFilterSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(SingleSchemaSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(SimpleConjunctiveFilterSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -513,7 +516,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                var expected = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -542,7 +545,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                var expected = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -571,7 +574,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                var expected = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -600,7 +603,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<SingleSchemaSqlScriptValidationRule>();
+                var expected = A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -634,8 +637,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SingleSchemaSqlScriptValidationRule systemUnderTest1 = null;
-                SingleSchemaSqlScriptValidationRule systemUnderTest2 = null;
+                SimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest1 = null;
+                SimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -665,7 +668,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SingleSchemaSqlScriptValidationRule systemUnderTest = null;
+                    SimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -814,8 +817,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                SingleSchemaSqlScriptValidationRule systemUnderTest1 = null;
-                SingleSchemaSqlScriptValidationRule systemUnderTest2 = null;
+                SimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest1 = null;
+                SimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -845,7 +848,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SingleSchemaSqlScriptValidationRule systemUnderTest = null;
+                    SimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1134,14 +1137,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleSchemaSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_SimpleConjunctiveFilterSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SingleSchemaSqlScriptValidationRule systemUnderTest = null;
+                    SimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1165,7 +1168,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleSchemaSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_SimpleConjunctiveFilterSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1193,7 +1196,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleSchemaSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_SimpleConjunctiveFilterSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1221,7 +1224,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleSchemaSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_SimpleConjunctiveFilterSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1249,7 +1252,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SingleSchemaSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_SimpleConjunctiveFilterSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

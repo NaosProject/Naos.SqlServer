@@ -251,6 +251,10 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SimpleConjunctiveFilterSqlScriptValidationRule(
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SingleSchemaSqlScriptValidationRule(
                                  A.Dummy<string>()));
 
@@ -311,6 +315,7 @@ namespace Naos.SqlServer.Domain.Test
                         typeof(SanctionedSchemaQualifiedTablesSqlScriptValidationRule),
                         typeof(SanctionedSchemasSqlScriptValidationRule),
                         typeof(SchemaQualifiedTableReferencesSqlScriptValidationRule),
+                        typeof(SimpleConjunctiveFilterSqlScriptValidationRule),
                         typeof(SingleSchemaSqlScriptValidationRule),
                         typeof(SingleStatementSqlScriptValidationRule)
                     };

@@ -164,6 +164,10 @@ namespace Naos.SqlServer.Protocol.Validation
                 {
                     ruleEvaluator = new FlatQuerySqlScriptValidationRuleEvaluator(flatQuerySqlScriptValidationRule);
                 }
+                else if (rule is SimpleConjunctiveFilterSqlScriptValidationRule simpleConjunctiveFilterSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new SimpleConjunctiveFilterSqlScriptValidationRuleEvaluator(simpleConjunctiveFilterSqlScriptValidationRule);
+                }
                 else
                 {
                     throw new NotSupportedException(Invariant($"This type of {nameof(SqlScriptValidationRuleBase)} is not supported: {rule.GetType().ToStringReadable()}."));

@@ -246,6 +246,7 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<SanctionedSchemaQualifiedTablesSqlScriptValidationRule>(),
                         A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
                         A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>(),
+                        A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>(),
                         A.Dummy<SingleSchemaSqlScriptValidationRule>(),
                         A.Dummy<SingleStatementSqlScriptValidationRule>(),
                     },
