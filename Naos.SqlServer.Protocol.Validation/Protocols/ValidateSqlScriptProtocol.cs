@@ -168,6 +168,14 @@ namespace Naos.SqlServer.Protocol.Validation
                 {
                     ruleEvaluator = new SimpleConjunctiveFilterSqlScriptValidationRuleEvaluator(simpleConjunctiveFilterSqlScriptValidationRule);
                 }
+                else if (rule is ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule columnScopedSimpleConjunctiveFilterSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleEvaluator(columnScopedSimpleConjunctiveFilterSqlScriptValidationRule);
+                }
+                else if (rule is ConstrainedFilterOperatorsByColumnSqlScriptValidationRule constrainedFilterOperatorsByColumnSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new ConstrainedFilterOperatorsByColumnSqlScriptValidationRuleEvaluator(constrainedFilterOperatorsByColumnSqlScriptValidationRule);
+                }
                 else
                 {
                     throw new NotSupportedException(Invariant($"This type of {nameof(SqlScriptValidationRuleBase)} is not supported: {rule.GetType().ToStringReadable()}."));

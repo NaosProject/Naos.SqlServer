@@ -125,6 +125,8 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
+                        A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>(),
+                        A.Dummy<ConstrainedFilterOperatorsByColumnSqlScriptValidationRule>(),
                         A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
                         A.Dummy<DisallowedSchemasSqlScriptValidationRule>(),
                         A.Dummy<FlatQuerySqlScriptValidationRule>(),

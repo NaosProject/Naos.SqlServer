@@ -48,7 +48,7 @@ namespace Naos.SqlServer.Domain
     /// </para>
     /// <para>
     /// Designed as a precondition for the filter-introspection rules
-    /// <c>SanctionedFilterOperatorsByColumnSqlScriptValidationRule</c> and
+    /// <c>ConstrainedFilterOperatorsByColumnSqlScriptValidationRule</c> and
     /// <c>AuthorizedFilterValuesByColumnSqlScriptValidationRule</c>.  Apply this rule
     /// alongside them when the script's filter shape must be statically analyzable.
     /// </para>

@@ -127,6 +127,7 @@
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetHandlingStatuses.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetLatestStringSerializedObject.cs" />
     <Compile Include="Logic\StreamSchema\Sprocs\StreamSchema.Sprocs.GetInternalRecordIds.cs" />
+    <Compile Include="Logic\Extensions\Validation\FilterOperatorExtensions.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\VersionSqlDataTypeRepresentation.cs" />
     <Compile Include="Models\Classes\DataTypeRepresentation\Concrete\VersionSqlDataTypeRepresentation.designer.cs">
       <DependentUpon>VersionSqlDataTypeRepresentation.cs</DependentUpon>
@@ -154,6 +155,16 @@
     <Compile Include="Models\Classes\Stream\StoredProcedureExecutionResult.designer.cs">
       <DependentUpon>StoredProcedureExecutionResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\ColumnFilterOperators.designer.cs">
+      <DependentUpon>ColumnFilterOperators.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule.designer.cs">
+      <DependentUpon>ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\ConstrainedFilterOperatorsByColumnSqlScriptValidationRule.designer.cs">
+      <DependentUpon>ConstrainedFilterOperatorsByColumnSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Enums\Validation\FilterOperator.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.designer.cs">
       <DependentUpon>DisallowAdHocDistributedQueriesSqlScriptValidationRule.cs</DependentUpon>
@@ -178,6 +189,10 @@
     <Compile Include="Models\Classes\Validation\Rules\SchemaQualifiedTableReferencesSqlScriptValidationRule.designer.cs">
       <DependentUpon>SchemaQualifiedTableReferencesSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SimpleConjunctiveFilterSqlScriptValidationRule.designer.cs">
+      <DependentUpon>SimpleConjunctiveFilterSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\SingleSchemaSqlScriptValidationRule.designer.cs">
       <DependentUpon>SingleSchemaSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
@@ -187,8 +202,16 @@
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\SanctionedSchemaQualifiedTablesSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\SchemaQualifiedTableReferencesSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\SchemaQualifiedColumnName.designer.cs">
+      <DependentUpon>SchemaQualifiedColumnName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\SchemaQualifiedTableName.cs" />
     <Compile Include="Models\Classes\Validation\Rules\SingleSchemaSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SimpleConjunctiveFilterSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\ConstrainedFilterOperatorsByColumnSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\SchemaQualifiedColumnName.cs" />
+    <Compile Include="Models\Enums\Validation\FilterOperators.cs" />
+    <Compile Include="Models\Classes\Validation\ColumnFilterOperators.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowSystemSchemasSqlScriptValidationRule.designer.cs">
       <DependentUpon>DisallowSystemSchemasSqlScriptValidationRule.cs</DependentUpon>
     </Compile>

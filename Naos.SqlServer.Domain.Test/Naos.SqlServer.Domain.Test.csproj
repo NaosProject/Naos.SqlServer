@@ -277,6 +277,18 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\Extensions\Validation\FilterOperatorExtensionsTest.cs" />
+    <Compile Include="Models\Classes\Validation\ColumnFilterOperatorsTest.cs" />
+    <Compile Include="Models\Classes\Validation\ColumnFilterOperatorsTest.designer.cs">
+      <DependentUpon>ColumnFilterOperatorsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\ConstrainedFilterOperatorsByColumnSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>ConstrainedFilterOperatorsByColumnSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest.cs</DependentUpon>
@@ -412,6 +424,11 @@
     <Compile Include="Models\Classes\Validation\SchemaQualifiedTableNameTest.cs" />
     <Compile Include="Models\Classes\Validation\SchemaQualifiedTableNameTest.designer.cs">
       <DependentUpon>SchemaQualifiedTableNameTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\ConstrainedFilterOperatorsByColumnSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\SchemaQualifiedColumnNameTest.cs" />
+    <Compile Include="Models\Classes\Validation\SchemaQualifiedColumnNameTest.designer.cs">
+      <DependentUpon>SchemaQualifiedColumnNameTest.cs</DependentUpon>
     </Compile>
     <Compile Include="SerializationConfigurationTypes.cs" />
     <Compile Include="GlobalSuppressions.cs" />

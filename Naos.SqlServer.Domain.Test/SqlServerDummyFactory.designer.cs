@@ -73,6 +73,21 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ColumnFilterOperators(
+                                 A.Dummy<SchemaQualifiedColumnName>(),
+                                 A.Dummy<FilterOperators>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                 A.Dummy<IReadOnlyCollection<SchemaQualifiedColumnName>>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ConstrainedFilterOperatorsByColumnSqlScriptValidationRule(
+                                 A.Dummy<IReadOnlyCollection<ColumnFilterOperators>>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new CreateStreamUserOp(
                                  A.Dummy<string>(),
                                  A.Dummy<string>(),
@@ -235,6 +250,12 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SchemaQualifiedColumnName(
+                                 A.Dummy<string>(),
+                                 A.Dummy<string>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SchemaQualifiedTableName(
                                  A.Dummy<string>(),
                                  A.Dummy<string>()));
@@ -307,6 +328,8 @@ namespace Naos.SqlServer.Domain.Test
                 {
                     var availableTypes = new[]
                     {
+                        typeof(ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule),
+                        typeof(ConstrainedFilterOperatorsByColumnSqlScriptValidationRule),
                         typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule),
                         typeof(DisallowedSchemasSqlScriptValidationRule),
                         typeof(DisallowSystemSchemasSqlScriptValidationRule),

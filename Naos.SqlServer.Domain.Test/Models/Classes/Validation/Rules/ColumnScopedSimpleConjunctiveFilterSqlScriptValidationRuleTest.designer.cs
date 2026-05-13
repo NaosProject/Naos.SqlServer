@@ -34,41 +34,113 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest
+    public static partial class ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleTest
     {
-        private static readonly StringRepresentationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly StringRepresentationTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new StringRepresentationTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedStringRepresentation<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.DisallowAdHocDistributedQueriesSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Columns = {systemUnderTest.Columns?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
-
-        private static readonly ConstructorPropertyAssignmentTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly ConstructorArgumentValidationTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new ConstructorArgumentValidationTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'columns' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
+
+                        var result = new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                             null,
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "columns", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'columns' is an empty enumerable scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
+
+                        var result = new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                             new List<SchemaQualifiedColumnName>(),
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "columns", "is an empty enumerable", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'columns' contains a null element scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
+
+                        var result = new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                             new SchemaQualifiedColumnName[0].Concat(referenceObject.Columns).Concat(new SchemaQualifiedColumnName[] { null }).Concat(referenceObject.Columns).ToList(),
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "columns", "contains at least one null element", },
+                });
+
+        private static readonly ConstructorPropertyAssignmentTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>()
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
+                {
+                    Name = "Columns should return same 'columns' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                                      referenceObject.Columns,
+                                                      referenceObject.Id),
+                            ExpectedPropertyValue = referenceObject.Columns,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "Columns",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
                 {
                     Name = "Id should return same 'id' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                        var referenceObject = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedPropertyValue<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
                         {
-                            SystemUnderTest = new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
+                            SystemUnderTest = new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                                      referenceObject.Columns,
                                                       referenceObject.Id),
                             ExpectedPropertyValue = referenceObject.Id,
                         };
@@ -78,19 +150,19 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "Id",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly DeepCloneWithTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new DeepCloneWithTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
                 {
                     Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
                     WithPropertyName = "Id",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
-                        var referenceObject = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
+                        var referenceObject = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                        var result = new SystemUnderTestDeepCloneWithValue<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.Id,
@@ -98,25 +170,50 @@ namespace Naos.SqlServer.Domain.Test
 
                         return result;
                     },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
+                {
+                    Name = "DeepCloneWithColumns should deep clone object and replace Columns with the provided columns",
+                    WithPropertyName = "Columns",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
+
+                        var referenceObject = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Columns.IsEqualTo(_.Columns));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.Columns,
+                        };
+
+                        return result;
+                    },
                 });
 
-        private static readonly DisallowAdHocDistributedQueriesSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+        private static readonly ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
-        private static readonly EquatableTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly EquatableTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new EquatableTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new EquatableTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new DisallowAdHocDistributedQueriesSqlScriptValidationRule[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule[]
                     {
-                        new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
+                        new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.Columns,
                                 ReferenceObjectForEquatableTestScenarios.Id),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new DisallowAdHocDistributedQueriesSqlScriptValidationRule[]
+                    ObjectsThatAreNotEqualToReferenceObject = new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule[]
                     {
-                        new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
-                                A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.Columns,
+                                A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
+                                A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>().Whose(_ => !_.Columns.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Columns)).Columns,
+                                ReferenceObjectForEquatableTestScenarios.Id),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -125,8 +222,8 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
-                        A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>(),
                         A.Dummy<ConstrainedFilterOperatorsByColumnSqlScriptValidationRule>(),
+                        A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
                         A.Dummy<DisallowedSchemasSqlScriptValidationRule>(),
                         A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
                         A.Dummy<FlatQuerySqlScriptValidationRule>(),
@@ -140,12 +237,12 @@ namespace Naos.SqlServer.Domain.Test
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly ValidModelTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ValidModelTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new ValidModelTestScenario<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>
                 {
-                    Name = "a dummy DisallowAdHocDistributedQueriesSqlScriptValidationRule should be valid",
-                    SystemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
+                    Name = "a dummy ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule should be valid",
+                    SystemUnderTest = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -166,12 +263,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_implement_IModel_of_DisallowAdHocDistributedQueriesSqlScriptValidationRule___When_reflecting()
+            public static void ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule___Should_implement_IModel_of_ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule___When_reflecting()
             {
                 // Arrange
-                var type = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule);
+                var type = typeof(ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule);
 
-                var expectedModelMethods = typeof(IModel<DisallowAdHocDistributedQueriesSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -181,7 +278,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<DisallowAdHocDistributedQueriesSqlScriptValidationRule>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -199,10 +296,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule);
+                var type = typeof(ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -382,10 +479,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 // Act
-                var actual = (DisallowAdHocDistributedQueriesSqlScriptValidationRule)systemUnderTest.Clone();
+                var actual = (ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -409,7 +506,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -417,6 +514,18 @@ namespace Naos.SqlServer.Domain.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
+
+                if (systemUnderTest.Columns == null)
+                {
+                    actual.Columns.AsTest().Must().BeNull();
+                }
+                else if (!actual.Columns.GetType().IsValueType)
+                {
+                    // When the declared type is a reference type, we still have to check the runtime type.
+                    // The object could be a boxed value type, which will fail this asseration because
+                    // a deep clone of a value type object is the same object.
+                    actual.Columns.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Columns);
+                }
             }
 
             [Fact]
@@ -435,7 +544,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Id" };
+                var propertyNames = new string[] { "Id", "Columns" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -448,12 +557,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (DisallowAdHocDistributedQueriesSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -515,7 +624,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var expected = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -544,7 +653,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var expected = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -573,7 +682,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var expected = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -602,7 +711,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var expected = A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -636,8 +745,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest1 = null;
-                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest2 = null;
+                ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest1 = null;
+                ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -667,7 +776,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
+                    ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -816,8 +925,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest1 = null;
-                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest2 = null;
+                ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest1 = null;
+                ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -847,7 +956,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
+                    ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1136,14 +1245,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
+                    ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1167,7 +1276,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1195,7 +1304,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1223,7 +1332,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1251,7 +1360,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1412,7 +1521,7 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
         public static class HashTesting
         {
-            [Fact]
+            [Fact(Skip = "It's possible (and even probable after a few runs of this test) that two dummy, unequal models will have the same hash code.  The model being tested contains at least one property who's type (or a type nested within the generic type, or a property of the IModel type) is a dictionary with keys that are not comparable or an unordered collection with elements that are not comparable.  In these cases the hashing method cannot hash the elements and must resort to hashing the element count.  Two dummies could easily have the same element count for such a type.")]
             [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
             [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
             [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]

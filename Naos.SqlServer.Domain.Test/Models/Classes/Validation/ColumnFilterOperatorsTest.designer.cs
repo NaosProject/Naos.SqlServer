@@ -34,89 +34,152 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class DisallowAdHocDistributedQueriesSqlScriptValidationRuleTest
+    public static partial class ColumnFilterOperatorsTest
     {
-        private static readonly StringRepresentationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly StringRepresentationTestScenarios<ColumnFilterOperators> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<ColumnFilterOperators>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new StringRepresentationTestScenario<ColumnFilterOperators>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<ColumnFilterOperators>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedStringRepresentation<ColumnFilterOperators>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.DisallowAdHocDistributedQueriesSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.ColumnFilterOperators: Column = {systemUnderTest.Column?.ToString() ?? "<null>"}, AllowedOperators = {systemUnderTest.AllowedOperators.ToString() ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
-
-        private static readonly ConstructorPropertyAssignmentTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly ConstructorArgumentValidationTestScenarios<ColumnFilterOperators> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<ColumnFilterOperators>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new ConstructorArgumentValidationTestScenario<ColumnFilterOperators>
                 {
-                    Name = "Id should return same 'id' parameter passed to constructor when getting",
+                    Name = "constructor should throw ArgumentNullException when parameter 'column' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<ColumnFilterOperators>();
+
+                        var result = new ColumnFilterOperators(
+                                             null,
+                                             referenceObject.AllowedOperators);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "column", },
+                });
+
+        private static readonly ConstructorPropertyAssignmentTestScenarios<ColumnFilterOperators> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<ColumnFilterOperators>()
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<ColumnFilterOperators>
+                {
+                    Name = "Column should return same 'column' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                        var referenceObject = A.Dummy<ColumnFilterOperators>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedPropertyValue<ColumnFilterOperators>
                         {
-                            SystemUnderTest = new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
-                                                      referenceObject.Id),
-                            ExpectedPropertyValue = referenceObject.Id,
+                            SystemUnderTest = new ColumnFilterOperators(
+                                                      referenceObject.Column,
+                                                      referenceObject.AllowedOperators),
+                            ExpectedPropertyValue = referenceObject.Column,
                         };
 
                         return result;
                     },
-                    PropertyName = "Id",
+                    PropertyName = "Column",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<ColumnFilterOperators>
+                {
+                    Name = "AllowedOperators should return same 'allowedOperators' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<ColumnFilterOperators>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<ColumnFilterOperators>
+                        {
+                            SystemUnderTest = new ColumnFilterOperators(
+                                                      referenceObject.Column,
+                                                      referenceObject.AllowedOperators),
+                            ExpectedPropertyValue = referenceObject.AllowedOperators,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "AllowedOperators",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly DeepCloneWithTestScenarios<ColumnFilterOperators> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ColumnFilterOperators>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new DeepCloneWithTestScenario<ColumnFilterOperators>
                 {
-                    Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
-                    WithPropertyName = "Id",
+                    Name = "DeepCloneWithColumn should deep clone object and replace Column with the provided column",
+                    WithPropertyName = "Column",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<ColumnFilterOperators>();
 
-                        var referenceObject = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
+                        var referenceObject = A.Dummy<ColumnFilterOperators>().ThatIs(_ => !systemUnderTest.Column.IsEqualTo(_.Column));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                        var result = new SystemUnderTestDeepCloneWithValue<ColumnFilterOperators>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Id,
+                            DeepCloneWithValue = referenceObject.Column,
+                        };
+
+                        return result;
+                    },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<ColumnFilterOperators>
+                {
+                    Name = "DeepCloneWithAllowedOperators should deep clone object and replace AllowedOperators with the provided allowedOperators",
+                    WithPropertyName = "AllowedOperators",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<ColumnFilterOperators>();
+
+                        var referenceObject = A.Dummy<ColumnFilterOperators>().ThatIs(_ => !systemUnderTest.AllowedOperators.IsEqualTo(_.AllowedOperators));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<ColumnFilterOperators>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.AllowedOperators,
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly DisallowAdHocDistributedQueriesSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+        private static readonly ColumnFilterOperators ReferenceObjectForEquatableTestScenarios = A.Dummy<ColumnFilterOperators>();
 
-        private static readonly EquatableTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly EquatableTestScenarios<ColumnFilterOperators> EquatableTestScenarios = new EquatableTestScenarios<ColumnFilterOperators>()
             .AddScenario(() =>
-                new EquatableTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new EquatableTestScenario<ColumnFilterOperators>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new DisallowAdHocDistributedQueriesSqlScriptValidationRule[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new ColumnFilterOperators[]
                     {
-                        new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
-                                ReferenceObjectForEquatableTestScenarios.Id),
+                        new ColumnFilterOperators(
+                                ReferenceObjectForEquatableTestScenarios.Column,
+                                ReferenceObjectForEquatableTestScenarios.AllowedOperators),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new DisallowAdHocDistributedQueriesSqlScriptValidationRule[]
+                    ObjectsThatAreNotEqualToReferenceObject = new ColumnFilterOperators[]
                     {
-                        new DisallowAdHocDistributedQueriesSqlScriptValidationRule(
-                                A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new ColumnFilterOperators(
+                                A.Dummy<ColumnFilterOperators>().Whose(_ => !_.Column.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Column)).Column,
+                                ReferenceObjectForEquatableTestScenarios.AllowedOperators),
+                        new ColumnFilterOperators(
+                                ReferenceObjectForEquatableTestScenarios.Column,
+                                A.Dummy<ColumnFilterOperators>().Whose(_ => !_.AllowedOperators.IsEqualTo(ReferenceObjectForEquatableTestScenarios.AllowedOperators)).AllowedOperators),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -125,27 +188,15 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
-                        A.Dummy<ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule>(),
-                        A.Dummy<ConstrainedFilterOperatorsByColumnSqlScriptValidationRule>(),
-                        A.Dummy<DisallowedSchemasSqlScriptValidationRule>(),
-                        A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
-                        A.Dummy<FlatQuerySqlScriptValidationRule>(),
-                        A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
-                        A.Dummy<SanctionedSchemaQualifiedTablesSqlScriptValidationRule>(),
-                        A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
-                        A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>(),
-                        A.Dummy<SimpleConjunctiveFilterSqlScriptValidationRule>(),
-                        A.Dummy<SingleSchemaSqlScriptValidationRule>(),
-                        A.Dummy<SingleStatementSqlScriptValidationRule>(),
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<DisallowAdHocDistributedQueriesSqlScriptValidationRule>()
+        private static readonly ValidModelTestScenarios<ColumnFilterOperators> ValidModelTestScenarios = new ValidModelTestScenarios<ColumnFilterOperators>()
             .AddScenario(() =>
-                new ValidModelTestScenario<DisallowAdHocDistributedQueriesSqlScriptValidationRule>
+                new ValidModelTestScenario<ColumnFilterOperators>
                 {
-                    Name = "a dummy DisallowAdHocDistributedQueriesSqlScriptValidationRule should be valid",
-                    SystemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
+                    Name = "a dummy ColumnFilterOperators should be valid",
+                    SystemUnderTest = A.Dummy<ColumnFilterOperators>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -166,12 +217,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_implement_IModel_of_DisallowAdHocDistributedQueriesSqlScriptValidationRule___When_reflecting()
+            public static void ColumnFilterOperators___Should_implement_IModel_of_ColumnFilterOperators___When_reflecting()
             {
                 // Arrange
-                var type = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule);
+                var type = typeof(ColumnFilterOperators);
 
-                var expectedModelMethods = typeof(IModel<DisallowAdHocDistributedQueriesSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<ColumnFilterOperators>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -181,7 +232,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<DisallowAdHocDistributedQueriesSqlScriptValidationRule>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<ColumnFilterOperators>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -199,10 +250,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void ColumnFilterOperators___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule);
+                var type = typeof(ColumnFilterOperators);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -382,10 +433,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<ColumnFilterOperators>();
 
                 // Act
-                var actual = (DisallowAdHocDistributedQueriesSqlScriptValidationRule)systemUnderTest.Clone();
+                var actual = (ColumnFilterOperators)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -409,7 +460,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<ColumnFilterOperators>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -417,6 +468,18 @@ namespace Naos.SqlServer.Domain.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
+
+                if (systemUnderTest.Column == null)
+                {
+                    actual.Column.AsTest().Must().BeNull();
+                }
+                else if (!actual.Column.GetType().IsValueType)
+                {
+                    // When the declared type is a reference type, we still have to check the runtime type.
+                    // The object could be a boxed value type, which will fail this asseration because
+                    // a deep clone of a value type object is the same object.
+                    actual.Column.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Column);
+                }
             }
 
             [Fact]
@@ -435,7 +498,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Id" };
+                var propertyNames = new string[] { "Column", "AllowedOperators" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -448,12 +511,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (DisallowAdHocDistributedQueriesSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (ColumnFilterOperators)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(ColumnFilterOperators).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -515,7 +578,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var expected = A.Dummy<ColumnFilterOperators>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -544,7 +607,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var expected = A.Dummy<ColumnFilterOperators>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -573,7 +636,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var expected = A.Dummy<ColumnFilterOperators>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -602,7 +665,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>();
+                var expected = A.Dummy<ColumnFilterOperators>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -636,8 +699,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest1 = null;
-                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest2 = null;
+                ColumnFilterOperators systemUnderTest1 = null;
+                ColumnFilterOperators systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -667,7 +730,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
+                    ColumnFilterOperators systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -816,8 +879,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest1 = null;
-                DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest2 = null;
+                ColumnFilterOperators systemUnderTest1 = null;
+                ColumnFilterOperators systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -847,7 +910,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
+                    ColumnFilterOperators systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -993,157 +1056,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_ColumnFilterOperators___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    SqlScriptValidationRuleBase systemUnderTest = null;
-
-                    // Act
-                    var actual = scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)systemUnderTest);
-
-                    // Assert
-                    actual.AsTest().Must().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_true___When_parameter_other_is_same_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actual = scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)scenario.ReferenceObject);
-
-                    // Assert
-                    actual.AsTest().Must().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_false___When_objects_being_compared_have_different_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_SqlScriptValidationRuleBase___Should_return_true___When_objects_being_compared_have_same_property_values()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange, Act
-                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((SqlScriptValidationRuleBase)_)).ToList();
-
-                    // Assert
-                    actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
-                }
-            }
-
-            [Fact]
-            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
-            {
-                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
-
-                foreach (var scenario in scenarios)
-                {
-                    // Arrange
-                    DisallowAdHocDistributedQueriesSqlScriptValidationRule systemUnderTest = null;
+                    ColumnFilterOperators systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1167,7 +1087,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_ColumnFilterOperators___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1195,7 +1115,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_ColumnFilterOperators___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1223,7 +1143,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_ColumnFilterOperators___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1251,7 +1171,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowAdHocDistributedQueriesSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_ColumnFilterOperators___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
