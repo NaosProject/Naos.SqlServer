@@ -8,7 +8,9 @@ namespace Naos.SqlServer.Protocol.Validation
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.SqlServer.TransactSql.ScriptDom;
+    using Naos.CodeAnalysis.Recipes;
     using Naos.SqlServer.Domain;
     using static System.FormattableString;
 
@@ -250,6 +252,7 @@ namespace Naos.SqlServer.Protocol.Validation
             return new SchemaQualifiedColumnName(schema, table, columnName);
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Prefer lower case here.")]
         private static string ColumnKey(
             SchemaQualifiedColumnName column)
         {

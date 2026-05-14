@@ -45,7 +45,7 @@ namespace Naos.SqlServer.Domain
     /// Composition notes:
     /// </para>
     /// <list type="bullet">
-    /// <item><description>Pair with <see cref="WhereBasedJoin"/> = enabled when you also use
+    /// <item><description>Pair with <see cref="JoinShapeIssues.WhereBasedJoin"/> = enabled when you also use
     /// <c>SanctionedJoinPairsSqlScriptValidationRule</c> — the latter inspects only JOIN ON
     /// predicates, so without this flag a caller could bypass join-pair sanctioning via the
     /// comma-FROM form.</description></item>
