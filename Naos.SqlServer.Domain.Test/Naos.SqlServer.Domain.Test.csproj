@@ -277,6 +277,10 @@
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeDummyFactory.designer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowedJoinShapesSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowedJoinShapesSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>DisallowedJoinShapesSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Classes\Validation\Rules\BenchmarkingFilterValuesByColumnSqlScriptValidationRuleTest.cs" />
     <Compile Include="Models\Classes\Validation\Rules\BenchmarkingFilterValuesByColumnSqlScriptValidationRuleTest.designer.cs">
       <DependentUpon>BenchmarkingFilterValuesByColumnSqlScriptValidationRuleTest.cs</DependentUpon>
@@ -433,6 +437,14 @@
     <Compile Include="Models\Classes\Validation\SchemaQualifiedColumnNameTest.cs" />
     <Compile Include="Models\Classes\Validation\SchemaQualifiedColumnNameTest.designer.cs">
       <DependentUpon>SchemaQualifiedColumnNameTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedJoinPairsSqlScriptValidationRuleTest.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedJoinPairsSqlScriptValidationRuleTest.designer.cs">
+      <DependentUpon>SanctionedJoinPairsSqlScriptValidationRuleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SanctionedJoinPairTest.cs" />
+    <Compile Include="Models\Classes\Validation\SanctionedJoinPairTest.designer.cs">
+      <DependentUpon>SanctionedJoinPairTest.cs</DependentUpon>
     </Compile>
     <Compile Include="SerializationConfigurationTypes.cs" />
     <Compile Include="GlobalSuppressions.cs" />

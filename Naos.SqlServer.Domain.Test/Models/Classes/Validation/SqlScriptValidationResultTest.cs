@@ -34,6 +34,24 @@ namespace Naos.SqlServer.Domain.Test
                 .AddScenario(() =>
                     new ConstructorArgumentValidationTestScenario<SqlScriptValidationResult>
                     {
+                        Name = "constructor should throw ArgumentOutOfRangeException when parameter 'targetSqlServerVersion' is SqlServerVersion.Unknown",
+                        ConstructionFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<SqlScriptValidationResult>();
+
+                            var result = new SqlScriptValidationResult(
+                                SqlServerVersion.Unknown,
+                                referenceObject.ParsingErrors,
+                                referenceObject.RuleViolations);
+
+                            return result;
+                        },
+                        ExpectedExceptionType = typeof(ArgumentOutOfRangeException),
+                        ExpectedExceptionMessageContains = new[] { "targetSqlServerVersion", "Unknown", },
+                    })
+                .AddScenario(() =>
+                    new ConstructorArgumentValidationTestScenario<SqlScriptValidationResult>
+                    {
                         Name = "constructor should throw ArgumentException when parameter 'parsingErrors' contains a null element scenario",
                         ConstructionFunc = () =>
                         {
@@ -52,7 +70,7 @@ namespace Naos.SqlServer.Domain.Test
                 .AddScenario(() =>
                     new ConstructorArgumentValidationTestScenario<SqlScriptValidationResult>
                     {
-                        Name = "constructor should throw ArgumentException when parameter 'violations' contains a null element scenario",
+                        Name = "constructor should throw ArgumentException when parameter 'ruleViolations' contains a null element scenario",
                         ConstructionFunc = () =>
                         {
                             var referenceObject = A.Dummy<SqlScriptValidationResult>();
@@ -65,7 +83,7 @@ namespace Naos.SqlServer.Domain.Test
                             return result;
                         },
                         ExpectedExceptionType = typeof(ArgumentException),
-                        ExpectedExceptionMessageContains = new[] { "violations", "contains at least one null element", },
+                        ExpectedExceptionMessageContains = new[] { "ruleViolations", "contains at least one null element", },
                     });
         }
 

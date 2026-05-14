@@ -282,6 +282,8 @@
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.ConstrainedFilterOperatorsByColumnSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.BenchmarkingFilterValuesByColumnSqlScriptValidationRule.cs" />
+    <Compile Include="Protocols\ValidateSqlScriptProtocolTest.SanctionedJoinPairsSqlScriptValidationRule.cs" />
+    <Compile Include="Protocols\ValidateSqlScriptProtocolTest.DisallowedJoinShapesSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.SingleSchemaSqlScriptValidationRule.cs" />
     <Compile Include="Protocols\ValidateSqlScriptProtocolTest.SingleStatementSqlScriptValidationRule.cs" />
   </ItemGroup>

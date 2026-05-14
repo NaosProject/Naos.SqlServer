@@ -128,6 +128,9 @@
     <Compile Include="Logic\SimpleConjunctiveFilterSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\ConstrainedFilterOperatorsByColumnSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Logic\BenchmarkingFilterValuesByColumnSqlScriptValidationRuleEvaluator.cs" />
+    <Compile Include="Logic\FromClauseAliasMapBuilder.cs" />
+    <Compile Include="Logic\SanctionedJoinPairsSqlScriptValidationRuleEvaluator.cs" />
+    <Compile Include="Logic\DisallowedJoinShapesSqlScriptValidationRuleEvaluator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Properties\ProjectInfo.cs" />

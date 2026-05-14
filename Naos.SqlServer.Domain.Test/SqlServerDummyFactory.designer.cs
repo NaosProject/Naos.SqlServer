@@ -113,6 +113,11 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new DisallowedJoinShapesSqlScriptValidationRule(
+                                 A.Dummy<JoinShapeIssues>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new DisallowedSchemasSqlScriptValidationRule(
                                  A.Dummy<IReadOnlyCollection<string>>(),
                                  A.Dummy<string>()));
@@ -248,6 +253,16 @@ namespace Naos.SqlServer.Domain.Test
                                  A.Dummy<RestrictedUserOption>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SanctionedJoinPair(
+                                 A.Dummy<SchemaQualifiedColumnName>(),
+                                 A.Dummy<SchemaQualifiedColumnName>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new SanctionedJoinPairsSqlScriptValidationRule(
+                                 A.Dummy<IReadOnlyCollection<SanctionedJoinPair>>(),
+                                 A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new SanctionedSchemaQualifiedTablesSqlScriptValidationRule(
                                  A.Dummy<IReadOnlyCollection<SchemaQualifiedTableName>>(),
                                  A.Dummy<string>()));
@@ -340,10 +355,12 @@ namespace Naos.SqlServer.Domain.Test
                         typeof(ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule),
                         typeof(ConstrainedFilterOperatorsByColumnSqlScriptValidationRule),
                         typeof(DisallowAdHocDistributedQueriesSqlScriptValidationRule),
+                        typeof(DisallowedJoinShapesSqlScriptValidationRule),
                         typeof(DisallowedSchemasSqlScriptValidationRule),
                         typeof(DisallowSystemSchemasSqlScriptValidationRule),
                         typeof(FlatQuerySqlScriptValidationRule),
                         typeof(ReadOnlySelectSqlScriptValidationRule),
+                        typeof(SanctionedJoinPairsSqlScriptValidationRule),
                         typeof(SanctionedSchemaQualifiedTablesSqlScriptValidationRule),
                         typeof(SanctionedSchemasSqlScriptValidationRule),
                         typeof(SchemaQualifiedTableReferencesSqlScriptValidationRule),

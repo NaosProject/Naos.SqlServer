@@ -106,7 +106,7 @@ namespace Naos.SqlServer.Protocol.Validation
                 return;
             }
 
-            var aliasMap = BuildAliasMap(node.FromClause);
+            var aliasMap = FromClauseAliasMapBuilder.Build(node.FromClause);
 
             if ((node.WhereClause != null) && (node.WhereClause.SearchCondition != null))
             {
@@ -177,84 +177,6 @@ namespace Naos.SqlServer.Protocol.Validation
             QuerySpecification node,
             IReadOnlyDictionary<string, SchemaQualifiedTableName> aliasMap)
         {
-        }
-
-        private static Dictionary<string, SchemaQualifiedTableName> BuildAliasMap(
-            FromClause fromClause)
-        {
-            var map = new Dictionary<string, SchemaQualifiedTableName>(StringComparer.OrdinalIgnoreCase);
-
-            if ((fromClause == null) || (fromClause.TableReferences == null))
-            {
-                return map;
-            }
-
-            foreach (var tableReference in fromClause.TableReferences)
-            {
-                CollectAliases(tableReference, map);
-            }
-
-            return map;
-        }
-
-        private static void CollectAliases(
-            TableReference tableReference,
-            Dictionary<string, SchemaQualifiedTableName> map)
-        {
-            if (tableReference == null)
-            {
-                return;
-            }
-
-            if (tableReference is NamedTableReference namedTableReference)
-            {
-                AddAliasForNamedTableReference(namedTableReference, map);
-            }
-            else if (tableReference is QualifiedJoin qualifiedJoin)
-            {
-                CollectAliases(qualifiedJoin.FirstTableReference, map);
-                CollectAliases(qualifiedJoin.SecondTableReference, map);
-            }
-            else if (tableReference is UnqualifiedJoin unqualifiedJoin)
-            {
-                CollectAliases(unqualifiedJoin.FirstTableReference, map);
-                CollectAliases(unqualifiedJoin.SecondTableReference, map);
-            }
-            else if (tableReference is JoinParenthesisTableReference joinParen)
-            {
-                CollectAliases(joinParen.Join, map);
-            }
-
-            // Other table-reference types (QueryDerivedTable, OpenRowsetTableReference, etc.)
-            // either contribute nothing to an alias map (e.g. a derived table is its own
-            // scope) or are blocked by other rules (FlatQuery, DisallowAdHocDistributedQueries).
-        }
-
-        private static void AddAliasForNamedTableReference(
-            NamedTableReference namedTableReference,
-            Dictionary<string, SchemaQualifiedTableName> map)
-        {
-            if ((namedTableReference == null) || (namedTableReference.SchemaObject == null) || (namedTableReference.SchemaObject.BaseIdentifier == null))
-            {
-                return;
-            }
-
-            var schemaIdentifier = namedTableReference.SchemaObject.SchemaIdentifier;
-            var baseIdentifier = namedTableReference.SchemaObject.BaseIdentifier;
-
-            // No schema → skip.  SchemaQualifiedTableReferencesSqlScriptValidationRule
-            // would have already flagged this; this rule's alias map deliberately ignores
-            // it so we don't synthesize a SchemaQualifiedTableName with a null schema.
-            if (schemaIdentifier == null)
-            {
-                return;
-            }
-
-            var schemaQualifiedTable = new SchemaQualifiedTableName(schemaIdentifier.Value, baseIdentifier.Value);
-
-            var aliasKey = (namedTableReference.Alias != null) ? namedTableReference.Alias.Value : baseIdentifier.Value;
-
-            map[aliasKey] = schemaQualifiedTable;
         }
 
         private void WalkJoinSearchConditions(

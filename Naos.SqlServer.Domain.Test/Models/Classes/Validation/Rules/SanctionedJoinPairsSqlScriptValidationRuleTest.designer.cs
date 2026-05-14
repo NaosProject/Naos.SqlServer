@@ -34,41 +34,113 @@ namespace Naos.SqlServer.Domain.Test
 
     using static global::System.FormattableString;
 
-    public static partial class DisallowSystemSchemasSqlScriptValidationRuleTest
+    public static partial class SanctionedJoinPairsSqlScriptValidationRuleTest
     {
-        private static readonly StringRepresentationTestScenarios<DisallowSystemSchemasSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<DisallowSystemSchemasSqlScriptValidationRule>()
+        private static readonly StringRepresentationTestScenarios<SanctionedJoinPairsSqlScriptValidationRule> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<SanctionedJoinPairsSqlScriptValidationRule>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<DisallowSystemSchemasSqlScriptValidationRule>
+                new StringRepresentationTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<DisallowSystemSchemasSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedStringRepresentation<SanctionedJoinPairsSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.DisallowSystemSchemasSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"Naos.SqlServer.Domain.SanctionedJoinPairsSqlScriptValidationRule: Id = {systemUnderTest.Id?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, SanctionedJoinPairs = {systemUnderTest.SanctionedJoinPairs?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<DisallowSystemSchemasSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<DisallowSystemSchemasSqlScriptValidationRule>();
-
-        private static readonly ConstructorPropertyAssignmentTestScenarios<DisallowSystemSchemasSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<DisallowSystemSchemasSqlScriptValidationRule>()
+        private static readonly ConstructorArgumentValidationTestScenarios<SanctionedJoinPairsSqlScriptValidationRule> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<SanctionedJoinPairsSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<DisallowSystemSchemasSqlScriptValidationRule>
+                new ConstructorArgumentValidationTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentNullException when parameter 'sanctionedJoinPairs' is null scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
+
+                        var result = new SanctionedJoinPairsSqlScriptValidationRule(
+                                             null,
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentNullException),
+                    ExpectedExceptionMessageContains = new[] { "sanctionedJoinPairs", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'sanctionedJoinPairs' is an empty enumerable scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
+
+                        var result = new SanctionedJoinPairsSqlScriptValidationRule(
+                                             new List<SanctionedJoinPair>(),
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "sanctionedJoinPairs", "is an empty enumerable", },
+                })
+            .AddScenario(() =>
+                new ConstructorArgumentValidationTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
+                {
+                    Name = "constructor should throw ArgumentException when parameter 'sanctionedJoinPairs' contains a null element scenario",
+                    ConstructionFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
+
+                        var result = new SanctionedJoinPairsSqlScriptValidationRule(
+                                             new SanctionedJoinPair[0].Concat(referenceObject.SanctionedJoinPairs).Concat(new SanctionedJoinPair[] { null }).Concat(referenceObject.SanctionedJoinPairs).ToList(),
+                                             referenceObject.Id);
+
+                        return result;
+                    },
+                    ExpectedExceptionType = typeof(ArgumentException),
+                    ExpectedExceptionMessageContains = new[] { "sanctionedJoinPairs", "contains at least one null element", },
+                });
+
+        private static readonly ConstructorPropertyAssignmentTestScenarios<SanctionedJoinPairsSqlScriptValidationRule> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<SanctionedJoinPairsSqlScriptValidationRule>()
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
+                {
+                    Name = "SanctionedJoinPairs should return same 'sanctionedJoinPairs' parameter passed to constructor when getting",
+                    SystemUnderTestExpectedPropertyValueFunc = () =>
+                    {
+                        var referenceObject = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
+
+                        var result = new SystemUnderTestExpectedPropertyValue<SanctionedJoinPairsSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = new SanctionedJoinPairsSqlScriptValidationRule(
+                                                      referenceObject.SanctionedJoinPairs,
+                                                      referenceObject.Id),
+                            ExpectedPropertyValue = referenceObject.SanctionedJoinPairs,
+                        };
+
+                        return result;
+                    },
+                    PropertyName = "SanctionedJoinPairs",
+                })
+            .AddScenario(() =>
+                new ConstructorPropertyAssignmentTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
                 {
                     Name = "Id should return same 'id' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                        var referenceObject = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<DisallowSystemSchemasSqlScriptValidationRule>
+                        var result = new SystemUnderTestExpectedPropertyValue<SanctionedJoinPairsSqlScriptValidationRule>
                         {
-                            SystemUnderTest = new DisallowSystemSchemasSqlScriptValidationRule(
+                            SystemUnderTest = new SanctionedJoinPairsSqlScriptValidationRule(
+                                                      referenceObject.SanctionedJoinPairs,
                                                       referenceObject.Id),
                             ExpectedPropertyValue = referenceObject.Id,
                         };
@@ -78,19 +150,19 @@ namespace Naos.SqlServer.Domain.Test
                     PropertyName = "Id",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<DisallowSystemSchemasSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<DisallowSystemSchemasSqlScriptValidationRule>()
+        private static readonly DeepCloneWithTestScenarios<SanctionedJoinPairsSqlScriptValidationRule> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<SanctionedJoinPairsSqlScriptValidationRule>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<DisallowSystemSchemasSqlScriptValidationRule>
+                new DeepCloneWithTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
                 {
                     Name = "DeepCloneWithId should deep clone object and replace Id with the provided id",
                     WithPropertyName = "Id",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                        var systemUnderTest = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
-                        var referenceObject = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
+                        var referenceObject = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.Id.IsEqualTo(_.Id));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<DisallowSystemSchemasSqlScriptValidationRule>
+                        var result = new SystemUnderTestDeepCloneWithValue<SanctionedJoinPairsSqlScriptValidationRule>
                         {
                             SystemUnderTest = systemUnderTest,
                             DeepCloneWithValue = referenceObject.Id,
@@ -98,25 +170,50 @@ namespace Naos.SqlServer.Domain.Test
 
                         return result;
                     },
+                })
+            .AddScenario(() =>
+                new DeepCloneWithTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
+                {
+                    Name = "DeepCloneWithSanctionedJoinPairs should deep clone object and replace SanctionedJoinPairs with the provided sanctionedJoinPairs",
+                    WithPropertyName = "SanctionedJoinPairs",
+                    SystemUnderTestDeepCloneWithValueFunc = () =>
+                    {
+                        var systemUnderTest = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
+
+                        var referenceObject = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>().ThatIs(_ => !systemUnderTest.SanctionedJoinPairs.IsEqualTo(_.SanctionedJoinPairs));
+
+                        var result = new SystemUnderTestDeepCloneWithValue<SanctionedJoinPairsSqlScriptValidationRule>
+                        {
+                            SystemUnderTest = systemUnderTest,
+                            DeepCloneWithValue = referenceObject.SanctionedJoinPairs,
+                        };
+
+                        return result;
+                    },
                 });
 
-        private static readonly DisallowSystemSchemasSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+        private static readonly SanctionedJoinPairsSqlScriptValidationRule ReferenceObjectForEquatableTestScenarios = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
-        private static readonly EquatableTestScenarios<DisallowSystemSchemasSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<DisallowSystemSchemasSqlScriptValidationRule>()
+        private static readonly EquatableTestScenarios<SanctionedJoinPairsSqlScriptValidationRule> EquatableTestScenarios = new EquatableTestScenarios<SanctionedJoinPairsSqlScriptValidationRule>()
             .AddScenario(() =>
-                new EquatableTestScenario<DisallowSystemSchemasSqlScriptValidationRule>
+                new EquatableTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new DisallowSystemSchemasSqlScriptValidationRule[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new SanctionedJoinPairsSqlScriptValidationRule[]
                     {
-                        new DisallowSystemSchemasSqlScriptValidationRule(
+                        new SanctionedJoinPairsSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.SanctionedJoinPairs,
                                 ReferenceObjectForEquatableTestScenarios.Id),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new DisallowSystemSchemasSqlScriptValidationRule[]
+                    ObjectsThatAreNotEqualToReferenceObject = new SanctionedJoinPairsSqlScriptValidationRule[]
                     {
-                        new DisallowSystemSchemasSqlScriptValidationRule(
-                                A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new SanctionedJoinPairsSqlScriptValidationRule(
+                                ReferenceObjectForEquatableTestScenarios.SanctionedJoinPairs,
+                                A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>().Whose(_ => !_.Id.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Id)).Id),
+                        new SanctionedJoinPairsSqlScriptValidationRule(
+                                A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>().Whose(_ => !_.SanctionedJoinPairs.IsEqualTo(ReferenceObjectForEquatableTestScenarios.SanctionedJoinPairs)).SanctionedJoinPairs,
+                                ReferenceObjectForEquatableTestScenarios.Id),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -131,9 +228,9 @@ namespace Naos.SqlServer.Domain.Test
                         A.Dummy<DisallowAdHocDistributedQueriesSqlScriptValidationRule>(),
                         A.Dummy<DisallowedJoinShapesSqlScriptValidationRule>(),
                         A.Dummy<DisallowedSchemasSqlScriptValidationRule>(),
+                        A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
                         A.Dummy<FlatQuerySqlScriptValidationRule>(),
                         A.Dummy<ReadOnlySelectSqlScriptValidationRule>(),
-                        A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>(),
                         A.Dummy<SanctionedSchemaQualifiedTablesSqlScriptValidationRule>(),
                         A.Dummy<SanctionedSchemasSqlScriptValidationRule>(),
                         A.Dummy<SchemaQualifiedTableReferencesSqlScriptValidationRule>(),
@@ -143,12 +240,12 @@ namespace Naos.SqlServer.Domain.Test
                     },
                 });
 
-        private static readonly ValidModelTestScenarios<DisallowSystemSchemasSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<DisallowSystemSchemasSqlScriptValidationRule>()
+        private static readonly ValidModelTestScenarios<SanctionedJoinPairsSqlScriptValidationRule> ValidModelTestScenarios = new ValidModelTestScenarios<SanctionedJoinPairsSqlScriptValidationRule>()
             .AddScenario(() =>
-                new ValidModelTestScenario<DisallowSystemSchemasSqlScriptValidationRule>
+                new ValidModelTestScenario<SanctionedJoinPairsSqlScriptValidationRule>
                 {
-                    Name = "a dummy DisallowSystemSchemasSqlScriptValidationRule should be valid",
-                    SystemUnderTest = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>(),
+                    Name = "a dummy SanctionedJoinPairsSqlScriptValidationRule should be valid",
+                    SystemUnderTest = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>(),
                 });
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -169,12 +266,12 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void DisallowSystemSchemasSqlScriptValidationRule___Should_implement_IModel_of_DisallowSystemSchemasSqlScriptValidationRule___When_reflecting()
+            public static void SanctionedJoinPairsSqlScriptValidationRule___Should_implement_IModel_of_SanctionedJoinPairsSqlScriptValidationRule___When_reflecting()
             {
                 // Arrange
-                var type = typeof(DisallowSystemSchemasSqlScriptValidationRule);
+                var type = typeof(SanctionedJoinPairsSqlScriptValidationRule);
 
-                var expectedModelMethods = typeof(IModel<DisallowSystemSchemasSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
+                var expectedModelMethods = typeof(IModel<SanctionedJoinPairsSqlScriptValidationRule>).GetInterfaceDeclaredAndImplementedMethods();
 
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
 
@@ -184,7 +281,7 @@ namespace Naos.SqlServer.Domain.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<DisallowSystemSchemasSqlScriptValidationRule>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<SanctionedJoinPairsSqlScriptValidationRule>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -202,10 +299,10 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void DisallowSystemSchemasSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void SanctionedJoinPairsSqlScriptValidationRule___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(DisallowSystemSchemasSqlScriptValidationRule);
+                var type = typeof(SanctionedJoinPairsSqlScriptValidationRule);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -385,10 +482,10 @@ namespace Naos.SqlServer.Domain.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
                 // Act
-                var actual = (DisallowSystemSchemasSqlScriptValidationRule)systemUnderTest.Clone();
+                var actual = (SanctionedJoinPairsSqlScriptValidationRule)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -412,7 +509,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                var systemUnderTest = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -420,6 +517,18 @@ namespace Naos.SqlServer.Domain.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
+
+                if (systemUnderTest.SanctionedJoinPairs == null)
+                {
+                    actual.SanctionedJoinPairs.AsTest().Must().BeNull();
+                }
+                else if (!actual.SanctionedJoinPairs.GetType().IsValueType)
+                {
+                    // When the declared type is a reference type, we still have to check the runtime type.
+                    // The object could be a boxed value type, which will fail this asseration because
+                    // a deep clone of a value type object is the same object.
+                    actual.SanctionedJoinPairs.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.SanctionedJoinPairs);
+                }
             }
 
             [Fact]
@@ -438,7 +547,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Id" };
+                var propertyNames = new string[] { "Id", "SanctionedJoinPairs" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -451,12 +560,12 @@ namespace Naos.SqlServer.Domain.Test
                     }
 
                     // Act
-                    var actual = (DisallowSystemSchemasSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (SanctionedJoinPairsSqlScriptValidationRule)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach (var propertyName in propertyNames)
                     {
-                        var propertyInfo = typeof(DisallowSystemSchemasSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
+                        var propertyInfo = typeof(SanctionedJoinPairsSqlScriptValidationRule).GetPropertyFiltered(propertyName, MemberRelationships.DeclaredOrInherited, MemberOwners.Instance, MemberAccessModifiers.Public);
 
                         var actualPropertyValue = propertyInfo.GetValue(actual);
 
@@ -518,7 +627,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                var expected = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -547,7 +656,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcBsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                var expected = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.BsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -576,7 +685,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_string_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                var expected = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -605,7 +714,7 @@ namespace Naos.SqlServer.Domain.Test
             public static void Deserialize___Should_roundtrip_object___When_serializing_to_and_deserializing_from_bytes_using_ObcJsonSerializer()
             {
                 // Arrange
-                var expected = A.Dummy<DisallowSystemSchemasSqlScriptValidationRule>();
+                var expected = A.Dummy<SanctionedJoinPairsSqlScriptValidationRule>();
 
                 var serializationConfigurationType = SerializationConfigurationTypes.JsonSerializationConfigurationType.ConcreteSerializationConfigurationDerivativeType;
 
@@ -639,8 +748,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                DisallowSystemSchemasSqlScriptValidationRule systemUnderTest1 = null;
-                DisallowSystemSchemasSqlScriptValidationRule systemUnderTest2 = null;
+                SanctionedJoinPairsSqlScriptValidationRule systemUnderTest1 = null;
+                SanctionedJoinPairsSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -670,7 +779,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    DisallowSystemSchemasSqlScriptValidationRule systemUnderTest = null;
+                    SanctionedJoinPairsSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -819,8 +928,8 @@ namespace Naos.SqlServer.Domain.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                DisallowSystemSchemasSqlScriptValidationRule systemUnderTest1 = null;
-                DisallowSystemSchemasSqlScriptValidationRule systemUnderTest2 = null;
+                SanctionedJoinPairsSqlScriptValidationRule systemUnderTest1 = null;
+                SanctionedJoinPairsSqlScriptValidationRule systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -850,7 +959,7 @@ namespace Naos.SqlServer.Domain.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    DisallowSystemSchemasSqlScriptValidationRule systemUnderTest = null;
+                    SanctionedJoinPairsSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1139,14 +1248,14 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowSystemSchemasSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_SanctionedJoinPairsSqlScriptValidationRule___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    DisallowSystemSchemasSqlScriptValidationRule systemUnderTest = null;
+                    SanctionedJoinPairsSqlScriptValidationRule systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1170,7 +1279,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowSystemSchemasSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_SanctionedJoinPairsSqlScriptValidationRule___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1198,7 +1307,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowSystemSchemasSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_SanctionedJoinPairsSqlScriptValidationRule___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1226,7 +1335,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowSystemSchemasSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_SanctionedJoinPairsSqlScriptValidationRule___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1254,7 +1363,7 @@ namespace Naos.SqlServer.Domain.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_DisallowSystemSchemasSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_SanctionedJoinPairsSqlScriptValidationRule___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1415,7 +1524,7 @@ namespace Naos.SqlServer.Domain.Test
         [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
         public static class HashTesting
         {
-            [Fact]
+            [Fact(Skip = "It's possible (and even probable after a few runs of this test) that two dummy, unequal models will have the same hash code.  The model being tested contains at least one property who's type (or a type nested within the generic type, or a property of the IModel type) is a dictionary with keys that are not comparable or an unordered collection with elements that are not comparable.  In these cases the hashing method cannot hash the elements and must resort to hashing the element count.  Two dummies could easily have the same element count for such a type.")]
             [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
             [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
             [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]

@@ -183,6 +183,14 @@ namespace Naos.SqlServer.Protocol.Validation
                 {
                     ruleEvaluator = new BenchmarkingFilterValuesByColumnSqlScriptValidationRuleEvaluator(benchmarkingFilterValuesByColumnSqlScriptValidationRule);
                 }
+                else if (rule is SanctionedJoinPairsSqlScriptValidationRule sanctionedJoinPairsSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new SanctionedJoinPairsSqlScriptValidationRuleEvaluator(sanctionedJoinPairsSqlScriptValidationRule);
+                }
+                else if (rule is DisallowedJoinShapesSqlScriptValidationRule disallowedJoinShapesSqlScriptValidationRule)
+                {
+                    ruleEvaluator = new DisallowedJoinShapesSqlScriptValidationRuleEvaluator(disallowedJoinShapesSqlScriptValidationRule);
+                }
                 else
                 {
                     throw new NotSupportedException(Invariant($"This type of {nameof(SqlScriptValidationRuleBase)} is not supported: {rule.GetType().ToStringReadable()}."));

@@ -168,6 +168,19 @@
       <DependentUpon>ConstrainedFilterOperatorsByColumnSqlScriptValidationRule.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Classes\Validation\Rules\BenchmarkingFilterValuesByColumnSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowedJoinShapesSqlScriptValidationRule.designer.cs">
+      <DependentUpon>DisallowedJoinShapesSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedJoinPairsSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\DisallowedJoinShapesSqlScriptValidationRule.cs" />
+    <Compile Include="Models\Classes\Validation\Rules\SanctionedJoinPairsSqlScriptValidationRule.designer.cs">
+      <DependentUpon>SanctionedJoinPairsSqlScriptValidationRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classes\Validation\SanctionedJoinPair.cs" />
+    <Compile Include="Models\Classes\Validation\SanctionedJoinPair.designer.cs">
+      <DependentUpon>SanctionedJoinPair.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Enums\Validation\JoinShapeIssues.cs" />
     <Compile Include="Models\Enums\Validation\FilterOperator.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.designer.cs">

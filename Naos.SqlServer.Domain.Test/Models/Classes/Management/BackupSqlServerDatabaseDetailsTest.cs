@@ -27,7 +27,6 @@ namespace Naos.SqlServer.Domain.Test
         {
             ConstructorArgumentValidationTestScenarios
                .RemoveAllScenarios()
-
                .AddScenario(
                     () =>
                         new ConstructorArgumentValidationTestScenario<BackupSqlServerDatabaseDetails>
