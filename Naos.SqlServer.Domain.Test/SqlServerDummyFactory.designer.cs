@@ -114,7 +114,7 @@ namespace Naos.SqlServer.Domain.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new DisallowedJoinShapesSqlScriptValidationRule(
-                                 A.Dummy<JoinShapeIssues>(),
+                                 A.Dummy<JoinShapes>(),
                                  A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(

@@ -37,7 +37,7 @@ namespace Naos.SqlServer.Domain.Test
                         ConstructionFunc = () =>
                         {
                             var result = new DisallowedJoinShapesSqlScriptValidationRule(
-                                JoinShapeIssues.None);
+                                JoinShapes.None);
 
                             return result;
                         },

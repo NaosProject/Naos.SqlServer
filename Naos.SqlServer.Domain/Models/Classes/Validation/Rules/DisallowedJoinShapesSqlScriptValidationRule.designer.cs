@@ -136,7 +136,7 @@ namespace Naos.SqlServer.Domain
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public DisallowedJoinShapesSqlScriptValidationRule DeepCloneWithDisallowedShapes(JoinShapeIssues disallowedShapes)
+        public DisallowedJoinShapesSqlScriptValidationRule DeepCloneWithDisallowedShapes(JoinShapes disallowedShapes)
         {
             var result = new DisallowedJoinShapesSqlScriptValidationRule(
                                  disallowedShapes,

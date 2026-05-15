@@ -17,6 +17,21 @@ namespace Naos.SqlServer.Protocol.Validation
     /// </summary>
     public class DisallowedJoinShapesSqlScriptValidationRuleEvaluator : SqlScriptValidationRuleEvaluatorBase
     {
+        private const JoinShapes JoinTypeFlags =
+            JoinShapes.InnerJoin
+            | JoinShapes.LeftOuterJoin
+            | JoinShapes.RightOuterJoin
+            | JoinShapes.FullOuterJoin
+            | JoinShapes.CrossJoin
+            | JoinShapes.CrossApply
+            | JoinShapes.OuterApply;
+
+        private const JoinShapes OnClauseFlags =
+            JoinShapes.ConstantOn
+            | JoinShapes.LiteralInOn
+            | JoinShapes.NonEqualityOn
+            | JoinShapes.FunctionInOn;
+
         private readonly DisallowedJoinShapesSqlScriptValidationRule rule;
 
         /// <summary>
@@ -41,29 +56,29 @@ namespace Naos.SqlServer.Protocol.Validation
 
             var shapes = this.rule.DisallowedShapes;
 
-            if (shapes.HasFlag(JoinShapeIssues.SelfJoin))
+            if (shapes.HasFlag(JoinShapes.SelfJoin))
             {
                 this.CheckSelfJoin(node.FromClause);
             }
 
-            if (shapes.HasFlag(JoinShapeIssues.CrossJoin))
+            // Single walk of the FROM tree dispatching join-type checks (InnerJoin,
+            // LeftOuterJoin, RightOuterJoin, FullOuterJoin, CrossJoin, CrossApply,
+            // OuterApply) based on which flags are enabled.
+            if ((shapes & JoinTypeFlags) != JoinShapes.None)
             {
-                this.CheckCrossJoin(node.FromClause);
+                this.CheckJoinTypes(node.FromClause);
             }
 
             // WhereBasedJoin and ImplicitCrossJoin both key off "comma-FROM" (FROM with
             // multiple top-level table references) and are mutually exclusive based on
             // whether the WHERE contains a column-on-column equality bridging the tables.
-            if (shapes.HasFlag(JoinShapeIssues.WhereBasedJoin) || shapes.HasFlag(JoinShapeIssues.ImplicitCrossJoin))
+            if (shapes.HasFlag(JoinShapes.WhereBasedJoin) || shapes.HasFlag(JoinShapes.ImplicitCrossJoin))
             {
                 this.CheckCommaFromShape(node);
             }
 
             // Per-ON-clause checks.  Walk every QualifiedJoin's SearchCondition.
-            if (shapes.HasFlag(JoinShapeIssues.ConstantOn)
-                || shapes.HasFlag(JoinShapeIssues.LiteralInOn)
-                || shapes.HasFlag(JoinShapeIssues.NonEqualityOn)
-                || shapes.HasFlag(JoinShapeIssues.FunctionInOn))
+            if ((shapes & OnClauseFlags) != JoinShapes.None)
             {
                 this.WalkOnClauses(node.FromClause);
             }
@@ -127,7 +142,7 @@ namespace Naos.SqlServer.Protocol.Validation
             // Other table-reference types (QueryDerivedTable, etc.) are blocked by FlatQuery.
         }
 
-        private void CheckCrossJoin(
+        private void CheckJoinTypes(
             FromClause fromClause)
         {
             if ((fromClause == null) || (fromClause.TableReferences == null))
@@ -137,40 +152,103 @@ namespace Naos.SqlServer.Protocol.Validation
 
             foreach (var tableReference in fromClause.TableReferences)
             {
-                this.FindCrossJoins(tableReference);
+                this.FindAndCheckJoinTypes(tableReference);
             }
         }
 
-        private void FindCrossJoins(
+        private void FindAndCheckJoinTypes(
             TableReference tableReference)
         {
-            if (tableReference is UnqualifiedJoin unqualifiedJoin)
+            if (tableReference is QualifiedJoin qualifiedJoin)
             {
-                if (unqualifiedJoin.UnqualifiedJoinType == UnqualifiedJoinType.CrossJoin)
-                {
-                    // Emit at the right-hand table — the table being attached via CROSS
-                    // JOIN.  UnqualifiedJoin.StartOffset is the start of the whole join
-                    // expression, which is the LEFT-hand table — misleading.
-                    var emitOffset = (unqualifiedJoin.SecondTableReference != null)
-                        ? unqualifiedJoin.SecondTableReference.StartOffset
-                        : unqualifiedJoin.StartOffset;
-
-                    this.AddViolation(
-                        emitOffset,
-                        "CROSS JOIN not allowed");
-                }
-
-                this.FindCrossJoins(unqualifiedJoin.FirstTableReference);
-                this.FindCrossJoins(unqualifiedJoin.SecondTableReference);
+                this.CheckQualifiedJoinType(qualifiedJoin);
+                this.FindAndCheckJoinTypes(qualifiedJoin.FirstTableReference);
+                this.FindAndCheckJoinTypes(qualifiedJoin.SecondTableReference);
             }
-            else if (tableReference is QualifiedJoin qualifiedJoin)
+            else if (tableReference is UnqualifiedJoin unqualifiedJoin)
             {
-                this.FindCrossJoins(qualifiedJoin.FirstTableReference);
-                this.FindCrossJoins(qualifiedJoin.SecondTableReference);
+                this.CheckUnqualifiedJoinType(unqualifiedJoin);
+                this.FindAndCheckJoinTypes(unqualifiedJoin.FirstTableReference);
+                this.FindAndCheckJoinTypes(unqualifiedJoin.SecondTableReference);
             }
             else if (tableReference is JoinParenthesisTableReference joinParen)
             {
-                this.FindCrossJoins(joinParen.Join);
+                this.FindAndCheckJoinTypes(joinParen.Join);
+            }
+        }
+
+        private void CheckQualifiedJoinType(
+            QualifiedJoin qualifiedJoin)
+        {
+            JoinShapes flag;
+            string message;
+
+            switch (qualifiedJoin.QualifiedJoinType)
+            {
+                case QualifiedJoinType.Inner:
+                    flag = JoinShapes.InnerJoin;
+                    message = "INNER JOIN not allowed";
+                    break;
+                case QualifiedJoinType.LeftOuter:
+                    flag = JoinShapes.LeftOuterJoin;
+                    message = "LEFT OUTER JOIN not allowed";
+                    break;
+                case QualifiedJoinType.RightOuter:
+                    flag = JoinShapes.RightOuterJoin;
+                    message = "RIGHT OUTER JOIN not allowed";
+                    break;
+                case QualifiedJoinType.FullOuter:
+                    flag = JoinShapes.FullOuterJoin;
+                    message = "FULL OUTER JOIN not allowed";
+                    break;
+                default:
+                    return;
+            }
+
+            if (this.rule.DisallowedShapes.HasFlag(flag))
+            {
+                // Emit at the right-hand table — the table being attached via the join.
+                // QualifiedJoin.StartOffset points at the LEFT-hand table, which is
+                // misleading when the violation is about the join shape itself.
+                var offset = (qualifiedJoin.SecondTableReference != null)
+                    ? qualifiedJoin.SecondTableReference.StartOffset
+                    : qualifiedJoin.StartOffset;
+
+                this.AddViolation(offset, message);
+            }
+        }
+
+        private void CheckUnqualifiedJoinType(
+            UnqualifiedJoin unqualifiedJoin)
+        {
+            JoinShapes flag;
+            string message;
+
+            switch (unqualifiedJoin.UnqualifiedJoinType)
+            {
+                case UnqualifiedJoinType.CrossJoin:
+                    flag = JoinShapes.CrossJoin;
+                    message = "CROSS JOIN not allowed";
+                    break;
+                case UnqualifiedJoinType.CrossApply:
+                    flag = JoinShapes.CrossApply;
+                    message = "CROSS APPLY not allowed";
+                    break;
+                case UnqualifiedJoinType.OuterApply:
+                    flag = JoinShapes.OuterApply;
+                    message = "OUTER APPLY not allowed";
+                    break;
+                default:
+                    return;
+            }
+
+            if (this.rule.DisallowedShapes.HasFlag(flag))
+            {
+                var offset = (unqualifiedJoin.SecondTableReference != null)
+                    ? unqualifiedJoin.SecondTableReference.StartOffset
+                    : unqualifiedJoin.StartOffset;
+
+                this.AddViolation(offset, message);
             }
         }
 
@@ -190,7 +268,7 @@ namespace Naos.SqlServer.Protocol.Validation
 
             if (bridgingBce != null)
             {
-                if (this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.WhereBasedJoin))
+                if (this.rule.DisallowedShapes.HasFlag(JoinShapes.WhereBasedJoin))
                 {
                     this.AddViolation(
                         bridgingBce.StartOffset,
@@ -199,7 +277,7 @@ namespace Naos.SqlServer.Protocol.Validation
             }
             else
             {
-                if (this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.ImplicitCrossJoin))
+                if (this.rule.DisallowedShapes.HasFlag(JoinShapes.ImplicitCrossJoin))
                 {
                     // Emit at the second top-level table reference — where the implicit
                     // cartesian product enters via the comma.
@@ -290,7 +368,7 @@ namespace Naos.SqlServer.Protocol.Validation
             // ConstantOn fires, the per-BCE checks are skipped — the constant predicate is
             // already the violation; emitting LiteralInOn/NonEqualityOn for `1 = 1` would
             // be noise.
-            if (this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.ConstantOn))
+            if (this.rule.DisallowedShapes.HasFlag(JoinShapes.ConstantOn))
             {
                 if (!HasAnyColumnReference(searchCondition))
                 {
@@ -302,9 +380,9 @@ namespace Naos.SqlServer.Protocol.Validation
                 }
             }
 
-            if (this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.LiteralInOn)
-                || this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.NonEqualityOn)
-                || this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.FunctionInOn))
+            if (this.rule.DisallowedShapes.HasFlag(JoinShapes.LiteralInOn)
+                || this.rule.DisallowedShapes.HasFlag(JoinShapes.NonEqualityOn)
+                || this.rule.DisallowedShapes.HasFlag(JoinShapes.FunctionInOn))
             {
                 this.WalkBoolForPredicateChecks(searchCondition);
             }
@@ -344,7 +422,7 @@ namespace Naos.SqlServer.Protocol.Validation
             }
 
             // Non-BCE leaf predicates that count as "non-equality" in ON.
-            if (this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.NonEqualityOn))
+            if (this.rule.DisallowedShapes.HasFlag(JoinShapes.NonEqualityOn))
             {
                 if (expression is LikePredicate likePredicate)
                 {
@@ -376,7 +454,7 @@ namespace Naos.SqlServer.Protocol.Validation
         private void CheckBceForShapeIssues(
             BooleanComparisonExpression bce)
         {
-            if (this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.NonEqualityOn))
+            if (this.rule.DisallowedShapes.HasFlag(JoinShapes.NonEqualityOn))
             {
                 if (bce.ComparisonType != BooleanComparisonType.Equals)
                 {
@@ -386,7 +464,7 @@ namespace Naos.SqlServer.Protocol.Validation
                 }
             }
 
-            if (this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.LiteralInOn))
+            if (this.rule.DisallowedShapes.HasFlag(JoinShapes.LiteralInOn))
             {
                 var firstIsColumn = bce.FirstExpression is ColumnReferenceExpression;
                 var secondIsColumn = bce.SecondExpression is ColumnReferenceExpression;
@@ -401,7 +479,7 @@ namespace Naos.SqlServer.Protocol.Validation
                 }
             }
 
-            if (this.rule.DisallowedShapes.HasFlag(JoinShapeIssues.FunctionInOn))
+            if (this.rule.DisallowedShapes.HasFlag(JoinShapes.FunctionInOn))
             {
                 if ((bce.FirstExpression is FunctionCall) || (bce.SecondExpression is FunctionCall))
                 {

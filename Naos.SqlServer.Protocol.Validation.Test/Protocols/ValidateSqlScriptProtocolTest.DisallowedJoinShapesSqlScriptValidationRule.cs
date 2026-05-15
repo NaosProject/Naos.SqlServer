@@ -13,16 +13,20 @@ namespace Naos.SqlServer.Protocol.Validation.Test
 
     public static partial class ValidateSqlScriptProtocolTest
     {
-        // All flags enabled — every recognized "weird" shape will be flagged.
-        private const JoinShapeIssues DisallowedJoinShapesSqlScriptValidationRuleAllFlags =
-            JoinShapeIssues.SelfJoin
-            | JoinShapeIssues.ConstantOn
-            | JoinShapeIssues.CrossJoin
-            | JoinShapeIssues.WhereBasedJoin
-            | JoinShapeIssues.LiteralInOn
-            | JoinShapeIssues.NonEqualityOn
-            | JoinShapeIssues.FunctionInOn
-            | JoinShapeIssues.ImplicitCrossJoin;
+        // The 8 "non-vanilla" shapes — every join-related issue OTHER than the plain
+        // join types (INNER / LEFT OUTER / RIGHT OUTER / FULL OUTER / CROSS APPLY /
+        // OUTER APPLY).  Used by the legacy-style violation/no-violation tests below,
+        // which include vanilla INNER and LEFT OUTER joins among the no-violation
+        // scenarios.
+        private const JoinShapes DisallowedJoinShapesSqlScriptValidationRuleNonVanillaShapes =
+            JoinShapes.SelfJoin
+            | JoinShapes.ConstantOn
+            | JoinShapes.CrossJoin
+            | JoinShapes.WhereBasedJoin
+            | JoinShapes.LiteralInOn
+            | JoinShapes.NonEqualityOn
+            | JoinShapes.FunctionInOn
+            | JoinShapes.ImplicitCrossJoin;
 
         private static readonly IReadOnlyList<TestScenariosWithExpected> DisallowedJoinShapesSqlScriptValidationRuleTestScenariosWithExpected = new[]
         {
@@ -145,6 +149,50 @@ namespace Naos.SqlServer.Protocol.Validation.Test
             new TestScenariosWithExpected { Sql = "Select * From dbo.a Left Outer Join dbo.b On a.id = b.id" },
         };
 
+        // Scenarios for the join-type flags (InnerJoin / LeftOuterJoin / RightOuterJoin /
+        // FullOuterJoin / CrossApply / OuterApply).  Each scenario configures only the
+        // single flag it tests so the violation can be tied to that flag specifically;
+        // CrossJoin already has coverage in the non-vanilla set above.
+        private static readonly IReadOnlyList<JoinTypeScenario> DisallowedJoinShapesSqlScriptValidationRuleJoinTypeScenarios = new[]
+        {
+            new JoinTypeScenario
+            {
+                Flag = JoinShapes.InnerJoin,
+                Sql = "Select * From dbo.a Inner Join dbo.b On a.id = b.id",
+                Expected = new ExpectedViolation { Offset = 31, Details = "INNER JOIN not allowed" },
+            },
+            new JoinTypeScenario
+            {
+                Flag = JoinShapes.LeftOuterJoin,
+                Sql = "Select * From dbo.a Left Outer Join dbo.b On a.id = b.id",
+                Expected = new ExpectedViolation { Offset = 36, Details = "LEFT OUTER JOIN not allowed" },
+            },
+            new JoinTypeScenario
+            {
+                Flag = JoinShapes.RightOuterJoin,
+                Sql = "Select * From dbo.a Right Outer Join dbo.b On a.id = b.id",
+                Expected = new ExpectedViolation { Offset = 37, Details = "RIGHT OUTER JOIN not allowed" },
+            },
+            new JoinTypeScenario
+            {
+                Flag = JoinShapes.FullOuterJoin,
+                Sql = "Select * From dbo.a Full Outer Join dbo.b On a.id = b.id",
+                Expected = new ExpectedViolation { Offset = 36, Details = "FULL OUTER JOIN not allowed" },
+            },
+            new JoinTypeScenario
+            {
+                Flag = JoinShapes.CrossApply,
+                Sql = "Select * From dbo.a Cross Apply (Select * From dbo.b) sub",
+                Expected = new ExpectedViolation { Offset = 32, Details = "CROSS APPLY not allowed" },
+            },
+            new JoinTypeScenario
+            {
+                Flag = JoinShapes.OuterApply,
+                Sql = "Select * From dbo.a Outer Apply (Select * From dbo.b) sub",
+                Expected = new ExpectedViolation { Offset = 32, Details = "OUTER APPLY not allowed" },
+            },
+        };
+
         [Fact]
         public static void Execute___Should_return_violations___When_DisallowedJoinShapesSqlScriptValidationRule_has_been_violated()
         {
@@ -152,7 +200,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
             var testScenariosWithExpected = DisallowedJoinShapesSqlScriptValidationRuleTestScenariosWithExpected;
 
             var rule = new DisallowedJoinShapesSqlScriptValidationRule(
-                DisallowedJoinShapesSqlScriptValidationRuleAllFlags);
+                DisallowedJoinShapesSqlScriptValidationRuleNonVanillaShapes);
 
             var operations = testScenariosWithExpected
                 .Select(_ => new ValidateSqlScriptOp(SqlServerVersion, _.Sql, new[] { rule }))
@@ -174,7 +222,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
             var testScenariosWithExpected = DisallowedJoinShapesSqlScriptValidationRuleNoViolationScenarios;
 
             var rule = new DisallowedJoinShapesSqlScriptValidationRule(
-                DisallowedJoinShapesSqlScriptValidationRuleAllFlags);
+                DisallowedJoinShapesSqlScriptValidationRuleNonVanillaShapes);
 
             var operations = testScenariosWithExpected
                 .Select(_ => new ValidateSqlScriptOp(SqlServerVersion, _.Sql, new[] { rule }))
@@ -187,6 +235,72 @@ namespace Naos.SqlServer.Protocol.Validation.Test
 
             // Assert
             actual.MustNotHaveAnyViolations();
+        }
+
+        [Fact]
+        public static void Execute___Should_return_a_violation_for_each_join_type___When_the_type_is_set_in_isolation()
+        {
+            // Arrange
+            var scenarios = DisallowedJoinShapesSqlScriptValidationRuleJoinTypeScenarios;
+
+            var testScenariosWithExpected = scenarios
+                .Select(s => new TestScenariosWithExpected
+                {
+                    Sql = s.Sql,
+                    ExpectedViolations = new[] { s.Expected },
+                })
+                .ToList();
+
+            // Each scenario uses a rule configured with ONLY its flag — verifies that the
+            // flag fires for its shape AND that the corresponding join shape doesn't
+            // accidentally fire for a different flag.
+            var rules = scenarios.Select(s => new DisallowedJoinShapesSqlScriptValidationRule(s.Flag)).ToList();
+
+            var operations = scenarios
+                .Select((s, i) => new ValidateSqlScriptOp(SqlServerVersion, s.Sql, new[] { rules[i] }))
+                .ToList();
+
+            var systemUnderTest = new ValidateSqlScriptProtocol();
+
+            // Act
+            var actual = operations.Select(_ => systemUnderTest.Execute(_)).ToList();
+
+            // Assert
+            actual.MustBeEqualTo(testScenariosWithExpected);
+        }
+
+        [Fact]
+        public static void Execute___Should_return_no_violations___When_DisallowedJoinShapesSqlScriptValidationRule_uses_All_and_query_has_no_joins()
+        {
+            // With JoinShapes.All, even vanilla joins are flagged.  Only queries with no
+            // joins at all should pass.
+            var testScenariosWithExpected = new[]
+            {
+                new TestScenariosWithExpected { Sql = "Select 1" },
+                new TestScenariosWithExpected { Sql = "Select * From dbo.a" },
+                new TestScenariosWithExpected { Sql = "Select * From dbo.a Where a.x = 1" },
+            };
+
+            var rule = new DisallowedJoinShapesSqlScriptValidationRule(JoinShapes.All);
+
+            var operations = testScenariosWithExpected
+                .Select(_ => new ValidateSqlScriptOp(SqlServerVersion, _.Sql, new[] { rule }))
+                .ToList();
+
+            var systemUnderTest = new ValidateSqlScriptProtocol();
+
+            var actual = operations.Select(_ => systemUnderTest.Execute(_)).ToList();
+
+            actual.MustNotHaveAnyViolations();
+        }
+
+        private class JoinTypeScenario
+        {
+            public JoinShapes Flag { get; set; }
+
+            public string Sql { get; set; }
+
+            public ExpectedViolation Expected { get; set; }
         }
     }
 }

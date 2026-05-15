@@ -180,7 +180,7 @@
     <Compile Include="Models\Classes\Validation\SanctionedJoinPair.designer.cs">
       <DependentUpon>SanctionedJoinPair.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Enums\Validation\JoinShapeIssues.cs" />
+    <Compile Include="Models\Enums\Validation\JoinShapes.cs" />
     <Compile Include="Models\Enums\Validation\FilterOperator.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.cs" />
     <Compile Include="Models\Classes\Validation\Rules\DisallowAdHocDistributedQueriesSqlScriptValidationRule.designer.cs">

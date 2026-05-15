@@ -43,7 +43,7 @@ namespace Naos.SqlServer.Domain.Test
             AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(SqlServerVersion.Unknown);
             AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(FilterOperator.Unknown);
             AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(FilterOperators.None);
-            AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(JoinShapeIssues.None);
+            AutoFixtureBackedDummyFactory.ConstrainDummyToExclude(JoinShapes.None);
 
             // --------------------------- Interfaces ------------------------
             AutoFixtureBackedDummyFactory.AddDummyCreator(() =>
