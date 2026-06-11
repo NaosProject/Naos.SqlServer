@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package>
   <metadata>
-    <description>DESCRIPTION_HERE</description>
-    <tags>TAG1_HERE TAG2_HERE SqlServer</tags>
+    <description>Validation Protocols for SQL Server</description>
+    <tags>Validation Protocol SqlServer</tags>
   </metadata>
 </package>
