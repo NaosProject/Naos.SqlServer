@@ -10,10 +10,10 @@ namespace Naos.SqlServer.Domain
     using OBeautifulCode.Assertion.Recipes;
 
     /// <summary>
-    /// A rule that requires every filter expression (<c>WHERE</c>, <c>HAVING</c>, and JOIN
-    /// <c>ON</c> clauses) of a query to be a simple conjunction of predicates — but only when
-    /// that query's filters reference one of the configured columns.  Queries whose filters do
-    /// not touch any configured column are not constrained.
+    /// A rule that disallows <c>OR</c> connectors and explicit <c>NOT</c> wrappers in any
+    /// filter sub-expression (within <c>WHERE</c>, <c>HAVING</c>, and JOIN <c>ON</c> clauses)
+    /// that references one of the configured columns.  <c>OR</c> / <c>NOT</c> over other
+    /// columns is permitted, as long as the configured columns are filtered outside it.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -21,27 +21,31 @@ namespace Naos.SqlServer.Domain
     /// <c>SimpleConjunctiveFilterSqlScriptValidationRule</c>.  Use it when only certain
     /// columns require the conjunctive-filter shape — typically the same columns that
     /// downstream rules (e.g. <c>ConstrainedFilterOperatorsByColumnSqlScriptValidationRule</c>
-    /// or <c>AuthorizedFilterValuesByColumnSqlScriptValidationRule</c>) introspect.  Queries
-    /// that don't touch those columns retain the freedom to use <c>OR</c> / <c>NOT</c>.
+    /// or <c>BenchmarkingFilterValuesByColumnSqlScriptValidationRule</c>) introspect.
     /// </para>
     /// <para>
-    /// Specifically flagged WHEN the query's filter clauses reference at least one configured
-    /// column:
+    /// The invariant being protected: every result row must satisfy the predicates on the
+    /// configured columns.  An <c>OR</c> / <c>NOT</c> threatens that invariant only when a
+    /// configured column is referenced WITHIN the <c>OR</c> / <c>NOT</c> subtree:
     /// </para>
     /// <list type="bullet">
-    /// <item><description><c>OR</c> connectors (<c>BooleanBinaryExpression</c> with
-    /// <c>BooleanBinaryExpressionType.Or</c>) appearing in any filter expression of that
-    /// query.</description></item>
-    /// <item><description><c>NOT</c> wrappers (<c>BooleanNotExpression</c>) appearing in any
-    /// filter expression of that query.</description></item>
+    /// <item><description><c>WHERE entity_id = 'x' OR name = 'y'</c> — flagged: the
+    /// <c>OR</c>'s subtree references <c>entity_id</c>, so rows can match without satisfying
+    /// the <c>entity_id</c> predicate.</description></item>
+    /// <item><description><c>WHERE NOT (entity_id = 'x')</c> — flagged: the <c>NOT</c>
+    /// inverts a predicate on <c>entity_id</c>.</description></item>
+    /// <item><description><c>WHERE entity_id = 'x' AND ((year = 2026 AND quarter = 1) OR
+    /// (year = 2025 AND quarter IN (1, 4)))</c> — NOT flagged: the <c>OR</c>'s subtree does
+    /// not reference <c>entity_id</c>; the <c>entity_id</c> predicate is AND-ed outside the
+    /// <c>OR</c> and holds for every result row.</description></item>
     /// </list>
     /// <para>
-    /// "Reference" means any column reference in the query's WHERE / HAVING / JOIN ON clauses
-    /// resolves (through the FROM-clause alias map) to one of the configured columns.  In
-    /// multi-table queries, a bare column reference whose name matches a configured column's
-    /// name also counts as a reference — the rule cannot prove the bare ref ISN'T the
-    /// configured column without schema introspection, so it errs on the side of enforcing
-    /// the shape.
+    /// "Reference" means a column reference anywhere within the <c>OR</c> / <c>NOT</c>
+    /// subtree resolves (through the FROM-clause alias map) to one of the configured columns.
+    /// In multi-table queries, a bare column reference whose name matches a configured
+    /// column's name also counts as a reference — the rule cannot prove the bare ref ISN'T
+    /// the configured column without schema introspection, so it errs on the side of
+    /// enforcing the shape.
     /// </para>
     /// <para>
     /// NOT flagged (these encode "not" inline rather than as a wrapping <c>NOT</c> node, so
@@ -57,12 +61,12 @@ namespace Naos.SqlServer.Domain
     /// <para>
     /// Why this rule exists.  Filter-validation rules that inspect specific columns (operator
     /// allow-lists, value authorization) need to reason locally about each predicate.  An
-    /// <c>OR</c> at the top level invalidates that local reasoning — a predicate like
+    /// <c>OR</c> over a configured column invalidates that local reasoning — a predicate like
     /// <c>WHERE entity_id = 'auth' OR x = 5</c> appears to filter on <c>entity_id</c> but in
     /// fact returns rows matching either branch, defeating the authorization filter entirely.
-    /// By restricting filters of queries that touch a configured column to AND-only
-    /// conjunctions of leaf predicates, every individual predicate must hold for a row to
-    /// match, making per-predicate validation sound.
+    /// By requiring configured-column predicates to sit in AND-only positions (never inside
+    /// an <c>OR</c> branch or <c>NOT</c> wrapper), every configured-column predicate must
+    /// hold for a row to match, making per-predicate validation sound.
     /// </para>
     /// <para>
     /// Composes naturally with
@@ -79,8 +83,8 @@ namespace Naos.SqlServer.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule"/> class.
         /// </summary>
-        /// <param name="columns">The columns whose presence in a query's filter clauses
-        /// triggers the conjunctive-filter requirement for that query.</param>
+        /// <param name="columns">The columns that may not be referenced within an <c>OR</c>
+        /// or <c>NOT</c> filter sub-expression.</param>
         /// <param name="id">OPTIONAL identifier.  DEFAULT is no identifier.</param>
         public ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRule(
             IReadOnlyCollection<SchemaQualifiedColumnName> columns,
@@ -93,10 +97,9 @@ namespace Naos.SqlServer.Domain
         }
 
         /// <summary>
-        /// Gets the columns whose presence in a query's filter clauses triggers the
-        /// conjunctive-filter requirement for that query.  Comparisons of schema, table, and
-        /// column names against AST references are case-insensitive (SQL Server's default
-        /// collation behavior).
+        /// Gets the columns that may not be referenced within an <c>OR</c> or <c>NOT</c>
+        /// filter sub-expression.  Comparisons of schema, table, and column names against
+        /// AST references are case-insensitive (SQL Server's default collation behavior).
         /// </summary>
         public IReadOnlyCollection<SchemaQualifiedColumnName> Columns { get; private set; }
     }

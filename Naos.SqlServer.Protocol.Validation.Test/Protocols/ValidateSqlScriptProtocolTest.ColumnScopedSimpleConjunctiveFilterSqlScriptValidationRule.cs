@@ -14,9 +14,8 @@ namespace Naos.SqlServer.Protocol.Validation.Test
     public static partial class ValidateSqlScriptProtocolTest
     {
         // Rule config used by both tests: dbo.users.entity_id and dbo.users.tenant_id are
-        // the trigger columns.  When a query's filter clauses reference either (resolved or
-        // bare-name match in multi-table queries), the query's filters must be a simple
-        // conjunction.  Two columns are configured so the multi-column message branch is
+        // the constrained columns — they may not be referenced within an OR or NOT filter
+        // sub-expression.  Two columns are configured so the multi-column message branch is
         // exercised.
         private static readonly IReadOnlyCollection<SchemaQualifiedColumnName> ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleConfig = new[]
         {
@@ -24,10 +23,10 @@ namespace Naos.SqlServer.Protocol.Validation.Test
             new SchemaQualifiedColumnName("dbo", "users", "tenant_id"),
         };
 
-        // Scripts where a configured column is referenced AND an OR or explicit NOT wrapper
-        // appears in some filter clause — the rule fires.  Offsets match the conventions of
-        // SimpleConjunctiveFilterSqlScriptValidationRule: BBE-Or at its leftmost operand,
-        // BNot at the "NOT" keyword.
+        // Scripts where an OR / NOT subtree references a constrained column — the rule
+        // fires.  Offsets: BBE-Or at its leftmost operand, BNot at the "NOT" keyword.
+        // The violation message names the constrained columns referenced WITHIN the
+        // offending subtree (sorted ordinal), not all columns referenced in the query.
         private static readonly IReadOnlyList<TestScenariosWithExpected> ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleTestScenariosWithExpected = new[]
         {
             // WHERE: entity_id used in OR's left branch — fires at OR's leftmost operand.
@@ -40,9 +39,7 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 },
             },
 
-            // WHERE: NOT wrapper around the only filter — entity_id is referenced INSIDE the
-            // NOT.  Base walks through NOT to leaf, so HandleResolvedFilterPredicate fires
-            // (column added), then OnComplete sees the NOT wrapper.
+            // WHERE: NOT wrapper whose operand references entity_id.
             new TestScenariosWithExpected
             {
                 Sql = "Select * From dbo.users Where Not (entity_id = 'x')",
@@ -62,15 +59,36 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 },
             },
 
-            // WHERE: nested OR inside an AND.  entity_id is in the AND's left branch; OR is
-            // in the right branch.  Cross-branch coverage — column referenced anywhere
-            // triggers the OR-anywhere check.
+            // WHERE: OR nested inside an AND, with entity_id INSIDE the OR's branches —
+            // fires at the inner OR.
             new TestScenariosWithExpected
             {
-                Sql = "Select * From dbo.users Where entity_id = 'x' And (a = 1 Or b = 2)",
+                Sql = "Select * From dbo.users Where name = 'x' And (entity_id = 'a' Or entity_id = 'b')",
                 ExpectedViolations = new[]
                 {
-                    new ExpectedViolation { Offset = 51, Details = "OR not allowed in filter referencing constrained column dbo.users.entity_id; filter must be a simple conjunction" },
+                    new ExpectedViolation { Offset = 46, Details = "OR not allowed in filter referencing constrained column dbo.users.entity_id; filter must be a simple conjunction" },
+                },
+            },
+
+            // WHERE: NOT nested inside an AND, with entity_id INSIDE the NOT's operand —
+            // fires at the NOT.
+            new TestScenariosWithExpected
+            {
+                Sql = "Select * From dbo.users Where name = 'x' And Not (entity_id = 'a')",
+                ExpectedViolations = new[]
+                {
+                    new ExpectedViolation { Offset = 45, Details = "NOT not allowed in filter referencing constrained column dbo.users.entity_id; filter must be a simple conjunction" },
+                },
+            },
+
+            // WHERE: entity_id deep in the OR's RIGHT branch — the outer OR fires (the
+            // constrained predicate is optional for rows matching the left branch).
+            new TestScenariosWithExpected
+            {
+                Sql = "Select * From dbo.users Where a = 1 Or (b = 2 And entity_id = 'x')",
+                ExpectedViolations = new[]
+                {
+                    new ExpectedViolation { Offset = 30, Details = "OR not allowed in filter referencing constrained column dbo.users.entity_id; filter must be a simple conjunction" },
                 },
             },
 
@@ -84,20 +102,19 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 },
             },
 
-            // Cross-clause: entity_id only in WHERE, OR only in JOIN ON.  Column recorded
-            // during WHERE walk; OnComplete walks JOIN ON and emits there.
+            // JOIN ON: OR whose subtree references u.entity_id — fires at the OR in the ON.
             new TestScenariosWithExpected
             {
-                Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.id = o.user_id Or u.id = o.id Where u.entity_id = 'x'",
+                Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.entity_id = o.user_id Or u.id = o.id",
                 ExpectedViolations = new[]
                 {
                     new ExpectedViolation { Offset = 53, Details = "OR not allowed in filter referencing constrained column dbo.users.entity_id; filter must be a simple conjunction" },
                 },
             },
 
-            // Multi-table: bare reference to "entity_id" cannot be resolved without schema
-            // introspection.  Bare name matches a configured column's name → the rule errs on
-            // the safe side and records the configured column.  OR in WHERE fires.
+            // Multi-table: bare reference to "entity_id" inside the OR cannot be resolved
+            // without schema introspection.  Bare name matches a configured column's name →
+            // the rule errs on the safe side and fires.
             new TestScenariosWithExpected
             {
                 Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.id = o.user_id Where entity_id = 'x' Or name = 'y'",
@@ -127,9 +144,8 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 },
             },
 
-            // Chained ORs at the top — only the outermost BBE-Or fires (recursion
-            // short-circuits on first OR encountered).  Column recorded because entity_id
-            // appears in the leftmost branch.
+            // Chained ORs — the outermost BBE-Or contains entity_id (in its leftmost
+            // branch) and fires once; recursion stops there.
             new TestScenariosWithExpected
             {
                 Sql = "Select * From dbo.users Where entity_id = 'x' Or a = 1 Or b = 2",
@@ -139,33 +155,9 @@ namespace Naos.SqlServer.Protocol.Validation.Test
                 },
             },
 
-            // JOIN ON references u.entity_id (records the column); WHERE has a NOT wrapper
-            // that does not reference entity_id but still fires because a constrained
-            // column was recorded.
-            new TestScenariosWithExpected
-            {
-                Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.entity_id = o.user_id Where Not (a = 1)",
-                ExpectedViolations = new[]
-                {
-                    new ExpectedViolation { Offset = 83, Details = "NOT not allowed in filter referencing constrained column dbo.users.entity_id; filter must be a simple conjunction" },
-                },
-            },
-
-            // Multi-table bare-name match in WHERE (via IS NOT NULL — an inline-not leaf, NOT
-            // a BooleanNotExpression), with OR in JOIN ON.
-            new TestScenariosWithExpected
-            {
-                Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.id = o.user_id Or u.id = o.id Where entity_id Is Not Null",
-                ExpectedViolations = new[]
-                {
-                    new ExpectedViolation { Offset = 53, Details = "OR not allowed in filter referencing constrained column dbo.users.entity_id; filter must be a simple conjunction" },
-                },
-            },
-
-            // Multi-column reference — BOTH entity_id and tenant_id are referenced in the
-            // query.  The message lists both, sorted (case-sensitive ordinal).  OR fires at
-            // the outer BBE-Or which wraps the AND-conjunction-with-tenant-id on the left
-            // and `name = 'z'` on the right (AND binds tighter than OR).
+            // Multi-column reference — BOTH entity_id and tenant_id are inside the OR
+            // subtree (`(entity_id = 'x' And tenant_id = 'y') Or name = 'z'`; AND binds
+            // tighter than OR).  The message lists both, sorted (case-sensitive ordinal).
             new TestScenariosWithExpected
             {
                 Sql = "Select * From dbo.users Where entity_id = 'x' And tenant_id = 'y' Or name = 'z'",
@@ -176,57 +168,77 @@ namespace Naos.SqlServer.Protocol.Validation.Test
             },
         };
 
-        // Scripts where the rule does NOT fire — either because no configured column is
-        // referenced in any filter clause, or because the query's filters are pure
-        // conjunctions.
+        // Scripts where the rule does NOT fire — either because no OR / NOT subtree
+        // references a constrained column, or because there is no OR / NOT at all.
         private static readonly IReadOnlyList<TestScenariosWithExpected> ColumnScopedSimpleConjunctiveFilterSqlScriptValidationRuleNoViolationScenarios = new[]
         {
             // No filter at all.
             new TestScenariosWithExpected { Sql = "Select 1" },
             new TestScenariosWithExpected { Sql = "Select * From dbo.users" },
 
-            // OR in WHERE but no configured column referenced — the key differentiator from
-            // the unscoped SimpleConjunctiveFilter rule.
+            // OR in WHERE but no constrained column referenced anywhere.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users Where name = 'x' Or age = 18" },
 
-            // NOT in WHERE but no configured column referenced.
+            // NOT in WHERE but no constrained column referenced.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users Where Not (name = 'x')" },
 
-            // Configured column with pure AND.
+            // Constrained column with pure AND.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users Where entity_id = 'x' And name = 'y'" },
 
-            // Configured column alone.
+            // Constrained column alone.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users Where entity_id = 'x'" },
 
-            // Both configured columns with pure AND.
+            // Both constrained columns with pure AND.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users Where entity_id = 'x' And tenant_id = 'y'" },
 
-            // Multi-table with bare reference to an UNCONFIGURED column name and OR — bare
-            // "name" doesn't match either configured column name, no column is recorded.
+            // THE KEY SHAPE this rule permits (and the binary referenced-anywhere
+            // implementation used to reject): constrained column AND-ed OUTSIDE an OR whose
+            // branches only reference other columns.  Every result row still satisfies the
+            // entity_id predicate.
+            new TestScenariosWithExpected { Sql = "Select * From dbo.users Where entity_id = 'x' And ((calendar_year = 2026 And calendar_quarter = 1) Or (calendar_year = 2025 And calendar_quarter In (1, 4)))" },
+
+            // Same idea, simpler: entity_id outside, OR over other columns inside an AND.
+            new TestScenariosWithExpected { Sql = "Select * From dbo.users Where entity_id = 'x' And (a = 1 Or b = 2)" },
+
+            // entity_id outside, NOT over another column.
+            new TestScenariosWithExpected { Sql = "Select * From dbo.users Where entity_id = 'x' And Not (a = 1)" },
+
+            // entity_id filtered conjunctively in WHERE; OR in JOIN ON whose subtree does
+            // not reference a constrained column.
+            new TestScenariosWithExpected { Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.id = o.user_id Or u.id = o.id Where u.entity_id = 'x'" },
+
+            // entity_id in JOIN ON (conjunctive); NOT in WHERE over another column.
+            new TestScenariosWithExpected { Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.entity_id = o.user_id Where Not (a = 1)" },
+
+            // Bare entity_id in WHERE via an inline-not leaf (IS NOT NULL — not a
+            // BooleanNotExpression); OR in JOIN ON does not reference a constrained column.
+            new TestScenariosWithExpected { Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.id = o.user_id Or u.id = o.id Where entity_id Is Not Null" },
+
+            // Multi-table with bare reference to an UNCONFIGURED column name inside the OR —
+            // bare "name" / "age" don't match either configured column name.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.id = o.user_id Where name = 'x' Or age = 18" },
 
-            // JOIN ON OR with no configured column reference anywhere.
+            // JOIN ON OR with no constrained column reference anywhere.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users Inner Join dbo.orders o On dbo.users.id = o.user_id Or dbo.users.id = o.id Where name = 'x'" },
 
-            // Alias-qualified configured column with pure AND.
+            // Alias-qualified constrained column with pure AND.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users u Where u.entity_id = 'x' And u.name = 'y'" },
 
-            // Inline-not predicates on the configured column — these are LEAF predicates
-            // (not BooleanNotExpression wrappers), so they pass even though entity_id is
-            // referenced.
+            // Inline-not predicates on the constrained column — these are LEAF predicates
+            // (not BooleanNotExpression wrappers), so they pass.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users Where entity_id <> 'x' And entity_id Not In ('a', 'b') And entity_id Is Not Null" },
 
-            // Configured column referenced in JOIN ON with pure AND in WHERE.
+            // Constrained column referenced in JOIN ON with pure AND in WHERE.
             new TestScenariosWithExpected { Sql = "Select * From dbo.users u Inner Join dbo.orders o On u.entity_id = o.user_id Where u.name = 'x' And o.amount > 0" },
 
-            // Single-table query against a non-configured table — bare "entity_id" resolves
-            // to dbo.audit_log.entity_id, not dbo.users.entity_id; full identity mismatches,
-            // so no column is recorded even though OR is present.
+            // Single-table query against a non-configured table — bare "entity_id" inside
+            // the OR resolves to dbo.audit_log.entity_id, not dbo.users.entity_id; full
+            // identity mismatches.
             new TestScenariosWithExpected { Sql = "Select * From dbo.audit_log Where entity_id = 'x' Or x = 1" },
 
             // Multi-table against non-configured tables — alias-qualified "a.entity_id"
             // resolves to dbo.audit_log.entity_id; bare "x" doesn't match any configured
-            // column name.  Nothing recorded.
+            // column name.
             new TestScenariosWithExpected { Sql = "Select * From dbo.audit_log a Inner Join dbo.something b On a.id = b.aid Where a.entity_id = 'x' Or x = 1" },
         };
 
